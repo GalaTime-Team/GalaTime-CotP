@@ -1,0 +1,9 @@
+D:\Projects\galatime-project\.mono\temp\bin\Debug\galatime-project.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\galatime-project.pdb
+D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.csproj.AssemblyReference.cache
+D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.AssemblyInfoInputs.cache
+D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.AssemblyInfo.cs
+D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.csproj.CoreCompileInputs.cache
+D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.dll
+D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.pdb
