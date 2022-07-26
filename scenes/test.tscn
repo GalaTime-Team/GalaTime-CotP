@@ -45,7 +45,7 @@ Scene = "res://scenes/test2.tscn"
 PlayerName = "player_body"
 
 [node name="player" parent="." instance=ExtResource( 1 )]
-position = Vector2( 380, 120 )
-IdleAnimation = "idle_right"
+position = Vector2( 354, 162 )
 
 [node name="fade" parent="player" instance=ExtResource( 3 )]
+position = Vector2( -380, -166 )

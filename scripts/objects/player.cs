@@ -10,7 +10,12 @@ public class player : Node2D {
 
     // Nodes
     private AnimationPlayer _animationPlayer;
+    private AnimationPlayer _animationPlayerWeapon;
+
     private KinematicBody2D _body;
+    private Sprite _weapon;
+
+    private Camera2D _camera;
 
     // Signals
     [Signal] delegate void fade(string type);
@@ -19,9 +24,13 @@ public class player : Node2D {
     public override void _Ready()
     {
         // Get Nodes
-        _body = GetNode<KinematicBody2D>("player_body");
         _animationPlayer = GetNode<AnimationPlayer>("player_body/animation");
-        _animationPlayer.Play("fade_out");
+        _animationPlayerWeapon = GetNode<AnimationPlayer>("player_body/animation_weapon");
+
+        _body = GetNode<KinematicBody2D>("player_body");
+        _weapon = GetNode<Sprite>("player_body/weapon");
+
+        _camera = GetNode<Camera2D>("player_body/camera");
 
         // Start
         foreach (string animationsString in _movementAnimations)
@@ -30,6 +39,12 @@ public class player : Node2D {
             animation.Loop = true;
             _animationPlayer.PlaybackSpeed = Speed / 100;
         }
+
+        // Animation weaponAnimation = _animationPlayerWeapon.GetAnimation("charged");
+        // weaponAnimation.Loop = true;
+        // _animationPlayerWeapon.Play("charged");
+
+        // _animationPlayer.Play("fade_out");
     }
 
     private void _SetAnimation(Vector2 animationVelocity)
@@ -89,6 +104,15 @@ public class player : Node2D {
         _SetAnimation(inputVelocity);
         inputVelocity = inputVelocity.Normalized() * Speed;
         velocity = inputVelocity;
+
+        _weapon.LookAt(GetGlobalMousePosition());
+        _setCameraPosition();
+    }
+
+    private void _setCameraPosition()
+    {
+        _camera.GlobalPosition = _camera.GlobalPosition.LinearInterpolate((_weapon.GlobalPosition + GetLocalMousePosition() / 10), 0.05f);
+        GD.Print(GetLocalMousePosition());    
     }
 
     public void _onWrap()
