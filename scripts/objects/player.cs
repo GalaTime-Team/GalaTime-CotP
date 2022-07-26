@@ -1,24 +1,34 @@
 using Godot;
 using System;
 
-public class player : KinematicBody2D
-{
-    [Export] float speed = 200f;
-
+public class player : Node2D {
+    [Export] public float Speed = 200f;
+    [Export] public string IdleAnimation = "idle_down";
     private Vector2 velocity = Vector2.Zero;
-    private string _idleAnimation = "walk_down";
     private string[] _movementAnimations = new string[] { "walk_up", "walk_down", "walk_right", "walk_left" };
+    private bool canMove = true;
 
+    // Nodes
     private AnimationPlayer _animationPlayer;
+    private KinematicBody2D _body;
+
+    // Signals
+    [Signal] delegate void fade(string type);
+    [Signal] delegate void wrap();
+
     public override void _Ready()
     {
-        _animationPlayer = GetNode<AnimationPlayer>("animation");
-        foreach(string animationsString in _movementAnimations)
+        // Get Nodes
+        _body = GetNode<KinematicBody2D>("player_body");
+        _animationPlayer = GetNode<AnimationPlayer>("player_body/animation");
+        _animationPlayer.Play("fade_out");
+
+        // Start
+        foreach (string animationsString in _movementAnimations)
         {
             Animation animation = _animationPlayer.GetAnimation(animationsString);
             animation.Loop = true;
-            _animationPlayer.PlaybackSpeed = speed / 100;
-            GD.Print(_animationPlayer.PlaybackSpeed);
+            _animationPlayer.PlaybackSpeed = Speed / 100;
         }
     }
 
@@ -26,18 +36,18 @@ public class player : KinematicBody2D
     {
         if (animationVelocity.Length() == 0)
         {
-            _animationPlayer.Play(_idleAnimation);
+            _animationPlayer.Play(IdleAnimation);
         }
         if (animationVelocity.y != 0)
         {
             if (animationVelocity.y <= -1 && _animationPlayer.CurrentAnimation != "walk_up")
             {
-                _idleAnimation = "idle_up";
+                IdleAnimation = "idle_up";
                 _animationPlayer.Play("walk_up");
             }
             if (animationVelocity.y >= 1 && _animationPlayer.CurrentAnimation != "walk_down")
             {
-                _idleAnimation = "idle_down";
+                IdleAnimation = "idle_down";
                 _animationPlayer.Play("walk_down");
             }
         }
@@ -45,16 +55,16 @@ public class player : KinematicBody2D
         {
             if (animationVelocity.x >= 1 && _animationPlayer.CurrentAnimation != "walk_right")
             {
-                _idleAnimation = "idle_right";
+                IdleAnimation = "idle_right";
                 _animationPlayer.Play("walk_right");
             }
             if (animationVelocity.x <= -1 && _animationPlayer.CurrentAnimation != "walk_left")
             {
-                _idleAnimation = "idle_left";
+                IdleAnimation = "idle_left";
                 _animationPlayer.Play("walk_left");
             }
         }
-        
+
     }
 
     private void _SetMove()
@@ -77,14 +87,21 @@ public class player : KinematicBody2D
             inputVelocity.x -= 1;
         }
         _SetAnimation(inputVelocity);
-        inputVelocity = inputVelocity.Normalized() * speed;
+        inputVelocity = inputVelocity.Normalized() * Speed;
         velocity = inputVelocity;
+    }
+
+    public void _onWrap()
+    {
+        GD.Print("work");
+        canMove = false;
+        EmitSignal("fade", "in");
     }
 
     public override void _PhysicsProcess(float delta)
     {
         _SetMove();
-        MoveAndSlide(velocity);
+        if (canMove) _body.MoveAndSlide(velocity);
         base._PhysicsProcess(delta);
     }
 

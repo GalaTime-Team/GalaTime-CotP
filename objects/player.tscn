@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://assets/sprites/characters/artur/arthur_down_1.png" type="Texture" id=1]
 [ext_resource path="res://animations/characters/artur/walk_down.tres" type="Animation" id=2]
@@ -7,12 +7,19 @@
 [ext_resource path="res://animations/characters/artur/walk_left.tres" type="Animation" id=5]
 [ext_resource path="res://animations/characters/artur/walk_right.tres" type="Animation" id=6]
 [ext_resource path="res://animations/characters/artur/walk_up.tres" type="Animation" id=7]
-[ext_resource path="res://assets/sprites/characters/artur/arthur_right_1.png" type="Texture" id=8]
 [ext_resource path="res://animations/characters/artur/idle_left.tres" type="Animation" id=9]
 [ext_resource path="res://scripts/objects/player.cs" type="Script" id=10]
+[ext_resource path="res://animations/characters/artur/fade_in.tres" type="Animation" id=11]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 27.5, 51 )
+extents = Vector2( 28, 51 )
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+
+[sub_resource type="Animation" id=4]
+resource_name = "fade_out"
+length = 0.2
 
 [sub_resource type="Animation" id=2]
 resource_name = "idle_down"
@@ -29,21 +36,24 @@ tracks/0/keys = {
 "values": [ ExtResource( 1 ) ]
 }
 
-[node name="node" type="Node2D"]
-
-[node name="player" type="KinematicBody2D" parent="."]
+[node name="player" type="Node2D"]
 script = ExtResource( 10 )
 
-[node name="sprite" type="Sprite" parent="player"]
-position = Vector2( 33.5, 60.7188 )
-scale = Vector2( 3.5, 3.5 )
-texture = ExtResource( 8 )
+[node name="player_body" type="KinematicBody2D" parent="."]
 
-[node name="collision" type="CollisionShape2D" parent="player"]
-position = Vector2( 33.5, 61 )
+[node name="sprite" type="Sprite" parent="player_body"]
+position = Vector2( 28, 51 )
+scale = Vector2( 3.5, 3.5 )
+texture = ExtResource( 1 )
+
+[node name="collision" type="CollisionShape2D" parent="player_body"]
+position = Vector2( 28, 51 )
 shape = SubResource( 1 )
 
-[node name="animation" type="AnimationPlayer" parent="player"]
+[node name="animation" type="AnimationPlayer" parent="player_body"]
+anims/RESET = SubResource( 3 )
+anims/fade_in = ExtResource( 11 )
+anims/fade_out = SubResource( 4 )
 anims/idle_down = SubResource( 2 )
 anims/idle_left = ExtResource( 9 )
 anims/idle_right = ExtResource( 4 )

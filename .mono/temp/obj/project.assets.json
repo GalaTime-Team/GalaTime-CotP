@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\PROJECTS\\GALATIME-PROJECT\\galatime-project.csproj",
+      "projectUniqueName": "D:\\Projects\\galatime-project\\galatime-project.csproj",
       "projectName": "galatime-project",
-      "projectPath": "D:\\PROJECTS\\GALATIME-PROJECT\\galatime-project.csproj",
+      "projectPath": "D:\\Projects\\galatime-project\\galatime-project.csproj",
       "packagesPath": "C:\\Users\\Пользователь\\.nuget\\packages\\",
-      "outputPath": "D:\\PROJECTS\\GALATIME-PROJECT\\.mono\\temp\\obj\\",
+      "outputPath": "D:\\Projects\\galatime-project\\.mono\\temp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Пользователь\\AppData\\Roaming\\NuGet\\NuGet.Config",
