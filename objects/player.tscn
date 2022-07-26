@@ -79,7 +79,8 @@ position = Vector2( 28, 51 )
 current = true
 
 [node name="weapon" type="Sprite" parent="player_body"]
-position = Vector2( 28, 70 )
+show_behind_parent = true
+position = Vector2( 27, 50 )
 scale = Vector2( 3.5, 3.5 )
 texture = ExtResource( 8 )
 offset = Vector2( 16, -0.5 )

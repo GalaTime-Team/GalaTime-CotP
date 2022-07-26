@@ -45,10 +45,13 @@ public class player : Node2D {
         // _animationPlayerWeapon.Play("charged");
 
         // _animationPlayer.Play("fade_out");
+
+        _weapon.Position = new Vector2(28, 70.5f);
     }
 
     private void _SetAnimation(Vector2 animationVelocity)
     {
+        if (IdleAnimation != "idle_down") _setLayerToWeapon(false);
         if (animationVelocity.Length() == 0)
         {
             _animationPlayer.Play(IdleAnimation);
@@ -64,6 +67,7 @@ public class player : Node2D {
             {
                 IdleAnimation = "idle_down";
                 _animationPlayer.Play("walk_down");
+                _setLayerToWeapon(true);
             }
         }
         else
@@ -110,9 +114,13 @@ public class player : Node2D {
     }
 
     private void _setCameraPosition()
+    {   
+        _camera.GlobalPosition = _camera.GlobalPosition.LinearInterpolate((_weapon.GlobalPosition + (GetGlobalMousePosition() - _weapon.GlobalPosition) / 5), 0.05f);
+    }
+
+    private void _setLayerToWeapon(bool toUp)
     {
-        _camera.GlobalPosition = _camera.GlobalPosition.LinearInterpolate((_weapon.GlobalPosition + GetLocalMousePosition() / 10), 0.05f);
-        GD.Print(GetLocalMousePosition());    
+        if (toUp) _weapon.ZIndex = 10; else _weapon.ZIndex = 0;
     }
 
     public void _onWrap()
