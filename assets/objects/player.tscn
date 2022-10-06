@@ -1,0 +1,219 @@
+[gd_scene load_steps=34 format=2]
+
+[ext_resource path="res://assets/objects/player_game_gui.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/animations/characters/artur/walk_left.tres" type="Animation" id=2]
+[ext_resource path="res://assets/animations/characters/artur/walk_down.tres" type="Animation" id=3]
+[ext_resource path="res://assets/animations/characters/artur/walk_right.tres" type="Animation" id=4]
+[ext_resource path="res://assets/animations/characters/artur/walk_up.tres" type="Animation" id=5]
+[ext_resource path="res://assets/animations/characters/artur/idle_left.tres" type="Animation" id=6]
+[ext_resource path="res://assets/animations/characters/artur/fade_in.tres" type="Animation" id=7]
+[ext_resource path="res://assets/animations/characters/artur/idle_up.tres" type="Animation" id=8]
+[ext_resource path="res://assets/animations/characters/artur/idle_right.tres" type="Animation" id=9]
+[ext_resource path="res://assets/scripts/objects/player.cs" type="Script" id=10]
+[ext_resource path="res://sprites/characters/artur/arthur_down_0.png" type="Texture" id=11]
+[ext_resource path="res://sprites/weapons/bows/sword.png" type="Texture" id=12]
+[ext_resource path="res://sprites/particles/heal_particles.png" type="Texture" id=13]
+[ext_resource path="res://sprites/particles/dream_world_particles.png" type="Texture" id=14]
+[ext_resource path="res://sprites/particles/effect.png" type="Texture" id=15]
+[ext_resource path="res://assets/fonts/m3x6.ttf" type="DynamicFontData" id=16]
+[ext_resource path="res://assets/scripts/objects/Weapon.cs" type="Script" id=17]
+[ext_resource path="res://assets/animations/objects/weapons/swing.tres" type="Animation" id=18]
+
+[sub_resource type="Gradient" id=13]
+offsets = PoolRealArray( 0.00520833, 0.125, 0.385417, 0.895833, 1 )
+colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=14]
+gradient = SubResource( 13 )
+
+[sub_resource type="ParticlesMaterial" id=15]
+emission_shape = 1
+emission_sphere_radius = 200.0
+flag_disable_z = true
+gravity = Vector3( 0, -200, 0 )
+angular_velocity = 50.0
+angular_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 3.0
+color_ramp = SubResource( 14 )
+
+[sub_resource type="Gradient" id=9]
+offsets = PoolRealArray( 0, 0.643154, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=4]
+gradient = SubResource( 9 )
+
+[sub_resource type="Curve" id=10]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.179545 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=6]
+curve = SubResource( 10 )
+
+[sub_resource type="ParticlesMaterial" id=11]
+flag_disable_z = true
+gravity = Vector3( 0, 32, 0 )
+initial_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+angle_random = 1.0
+scale = 10.0
+scale_curve = SubResource( 6 )
+color_ramp = SubResource( 4 )
+hue_variation = 0.17
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 17.5, 33 )
+
+[sub_resource type="Animation" id=17]
+resource_name = "idle"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="DynamicFont" id=16]
+font_data = ExtResource( 16 )
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+
+[sub_resource type="Animation" id=12]
+length = 0.2
+
+[sub_resource type="Animation" id=2]
+resource_name = "idle_down"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ ExtResource( 11 ) ]
+}
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 32, 34 )
+
+[node name="player" type="Node2D"]
+script = ExtResource( 10 )
+
+[node name="player_body" type="KinematicBody2D" parent="."]
+__meta__ = {
+"_editor_description_": "	"
+}
+
+[node name="heal_particles" type="Particles2D" parent="player_body"]
+visible = false
+position = Vector2( 31, 113 )
+scale = Vector2( 0.333333, 0.333333 )
+z_index = -1
+amount = 16
+local_coords = false
+process_material = SubResource( 15 )
+texture = ExtResource( 13 )
+
+[node name="sword_particles" type="Particles2D" parent="player_body"]
+visible = false
+position = Vector2( 88.8278, 27.1221 )
+rotation = -0.767945
+scale = Vector2( 0.999999, 0.999999 )
+z_index = -1
+amount = 1000
+lifetime = 0.1
+local_coords = false
+process_material = SubResource( 11 )
+texture = ExtResource( 14 )
+
+[node name="Effect" type="Sprite" parent="player_body"]
+visible = false
+modulate = Color( 0, 1, 0, 1 )
+position = Vector2( 31, 97 )
+scale = Vector2( 4, 4 )
+z_index = 10
+texture = ExtResource( 15 )
+
+[node name="camera" type="Camera2D" parent="player_body"]
+position = Vector2( 32, 58 )
+z_index = 4096
+current = true
+
+[node name="player_game_gui" parent="player_body/camera" instance=ExtResource( 1 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -510.0
+margin_top = -298.0
+margin_right = -510.0
+margin_bottom = -298.0
+rect_pivot_offset = Vector2( 208, 700 )
+
+[node name="Weapon" type="Area2D" parent="player_body"]
+position = Vector2( 32, 82 )
+script = ExtResource( 17 )
+
+[node name="WeaponSprite" type="Sprite" parent="player_body/Weapon"]
+show_behind_parent = true
+position = Vector2( 0, 3.8147e-06 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 12 )
+offset = Vector2( 16, -0.5 )
+
+[node name="WeaponCollision" type="CollisionShape2D" parent="player_body/Weapon"]
+position = Vector2( 85, 0 )
+shape = SubResource( 7 )
+
+[node name="WeaponAnimationPlayer" type="AnimationPlayer" parent="player_body/Weapon"]
+root_node = NodePath("../WeaponSprite")
+anims/idle = SubResource( 17 )
+anims/swing = ExtResource( 18 )
+
+[node name="debuginfo" type="RichTextLabel" parent="player_body"]
+margin_left = -55.0
+margin_bottom = 116.0
+custom_fonts/normal_font = SubResource( 16 )
+text = "Hp: 100
+Mana: 100
+Stamina: 100
+Element: Defalult
+"
+
+[node name="Sprite" type="Sprite" parent="player_body"]
+position = Vector2( 32, 58 )
+scale = Vector2( 4, 4 )
+texture = ExtResource( 11 )
+
+[node name="animation" type="AnimationPlayer" parent="player_body"]
+anims/RESET = SubResource( 3 )
+anims/fade_in = ExtResource( 7 )
+anims/fade_out = SubResource( 12 )
+anims/idle_down = SubResource( 2 )
+anims/idle_left = ExtResource( 6 )
+anims/idle_right = ExtResource( 9 )
+anims/idle_up = ExtResource( 8 )
+anims/walk_down = ExtResource( 3 )
+anims/walk_left = ExtResource( 2 )
+anims/walk_right = ExtResource( 4 )
+anims/walk_up = ExtResource( 5 )
+
+[node name="collision" type="CollisionShape2D" parent="player_body"]
+position = Vector2( 32, 82 )
+shape = SubResource( 1 )
+
+[node name="damage_effect_position" type="Position2D" parent="player_body"]
+position = Vector2( 10, -17 )

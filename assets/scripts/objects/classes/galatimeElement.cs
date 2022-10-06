@@ -1,0 +1,98 @@
+using Godot;
+using System;
+
+namespace Galatime
+{
+    public class GalatimeElementDamageResult {
+        public float damage = 0;
+        public float multiplier = 1;
+        public string type = "equal";
+    }
+
+    public class GalatimeElement : Godot.Object
+    {
+        public int id = 0;
+        public string name = "Default";
+        public string description = "This element has no special abilities";
+
+        public float attackPhysics = 1.0f;
+        public float attackMagic = 1.0f;
+        public float defensePhysics = 1.0f;
+        public float defenseMagic = 1.0f;
+        public float hpMultiplier = 1.0f;
+        public float manaMultiplier = 1.0f;
+        public float staminaMultiplier = 1.0f;
+        public float agilityMultiplier = 1.0f;
+
+        public Godot.Collections.Dictionary DamageMultipliers = new Godot.Collections.Dictionary();
+        
+        /// <summary>
+        /// Gets damage in float from the source of the damage, depending on its element
+        /// </summary>
+        public GalatimeElementDamageResult getReceivedDamage(GalatimeElement e, float amount) {
+            GalatimeElementDamageResult result = new GalatimeElementDamageResult();
+            if (!DamageMultipliers.Contains(e.name)) {
+                GD.PushWarning("No element is found, the standard multiplier will be used (1x)");
+                result.damage = amount;
+                return result;
+            }
+            float multiplier = (float)DamageMultipliers[e.name];
+            float damage = amount * multiplier;
+            GD.Print("Received element: " + e.name + ", Element: " + name + ". Multiplier: " + multiplier);
+            result.damage = damage;
+            if (multiplier == 1)
+            {
+                result.type = "equal";
+            }
+            else if (multiplier > 1)
+            {
+                result.type = "plus";
+            }
+            else
+            {
+                result.type = "minus";
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Fire element
+        /// </summary>
+        public static GalatimeElement Ignis {
+            get {
+                GalatimeElement e = new GalatimeElement();
+                e.name = "Ignis";
+                e.description = "This element has fiery abilities. Don't get burned!";
+
+                e.attackMagic = 1.25f;
+                e.defenseMagic = 1.25f;
+                e.manaMultiplier = 0.8f;
+                e.staminaMultiplier = 0.8f;
+
+                e.DamageMultipliers["Aqua"] = 2f;
+                e.DamageMultipliers["Caeli"] = 2f;
+                e.DamageMultipliers["Naturaela"] = 0.5f;
+                e.DamageMultipliers["Tenerbis"] = 0.5f;
+                return e;
+            }
+        }
+
+        public static GalatimeElement Aqua {
+            get {
+                GalatimeElement e = new GalatimeElement();
+                e.name = "Aqua";
+                e.description = "This element has the power of water. Do not drown!";
+
+                e.attackMagic = 0.75f;
+                e.staminaMultiplier = 1.25f;
+                e.agilityMultiplier = 0.75f;
+
+                e.DamageMultipliers["Chaos"] = 2f;
+                e.DamageMultipliers["Ignis"] = 0.75f;
+                e.DamageMultipliers["Lux"] = 0.5f;
+                e.DamageMultipliers["Naturaela"] = 2f;
+                return e;
+            }
+        }
+    }
+}

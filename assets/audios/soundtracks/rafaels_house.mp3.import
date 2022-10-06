@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/rafaels_house.mp3-12a8d2b64b0fd71680ad0cff0e83c8dd.mp3str"
+
+[deps]
+
+source_file="res://assets/audios/soundtracks/rafaels_house.mp3"
+dest_files=[ "res://.import/rafaels_house.mp3-12a8d2b64b0fd71680ad0cff0e83c8dd.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

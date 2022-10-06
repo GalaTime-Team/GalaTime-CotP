@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/fonts/m3x6.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://assets/scripts/objects/item.cs" type="Script" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+font_data = ExtResource( 2 )
+
+[node name="item" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+
+[node name="quantity" type="Label" parent="."]
+margin_top = 4.0
+margin_right = 15.0
+margin_bottom = 17.0
+custom_colors/font_color = Color( 1, 0.803922, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "1"
+align = 2
+valign = 2
+
+[node name="icon" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.392157 )
+margin_right = 16.0
+margin_bottom = 16.0

@@ -1,0 +1,17 @@
+{
+    "golden_holder_sword": {
+        "name": "Golden holder sword",
+        "type": "sword",
+        "assets": {
+            "default": "weapons/swords/golden_holder_sword.png",
+            "optional": [],
+            "icon": "weapons/swords/icon/golden_holder_sword_icon.png"
+        },
+        "stats": {
+            "damage": 10,
+            "recharge_speed": 500
+        },
+        "stackable": false,
+		"quantity": 16
+    }
+}
