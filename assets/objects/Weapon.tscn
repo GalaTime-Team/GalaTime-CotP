@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/animations/objects/weapons/swing.tres" type="Animation" id=1]
+[ext_resource path="res://assets/scripts/objects/Weapon.cs" type="Script" id=2]
+[ext_resource path="res://sprites/weapons/bows/swordg.png" type="Texture" id=3]
+
+[sub_resource type="Curve" id=21]
+_data = [ Vector2( 0, 1 ), 0.0, -1.0, 0, 1, Vector2( 1, 0 ), -1.0, 0.0, 1, 0 ]
+
+[sub_resource type="CurveTexture" id=19]
+curve = SubResource( 21 )
+
+[sub_resource type="ParticlesMaterial" id=20]
+gravity = Vector3( 0, 0, 0 )
+tangential_accel = -12.0
+scale = 16.0
+scale_curve = SubResource( 19 )
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 12.276, 33 )
+
+[sub_resource type="Animation" id=17]
+resource_name = "idle"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("WeaponParticles:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[node name="Weapon" type="Area2D"]
+position = Vector2( 0, 28 )
+script = ExtResource( 2 )
+
+[node name="WeaponSprite" type="Sprite" parent="."]
+show_behind_parent = true
+scale = Vector2( 3, 3 )
+texture = ExtResource( 3 )
+offset = Vector2( 16, -0.5 )
+
+[node name="WeaponParticles" type="Particles2D" parent="WeaponSprite"]
+position = Vector2( 25.3333, -4 )
+rotation = -1.5708
+z_index = 1
+emitting = false
+amount = 32
+lifetime = 0.3
+local_coords = false
+process_material = SubResource( 20 )
+
+[node name="WeaponCollision" type="CollisionShape2D" parent="."]
+position = Vector2( 74.474, 1.90735e-06 )
+shape = SubResource( 7 )
+
+[node name="WeaponAnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../WeaponSprite")
+anims/idle = SubResource( 17 )
+anims/swing = ExtResource( 1 )

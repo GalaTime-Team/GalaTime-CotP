@@ -14,16 +14,16 @@ scale = Vector2( 2, 10 )
 Scene = "res://assets/scenes/test2.tscn"
 PlayerName = "player_body"
 
-[node name="player" parent="." instance=ExtResource( 1 )]
-position = Vector2( 563, 200 )
-
-[node name="Testbarrel" type="Sprite" parent="player"]
-position = Vector2( 466, 143 )
+[node name="Testbarrel" type="Sprite" parent="."]
+position = Vector2( 1029, 343 )
 scale = Vector2( 8.25, 47.125 )
 texture = ExtResource( 4 )
+
+[node name="player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 548, 219 )
 
 [node name="music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )
 
 [node name="Slime" parent="." instance=ExtResource( 5 )]
-position = Vector2( 747, 233 )
+position = Vector2( 604, 144 )
