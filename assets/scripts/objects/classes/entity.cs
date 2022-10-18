@@ -65,6 +65,13 @@ namespace Galatime
             } 
 
             _knockbackVelocity = Vector2.Left.Rotated(damageRotation) * knockback;
+
+            health -= damageN; 
+            _healthChangedEvent(health);
+            if (health <= 0)
+            {
+                _deathEvent();
+            }
         }
 
         public override void _PhysicsProcess(float delta)
@@ -80,6 +87,21 @@ namespace Galatime
         /// </summary>
         public virtual void _moveProcess() {
             velocity = Vector2.Zero;
+        }
+
+        /// <summary>
+        /// If entity dies event 
+        /// if (health <= 0)
+        /// </summary>
+        public virtual void _deathEvent() {
+            QueueFree();
+        }
+
+        /// <summary>
+        /// If entity changed his health
+        /// </summary>
+        public virtual void _healthChangedEvent(float health) {
+
         }
 
         public void heal(float amount, int timeToHeal = 0)

@@ -1,0 +1,10 @@
+{
+  "gabriel": {
+    "thumbup": "res://sprites/gui/dialog/characters/gabriel/thumbup/thumbup.tres",
+    "netrual": "res://sprites/gui/dialog/characters/gabriel/netrual/netrual.tres",
+    "sound": "res://path/to/sound.ogg"
+  },
+  "slime": {
+    "netrual": "res://sprites/slime.png"
+  }
+}

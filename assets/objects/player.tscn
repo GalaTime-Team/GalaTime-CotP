@@ -61,12 +61,14 @@ tracks/0/keys = {
 }
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 28, 27.5 )
+extents = Vector2( 28, 26 )
 
 [node name="player" type="Node2D"]
 script = ExtResource( 10 )
 
 [node name="player_body" type="KinematicBody2D" parent="."]
+collision_layer = 2
+collision_mask = 5
 __meta__ = {
 "_editor_description_": "	"
 }
@@ -105,6 +107,7 @@ rect_pivot_offset = Vector2( 208, 700 )
 [node name="Weapon" parent="player_body" instance=ExtResource( 12 )]
 
 [node name="debuginfo" type="RichTextLabel" parent="player_body"]
+visible = false
 margin_left = -86.0
 margin_top = -59.0
 margin_right = -31.0
@@ -134,7 +137,7 @@ anims/walk_right = ExtResource( 4 )
 anims/walk_up = ExtResource( 5 )
 
 [node name="collision" type="CollisionShape2D" parent="player_body"]
-position = Vector2( 0, 0.5 )
+position = Vector2( 0, 26 )
 shape = SubResource( 1 )
 
 [node name="damage_effect_position" type="Position2D" parent="player_body"]

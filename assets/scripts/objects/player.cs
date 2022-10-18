@@ -7,9 +7,11 @@ namespace Galatime {
     {
         // Exports
         [Export] public string IdleAnimation = "idle_down";
+        [Export] public bool canInteract = true;
+        [Export] public bool canMove;
 
         // Variables
-        private bool canMove;
+
 
         private float stamina, mana, ultimate = 100f;
 
@@ -28,6 +30,8 @@ namespace Galatime {
         [Signal] public delegate void wrap();
         [Signal] public delegate void fade(string type);
         [Signal] public delegate void healthChanged(float health);
+        [Signal] public delegate void on_interact();
+        [Signal] public delegate void on_dialog_start(string id);
 
         public override void _Ready() 
         {
@@ -50,6 +54,8 @@ namespace Galatime {
             _animationPlayer.PlaybackSpeed = speed / 100;
 
             EmitSignal("fade", "out");
+
+            health = 100;
         }
 
         // public void _test() {
@@ -123,7 +129,7 @@ namespace Galatime {
             inputVelocity = inputVelocity.Normalized() * speed;
 
             // OS.WindowPosition = windowPosition;
-            velocity = inputVelocity;
+            if (canMove) velocity = inputVelocity;
 
             _weapon.LookAt(GetGlobalMousePosition());
             _setCameraPosition();
@@ -150,9 +156,18 @@ namespace Galatime {
             _SetMove();
         }
 
+        public override void _healthChangedEvent(float health)
+        {
+            EmitSignal("healthChanged", health);
+        }
+
         public override void _Process(float delta)
         {
             _debug.Text = $"hp {health} stamina {stamina} mana {mana} ultimate {ultimate} element {element.name}";
+        }
+
+        public void startDialog(string id) {
+            EmitSignal("on_dialog_start", id);
         }
 
         public override void _UnhandledInput(InputEvent @event)
@@ -160,6 +175,13 @@ namespace Galatime {
             if (@event.IsActionPressed("game_attack"))
             {
                 _weapon.Call("attack");
+            }
+            if (@event.IsActionPressed("ui_accept"))
+            {
+                if (canInteract)
+                {
+                    EmitSignal("on_interact");
+                }
             }
         }
     }

@@ -7,3 +7,4 @@ D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.AssemblyInfo.
 D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.csproj.CoreCompileInputs.cache
 D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.dll
 D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.pdb
+D:\Projects\galatime-project\.mono\temp\bin\Debug\galatime-project.deps.json

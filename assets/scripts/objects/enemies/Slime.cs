@@ -6,7 +6,9 @@ public class Slime : Entity
 {
     private Node2D _player;
     private Sprite _sprite;
+    private Area2D _weapon;
     public new float speed = 100;
+    [Export] public float r = 1;
 
     public override void _Ready()
     {
@@ -16,6 +18,11 @@ public class Slime : Entity
 
         _player = GetNode<Node2D>("/root/Node2D/player/player_body"); 
         _sprite = GetNode<Sprite>("Body/Sprite");
+        _weapon = GetNode<Area2D>("Body/Weapon");
+
+        health = 100;
+
+        _weapon.Connect("body_entered", this, "_attack");
     }
 
     public override void _moveProcess()
@@ -23,11 +30,26 @@ public class Slime : Entity
         findPath();
     }
 
+    public void _attack(KinematicBody2D body) {
+        Node2D parent = body.GetParent<Node2D>();
+        // !!! NEEDS REWORK !!!
+        GalatimeElement element = GalatimeElement.Aqua;
+
+        // Get angle of damage
+        float damageRotation = _sprite.GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
+        GD.Print(damageRotation);
+        if (parent.HasMethod("hit"))
+        {
+            parent.Call("hit", 4, element, 250, damageRotation);
+        }
+    }
+
     public void findPath() {
         Vector2 vectorPath = Vector2.Zero;
-        if (_player != null)
+        if (Node2D.IsInstanceValid(_player))
         {
             float rotation = body.GlobalTransform.origin.AngleToPoint(_player.GlobalTransform.origin);
+            _weapon.Rotation = rotation + r;
             vectorPath = Vector2.Left.Rotated(rotation) * speed;
             float rotationDeg = Mathf.Rad2Deg(rotation);
             float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;

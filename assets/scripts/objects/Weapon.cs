@@ -5,48 +5,50 @@ using Galatime;
 public class Weapon : Area2D
 {
     private AnimationPlayer _animation;
-    private float countdown = 0.5f;
+    private float countdown = 0.3f;
     private bool canAttack = true;
+    private Node2D _player;
     public override void _Ready()
     {
-        _animation = GetNode<AnimationPlayer>("WeaponAnimationPlayer");
+        _animation = GetNode<AnimationPlayer>("WeaponAnimationPlayer"); 
+        _player = GetParent<Node2D>();
 
         // Connect event
         Connect("body_entered", this, "_on_body_entered");
-
-        // Disable collision
-        Monitoring = false;
     }
 
     public void attack() {
         if (canAttack)
         {
-            // Enable collision
-            Monitoring = true;
-
             // Play animation
             _animation.Stop();
             _animation.Play("swing");
 
             // Delay for disable collision and countdown
             SceneTree tree = GetTree();
-            tree.CreateTimer(0.05f).Connect("timeout", this, "_resetCollision");
             tree.CreateTimer(countdown).Connect("timeout", this, "_resetCountdown");
 
+            // Reset collision
+            tree.CreateTimer(0.05f).Connect("timeout", this, "_resetCollision");
+
             canAttack = false;
+
+            // Enable collision
+            SetCollisionMaskBit(2, true);
         }
     } 
 
     public void _resetCollision() {
-        // Disable collision
-        Monitoring = false;
+        SetCollisionMaskBit(2, false);
     }
 
     public void _resetCountdown() {
         canAttack = true;
+        SetCollisionMaskBit(2, false);
     }
 
     public void _on_body_entered(KinematicBody2D body) {
+        GD.Print("body_entered");
         // Get scripted node
         Node2D parent = body.GetParent<Node2D>();
         // !!! NEEDS REWORK !!!
@@ -56,7 +58,7 @@ public class Weapon : Area2D
         float damageRotation = GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
         if (parent.HasMethod("hit"))
         {
-            parent.Call("hit", 10, element, 2000, damageRotation);
+            parent.Call("hit", 10, element, 500, damageRotation);
         }
     }
 }

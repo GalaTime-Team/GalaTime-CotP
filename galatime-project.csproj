@@ -1,7 +1,11 @@
 <Project Sdk="Godot.NET.Sdk/3.3.0">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable> 
+	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> 
+    <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>galatimeproject</RootNamespace>
+
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="assets\scripts\objects\classes\" />

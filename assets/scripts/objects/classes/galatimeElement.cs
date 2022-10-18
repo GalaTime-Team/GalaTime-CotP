@@ -38,7 +38,7 @@ namespace Galatime
             }
             float multiplier = (float)DamageMultipliers[e.name];
             float damage = amount * multiplier;
-            GD.Print("Received element: " + e.name + ", Element: " + name + ". Multiplier: " + multiplier);
+            // GD.Print("Received element: " + e.name + ", Element: " + name + ". Multiplier: " + multiplier);
             result.damage = damage;
             if (multiplier == 1)
             {

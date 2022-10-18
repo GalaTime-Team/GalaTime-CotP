@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://sprites/gui/player_status_outline.png" type="Texture" id=1]
 [ext_resource path="res://sprites/gui/player_status_mana.png" type="Texture" id=2]
@@ -13,6 +13,8 @@
 [ext_resource path="res://sprites/gui/inventory-background.png" type="Texture" id=11]
 [ext_resource path="res://assets/fonts/m5x7.ttf" type="DynamicFontData" id=12]
 [ext_resource path="res://sprites/gui/dialog-background.png" type="Texture" id=13]
+[ext_resource path="res://sprites/gui/player_status_hp_drain.png" type="Texture" id=14]
+[ext_resource path="res://assets/scripts/objects/DialogBox.cs" type="Script" id=15]
 
 [sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0, 0, 0, 1 )
@@ -86,7 +88,6 @@ shader_param/vignette_opacity = 1.0
 shader_param/vignette_rgb = Color( 0, 0, 0, 1 )
 
 [sub_resource type="DynamicFont" id=8]
-size = 32
 font_data = ExtResource( 12 )
 
 [node name="player_game_gui" type="Control"]
@@ -126,11 +127,21 @@ margin_bottom = 13.0
 value = 100.0
 texture_progress = ExtResource( 5 )
 
+[node name="hp_drain" type="TextureProgress" parent="status"]
+margin_left = 17.0
+margin_top = 17.0
+margin_right = 31.0
+margin_bottom = 20.0
+rect_pivot_offset = Vector2( -20.2, -8 )
+value = 100.0
+texture_progress = ExtResource( 14 )
+
 [node name="hp" type="TextureProgress" parent="status"]
 margin_left = 17.0
 margin_top = 17.0
 margin_right = 31.0
 margin_bottom = 20.0
+rect_pivot_offset = Vector2( -20.2, -8 )
 value = 100.0
 texture_progress = ExtResource( 3 )
 
@@ -377,8 +388,7 @@ margin_top = -8.0
 margin_right = 1032.0
 margin_bottom = 608.0
 
-[node name="NinePatchRect" type="NinePatchRect" parent="."]
-visible = false
+[node name="DialogBox" type="NinePatchRect" parent="."]
 margin_left = 192.0
 margin_top = 448.0
 margin_right = 346.0
@@ -389,14 +399,24 @@ patch_margin_left = 5
 patch_margin_top = 5
 patch_margin_right = 5
 patch_margin_bottom = 5
+script = ExtResource( 15 )
 
-[node name="RichTextLabel" type="RichTextLabel" parent="."]
-visible = false
-margin_left = 208.0
-margin_top = 456.0
-margin_right = 792.0
-margin_bottom = 592.0
+[node name="DialogText" type="RichTextLabel" parent="DialogBox"]
+margin_left = 32.0
+margin_top = 4.0
+margin_right = 269.0
+margin_bottom = 60.0
+rect_scale = Vector2( 0.5, 0.5 )
 custom_fonts/normal_font = SubResource( 8 )
 bbcode_enabled = true
 bbcode_text = "You need to find a [color=yellow]special potion[/color]. But if you will go to the forest it's [shake rate=25 level=5][color=red]very dangerous[/color][/shake]. But [tornado radius=3 freq=5][rainbow freq=0.1 sat=1 val=1]hope [/rainbow][/tornado]always with you"
 text = "You need to find a special potion. But if you will go to the forest it's very dangerous. But hope always with you"
+
+[node name="CharacterPortrait" type="TextureRect" parent="DialogBox"]
+margin_left = -3.75
+margin_top = -3.25
+margin_right = 36.25
+margin_bottom = 36.75
+expand = true
+
+[node name="Tween" type="Tween" parent="."]

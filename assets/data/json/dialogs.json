@@ -1,0 +1,11 @@
+{
+    "test_0": [ 
+        {"text": "Ay dawn, can I get some ice cream?", "character": "gabriel", "emotion": "netrual"},
+        {"text": "Only a spoonful!", "character": "gabriel", "emotion": "thumbup"}, 
+        {"text": "...", "character": "gabriel", "emotion": "netrual"} ],
+    "test_1": [
+        {"text": "Hey kid", "character": "slime", "emotion": "netrual"},
+        {"text": "You so [color=red]ass[/color] weak", "character": "slime", "emotion": "netrual"},
+        {"text": "Loser", "character": "slime", "emotion": "netrual"}
+    ]  
+}
