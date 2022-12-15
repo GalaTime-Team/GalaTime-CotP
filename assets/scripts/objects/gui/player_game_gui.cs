@@ -15,7 +15,13 @@ namespace Galatime
         private TextureProgress _healthDrain;
 
         private NinePatchRect _dialogBox;
+
+        private Panel _pauseContainer;
+
         private float _localHp = 0f;
+
+        [Signal] public delegate void items_changed();
+        [Signal] public delegate void on_pause(bool visible);
 
         public override void _Ready()
         {
@@ -28,9 +34,13 @@ namespace Galatime
 
             _dialogBox = GetNode<NinePatchRect>("DialogBox");
 
+            _pauseContainer = GetNode<Panel>("PauseContainer");
+
             _player.Connect("fade", this, "onFade");
             _player.Connect("healthChanged", this, "onHealthChanged");
             _player.Connect("on_dialog_start", this, "startDialog");
+            _player.Connect("on_pause", this, "_onPause");
+            GetNode<PlayerVariables>("/root/PlayerVariables").Connect("items_changed", this, "displayItem");
         }
 
         public void onFade(string type)
@@ -64,6 +74,10 @@ namespace Galatime
         public void startDialog(string id) {
             _dialogBox.Call("startDialog", id);
         }
+
+        public void displayItem() {
+            EmitSignal("items_changed");
+        }
  
         public void _hpDrain()
         {
@@ -73,6 +87,13 @@ namespace Galatime
             Tween.TransitionType.Linear, Tween.EaseType.InOut);
             tween.Start();
             _healthDrain.Value = _localHp;
+        }
+
+        private void _onPause(bool visible)
+        {
+            GD.Print(visible);
+            EmitSignal("on_pause");
+            _pauseContainer.Visible = visible;
         }
     }
 }

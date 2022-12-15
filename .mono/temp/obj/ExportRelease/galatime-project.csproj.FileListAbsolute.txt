@@ -1,0 +1,10 @@
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\galatime-project.deps.json
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\galatime-project.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\galatime-project.pdb
+D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.csproj.AssemblyReference.cache
+D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.AssemblyInfoInputs.cache
+D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.AssemblyInfo.cs
+D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.csproj.CoreCompileInputs.cache
+D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.dll
+D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.pdb

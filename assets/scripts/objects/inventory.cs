@@ -37,7 +37,7 @@ public class inventory : Node
     public void SetItem(Godot.Collections.Dictionary item, int i)
     {
         items[i] = item;
-        EmitSignal("items_changed", i);
+        EmitSignal("items_changed", item);
     }
 
     public void RemoveItem(int i)

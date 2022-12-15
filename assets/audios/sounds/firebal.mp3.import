@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/firebal.mp3-8c6ba94494066d8dd2254c1d0a791df0.mp3str"
+
+[deps]
+
+source_file="res://assets/audios/sounds/firebal.mp3"
+dest_files=[ "res://.import/firebal.mp3-8c6ba94494066d8dd2254c1d0a791df0.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

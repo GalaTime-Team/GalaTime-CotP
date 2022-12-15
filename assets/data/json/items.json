@@ -1,17 +1,25 @@
 {
     "golden_holder_sword": {
         "name": "Golden holder sword",
-        "type": "sword",
+		"description": "A standard sword given to all who came to this kingdom. May it be faithful to you... AUCH, that's sharp!",
+        "type": "weapon",
         "assets": {
-            "default": "weapons/swords/golden_holder_sword.png",
-            "optional": [],
-            "icon": "weapons/swords/icon/golden_holder_sword_icon.png"
+            "icon": "weapons/swords/icon/golden_holder_sword_icon.png",
+			"object": "res://assets/objects/weapons/GoldenHolderSword.tscn"
         },
         "stats": {
             "damage": 10,
-            "recharge_speed": 500
+            "swing_speed": 500
         },
-        "stackable": false,
-		"quantity": 16
+        "stackable": false
+    },
+    "barrel": {
+        "name": "Barrel",	
+        "description": "What do I need it for?",
+        "assets": {
+            "icon": "bagtest.png"
+        },
+        "stackable": true,
+		"capacity": 16
     }
 }

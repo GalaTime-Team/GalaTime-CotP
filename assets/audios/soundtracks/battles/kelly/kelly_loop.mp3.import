@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/kelly_loop.mp3-edba6a9fafe2a9b72135e1e4d9e49593.mp3str"
+
+[deps]
+
+source_file="res://assets/audios/soundtracks/battles/kelly/kelly_loop.mp3"
+dest_files=[ "res://.import/kelly_loop.mp3-edba6a9fafe2a9b72135e1e4d9e49593.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

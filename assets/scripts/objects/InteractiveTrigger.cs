@@ -2,75 +2,88 @@ using Godot;
 using System;
 using Galatime;
 
-public class InteractiveTrigger : Node2D
+namespace Galatime
 {
-    [Export] NodePath visualNode;
-
-    public bool canInteract = true;
-
-    private Node2D _node;
-    private Area2D _collisionArea;
-    private ShaderMaterial _shader;
-    private KinematicBody2D _playerBody;
-    private Node2D _playerNode;
-
-    private Tween tween;
-    public override void _Ready()
+    public class InteractiveTrigger : Node2D
     {
-        _collisionArea = GetNode<Area2D>("CollisionArea");
-        _collisionArea.Connect("body_entered", this, "_onEntered");
-        _collisionArea.Connect("body_exited", this, "_onExit");
+        [Export] NodePath visualNode;
+        [Export] NodePath executeNode;
+        [Export] string method;
+        [Export] string[] args;  
 
-        _shader = GD.Load<ShaderMaterial>("res://assets/shaders/outline.tres");
-        _playerBody = GetNode<KinematicBody2D>(Galatime.GalatimeConstants.playerBodyPath);
-        _playerNode = GetNode<Node2D>(Galatime.GalatimeConstants.playerPath);
+        [Signal] delegate void dialog(string id);
 
-        _playerNode.Connect("on_interact", this, "_OnInteract");
+        public bool canInteract = true;
 
-        _node = GetNode<Node2D>(visualNode);
-        tween = GetNode<Tween>("Tween");
-    }
+        private Node2D _node;
+        private Node2D _executeNode;
 
-    public void _onEntered(Node node)
-    {
-        if (node == _playerBody)
+        private Area2D _collisionArea;
+        private ShaderMaterial _shader;
+
+        private KinematicBody2D _playerBody;
+        private Node2D _playerNode;
+
+        private Tween tween;
+        public override void _Ready()
         {
-            _interactShaderInterpolate(0, 0.02f, 0.1f);
-        }
-    }
+            tween = GetNode<Tween>("Tween");
 
-    public void _onExit(Node node)
-    {
-        if (canInteract)
+            _collisionArea = GetNode<Area2D>("CollisionArea");
+            _collisionArea.Connect("body_entered", this, "_onEntered");
+            _collisionArea.Connect("body_exited", this, "_onExit");
+
+            _shader = GD.Load<ShaderMaterial>("res://assets/shaders/outline.tres");
+            _playerBody = GetNode<KinematicBody2D>(Galatime.GalatimeConstants.playerBodyPath);
+            _playerNode = GetNode<Node2D>(Galatime.GalatimeConstants.playerPath);
+
+            _playerNode.Connect("on_interact", this, "_OnInteract");
+
+            _node = GetNode<Node2D>(visualNode);
+            _executeNode = GetNode<Node2D>(executeNode);
+        }
+
+        public void _onEntered(Node node)
         {
             if (node == _playerBody)
             {
-                _interactShaderInterpolate(0.02f, 0, 0.1f);
+                _interactShaderInterpolate(0, 0.02f, 0.1f);
             }
         }
-        canInteract = true;
-    }
 
-    private void _interactShaderInterpolate(float from, float to, float durationSec)
-    {
-        tween.InterpolateProperty(_shader, "shader_param/precision",
-        from, to, durationSec,
-        Tween.TransitionType.Linear, Tween.EaseType.InOut);
-        tween.Start();
-        _node.Material = _shader;
-    }
-
-    public void _OnInteract()
-    {
-        if (canInteract)
+        public void _onExit(Node node)
         {
-            Godot.Collections.Array bodies = _collisionArea.GetOverlappingBodies();
-            if (bodies.Contains(_playerBody))
+            if (canInteract)
             {
-                _playerNode.Call("startDialog", "test_1");
-                canInteract = false;
-                _interactShaderInterpolate(0.02f, 0, 0.05f);
+                if (node == _playerBody)
+                {
+                    _interactShaderInterpolate(0.02f, 0, 0.1f);
+                }
+            }
+            canInteract = true;
+        }
+
+        private void _interactShaderInterpolate(float from, float to, float durationSec)
+        {
+            tween.InterpolateProperty(_shader, "shader_param/precision",
+            from, to, durationSec,
+            Tween.TransitionType.Linear, Tween.EaseType.InOut);
+            tween.Start();
+            _node.Material = _shader;
+        }
+
+        public void _OnInteract()
+        {
+            if (canInteract)
+            {
+                Godot.Collections.Array bodies = _collisionArea.GetOverlappingBodies();
+                if (bodies.Contains(_playerBody))
+                {
+                    GD.Print(_executeNode.HasMethod(method));
+                    _executeNode.Call(method, args);
+                }
             }
         }
     }
 }
+

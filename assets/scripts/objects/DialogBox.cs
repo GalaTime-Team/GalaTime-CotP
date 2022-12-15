@@ -40,7 +40,7 @@ public class DialogBox : NinePatchRect
             }
             catch (System.Exception e)
             {
-                GD.PrintErr("DIALOG: Invalid dialog. " + e.Message);
+                GD.PrintErr("DIALOG: Invalid dialog " + id + ". " + e.Message);
             }
             return dialog;
         }
@@ -65,7 +65,7 @@ public class DialogBox : NinePatchRect
             }
             catch (System.Exception e)
             {
-                GD.PrintErr("DIALOG: Invalid dialog. " + e.Message);
+                GD.PrintErr("DIALOG: Invalid dialog " + name + ". " + e.Message);
             }
             return character;
         }

@@ -44,24 +44,17 @@ namespace Galatime
             }
 
             PackedScene damageEffect = (PackedScene)GD.Load("res://assets/objects/gui/damage_effect.tscn");
-            Node damageEffectInstance = damageEffect.Instance();
-            damageEffectInstance.Set("number", damageN);
+            Node2D damageEffectInstance = damageEffect.Instance() as Node2D;
 
+            damageEffectInstance.Set("number", damageN);
             damageEffectInstance.Set("type", damage.type);
 
-            if (damageEffectPoint is Position2D)
-            {
-                damageEffectPoint.AddChild(damageEffectInstance);
-            }
-            else
-            {
-                body.AddChild(damageEffectInstance);
-            }
-
+            damageEffectInstance.GlobalPosition = body.GlobalPosition;
+            AddChild(damageEffectInstance);
 
             if (damageSpritePlayer is AnimationPlayer) {
                 damageSpritePlayer.Stop();
-                damageSpritePlayer.Play("damage");
+                damageSpritePlayer.Play("damage");  
             } 
 
             _knockbackVelocity = Vector2.Left.Rotated(damageRotation) * knockback;

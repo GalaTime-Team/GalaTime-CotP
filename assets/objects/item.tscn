@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://assets/fonts/m3x6.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://assets/scripts/objects/item.cs" type="Script" id=3]
@@ -6,22 +6,58 @@
 [sub_resource type="DynamicFont" id=1]
 font_data = ExtResource( 2 )
 
+[sub_resource type="Animation" id=3]
+resource_name = "idle"
+tracks/0/type = "value"
+tracks/0/path = NodePath("icon:rect_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "pop"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("icon:rect_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2 ),
+"transitions": PoolRealArray( 2, 2, 2 ),
+"update": 0,
+"values": [ Vector2( 0.7, 0.7 ), Vector2( 1.2, 1.2 ), Vector2( 1, 1 ) ]
+}
+
 [node name="item" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_right = -1024.0
+margin_bottom = -600.0
 script = ExtResource( 3 )
+
+[node name="icon" type="TextureRect" parent="."]
+margin_right = 16.0
+margin_bottom = 16.0
+rect_pivot_offset = Vector2( 8, 8 )
 
 [node name="quantity" type="Label" parent="."]
 margin_top = 4.0
 margin_right = 15.0
 margin_bottom = 17.0
-custom_colors/font_color = Color( 1, 0.803922, 0, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_fonts/font = SubResource( 1 )
-text = "1"
 align = 2
 valign = 2
 
-[node name="icon" type="TextureRect" parent="."]
-modulate = Color( 1, 1, 1, 0.392157 )
-margin_right = 16.0
-margin_bottom = 16.0
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/idle = SubResource( 3 )
+anims/pop = SubResource( 2 )
