@@ -19,7 +19,7 @@
 [resource]
 frames = 15
 oneshot = true
-fps = 30.0
+fps = 24.0
 frame_0/texture = ExtResource( 1 )
 frame_1/texture = ExtResource( 7 )
 frame_1/delay_sec = 0.0

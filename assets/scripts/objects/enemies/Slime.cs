@@ -16,7 +16,7 @@ public class Slime : Entity
         body = GetNode<KinematicBody2D>("Body");
         damageEffectPoint = GetNode<Position2D>("Body/DamageEffectPoint");
 
-        _player = GetNode<Node2D>("/root/Node2D/player/player_body"); 
+        _player = GetNode<Node2D>("/root/Node2D/Player/player_body"); 
         _sprite = GetNode<Sprite>("Body/Sprite");
         _weapon = GetNode<Area2D>("Body/Weapon");
 

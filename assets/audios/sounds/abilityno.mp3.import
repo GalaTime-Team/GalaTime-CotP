@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/abilityno.mp3-4449c84d278d0755ddb54f3741d6da56.mp3str"
+
+[deps]
+
+source_file="res://assets/audios/sounds/abilityno.mp3"
+dest_files=[ "res://.import/abilityno.mp3-4449c84d278d0755ddb54f3741d6da56.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

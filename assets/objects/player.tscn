@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://assets/objects/player_game_gui.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/animations/characters/artur/walk_left.tres" type="Animation" id=2]
@@ -9,12 +9,27 @@
 [ext_resource path="res://assets/animations/characters/artur/fade_in.tres" type="Animation" id=7]
 [ext_resource path="res://assets/animations/characters/artur/idle_up.tres" type="Animation" id=8]
 [ext_resource path="res://assets/animations/characters/artur/idle_right.tres" type="Animation" id=9]
-[ext_resource path="res://assets/scripts/objects/player.cs" type="Script" id=10]
+[ext_resource path="res://assets/scripts/objects/Player.cs" type="Script" id=10]
 [ext_resource path="res://sprites/characters/artur/arthur_down_0.png" type="Texture" id=11]
 [ext_resource path="res://assets/scripts/objects/Hand.cs" type="Script" id=12]
 [ext_resource path="res://sprites/particles/heal_particles.png" type="Texture" id=13]
+[ext_resource path="res://sprites/characters/artur/arthur_down_1.png" type="Texture" id=14]
 [ext_resource path="res://sprites/particles/effect.png" type="Texture" id=15]
 [ext_resource path="res://assets/fonts/m3x6.ttf" type="DynamicFontData" id=16]
+
+[sub_resource type="Gradient" id=18]
+colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=19]
+gradient = SubResource( 18 )
+
+[sub_resource type="ParticlesMaterial" id=17]
+flag_disable_z = true
+gravity = Vector3( 0, 0, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 4.0
+color_ramp = SubResource( 19 )
 
 [sub_resource type="Gradient" id=13]
 offsets = PoolRealArray( 0.00520833, 0.125, 0.385417, 0.895833, 1 )
@@ -63,7 +78,7 @@ tracks/0/keys = {
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 30, 30 )
 
-[node name="player" type="Node2D"]
+[node name="Player" type="Node2D"]
 script = ExtResource( 10 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -77,6 +92,14 @@ input_pickable = true
 __meta__ = {
 "_editor_description_": "	"
 }
+
+[node name="TrailParticles" type="Particles2D" parent="player_body"]
+emitting = false
+amount = 4
+lifetime = 0.3
+local_coords = false
+process_material = SubResource( 17 )
+texture = ExtResource( 14 )
 
 [node name="heal_particles" type="Particles2D" parent="player_body"]
 visible = false
@@ -117,7 +140,7 @@ Element: Defalult
 
 [node name="Sprite" type="Sprite" parent="player_body"]
 scale = Vector2( 4, 4 )
-texture = ExtResource( 11 )
+texture = ExtResource( 14 )
 
 [node name="Hand" type="Position2D" parent="player_body"]
 position = Vector2( 0, 30 )
@@ -142,3 +165,5 @@ shape = SubResource( 1 )
 
 [node name="damage_effect_position" type="Position2D" parent="player_body"]
 position = Vector2( 10, -17 )
+
+[node name="Timer" type="Timer" parent="player_body"]

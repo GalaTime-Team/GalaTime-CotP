@@ -48,16 +48,18 @@ namespace Galatime
 
             damageEffectInstance.Set("number", damageN);
             damageEffectInstance.Set("type", damage.type);
+            damageEffectInstance.SetAsToplevel(true);
 
             damageEffectInstance.GlobalPosition = body.GlobalPosition;
             AddChild(damageEffectInstance);
 
-            if (damageSpritePlayer is AnimationPlayer) {
+            if (damageSpritePlayer is AnimationPlayer)
+            {
                 damageSpritePlayer.Stop();
-                damageSpritePlayer.Play("damage");  
-            } 
+                damageSpritePlayer.Play("damage");
+            }
 
-            _knockbackVelocity = Vector2.Left.Rotated(damageRotation) * knockback;
+            setKnockback(knockback, damageRotation);
 
             health -= damageN; 
             _healthChangedEvent(health);
@@ -65,6 +67,11 @@ namespace Galatime
             {
                 _deathEvent();
             }
+        }
+
+        public void setKnockback(float knockback = 0f, float damageRotation = 0f)
+        {
+            _knockbackVelocity = Vector2.Left.Rotated(damageRotation) * knockback;
         }
 
         public override void _PhysicsProcess(float delta)

@@ -3,9 +3,9 @@ using System;
 
 public static class damageEffectColors {
     public static Color equal = new Color(1, 1, 1);
-    
-    public static Color plus = new Color(1, 0.66f, 0.2f);
-    public static Color minus = new Color(0, 1, 0);
+
+    public static Color plus = new Color(1, 0.9f, 0);
+    public static Color minus = new Color(0.6f, 0.6f, 0.6f);
 }
 
 public class damage_effect : Node2D

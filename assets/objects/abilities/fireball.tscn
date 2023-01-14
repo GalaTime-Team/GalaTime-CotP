@@ -13,6 +13,9 @@
 [ext_resource path="res://assets/objects/abilities/Fireball.cs" type="Script" id=11]
 [ext_resource path="res://assets/audios/sounds/firebal.mp3" type="AudioStream" id=12]
 
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 32, 32 )
+
 [sub_resource type="Animation" id=1]
 resource_name = "intro"
 length = 0.4
@@ -25,7 +28,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0, 0.2 ),
 "transitions": PoolRealArray( 1, 1 ),
-"update": 1,
+"update": 0,
 "values": [ ExtResource( 5 ), ExtResource( 4 ) ]
 }
 tracks/1/type = "method"
@@ -35,7 +38,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.4 ),
+"times": PoolRealArray( 0.3 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [ "loop", -1, 1.0, false ],
@@ -50,7 +53,7 @@ tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
 "clips": [ {
-"end_offset": 0.4,
+"end_offset": 0.3,
 "start_offset": 0.0,
 "stream": ExtResource( 12 )
 } ],
@@ -70,7 +73,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 1,
+"update": 0,
 "values": [ ExtResource( 3 ), ExtResource( 1 ), ExtResource( 2 ), ExtResource( 6 ) ]
 }
 tracks/1/type = "audio"
@@ -100,7 +103,7 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 1,
+"update": 0,
 "values": [ ExtResource( 9 ), ExtResource( 10 ), ExtResource( 7 ), ExtResource( 8 ) ]
 }
 tracks/1/type = "method"
@@ -135,9 +138,6 @@ tracks/2/keys = {
 [sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 8, 8 )
 
-[sub_resource type="RectangleShape2D" id=5]
-extents = Vector2( 16, 16 )
-
 [node name="Fireball" type="Node2D"]
 script = ExtResource( 11 )
 
@@ -146,9 +146,16 @@ z_index = -1
 collision_layer = 0
 collision_mask = 0
 
+[node name="DamageArea" type="Area2D" parent="KinematicBody"]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape" type="CollisionShape2D" parent="KinematicBody/DamageArea"]
+shape = SubResource( 5 )
+
 [node name="Sprite" type="Sprite" parent="KinematicBody"]
-scale = Vector2( 4, 4 )
-texture = ExtResource( 4 )
+scale = Vector2( 6, 6 )
+texture = ExtResource( 3 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="KinematicBody"]
 root_node = NodePath("../..")
@@ -158,13 +165,6 @@ anims/outro = SubResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody"]
 shape = SubResource( 4 )
-
-[node name="DamageArea" type="Area2D" parent="KinematicBody"]
-collision_layer = 0
-collision_mask = 4
-
-[node name="CollisionShape" type="CollisionShape2D" parent="KinematicBody/DamageArea"]
-shape = SubResource( 5 )
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="KinematicBody"]
 stream = ExtResource( 12 )

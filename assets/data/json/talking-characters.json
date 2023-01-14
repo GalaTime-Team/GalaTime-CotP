@@ -1,10 +1,35 @@
 {
   "gabriel": {
+	"name": "Gabriel",
     "thumbup": "res://sprites/gui/dialog/characters/gabriel/thumbup/thumbup.tres",
     "netrual": "res://sprites/gui/dialog/characters/gabriel/netrual/netrual.tres",
     "sound": "res://path/to/sound.ogg"
   },
+  "rafael": {
+	"name": "Rafael",
+    "netrual": "res://sprites/gui/dialog/characters/rafael/netrual.png",
+    "serious": "res://sprites/gui/dialog/characters/rafael/serious.png",
+    "surprised": "res://sprites/gui/dialog/characters/rafael/surprised.png",
+    "ready": "res://sprites/gui/dialog/characters/rafael/ready/ready.tres",
+    "sweating": "res://sprites/gui/dialog/characters/rafael/sweating/sweating.tres",
+    "angry": "res://sprites/gui/dialog/characters/rafael/angry/angry.tres",
+    "sound": "res://path/to/sound.ogg"
+  },
+  "arthur": {
+	"name": "Arthur",
+    "netrual": "res://sprites/gui/dialog/characters/arthur/neutral/neutral.tres",
+    "unsure": "res://sprites/gui/dialog/characters/arthur/unsure/unsure.tres",
+    "surprised": "res://sprites/gui/dialog/characters/arthur/surprised/suprised.tres",
+    "sweating": "res://sprites/gui/dialog/characters/arthur/sweating/sweating.tres",
+    "angry": "res://sprites/gui/dialog/characters/arthur/angry/angry.tres",
+	"justwokeup": "res://sprites/gui/dialog/characters/arthur/justwokeup/justwokeup.tres",
+	"flustered": "res://sprites/gui/dialog/characters/arthur/flustered/flustered.tres",
+	"explaining": "res://sprites/gui/dialog/characters/arthur/explaining/explaining.tres",
+	"anoyed": "res://sprites/gui/dialog/characters/arthur/anoyed/anoyed.tres",
+    "sound": "res://path/to/sound.ogg"
+  },
   "slime": {
+	"name": "Slime",
     "netrual": "res://sprites/slime.png"
   }
 }

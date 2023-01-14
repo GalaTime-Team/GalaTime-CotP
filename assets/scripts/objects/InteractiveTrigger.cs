@@ -16,7 +16,7 @@ namespace Galatime
         public bool canInteract = true;
 
         private Node2D _node;
-        private Node2D _executeNode;
+        private Node _executeNode;
 
         private Area2D _collisionArea;
         private ShaderMaterial _shader;
@@ -38,9 +38,10 @@ namespace Galatime
             _playerNode = GetNode<Node2D>(Galatime.GalatimeConstants.playerPath);
 
             _playerNode.Connect("on_interact", this, "_OnInteract");
+            _playerNode.Connect("on_dialog_end", this, "_OnDialogEnd");
 
             _node = GetNode<Node2D>(visualNode);
-            _executeNode = GetNode<Node2D>(executeNode);
+            _executeNode = GetNode<Node>(executeNode);
         }
 
         public void _onEntered(Node node)
@@ -81,8 +82,17 @@ namespace Galatime
                 {
                     GD.Print(_executeNode.HasMethod(method));
                     _executeNode.Call(method, args);
+                    canInteract = false;
+                    _interactShaderInterpolate(0.02f, 0, 0.1f);
                 }
             }
+        }
+        public async void _OnDialogEnd()
+        {
+
+            GD.Print("end");
+            await ToSignal(GetTree().CreateTimer(0.1f), "timeout");
+            canInteract = true;
         }
     }
 }
