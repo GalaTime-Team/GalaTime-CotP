@@ -101,39 +101,61 @@ tracks/0/keys = {
 }
 
 [sub_resource type="Shader" id=5]
-code = "shader_type canvas_item;
+code = "/*
+    å‰²ã‚ŒãŸã‚¬ãƒ©ã‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ by ã‚ã‚‹ã‚‹ï¼ˆãã®ã‚‚ã¨ çµè¡£ï¼‰
+    Broken Glass Effect Shader by @arlez80
 
-uniform float offset = 1.5f;
+    MIT License
+*/
 
-uniform float vignette_intensity = 0.05;
-uniform float vignette_opacity : hint_range(0.0, 1.0) = 1;
-uniform vec4 vignette_rgb : hint_color = vec4(0.0, 0.0, 0.0, 1.0);
+shader_type canvas_item;
+render_mode unshaded;
 
-float vignette(vec2 uv){
-	uv *= 1.0 - uv.xy;
-	float vignette = uv.x * uv.y * 20.0;
-	return pow(vignette, vignette_intensity * vignette_opacity);
+uniform float scale = 20.0;
+uniform float shift = 0.05;
+uniform float seed = 0.0;
+
+vec2 random( vec2 pos )
+{ 
+    return fract(
+        sin(
+            vec2(
+                dot(pos, vec2(12.9898,78.233))
+            ,    dot(pos, vec2(-148.998,-65.233))
+            )
+        ) * 43758.5453
+    );
 }
 
-void fragment(){
-	vec4 green_channel = texture(SCREEN_TEXTURE, SCREEN_UV);
-	vec4 red_channel = texture(SCREEN_TEXTURE, vec2(SCREEN_UV.x + (offset * SCREEN_PIXEL_SIZE.x), SCREEN_UV.y));
-	vec4 blue_channel = texture(SCREEN_TEXTURE, vec2(SCREEN_UV.x - (offset * SCREEN_PIXEL_SIZE.x), SCREEN_UV.y));
-	
-	vec4 text = texture(TEXTURE, UV);
-	text.rgba *= (vignette_rgb.rgba);
-	text.rgba *= (1.0 - vignette(UV));
-	
-	// COLOR += vec4((text.rgb)*color.rgb,text.a);
-	COLOR = vec4(red_channel.r - text.a, green_channel.g - text.a, blue_channel.b - text.a, 1f);
+void fragment( )
+{
+    vec2 v = UV * scale + vec2( seed, seed );
+    vec2 v_floor = floor( v );
+    vec2 v_fract = fract( v );
+
+    vec2 min_p = vec2( 0.0, 0.0 );
+    float min_dist = 2.0;
+
+    for( int y = -1; y <= 1; y ++ ) {
+        for( int x = -1; x <= 1; x ++ ) {
+            vec2 n = vec2( float( x ), float( y ) );
+            vec2 p = random( v_floor + n );
+            float d = distance( v_fract, p + n );
+
+            min_p = mix( min_p, p, float( d < min_dist ) );
+            min_dist = min( min_dist, d );
+        }
+    }
+
+    // thanks advice to reddit user u/e344fde6bf
+    COLOR = textureLod( SCREEN_TEXTURE, SCREEN_UV + min_p * shift, 0.0 );
 }"
 
 [sub_resource type="ShaderMaterial" id=6]
 shader = SubResource( 5 )
-shader_param/offset = 1.5
-shader_param/vignette_intensity = 0.05
-shader_param/vignette_opacity = 1.0
-shader_param/vignette_rgb = Color( 0, 0, 0, 1 )
+shader_param/scale = 8.0
+shader_param/shift = 0.05
+shader_param/seed = 0.0
 
 [sub_resource type="StyleBoxFlat" id=9]
 bg_color = Color( 0, 0, 0, 0.780392 )
@@ -403,12 +425,12 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -280.0
-margin_top = -86.0
+margin_left = -284.0
+margin_top = -90.0
 margin_right = -216.0
-margin_bottom = -60.0
+margin_bottom = -57.0
 rect_scale = Vector2( 3, 3 )
-custom_constants/separation = 8
+custom_constants/separation = 10
 alignment = 2
 
 [node name="AbilityContainer3" parent="AbilitiesContainer" instance=ExtResource( 18 )]
@@ -419,27 +441,27 @@ anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 0.0
 margin_right = 16.0
-margin_bottom = 26.0
+margin_bottom = 30.0
 
 [node name="AbilityContainer" parent="AbilitiesContainer" instance=ExtResource( 18 )]
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 24.0
+margin_left = 26.0
 margin_top = 0.0
-margin_right = 40.0
-margin_bottom = 26.0
+margin_right = 42.0
+margin_bottom = 30.0
 
 [node name="AbilityContainer2" parent="AbilitiesContainer" instance=ExtResource( 18 )]
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 48.0
+margin_left = 52.0
 margin_top = 0.0
-margin_right = 64.0
-margin_bottom = 26.0
+margin_right = 68.0
+margin_bottom = 30.0
 
 [node name="DialogBox" type="NinePatchRect" parent="."]
 visible = false
@@ -508,6 +530,13 @@ anims/loop = SubResource( 10 )
 anims/start = SubResource( 11 )
 
 [node name="shader" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 6 )
+margin_right = 1024.0
+margin_bottom = 600.0
+mouse_filter = 2
+
+[node name="shader2" type="ColorRect" parent="."]
 visible = false
 material = SubResource( 6 )
 margin_left = -10.0
@@ -716,5 +745,5 @@ visible = false
 position = Vector2( 994, 322 )
 scale = Vector2( 2, 2 )
 frames = SubResource( 45 )
-frame = 4
+frame = 3
 playing = true

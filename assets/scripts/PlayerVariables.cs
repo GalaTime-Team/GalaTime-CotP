@@ -49,7 +49,7 @@ public class PlayerVariables : Node
     }
 
     /// <summary> Add item to free slot in inventory </summary>
-    public void addItem(Godot.Collections.Dictionary item)
+    public void addItem(Godot.Collections.Dictionary item, int quantity)
     {
         // Go through all items
         for (var i = 0; i < inventory.Count; i++)
@@ -62,7 +62,7 @@ public class PlayerVariables : Node
                 if (existedItem.Count != 0 && (string)existedItem["name"] == (string)item["name"])
                 {
                     // Add quantity if find a similar item
-                    setQuantity(i, 1);
+                    setQuantity(i, quantity);
                     return;
                 }
             }
@@ -83,7 +83,7 @@ public class PlayerVariables : Node
                 setItem(item, i);
                 if (isStackable(item))
                 {
-                    setQuantity(i, 1);
+                    setQuantity(i, quantity);
                 }
                 return;
             }

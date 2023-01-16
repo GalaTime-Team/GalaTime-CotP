@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "RsUHz3YJGXze3mZWaVH/XO5KStgx70MeVUcqsHLDmfW6I14190ps16WfPM6/18eX1jumE5n0c1vPx5SXc0oDbA==",
+  "dgSpecHash": "GkwCgFmFe5gJg3KVtVGio2VzEjvDg5fIX4b2Lygk2p9KMXdnlJZu8NWoYaOcItLTgHBxU/yX6lJvOMzfFaHx8Q==",
   "success": true,
   "projectFilePath": "D:\\Projects\\galatime-project\\galatime-project.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Пользователь\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512"
+  ],
   "logs": []
 }

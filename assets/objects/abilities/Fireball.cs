@@ -53,7 +53,7 @@ namespace Galatime {
             _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
 
             _velocity.x += 1;
-            p.cameraShakeAmount += 5;
+            p.cameraShakeAmount += 10;
 
             _animationPlayer.Play("intro");
 

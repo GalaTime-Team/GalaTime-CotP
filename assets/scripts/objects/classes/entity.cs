@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using Galatime;
+using System.Collections.Generic;
 
 namespace Galatime
 {
@@ -13,6 +14,7 @@ namespace Galatime
         public KinematicBody2D body = null;
         public Position2D damageEffectPoint = null;
         public AnimationPlayer damageSpritePlayer = null;
+        public List<dynamic> lootPool = new List<dynamic>();
 
         public Vector2 _knockbackVelocity = Vector2.Zero;
 
@@ -65,7 +67,7 @@ namespace Galatime
             _healthChangedEvent(health);
             if (health <= 0)
             {
-                _deathEvent();
+                _deathEvent(damageRotation);
             }
         }
 
@@ -93,7 +95,7 @@ namespace Galatime
         /// If entity dies event 
         /// if (health <= 0)
         /// </summary>
-        public virtual void _deathEvent() {
+        public virtual void _deathEvent(float damageRotation = 0f) {
             QueueFree();
         }
 
@@ -102,6 +104,31 @@ namespace Galatime
         /// </summary>
         public virtual void _healthChangedEvent(float health) {
 
+        }
+
+        public virtual void _dropLoot(float damageRotation)
+        {
+            PackedScene itemPickupScene = GD.Load<PackedScene>("res://assets/objects/ItemPickup.tscn");
+            var rnd = new Random();
+
+            for (int i = 0; i < lootPool.Count; i++)
+            {
+                if (rnd.Next(1, 101) <= lootPool[i].chance)
+                {
+                    var itemPickup = itemPickupScene.Instance() as ItemPickup;
+                    var testQuantity = rnd.Next(lootPool[i].min, lootPool[i].max);
+                    var spawnVector = new Vector2();
+                    spawnVector.x = -200 + rnd.Next(0, 100);
+                    spawnVector = spawnVector.Rotated(damageRotation);
+                    itemPickup.spawnVelocity = spawnVector;
+                    itemPickup.itemId = lootPool[i].id;
+                    itemPickup.quantity = testQuantity;
+                    GD.Print("quantity" + testQuantity);
+                    itemPickup.GlobalPosition = body.GlobalPosition;
+
+                    GetParent().AddChild(itemPickup);
+                }
+            }
         }
 
         public void heal(float amount, int timeToHeal = 0)

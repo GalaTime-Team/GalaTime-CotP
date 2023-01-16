@@ -8,3 +8,5 @@ D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.csproj.CoreCo
 D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.dll
 D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.pdb
 D:\Projects\galatime-project\.mono\temp\bin\Debug\galatime-project.deps.json
+D:\Projects\galatime-project\.mono\temp\bin\Debug\Microsoft.CSharp.dll
+D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.csproj.CopyComplete

@@ -173,8 +173,17 @@ namespace Galatime
                 {
                     GD.Print(_abilities[i]);
                     var ability = _abilities[i].Instance<GalatimeAbility>();
-                    if (ability.costs.ContainsKey("stamina")) { if (stamina - ability.costs["stamina"] <= 0) { EmitSignal("sayNoToAbility", i); return; } }
-                    if (ability.costs.ContainsKey("mana")) { if (stamina - ability.costs["mana"] <= 0) { EmitSignal("sayNoToAbility", i); return; } }
+                    if (ability.costs.ContainsKey("stamina")) { 
+                        if (stamina - ability.costs["stamina"] < 0) 
+                        { 
+                            EmitSignal("sayNoToAbility", i); return; 
+                        } 
+                    }
+                    if (ability.costs.ContainsKey("mana")) {
+                        if (stamina - ability.costs["mana"] < 0) {
+                            EmitSignal("sayNoToAbility", i); return; 
+                        } 
+                    }
                     GetParent().AddChild(ability);
                     EmitSignal("reloadAbility", i);
                     ability.execute(this);

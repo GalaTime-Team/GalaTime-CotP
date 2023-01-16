@@ -21,6 +21,30 @@ tracks/0/keys = {
 "update": 0,
 "values": [ Vector2( 2, 2 ), Vector2( 1.5, 1.5 ), Vector2( 2, 2 ) ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite2:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.5, 1 ),
+"transitions": PoolRealArray( 2, 2, 2 ),
+"update": 0,
+"values": [ Vector2( 2, 2 ), Vector2( 1.5, 1.5 ), Vector2( 2, 2 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite3:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.5, 1 ),
+"transitions": PoolRealArray( 2, 2, 2 ),
+"update": 0,
+"values": [ Vector2( 2, 2 ), Vector2( 1.5, 1.5 ), Vector2( 2, 2 ) ]
+}
 
 [sub_resource type="Curve" id=20]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
@@ -35,12 +59,13 @@ scale = 10.0
 scale_curve = SubResource( 19 )
 
 [sub_resource type="RectangleShape2D" id=23]
-extents = Vector2( 17.5, 17.5 )
+extents = Vector2( 20, 20 )
 
 [node name="ItemPickup" type="KinematicBody2D"]
 position = Vector2( 0, 187 )
 z_index = 2
-collision_layer = 2
+collision_layer = 0
+collision_mask = 2
 script = ExtResource( 4 )
 spawnVelocity = Vector2( 100, 100 )
 itemId = "golden_holder_sword"
@@ -48,8 +73,23 @@ itemId = "golden_holder_sword"
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource( 22 )
 
+[node name="Sprite3" type="Sprite" parent="."]
+visible = false
+position = Vector2( 5, 4 )
+scale = Vector2( 1.96447, 1.96447 )
+z_index = 2
+texture = ExtResource( 2 )
+
 [node name="Sprite" type="Sprite" parent="."]
-scale = Vector2( 2, 2 )
+position = Vector2( 0, -6 )
+scale = Vector2( 1.96447, 1.96447 )
+z_index = 2
+texture = ExtResource( 2 )
+
+[node name="Sprite2" type="Sprite" parent="."]
+visible = false
+position = Vector2( -6, 4 )
+scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
 texture = ExtResource( 2 )
 
@@ -65,7 +105,12 @@ local_coords = false
 process_material = SubResource( 21 )
 
 [node name="PickupArea" type="Area2D" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Collision" type="CollisionShape2D" parent="PickupArea"]
-position = Vector2( 0.5, -0.5 )
 shape = SubResource( 23 )
+__meta__ = {
+"_edit_lock_": true
+}
