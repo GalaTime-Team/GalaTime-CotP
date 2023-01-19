@@ -48,9 +48,9 @@ namespace Galatime
             }
         }
 
-        public void attack()
+        public void attack(float physicalAttack, float magicalAttack)
         {
-            if (GetChildCount() != 0) _item.Call("attack");
+            if (GetChildCount() != 0) _item.Call("attack", physicalAttack, magicalAttack);
         }
     }
 }

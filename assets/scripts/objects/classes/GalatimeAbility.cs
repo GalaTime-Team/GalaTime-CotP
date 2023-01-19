@@ -16,9 +16,9 @@ namespace Galatime
             this.texture = texture;
             this.reload = reload;
             this.duration = duration;
-            this.costs = costs; 
-        }
+            this.costs = costs;
+    }
 
-        public abstract void execute(Player p);
+        public abstract void execute(Player p, float physicalAttack, float magicalAttack);
     }
 }

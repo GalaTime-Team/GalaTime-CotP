@@ -1,4 +1,4 @@
-using Godot;
+    using Godot;
 using System;
 using Galatime;
 using System.Collections.Generic;
@@ -20,6 +20,18 @@ namespace Galatime
         public float stamina { get; private set; }
         private bool _isPause = false;
         private bool _isDodge = false;
+
+        public new EntityStats stats = new EntityStats
+        {
+            physicalAttack = 75,
+            magicalAttack = 80,
+            physicalDefence = 65,
+            magicalDefense = 75,
+            health = 70,
+            mana = 65,
+            stamina = 65,
+            agility = 60
+        };
 
         private List<PackedScene> _abilities = new List<PackedScene>();
         private Timer[] _abilitiesTimers = new Timer[3];
@@ -91,7 +103,6 @@ namespace Galatime
 
             EmitSignal("fade", "out");
 
-            health = 100;
             stamina = 150;
 
             cameraOffset = Vector2.Zero;
@@ -186,7 +197,7 @@ namespace Galatime
                     }
                     GetParent().AddChild(ability);
                     EmitSignal("reloadAbility", i);
-                    ability.execute(this);
+                    ability.execute(this, stats.physicalAttack, stats.magicalAttack);
                     reduceStamina(ability.costs["stamina"]);
                     _abilitiesTimers[i].Stop();
                     _abilitiesTimers[i].Start();
@@ -346,7 +357,7 @@ namespace Galatime
             }
             if (@event.IsActionPressed("game_attack"))
             {
-                weapon.Call("attack");
+                weapon.attack(stats.physicalAttack, stats.magicalAttack);
             }
 
             if (@event.IsActionPressed("game_dodge"))

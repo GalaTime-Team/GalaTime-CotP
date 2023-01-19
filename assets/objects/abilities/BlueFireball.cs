@@ -31,25 +31,23 @@ namespace Galatime
             _sprite = GetNode<Sprite>("KinematicBody/Sprite");
             _kinematicBody = GetNode<KinematicBody2D>("KinematicBody");
             _damageArea = GetNode<Area2D>("KinematicBody/DamageArea");
-
-            _damageArea.Connect("body_entered", this, "_bodyEntered");
         }
 
-        public void _bodyEntered(KinematicBody2D body)
+        public void _bodyEntered(KinematicBody2D body, float physicalAttack, float magicalAttack)
         {
-            Node2D parent = body.GetParent<Node2D>();
+            Entity parent = body.GetParent<Entity>();
             GalatimeElement element = GalatimeElement.Ignis;
 
             // Get angle of damage
             float damageRotation = _kinematicBody.GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
             if (parent.HasMethod("hit"))
             {
-                parent.Call("hit", 35, element, 1000, damageRotation);
+                parent.hit(25, magicalAttack, element, DamageType.magical, 500, damageRotation);
                 destroy();
             }
         }
 
-        public override async void execute(Player p)
+        public override async void execute(Player p, float physicalAttack, float magicalAttack)
         {
             Rotation = p.weapon.Rotation;
             _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
@@ -58,6 +56,10 @@ namespace Galatime
             _velocity.x += 1;
 
             _animationPlayer.Play("intro");
+            var binds = new Godot.Collections.Array();
+            binds.Add(physicalAttack);
+            binds.Add(magicalAttack);
+            _damageArea.Connect("body_entered", this, "_bodyEntered", binds);
 
             await ToSignal(GetTree().CreateTimer(duration), "timeout");
             destroy();

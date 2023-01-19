@@ -14,14 +14,18 @@ namespace Galatime
         public KinematicBody2D body = null;
         public Position2D damageEffectPoint = null;
         public AnimationPlayer damageSpritePlayer = null;
+
+        public EntityStats stats = new EntityStats();
         public List<dynamic> lootPool = new List<dynamic>();
 
         public Vector2 _knockbackVelocity = Vector2.Zero;
 
         [Signal] delegate void _onDamage();
 
-        public void hit(float amount, GalatimeElement type, float knockback = 0f, float damageRotation = 0f)
+
+        public void hit(float power, float attackStat, GalatimeElement elemen, DamageType type = DamageType.physical, float knockback = 0f, float damageRotation = 0f)
         {
+            // Damage animation
             if (damageSpritePlayer == null)
             {
                 PackedScene scene = (PackedScene)GD.Load("res://assets/objects/DamageAnimationPlayer.tscn");
@@ -33,22 +37,37 @@ namespace Galatime
                 damageAnimation.TrackSetPath(0, "Sprite:modulate");
             }
 
-            GalatimeElementDamageResult damage = new GalatimeElementDamageResult();
+            // Calculating damage
             float damageN = 0;
+
+            if (type == DamageType.physical)
+            {
+                damageN = attackStat * (power / 10) / stats.physicalDefence;
+            }
+            if (type == DamageType.magical)
+            {
+                damageN = attackStat * (power / 10) / stats.magicalDefense;
+            }
+
+            // Calculating weaknesess
+            GalatimeElementDamageResult damage = new GalatimeElementDamageResult();
             if (element == null)
             {
                 GD.PushWarning("Entity doesn't have a element, default multiplier (1x)");
             } 
             else
             {
-                damage = element.getReceivedDamage(type, amount);
+                damage = element.getReceivedDamage(elemen, damageN);
                 damageN = damage.damage;
+                if (type == DamageType.magical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.magicalDefense + " RECEIVER MAGICAL DEFENCE.");
+                if (type == DamageType.physical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.physicalDefence + " RECEIVER PHYSICAL DEFENCE.");
             }
 
+            // Damage effect
             PackedScene damageEffect = (PackedScene)GD.Load("res://assets/objects/gui/damage_effect.tscn");
             Node2D damageEffectInstance = damageEffect.Instance() as Node2D;
 
-            damageEffectInstance.Set("number", damageN);
+            damageEffectInstance.Set("number", Math.Round(damageN, 2));
             damageEffectInstance.Set("type", damage.type);
             damageEffectInstance.SetAsToplevel(true);
 
@@ -61,11 +80,12 @@ namespace Galatime
                 damageSpritePlayer.Play("damage");
             }
 
+            // Final
             setKnockback(knockback, damageRotation);
 
-            health -= damageN; 
+            stats.health -= damageN; 
             _healthChangedEvent(health);
-            if (health <= 0)
+            if (stats.health <= 0)
             {
                 _deathEvent(damageRotation);
             }

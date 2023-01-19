@@ -155,7 +155,7 @@ shape = SubResource( 5 )
 
 [node name="Sprite" type="Sprite" parent="KinematicBody"]
 scale = Vector2( 6, 6 )
-texture = ExtResource( 3 )
+texture = ExtResource( 8 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="KinematicBody"]
 root_node = NodePath("../..")

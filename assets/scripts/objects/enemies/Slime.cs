@@ -7,20 +7,34 @@ using System.Linq;
 
 public class Slime : Entity
 {
-    private Navigation2D _navigation = null;
     private Player _player = null;
     private Vector2[] _path = null;
     private Line2D _line = null;
+    private NavigationAgent2D _navigation = null;
 
     private Sprite _sprite;
     private Area2D _weapon;
     private AnimationPlayer _animationPlayer;
+
+    public new EntityStats stats = new EntityStats 
+    {
+        physicalAttack = 21,
+        magicalAttack = 22,
+        physicalDefence = 10,
+        magicalDefense = 34,
+        health = 19,
+        mana = 15,
+        stamina = 12,
+        agility = 46
+    };
+
     private bool _canMoveTest = true;
     public new float speed = 100;
     [Export] public float r = 1;
 
     public override void _Ready()
     {
+
         element = GalatimeElement.Aqua;
         body = GetNode<KinematicBody2D>("Body");
         damageEffectPoint = GetNode<Position2D>("Body/DamageEffectPoint");
@@ -30,6 +44,7 @@ public class Slime : Entity
         _line = GetNode<Line2D>("Line");
 
         _sprite = GetNode<Sprite>("Body/Sprite");
+        _navigation = GetNode<NavigationAgent2D>("Body/NavigationAgent");
 
         _weapon = GetNode<Area2D>("Body/Weapon");
 
@@ -37,24 +52,14 @@ public class Slime : Entity
 
         _weapon.Connect("body_entered", this, "_attack");
 
-        var tree = GetTree();
-        if (tree.HasGroup("levelNavigation"))
-        {
-            var nodes = tree.GetNodesInGroup("levelNavigation");
-            _navigation = nodes[0] as Navigation2D;
-        }
-        else
-        {
-            GD.Print("navigation doesn't found");
-        }
-
+        GD.Print(stats.health);
     }
 
     public override void _moveProcess()
     {
         _line.GlobalPosition = Vector2.Zero;
-        findPath();
-        generatePath();
+        // move();
+        velocity = Vector2.Zero;
     }
 
     public override void _deathEvent(float damageRotation = 0f)
@@ -75,21 +80,8 @@ public class Slime : Entity
         _animationPlayer.Play("outro");
     }
 
-    public void generatePath()
+    public void _attack(KinematicBody2D body)
     {
-        if (_navigation != null && _player != null)
-        {
-            
-            _path = _navigation.GetSimplePath(body.GlobalPosition, _player.body.GlobalPosition, false);
-            _line.Points = _path;
-        }
-        else
-        {
-            GD.Print("no navigator or player");
-        }
-    }
-
-    public void _attack(KinematicBody2D body) {
         Node2D parent = body.GetParent<Node2D>();
         // !!! NEEDS REWORK !!!
         GalatimeElement element = GalatimeElement.Aqua;
@@ -103,35 +95,24 @@ public class Slime : Entity
         }
     }
 
-    public void findPath() {
-        Vector2 vectorPath = Vector2.Zero;
+    public void move() {
         try
         {
-            if (Node2D.IsInstanceValid(_player))
-            {
-                float rotation = body.GlobalTransform.origin.AngleToPoint(_player.body.GlobalTransform.origin);
-                _weapon.Rotation = rotation + r;
-                if (_path != null)
-                {
-                    if (_path.Length > 0)
-                    {
-                        vectorPath = body.GlobalPosition.DirectionTo(_path[2]) * speed;
-                        if (body.GlobalPosition == _path[0])
-                        {
-                            _path = _path.Skip(1).ToArray();
-                            GD.Print("finished point");
-                        }
-                    }
-                }
-                float rotationDeg = Mathf.Rad2Deg(rotation);
-                float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
-                if (rotationDegPositive >= 90) _sprite.FlipH = true; else _sprite.FlipH = false;
-            }
+            Vector2 vectorPath = Vector2.Zero;
+            _path = Navigation2DServer.MapGetPath(_navigation.GetNavigationMap(), body.GlobalPosition, _player.body.GlobalPosition, false);
+            vectorPath = body.GlobalPosition.DirectionTo(_path[1]) * speed;
+            if (_path[0] == body.GlobalPosition) _path.Skip(0).ToArray();
+            _navigation.SetVelocity(body.GlobalPosition);
+            float rotation = body.GlobalTransform.origin.AngleToPoint(_player.body.GlobalTransform.origin);
+            _weapon.Rotation = rotation + r;
+            float rotationDeg = Mathf.Rad2Deg(rotation);
+            float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
+            if (rotationDegPositive >= 90) _sprite.FlipH = true; else _sprite.FlipH = false;
             velocity = vectorPath;
         }
         catch (Exception err)
         {
-            GD.PrintErr("CAN'T MOVE " + err.Message);
+            // GD.PrintErr("CAN'T MOVE " + err.Message);
         }
         }
     }

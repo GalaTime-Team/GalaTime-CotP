@@ -8,6 +8,8 @@ public class GoldenHolderSword : Area2D
     private float countdown = 0.3f;
     private bool canAttack = true;
 
+    private float _physicalAttack;
+
     public override void _Ready()
     {
         _animation = GetNode<AnimationPlayer>("WeaponAnimationPlayer");
@@ -16,8 +18,9 @@ public class GoldenHolderSword : Area2D
         Connect("body_entered", this, "_on_body_entered");
     }
 
-    public void attack()
+    public void attack(float physicalAttack, float magicalAttack)
     {
+        _physicalAttack = physicalAttack;
         if (canAttack)
         {
             // Play animation
@@ -53,15 +56,15 @@ public class GoldenHolderSword : Area2D
     {
         GD.Print("body_entered");
         // Get scripted node
-        Node2D parent = body.GetParent<Node2D>();
+        Entity parent = body.GetParent<Entity>();
         // !!! NEEDS REWORK !!!
-        GalatimeElement element = GalatimeElement.Ignis;
+        GalatimeElement element = new GalatimeElement();
 
         // Get angle of damage
         float damageRotation = GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
         if (parent.HasMethod("hit"))
         {
-            parent.Call("hit", 10, element, 500, damageRotation);
+            parent.hit(10, _physicalAttack, element, DamageType.physical, 500, damageRotation);
         }
     }
 }
