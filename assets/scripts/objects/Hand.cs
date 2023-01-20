@@ -46,7 +46,7 @@ namespace Galatime
             {
                 GD.Print("no");
             }
-        }
+            }
 
         public void attack(float physicalAttack, float magicalAttack)
         {

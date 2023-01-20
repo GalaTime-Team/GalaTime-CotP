@@ -5,8 +5,9 @@ using System;
 public class GoldenHolderSword : Area2D
 {
     private AnimationPlayer _animation;
-    private float countdown = 0.3f;
+    private float countdown = 0.5f;
     private bool canAttack = true;
+    private bool _swungBit = true;
 
     private float _physicalAttack;
 
@@ -25,7 +26,8 @@ public class GoldenHolderSword : Area2D
         {
             // Play animation
             _animation.Stop();
-            _animation.Play("swing");
+            _animation.Play(_swungBit ? "swing" : "swing_inverted");
+            _swungBit = !_swungBit;
 
             // Delay for disable collision and countdown
             SceneTree tree = GetTree();

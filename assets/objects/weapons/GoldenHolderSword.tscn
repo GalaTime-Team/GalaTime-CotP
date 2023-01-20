@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/animations/objects/weapons/swing.tres" type="Animation" id=1]
 [ext_resource path="res://assets/scripts/objects/weapons/GoldenHolderSword.cs" type="Script" id=2]
@@ -46,13 +46,55 @@ tracks/1/keys = {
 "values": [ false ]
 }
 
+[sub_resource type="Animation" id=23]
+resource_name = "swing_inverted"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.35 ),
+"transitions": PoolRealArray( 1, 1, 10, 1 ),
+"update": 0,
+"values": [ 0.0, 44.0, -44.0, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("WeaponParticles:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray(  ),
+"transitions": PoolRealArray(  ),
+"update": 0,
+"values": [  ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("WeaponParticles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.06, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false ]
+}
+
 [node name="GoldenHolderSword" type="Area2D"]
 collision_layer = 0
 collision_mask = 0
 script = ExtResource( 2 )
 
 [node name="WeaponSprite" type="Sprite" parent="."]
+self_modulate = Color( 1, 1, 1, 0.392157 )
 show_behind_parent = true
+position = Vector2( -12, 0 )
 scale = Vector2( 3, 3 )
 texture = ExtResource( 3 )
 offset = Vector2( 16, -0.5 )
@@ -75,3 +117,4 @@ shape = SubResource( 7 )
 root_node = NodePath("../WeaponSprite")
 anims/idle = SubResource( 17 )
 anims/swing = ExtResource( 1 )
+anims/swing_inverted = SubResource( 23 )

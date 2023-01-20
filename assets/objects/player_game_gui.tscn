@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=2]
+[gd_scene load_steps=69 format=2]
 
 [ext_resource path="res://sprites/gui/status/stamina_progress_outline.png" type="Texture" id=1]
 [ext_resource path="res://sprites/gui/status/mana_progress_outline.png" type="Texture" id=2]
@@ -22,6 +22,8 @@
 [ext_resource path="res://bootsplash.png" type="Texture" id=20]
 [ext_resource path="res://assets/fonts/TEACPSSB.TTF" type="DynamicFontData" id=21]
 [ext_resource path="res://sprites/test/loading_full.png" type="Texture" id=22]
+[ext_resource path="res://assets/fonts/m3x6.tres" type="DynamicFont" id=23]
+[ext_resource path="res://sprites/characters/test/dodge_icon.png" type="Texture" id=24]
 
 [sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0, 0, 0, 1 )
@@ -298,6 +300,35 @@ anchor_bottom = 1.0
 mouse_filter = 2
 script = ExtResource( 6 )
 
+[node name="LeftCenter" type="VBoxContainer" parent="."]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 10.0
+margin_top = -10.0
+margin_right = 38.0
+margin_bottom = 10.0
+rect_scale = Vector2( 2, 2 )
+rect_pivot_offset = Vector2( 0, 10 )
+
+[node name="DodgeContainer" type="HBoxContainer" parent="LeftCenter"]
+margin_right = 28.0
+margin_bottom = 16.0
+
+[node name="Icon" type="TextureRect" parent="LeftCenter/DodgeContainer"]
+margin_right = 16.0
+margin_bottom = 16.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource( 24 )
+
+[node name="Countdown" type="Label" parent="LeftCenter/DodgeContainer"]
+margin_left = 20.0
+margin_top = 5.0
+margin_right = 20.0
+margin_bottom = 11.0
+size_flags_horizontal = 0
+custom_fonts/font = ExtResource( 23 )
+
 [node name="fade" type="PanelContainer" parent="."]
 visible = false
 modulate = Color( 1, 1, 1, 0 )
@@ -553,12 +584,14 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -192.0
-margin_top = -40.0
+margin_top = -48.0
 margin_right = -8.0
 margin_bottom = -8.0
 custom_fonts/font = ExtResource( 9 )
-text = "Beta build
-Version: 0.2.0"
+text = "PROPERTY OF GALATIME TEAM
+Version: 0.2.0
+Preview build
+Combat and Stats Update"
 align = 2
 valign = 2
 autowrap = true
@@ -745,5 +778,5 @@ visible = false
 position = Vector2( 994, 322 )
 scale = Vector2( 2, 2 )
 frames = SubResource( 45 )
-frame = 3
+frame = 19
 playing = true

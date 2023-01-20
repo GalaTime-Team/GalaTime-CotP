@@ -1,4 +1,4 @@
-    using Godot;
+using Godot;
 using System;
 using Galatime;
 using System.Collections.Generic;
@@ -20,6 +20,7 @@ namespace Galatime
         public float stamina { get; private set; }
         private bool _isPause = false;
         private bool _isDodge = false;
+        private bool _canDodge = true;
 
         public new EntityStats stats = new EntityStats
         {
@@ -70,6 +71,7 @@ namespace Galatime
         [Signal] public delegate void on_dialog_end();
         [Signal] public delegate void on_ability_add(GalatimeAbility ab);
         [Signal] public delegate void reloadAbility(int i);
+        [Signal] public delegate void reloadDodge();
         [Signal] public delegate void sayNoToAbility(int i);
 
         public override void _Ready()
@@ -120,10 +122,10 @@ namespace Galatime
             AddChild(_staminaRegenTimer);
 
             _dodgeTimer = new Timer();
-            _dodgeTimer.WaitTime = 0.2f;
+            _dodgeTimer.WaitTime = 2f;
             _dodgeTimer.OneShot = true;
             _dodgeTimer.Connect("timeout", this, "_onCountdownDodge");
-            AddChild(_staminaRegenTimer);
+            AddChild(_dodgeTimer);
         }
 
         private void _SetAnimation(Vector2 animationVelocity, bool idle)
@@ -327,6 +329,11 @@ namespace Galatime
             EmitSignal("on_dialog_start", id, this);
         }
 
+        public void _onCountdownDodge()
+        {
+            _canDodge = true;
+        }
+
         public override async void _UnhandledInput(InputEvent @event)
         {
             if (@event is InputEventMouseMotion)
@@ -362,13 +369,17 @@ namespace Galatime
 
             if (@event.IsActionPressed("game_dodge"))
             {
-                if (stamina - 20 >= 0)
+                if (stamina - 20 >= 0 && _canDodge)
                 {
+                    _canDodge = false;
                     _isDodge = true;
                     float direction = weapon.Rotation + 3.14159f;
                     setKnockback(900, direction);
                     _trailParticles.Emitting = true;
                     reduceStamina(20);
+                    _dodgeTimer.Start();
+                    EmitSignal("reloadDodge");
+                    GD.Print("dodge");
                     await ToSignal(GetTree().CreateTimer(0.3f), "timeout");
                     _isDodge = false;
                     _trailParticles.Emitting = false;

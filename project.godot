@@ -21,6 +21,11 @@ config/icon="res://icon.png"
 GalatimeGlobals="*res://assets/scripts/GalatimeGlobals.cs"
 PlayerVariables="*res://assets/scripts/PlayerVariables.cs"
 
+[display]
+
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
 [global]
 
 collision=false

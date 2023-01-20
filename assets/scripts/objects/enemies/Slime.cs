@@ -58,8 +58,7 @@ public class Slime : Entity
     public override void _moveProcess()
     {
         _line.GlobalPosition = Vector2.Zero;
-        // move();
-        velocity = Vector2.Zero;
+        move();
     }
 
     public override void _deathEvent(float damageRotation = 0f)
@@ -112,7 +111,8 @@ public class Slime : Entity
         }
         catch (Exception err)
         {
-            // GD.PrintErr("CAN'T MOVE " + err.Message);
+            GD.PrintErr("CAN'T MOVE " + _path.Length);
         }
         }
     }
+    

@@ -8,3 +8,5 @@ D:\Projects\galatime-project\.mono\temp\obj\ExportDebug\galatime-project.Assembl
 D:\Projects\galatime-project\.mono\temp\obj\ExportDebug\galatime-project.csproj.CoreCompileInputs.cache
 D:\Projects\galatime-project\.mono\temp\obj\ExportDebug\galatime-project.dll
 D:\Projects\galatime-project\.mono\temp\obj\ExportDebug\galatime-project.pdb
+D:\Projects\galatime-project\.mono\temp\bin\ExportDebug\Microsoft.CSharp.dll
+D:\Projects\galatime-project\.mono\temp\obj\ExportDebug\galatime-project.csproj.CopyComplete

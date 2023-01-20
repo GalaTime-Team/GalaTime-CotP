@@ -2,6 +2,7 @@ using Godot;
 using System;
 using Galatime;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace Galatime
 {
@@ -19,7 +20,9 @@ namespace Galatime
         private TextureProgress _healthDrain;
 
         // Text Stats
-        private Label _textStamina;
+        private Godot.Label _textStamina;
+        private Godot.Label _dodgeCountdownText;
+        public Timer DodgeTextTimer;
 
         private NinePatchRect _dialogBox;
 
@@ -28,6 +31,7 @@ namespace Galatime
         private HBoxContainer _abilitiesContainer;
 
         private float _localHp = 0f;
+        private float _remainingDodge;
 
         [Signal] public delegate void items_changed();
         [Signal] public delegate void on_pause(bool visible);
@@ -45,8 +49,8 @@ namespace Galatime
             // _healthDrain = GetNode<TextureProgress>("status/hp_drain");
 
             // Text Stats
-            _textStamina = GetNode<Label>("stamina_text");
-
+            _textStamina = GetNode<Godot.Label>("stamina_text");
+            _dodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
 
             _dialogBox = GetNode<NinePatchRect>("DialogBox");
 
@@ -61,8 +65,13 @@ namespace Galatime
             _player.Connect("on_pause", this, "_onPause");
             _player.Connect("on_ability_add", this, "addAbility");
             _player.Connect("reloadAbility", this, "reloadAbility");
+            _player.Connect("reloadDodge", this, "reloadDodge");
             _player.Connect("sayNoToAbility", this, "pleaseSayNoToAbility");
             GetNode<PlayerVariables>("/root/PlayerVariables").Connect("items_changed", this, "displayItem");
+
+            DodgeTextTimer = new Timer();
+            DodgeTextTimer.Connect("timeout", this, "_reloadingDodge");
+            AddChild(DodgeTextTimer);
         }
 
         public void onFade(string type)
@@ -103,6 +112,24 @@ namespace Galatime
         public void addAbility(GalatimeAbility ab, int i)
         {
             _abilitiesContainer.GetChild<AbilityContainer>(i).load(ab.texture, ab.reload);
+        }
+
+        public void reloadDodge()
+        {
+            GD.Print("REEEEEEEEELLLLL");
+            _remainingDodge = 2;
+            DodgeTextTimer.Start();
+            _reloadingDodge();
+        }
+
+        public async void _reloadingDodge()
+        {
+            _remainingDodge--;
+            _dodgeCountdownText.Text = _remainingDodge + "s";
+            if (_dodgeCountdownText.Text == "-1s")
+            {
+                DodgeTextTimer.Stop(); _dodgeCountdownText.Text = "";
+            }
         }
 
         public void reloadAbility(int i)
