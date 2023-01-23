@@ -26,6 +26,10 @@ PlayerVariables="*res://assets/scripts/PlayerVariables.cs"
 window/stretch/mode="viewport"
 window/stretch/aspect="keep"
 
+[editor_plugins]
+
+enabled=PoolStringArray(  )
+
 [global]
 
 collision=false

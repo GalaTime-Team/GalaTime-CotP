@@ -17,7 +17,7 @@ public class item : Control
         animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
     }
 
-    public void DisplayItem(Godot.Collections.Dictionary i, bool playAnimation = false)
+    public void DisplayItem(Godot.Collections.Dictionary i)
     {
         data = i;
         if (i.Count != 0)
@@ -37,7 +37,6 @@ public class item : Control
                 }
                 // GD.Print(i.Contains("quantity") + " " + i);
                 if (!(bool)i["stackable"]) ItemQuantity.Text = "";
-                if (playAnimation) animationPlayer.Play("pop");
             }
             else
             {

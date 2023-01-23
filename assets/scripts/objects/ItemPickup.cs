@@ -67,11 +67,25 @@ namespace Galatime
                 GD.Print("item quantity pickup" + quantity);
                 if (quantity >= 2)
                 {
+                    var spriteNewPosition = new Vector2();
+                    spriteNewPosition.y = -6;
+                    sprite.Position = spriteNewPosition;
+                    var sprite2NewPosition = new Vector2();
+                    sprite2NewPosition.y = 6;
+                    sprite2.Position = sprite2NewPosition;
                     sprite2.Texture = itemTexture;
                     sprite2.Visible = true;
                 }
                 if (quantity >= 5)
                 {
+                    var sprite2NewPosition = new Vector2();
+                    sprite2NewPosition.y = 6;
+                    sprite2NewPosition.x = -6;
+                    sprite2.Position = sprite2NewPosition;
+                    var sprite3NewPosition = new Vector2();
+                    sprite3NewPosition.y = 6;
+                    sprite3NewPosition.x = 6;
+                    sprite3.Position = sprite3NewPosition;
                     sprite3.Texture = itemTexture;
                     sprite3.Visible = true;
                 }

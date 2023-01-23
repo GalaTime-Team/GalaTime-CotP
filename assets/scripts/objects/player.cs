@@ -93,7 +93,16 @@ namespace Galatime
             _playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
             _playerVariables.Connect("items_changed", this, "_onItemsChanged");
 
-            element = GalatimeElement.Ignis;
+            element = GalatimeElement.Ignis + GalatimeElement.Chaos;
+            var elementDebug = "";
+            elementDebug += element.name + ". " + element.description + ". ";
+            foreach (var item in element.DamageMultipliers.Keys)
+            {
+                elementDebug += item + " ";
+                elementDebug += element.DamageMultipliers[item] + ", ";
+            }
+
+            GD.Print(elementDebug);
 
             addAbility("res://assets/objects/abilities/fireball.tscn", 0);
             addAbility("res://assets/objects/abilities/blueFireball.tscn", 1);

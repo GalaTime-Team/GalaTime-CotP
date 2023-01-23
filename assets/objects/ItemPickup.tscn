@@ -75,20 +75,17 @@ shape = SubResource( 22 )
 
 [node name="Sprite3" type="Sprite" parent="."]
 visible = false
-position = Vector2( 5, 4 )
 scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
 texture = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 0, -6 )
 scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
 texture = ExtResource( 2 )
 
 [node name="Sprite2" type="Sprite" parent="."]
 visible = false
-position = Vector2( -6, 4 )
 scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
 texture = ExtResource( 2 )

@@ -34,7 +34,6 @@ public class Slime : Entity
 
     public override void _Ready()
     {
-
         element = GalatimeElement.Aqua;
         body = GetNode<KinematicBody2D>("Body");
         damageEffectPoint = GetNode<Position2D>("Body/DamageEffectPoint");
@@ -58,12 +57,13 @@ public class Slime : Entity
     public override void _moveProcess()
     {
         _line.GlobalPosition = Vector2.Zero;
-        move();
+        if (!_deathState) move(); else velocity = Vector2.Zero;
     }
 
     public override void _deathEvent(float damageRotation = 0f)
     {
-        dynamic testItem = new
+        base._deathEvent();
+        dynamic barrelItem = new
         {
             id = "barrel",
             max = 7,
@@ -71,7 +71,7 @@ public class Slime : Entity
             chance = 75
         };
 
-        lootPool.Add(testItem);
+        lootPool.Add(barrelItem);
 
         _dropLoot(damageRotation);
 

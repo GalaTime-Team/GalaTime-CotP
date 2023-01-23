@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 namespace Galatime
 {
@@ -13,7 +14,7 @@ namespace Galatime
     {
         public int id = 0;
         public string name = "Default";
-        public string description = "This element has no special abilities";
+        public string description = "No description";
 
         public float attackPhysics = 1.0f;
         public float attackMagic = 1.0f;
@@ -24,14 +25,14 @@ namespace Galatime
         public float staminaMultiplier = 1.0f;
         public float agilityMultiplier = 1.0f;
 
-        public Godot.Collections.Dictionary DamageMultipliers = new Godot.Collections.Dictionary();
+        public Dictionary<string, float> DamageMultipliers = new Dictionary<string, float>();
         
         /// <summary>
         /// Gets damage in float from the source of the damage, depending on its element
         /// </summary>
         public GalatimeElementDamageResult getReceivedDamage(GalatimeElement e, float amount) {
             GalatimeElementDamageResult result = new GalatimeElementDamageResult();
-            if (!DamageMultipliers.Contains(e.name)) {
+            if (!DamageMultipliers.ContainsKey(e.name)) {
                 GD.PushWarning("No element is found, the standard multiplier will be used (1x)");
                 result.damage = amount;
                 return result;
@@ -55,11 +56,33 @@ namespace Galatime
             return result;
         }
 
+        public static GalatimeElement operator +(GalatimeElement a, GalatimeElement b)
+        {
+            var c = new GalatimeElement();
+            c.name = a.name + " + " + b.name;
+            foreach (var elem in a.DamageMultipliers.Keys)
+            {
+                c.DamageMultipliers[elem] = a.DamageMultipliers[elem];
+            }
+            foreach (var elem in b.DamageMultipliers.Keys)
+            {
+                if (c.DamageMultipliers.ContainsKey(elem))
+                {
+                    c.DamageMultipliers[elem] = (b.DamageMultipliers[elem] + c.DamageMultipliers[elem]) / 2;
+                    continue;
+                }
+                c.DamageMultipliers[elem] = b.DamageMultipliers[elem];
+            }
+            return c;
+        }
+
         /// <summary>
         /// Fire element
         /// </summary>
-        public static GalatimeElement Ignis {
-            get {
+        public static GalatimeElement Ignis
+        {
+            get
+            {
                 GalatimeElement e = new GalatimeElement();
                 e.name = "Ignis";
                 e.description = "This element has fiery abilities. Don't get burned!";
@@ -73,6 +96,26 @@ namespace Galatime
                 e.DamageMultipliers["Caeli"] = 2f;
                 e.DamageMultipliers["Naturaela"] = 0.5f;
                 e.DamageMultipliers["Tenerbis"] = 0.5f;
+                return e;
+            }
+        }
+
+        public static GalatimeElement Chaos
+        {
+            get
+            {
+                GalatimeElement e = new GalatimeElement();
+                e.name = "Chaos";
+                e.description = "The element that forces destruction. A very destructive thing";
+
+                e.attackMagic = 0.75f;
+                e.staminaMultiplier = 1.25f;
+                e.agilityMultiplier = 0.75f;
+
+                e.DamageMultipliers["Caeli"] = 0.5f;
+                e.DamageMultipliers["Lapis"] = 0.5f;
+                e.DamageMultipliers["Lux"] = 2f;
+                e.DamageMultipliers["Spatium"] = 2f;
                 return e;
             }
         }

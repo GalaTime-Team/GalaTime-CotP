@@ -45,9 +45,8 @@ public class slot_container : GridContainer
         for (int i = 0; i < PlayerVariables.inventory.Count; i++)
         {
             var ItemSlot = GetChild(i);
-            var Item = ItemSlot.GetChild(0);
-     
-            Item.Call("DisplayItem", (Godot.Collections.Dictionary)PlayerVariables.inventory[i], false);
+            var Item = ItemSlot.GetChild<item>(0);
+            Item.DisplayItem((Godot.Collections.Dictionary)PlayerVariables.inventory[i]); 
         }
     }
 
@@ -96,7 +95,6 @@ public class slot_container : GridContainer
                 dragPreview.prevent();
                 return;
             }
-            dragPreview.Call("setDraggedItem", playerVariables.setItem(draggedItem, nodeItem.GetIndex()));
             dragPreview.draggedItem = null;
         }
         else if (inventoryItem.Count >= 0 && draggedItem.Count >= 0)

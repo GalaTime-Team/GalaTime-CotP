@@ -32,8 +32,8 @@ namespace Galatime {
             else
             {
                 RectPosition = Vector2.Zero;
-                //ItemIcon.Texture = null;
-                //ItemQuantity.Text = "";
+                ItemIcon.Texture = null;
+                ItemQuantity.Text = "";
             }
         }
 

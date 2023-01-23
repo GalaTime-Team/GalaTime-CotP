@@ -10,6 +10,9 @@ namespace Galatime
         [Export] public float speed = 200f;
         public float health = 100f;
         public Vector2 velocity = Vector2.Zero;
+
+        public PackedScene scene = (PackedScene)GD.Load("res://assets/objects/DamageAnimationPlayer.tscn");
+
         public GalatimeElement element = null;
         public KinematicBody2D body = null;
         public Position2D damageEffectPoint = null;
@@ -17,6 +20,7 @@ namespace Galatime
 
         public EntityStats stats = new EntityStats();
         public List<dynamic> lootPool = new List<dynamic>();
+        public bool _deathState = false;
 
         public Vector2 _knockbackVelocity = Vector2.Zero;
 
@@ -25,10 +29,10 @@ namespace Galatime
 
         public void hit(float power, float attackStat, GalatimeElement elemen, DamageType type = DamageType.physical, float knockback = 0f, float damageRotation = 0f)
         {
+            if (_deathState) return;
             // Damage animation
             if (damageSpritePlayer == null)
             {
-                PackedScene scene = (PackedScene)GD.Load("res://assets/objects/DamageAnimationPlayer.tscn");
                 Node damageSpritePlayerInstance = scene.Instance();
                 body.AddChild(damageSpritePlayerInstance);
                 damageSpritePlayer = body.GetNode<AnimationPlayer>("DamageAnimationPlayer");
@@ -116,7 +120,8 @@ namespace Galatime
         /// if (health <= 0)
         /// </summary>
         public virtual void _deathEvent(float damageRotation = 0f) {
-            QueueFree();
+            _deathState = true;
+            
         }
 
         /// <summary>

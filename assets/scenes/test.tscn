@@ -344,16 +344,12 @@ stream = ExtResource( 3 )
 [node name="InteractionAnimationPlayer" type="AnimationPlayer" parent="."]
 anims/test = SubResource( 3 )
 
-[node name="ItemPickup2" parent="." instance=ExtResource( 9 )]
-position = Vector2( 33, 272 )
-scale = Vector2( 0.996776, 0.999088 )
-
 [node name="ItemPickup" parent="." instance=ExtResource( 9 )]
 position = Vector2( -131, 105 )
 itemId = "barrel"
 
 [node name="ItemPickup3" parent="." instance=ExtResource( 9 )]
-position = Vector2( -40, 110 )
+position = Vector2( 244, 153 )
 itemId = "barrel"
 
 [node name="ItemPickup4" parent="." instance=ExtResource( 9 )]
@@ -382,21 +378,19 @@ anims/walk_up = SubResource( 9 )
 anims/test = SubResource( 10 )
 
 [node name="Slime" parent="." instance=ExtResource( 21 )]
-position = Vector2( 420, -200 )
+position = Vector2( 1357, -119 )
 
 [node name="Slime2" parent="." instance=ExtResource( 21 )]
-position = Vector2( 1108, -113 )
+position = Vector2( 1688, -46 )
 
 [node name="Slime3" parent="." instance=ExtResource( 21 )]
-position = Vector2( -435, 377 )
+position = Vector2( 1492, -122 )
 
 [node name="Slime4" parent="." instance=ExtResource( 21 )]
-position = Vector2( -369, -318 )
+position = Vector2( 1667, -161 )
 
 [node name="Slime5" parent="." instance=ExtResource( 21 )]
-position = Vector2( 230, 522 )
+position = Vector2( 1600, -101 )
 
 [node name="Slime6" parent="." instance=ExtResource( 21 )]
-position = Vector2( 925, 381 )
-
-[editable path="ItemPickup2"]
+position = Vector2( 1838, -128 )
