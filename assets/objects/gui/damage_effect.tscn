@@ -71,6 +71,7 @@ script = ExtResource( 2 )
 [node name="position" type="Position2D" parent="."]
 
 [node name="damage" type="Label" parent="position"]
+modulate = Color( 1, 1, 1, 0 )
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 1023.0

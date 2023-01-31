@@ -22,19 +22,7 @@ namespace Galatime
         private bool _isDodge = false;
         private bool _canDodge = true;
 
-        public new EntityStats stats = new EntityStats
-        {
-            physicalAttack = 75,
-            magicalAttack = 80,
-            physicalDefence = 65,
-            magicalDefense = 75,
-            health = 70,
-            mana = 65,
-            stamina = 65,
-            agility = 60
-        };
-
-        private List<PackedScene> _abilities = new List<PackedScene>();
+        private PackedScene[] _abilities = new PackedScene[3];
         private Timer[] _abilitiesTimers = new Timer[3];
         private int[] _abiltiesReloadTimes = new int[3];
 
@@ -92,6 +80,7 @@ namespace Galatime
 
             _playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
             _playerVariables.Connect("items_changed", this, "_onItemsChanged");
+            _playerVariables.Connect("abilities_changed", this, "_abilitiesChanged");
 
             element = GalatimeElement.Ignis + GalatimeElement.Chaos;
             var elementDebug = "";
@@ -102,10 +91,23 @@ namespace Galatime
                 elementDebug += element.DamageMultipliers[item] + ", ";
             }
 
-            GD.Print(elementDebug);
+            _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 0);
+            _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 1);
+            _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 2);
 
-            addAbility("res://assets/objects/abilities/fireball.tscn", 0);
-            addAbility("res://assets/objects/abilities/blueFireball.tscn", 1);
+            stats = new EntityStats
+            {
+                physicalAttack = 75,
+                magicalAttack = 80,
+                physicalDefence = 65,
+                magicalDefense = 75,
+                health = 70,
+                mana = 65,
+                stamina = 65,
+                agility = 60
+            };
+
+            GD.Print(elementDebug);
 
             // Start
             canMove = true;
@@ -171,7 +173,7 @@ namespace Galatime
         {
             PackedScene scene = GD.Load<PackedScene>(scenePath);
             GalatimeAbility ability = scene.Instance<GalatimeAbility>();
-            _abilities.Add(scene);
+            _abilities[i] = scene;
             EmitSignal("on_ability_add", ability, i);
             var binds = new Godot.Collections.Array();
             binds.Add(i);
@@ -184,7 +186,6 @@ namespace Galatime
         {
             if (_abiltiesReloadTimes[i] <= 0) _abilitiesTimers[i].Stop();
             _abiltiesReloadTimes[i]--;
-            GD.Print(_abiltiesReloadTimes[i]);
         }
 
         private void _useAbility(int i)
@@ -193,7 +194,6 @@ namespace Galatime
             {
                 if (_abiltiesReloadTimes[i] <= 0)
                 {
-                    GD.Print(_abilities[i]);
                     var ability = _abilities[i].Instance<GalatimeAbility>();
                     if (ability.costs.ContainsKey("stamina")) { 
                         if (stamina - ability.costs["stamina"] < 0) 
@@ -293,6 +293,25 @@ namespace Galatime
             EmitSignal("healthChanged", health);
         }
 
+        public void _abilitiesChanged()
+        {
+            GD.Print("worksasfakjwlofghakwjfjkawfg");
+            var obj = (Godot.Collections.Dictionary)PlayerVariables.abilities;
+            GD.Print(obj);
+            for (int i = 0; i < obj.Count; i++)
+            {
+                var ability = (Godot.Collections.Dictionary)obj[i];
+                if (ability.Contains("path"))
+                {
+                    addAbility((string)ability["path"], i);
+                }
+                else
+                {
+                    GD.PushWarning("no path " + i);
+                }
+            }
+        }
+
         public void reduceStamina(float stam)
         {
             stamina -= stam;
@@ -309,7 +328,6 @@ namespace Galatime
 
         public void _onCountdownStaminaRegen()
         {
-            GD.Print("workkfkffk");
             _staminaCountdownTimer.Stop();
             _staminaRegenTimer.Start();
         }
@@ -330,6 +348,7 @@ namespace Galatime
         private void _onItemsChanged()
         {
             var obj = (Godot.Collections.Dictionary)PlayerVariables.inventory[0];
+            if (weapon._item != null && obj.Count != 0) return;
             weapon.takeItem(obj);
         }
 
@@ -383,12 +402,11 @@ namespace Galatime
                     _canDodge = false;
                     _isDodge = true;
                     float direction = weapon.Rotation + 3.14159f;
-                    setKnockback(900, direction);
+                    setKnockback(1200, direction);
                     _trailParticles.Emitting = true;
                     reduceStamina(20);
                     _dodgeTimer.Start();
                     EmitSignal("reloadDodge");
-                    GD.Print("dodge");
                     await ToSignal(GetTree().CreateTimer(0.3f), "timeout");
                     _isDodge = false;
                     _trailParticles.Emitting = false;

@@ -1,12 +1,14 @@
 using Godot;
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
+using DictionaryExtension;
 
 namespace Galatime
 {
     public class Hand : Position2D
     {
-        private Node _item;
+        public Node _item;
         public void takeItem(Godot.Collections.Dictionary item)
         {
             _removeItem();
@@ -36,6 +38,7 @@ namespace Galatime
         {
             if (GetChildCount() != 0)
             {
+                _item = null;
                 for (int i = 0; i < GetChildCount(); i++)
                 {
                     var child = GetChild(i);
@@ -46,7 +49,7 @@ namespace Galatime
             {
                 GD.Print("no");
             }
-            }
+        }
 
         public void attack(float physicalAttack, float magicalAttack)
         {

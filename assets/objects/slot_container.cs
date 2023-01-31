@@ -6,7 +6,7 @@ using Galatime;
 
 public class slot_container : GridContainer
 {
-    public InventoryTooltip tooltip;
+    public Tooltip tooltip;
     public DragPreview dragPreview;
 
     public PlayerVariables playerVariables;
@@ -17,7 +17,7 @@ public class slot_container : GridContainer
     {
         Control gui = GetNode<Control>("../../");
 
-        tooltip = GetNode<InventoryTooltip>("../Tooltip");
+        tooltip = GetNode<Tooltip>("../Tooltip");
         dragPreview = GetNode<DragPreview>("../DragPreview");
 
         playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
@@ -46,13 +46,21 @@ public class slot_container : GridContainer
         {
             var ItemSlot = GetChild(i);
             var Item = ItemSlot.GetChild<item>(0);
-            Item.DisplayItem((Godot.Collections.Dictionary)PlayerVariables.inventory[i]); 
+            if (playerVariables.currentItem == i)
+            {
+                Item.DisplayItem((Godot.Collections.Dictionary)PlayerVariables.inventory[i], true);
+                playerVariables.currentItem = -1;
+            }
+            else
+            {
+                Item.DisplayItem((Godot.Collections.Dictionary)PlayerVariables.inventory[i]);
+            }
         }
     }
 
-    public void _mouseEnterSlot(TextureRect item)
+    public void _mouseEnterSlot(Slot item)
     {
-        tooltip.Call("_display", item);
+        tooltip._display(item);
     }
 
     public void _mouseExitSlot()
@@ -62,12 +70,6 @@ public class slot_container : GridContainer
 
     public void _guiInputSlot(InputEvent @event, TextureRect item)
     {
-        if (@event is InputEventMouseMotion)
-        {
-            Vector2 finalPosition = GetGlobalMousePosition();
-            finalPosition.y += 16;
-            tooltip.Call("_setPosition", finalPosition);
-        }
         if (@event is InputEventMouseButton)
         {
             var @mouseEvent = @event as InputEventMouseButton;
@@ -96,6 +98,7 @@ public class slot_container : GridContainer
                 return;
             }
             dragPreview.draggedItem = null;
+            playerVariables.setItem(draggedItem, nodeItem.GetIndex());
         }
         else if (inventoryItem.Count >= 0 && draggedItem.Count >= 0)
         {

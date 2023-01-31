@@ -1,4 +1,4 @@
-using Godot;
+    using Godot;
 using System;
 using Galatime;
 using System.Collections.Generic;
@@ -50,8 +50,6 @@ public class Slime : Entity
         health = 10;
 
         _weapon.Connect("body_entered", this, "_attack");
-
-        GD.Print(stats.health);
     }
 
     public override void _moveProcess()
@@ -81,16 +79,18 @@ public class Slime : Entity
 
     public void _attack(KinematicBody2D body)
     {
-        Node2D parent = body.GetParent<Node2D>();
-        // !!! NEEDS REWORK !!!
-        GalatimeElement element = GalatimeElement.Aqua;
-
-        // Get angle of damage
-        float damageRotation = _sprite.GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
-        GD.Print(damageRotation);
-        if (parent.HasMethod("hit"))
+        if (!_deathState)
         {
-            parent.Call("hit", 4, element, 250, damageRotation);
+            Entity parent = body.GetParent<Entity>();
+            // !!! NEEDS REWORK !!!
+            GalatimeElement element = GalatimeElement.Aqua;
+
+            // Get angle of damage
+            float damageRotation = _sprite.GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
+            if (parent.HasMethod("hit"))
+            {
+                parent.hit(30, stats.physicalAttack, element, DamageType.physical, 250, damageRotation);
+            }
         }
     }
 
@@ -98,10 +98,10 @@ public class Slime : Entity
         try
         {
             Vector2 vectorPath = Vector2.Zero;
-            _path = Navigation2DServer.MapGetPath(_navigation.GetNavigationMap(), body.GlobalPosition, _player.body.GlobalPosition, false);
-            vectorPath = body.GlobalPosition.DirectionTo(_path[1]) * speed;
-            if (_path[0] == body.GlobalPosition) _path.Skip(0).ToArray();
-            _navigation.SetVelocity(body.GlobalPosition);
+            _navigation.SetTargetLocation(_player.body.GlobalPosition);
+            _line.Points = _navigation.GetNavPath();
+            vectorPath = body.GlobalPosition.DirectionTo(_navigation.GetNextLocation()) * speed;
+            _navigation.SetVelocity(vectorPath);
             float rotation = body.GlobalTransform.origin.AngleToPoint(_player.body.GlobalTransform.origin);
             _weapon.Rotation = rotation + r;
             float rotationDeg = Mathf.Rad2Deg(rotation);

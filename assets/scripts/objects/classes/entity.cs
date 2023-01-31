@@ -87,8 +87,9 @@ namespace Galatime
             // Final
             setKnockback(knockback, damageRotation);
 
-            stats.health -= damageN; 
-            _healthChangedEvent(health);
+            stats.health -= damageN;
+            stats.health = (float)Math.Round(stats.health, 2);
+            _healthChangedEvent(stats.health);
             if (stats.health <= 0)
             {
                 _deathEvent(damageRotation);
@@ -148,7 +149,6 @@ namespace Galatime
                     itemPickup.spawnVelocity = spawnVector;
                     itemPickup.itemId = lootPool[i].id;
                     itemPickup.quantity = testQuantity;
-                    GD.Print("quantity" + testQuantity);
                     itemPickup.GlobalPosition = body.GlobalPosition;
 
                     GetParent().AddChild(itemPickup);

@@ -4,10 +4,14 @@ using System;
 public class PlayerVariables : Node
 {
     public int slots = 16;
+    public int abilitySlots = 3;
+    public int currentItem = -1;
 
     public static Godot.Collections.Dictionary inventory = new Godot.Collections.Dictionary();
+    public static Godot.Collections.Dictionary abilities = new Godot.Collections.Dictionary();
 
     [Signal] public delegate void items_changed();
+    [Signal] public delegate void abilities_changed();
 
     public override void _Ready()
     {
@@ -16,6 +20,12 @@ public class PlayerVariables : Node
             inventory.Add(i, new Godot.Collections.Dictionary());
         }
         EmitSignal("items_changed", inventory);
+
+        for (int i = 0; i < abilitySlots; i++)
+        {
+            abilities.Add(i, new Godot.Collections.Dictionary());
+        }
+        EmitSignal("abilities_changed", abilities);
     }
 
 
@@ -90,6 +100,21 @@ public class PlayerVariables : Node
         }
     }
 
+    /// <summary>
+    /// Sets ability to new slot
+    /// </summary>
+    /// <param name="ability">JSON ability data</param>
+    /// <param name="slot">Up to three slots</param>
+    public void setAbility(Godot.Collections.Dictionary ability, int slot)
+    {
+        if (abilities.Count >= 4)
+        {
+            GD.PushWarning("Can't set ability up to " + abilities.Count); return;
+        }
+        abilities[slot] = ability;
+        EmitSignal("abilities_changed");
+    }
+
     /// <summary> Set inventory item to slot </summary>
     public Godot.Collections.Dictionary setItem(Godot.Collections.Dictionary item, int slot)
     {
@@ -100,6 +125,7 @@ public class PlayerVariables : Node
         inventory.Remove(slot);
         // Set item
         inventory[slot] = item;
+        currentItem = slot;
         // Send item_changed signal to GUI
         EmitSignal("items_changed");
         return previousItem;

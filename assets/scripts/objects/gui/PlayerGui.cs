@@ -21,6 +21,7 @@ namespace Galatime
 
         // Text Stats
         private Godot.Label _textStamina;
+        private Godot.Label _textHealth;
         private Godot.Label _dodgeCountdownText;
         public Timer DodgeTextTimer;
 
@@ -50,6 +51,7 @@ namespace Galatime
 
             // Text Stats
             _textStamina = GetNode<Godot.Label>("stamina_text");
+            _textHealth = GetNode<Godot.Label>("hp_text");
             _dodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
 
             _dialogBox = GetNode<NinePatchRect>("DialogBox");
@@ -98,6 +100,7 @@ namespace Galatime
         {
             // _localHp = health;
             _health.Value = health;
+            _textHealth.Text = health + " HP";
             // SceneTree tree = GetTree();
             // tree.CreateTimer(2f).Connect("timeout", this, "_hpDrain");
         }
@@ -116,7 +119,6 @@ namespace Galatime
 
         public void reloadDodge()
         {
-            GD.Print("REEEEEEEEELLLLL");
             _remainingDodge = 2;
             DodgeTextTimer.Start();
             _reloadingDodge();
@@ -152,19 +154,18 @@ namespace Galatime
             EmitSignal("items_changed");
         }
  
-        public void _hpDrain()
-        {
-            Tween tween = GetNode<Tween>("Tween");
-            tween.InterpolateProperty(_healthDrain, "value",
-            _healthDrain.Value, _localHp, 0.3f,
-            Tween.TransitionType.Linear, Tween.EaseType.InOut);
-            tween.Start();
-            _healthDrain.Value = _localHp;
-        }
+        //public void _hpDrain()
+        //{
+            //Tween tween = GetNode<Tween>("Tween");
+            //tween.InterpolateProperty(_healthDrain, "value",
+            //_healthDrain.Value, _localHp, 0.3f,
+            //Tween.TransitionType.Linear, Tween.EaseType.InOut);
+            //tween.Start();
+            //_healthDrain.Value = _localHp;
+        //}
 
         private void _onPause(bool visible)
         {
-            GD.Print(visible);
             EmitSignal("on_pause");
             _pauseContainer.Visible = visible;
         }

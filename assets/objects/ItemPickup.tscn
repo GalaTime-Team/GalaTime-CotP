@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
+[ext_resource path="res://assets/shaders/outline.tres" type="Material" id=1]
 [ext_resource path="res://sprites/gui/abilities/ignis/fire_ball.png" type="Texture" id=2]
 [ext_resource path="res://assets/scripts/objects/ItemPickup.cs" type="Script" id=4]
 
@@ -65,7 +66,7 @@ extents = Vector2( 20, 20 )
 position = Vector2( 0, 187 )
 z_index = 2
 collision_layer = 0
-collision_mask = 2
+collision_mask = 3
 script = ExtResource( 4 )
 spawnVelocity = Vector2( 100, 100 )
 itemId = "golden_holder_sword"
@@ -75,17 +76,20 @@ shape = SubResource( 22 )
 
 [node name="Sprite3" type="Sprite" parent="."]
 visible = false
+material = ExtResource( 1 )
 scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
 texture = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
+material = ExtResource( 1 )
 scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
 texture = ExtResource( 2 )
 
 [node name="Sprite2" type="Sprite" parent="."]
 visible = false
+material = ExtResource( 1 )
 scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
 texture = ExtResource( 2 )

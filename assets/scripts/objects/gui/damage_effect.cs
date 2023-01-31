@@ -32,8 +32,8 @@ public class damage_effect : Node2D
 
         Random rnd = new Random();
         Vector2 randomPosition = Vector2.Zero;
-        randomPosition.x = rnd.Next(-10, 10);
-        randomPosition.y = rnd.Next(-10, 10);
+        randomPosition.x = rnd.Next(-20, 20);
+        randomPosition.y = rnd.Next(-20, 20);
         _position.Position = randomPosition;
         
         Color color = damageEffectColors.equal;
@@ -57,8 +57,15 @@ public class damage_effect : Node2D
         }
         _text.Set("custom_colors/font_color", color);
 
+        var scale = _text.RectScale;
+        var scaleAmount = Mathf.Clamp((float)number / 4, 0.75f, 1.25f);
+        var animationSpeed = 4 - Mathf.Clamp((float)number / 2, 0f, 3f);
+        scale.x = scaleAmount;
+        scale.y = scaleAmount;
+        _text.RectScale = scale;
         _text.Text = symbol + Convert.ToString(number);
 
+        _animation.PlaybackSpeed = animationSpeed;
         _animation.Play("damage");
     }
 }

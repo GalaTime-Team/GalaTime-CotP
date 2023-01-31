@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/fonts/m5x7.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/fonts/m3x6.tres" type="DynamicFont" id=2]
-[ext_resource path="res://assets/scripts/objects/InventoryTooltip.cs" type="Script" id=3]
+[ext_resource path="res://assets/scripts/objects/Tooltip.cs" type="Script" id=3]
 
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0, 0, 0, 1 )
