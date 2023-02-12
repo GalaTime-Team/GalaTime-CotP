@@ -11,6 +11,8 @@ public class slot_container : GridContainer
 
     public PlayerVariables playerVariables;
 
+    private int _previousItemId; 
+
     [Signal] public delegate void guiChanged();
 
     public override void _Ready()
@@ -23,6 +25,7 @@ public class slot_container : GridContainer
         playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
         gui.Connect("items_changed", this, "_on_inventory_items_changed");
+        gui.Connect("on_pause", this, "_onPause");
         PackedScene slot = GD.Load<PackedScene>("res://assets/objects/Slot.tscn");
         for (int i = 0; i < playerVariables.slots; i++)
         {
@@ -39,6 +42,13 @@ public class slot_container : GridContainer
             AddChild(ItemSlot);
         }
     }
+
+    public void _onPause()
+    {
+        var draggedItem = (Godot.Collections.Dictionary)dragPreview.Get("draggedItem");
+        if (draggedItem != null) if (draggedItem.Count >= 0) playerVariables.setItem(draggedItem, _previousItemId);
+        dragPreview.draggedItem = null;
+    } 
 
     void _on_inventory_items_changed()
     {
@@ -88,6 +98,7 @@ public class slot_container : GridContainer
         {
             GD.Print("pick");
             dragPreview.Call("setDraggedItem", playerVariables.removeItem(nodeItem.GetIndex()));
+            _previousItemId = nodeItem.GetIndex();
         }
         else if (inventoryItem.Count <= 0 && draggedItem.Count >= 0)
         {
@@ -110,6 +121,7 @@ public class slot_container : GridContainer
                 return;
             }
             dragPreview.Call("setDraggedItem", playerVariables.setItem(draggedItem, nodeItem.GetIndex()));
+            _previousItemId = nodeItem.GetIndex();
         }
     }
 }

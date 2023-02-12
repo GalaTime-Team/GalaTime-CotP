@@ -9,7 +9,8 @@ namespace Galatime
         [Export] NodePath visualNode;
         [Export] NodePath executeNode;
         [Export] string method;
-        [Export] string[] args;  
+        [Export] string[] args;
+        [Export] bool changeState = true;
 
         [Signal] delegate void dialog(string id);
 
@@ -33,7 +34,7 @@ namespace Galatime
             _collisionArea.Connect("body_entered", this, "_onEntered");
             _collisionArea.Connect("body_exited", this, "_onExit");
 
-            _shader = GD.Load<ShaderMaterial>("res://assets/shaders/outline.tres");
+            _shader = GD.Load<ShaderMaterial>("res://assets/shaders/outline.tres").Duplicate() as ShaderMaterial;
             _playerBody = GetNode<KinematicBody2D>(Galatime.GalatimeConstants.playerBodyPath);
             _playerNode = GetNode<Node2D>(Galatime.GalatimeConstants.playerPath);
 
@@ -42,6 +43,8 @@ namespace Galatime
 
             _node = GetNode<Node2D>(visualNode);
             _executeNode = GetNode<Node>(executeNode);
+
+            GD.Print(changeState + " fawfawfawf " + method);
         }
 
         public void _onEntered(Node node)
@@ -61,7 +64,7 @@ namespace Galatime
                     _interactShaderInterpolate(0.02f, 0, 0.1f);
                 }
             }
-            canInteract = true;
+            if (changeState) canInteract = true;
         }
 
         private void _interactShaderInterpolate(float from, float to, float durationSec)
@@ -82,17 +85,16 @@ namespace Galatime
                 {
                     GD.Print(_executeNode.HasMethod(method));
                     _executeNode.Call(method, args);
-                    canInteract = false;
-                    _interactShaderInterpolate(0.02f, 0, 0.1f);
+                    if (changeState) canInteract = false;
+                    if (changeState) _interactShaderInterpolate(0.02f, 0, 0.1f);
                 }
             }
         }
         public async void _OnDialogEnd()
         {
-
             GD.Print("end");
             await ToSignal(GetTree().CreateTimer(0.1f), "timeout");
-            canInteract = true;
+            if (changeState) canInteract = true;
         }
     }
 }

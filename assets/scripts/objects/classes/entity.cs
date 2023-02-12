@@ -2,13 +2,13 @@ using Godot;
 using System;
 using Galatime;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Galatime
 {
     public class Entity : Node2D
     {
         [Export] public float speed = 200f;
-        public float health = 100f;
         public Vector2 velocity = Vector2.Zero;
 
         public PackedScene scene = (PackedScene)GD.Load("res://assets/objects/DamageAnimationPlayer.tscn");
@@ -22,11 +22,22 @@ namespace Galatime
         public List<dynamic> lootPool = new List<dynamic>();
         public bool _deathState = false;
 
+        public float health = 0;
+
         public Vector2 _knockbackVelocity = Vector2.Zero;
 
         [Signal] delegate void _onDamage();
 
-
+        /// <summary>
+        /// Damages and reduces entity health. If health is less than 0 it will call the function <c>_deathEvent()</c>. 
+        /// It will also call the <c>_healthChangedEvent()</c> function 
+        /// </summary>
+        /// <param name="power">Attacker PWR</param>
+        /// <param name="attackStat">Attacker ATK</param>
+        /// <param name="elemen">Attacker element</param>
+        /// <param name="type">Damage type</param>
+        /// <param name="knockback">The Power of Knockback</param>
+        /// <param name="damageRotation">In radians, will knockback this way. 100 is small knockback</param>
         public void hit(float power, float attackStat, GalatimeElement elemen, DamageType type = DamageType.physical, float knockback = 0f, float damageRotation = 0f)
         {
             if (_deathState) return;
@@ -87,10 +98,11 @@ namespace Galatime
             // Final
             setKnockback(knockback, damageRotation);
 
-            stats.health -= damageN;
-            stats.health = (float)Math.Round(stats.health, 2);
-            _healthChangedEvent(stats.health);
-            if (stats.health <= 0)
+            health -= damageN;
+            health = (float)Math.Round(health, 2);
+            _healthChangedEvent(health);
+            GD.Print(health);
+            if (health <= 0)
             {
                 _deathEvent(damageRotation);
             }
@@ -122,16 +134,19 @@ namespace Galatime
         /// </summary>
         public virtual void _deathEvent(float damageRotation = 0f) {
             _deathState = true;
-            
         }
 
         /// <summary>
         /// If entity changed his health
         /// </summary>
-        public virtual void _healthChangedEvent(float health) {
-
+        public virtual void _healthChangedEvent(float health)
+        {
         }
 
+        /// <summary>
+        /// Drop loot from entity
+        /// </summary>
+        /// <param name="damageRotation"></param>
         public virtual void _dropLoot(float damageRotation)
         {
             PackedScene itemPickupScene = GD.Load<PackedScene>("res://assets/objects/ItemPickup.tscn");
@@ -158,7 +173,35 @@ namespace Galatime
 
         public void heal(float amount, int timeToHeal = 0)
         {
+            if (damageSpritePlayer == null)
+            {
+                Node damageSpritePlayerInstance = scene.Instance();
+                body.AddChild(damageSpritePlayerInstance);
+                damageSpritePlayer = body.GetNode<AnimationPlayer>("DamageAnimationPlayer");
 
+                Animation damageAnimation = damageSpritePlayer.GetAnimation("heal");
+                damageAnimation.TrackSetPath(0, "Sprite:modulate");
+            }
+
+            if (damageSpritePlayer is AnimationPlayer)
+            {
+                damageSpritePlayer.Stop();
+                damageSpritePlayer.Play("heal");
+            }
+
+            PackedScene damageEffect = (PackedScene)GD.Load("res://assets/objects/gui/damage_effect.tscn");
+            Node2D damageEffectInstance = damageEffect.Instance() as Node2D;
+
+            damageEffectInstance.Set("number", amount);
+            damageEffectInstance.Set("type", "heal");
+            damageEffectInstance.SetAsToplevel(true);
+
+            damageEffectInstance.GlobalPosition = body.GlobalPosition;
+            AddChild(damageEffectInstance);
+
+            health += amount;
+            health = Math.Min(stats.health, health);
+            _healthChangedEvent(health);
         }
 
         public void effect(GalatimeElement type, int duration)

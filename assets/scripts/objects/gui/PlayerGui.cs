@@ -1,4 +1,4 @@
-using Godot;
+        using Godot;
 using System;
 using Galatime;
 using System.Collections.Generic;
@@ -17,13 +17,17 @@ namespace Galatime
         // Stats
         private TextureProgress _health;
         private TextureProgress _stamina;
+        private TextureProgress _mana;
         private TextureProgress _healthDrain;
 
         // Text Stats
         private Godot.Label _textStamina;
         private Godot.Label _textHealth;
+        private Godot.Label _textMana;
         private Godot.Label _dodgeCountdownText;
         public Timer DodgeTextTimer;
+
+        private Godot.Label _versionText;
 
         private NinePatchRect _dialogBox;
 
@@ -47,10 +51,12 @@ namespace Galatime
             // Stats
             _health = GetNode<TextureProgress>("HealthProgress");
             _stamina = GetNode<TextureProgress>("StaminaProgress");
+            _mana = GetNode<TextureProgress>("ManaProgress");
             // _healthDrain = GetNode<TextureProgress>("status/hp_drain");
 
             // Text Stats
             _textStamina = GetNode<Godot.Label>("stamina_text");
+            _textMana = GetNode<Godot.Label>("mana_text");
             _textHealth = GetNode<Godot.Label>("hp_text");
             _dodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
 
@@ -63,9 +69,11 @@ namespace Galatime
             _player.Connect("fade", this, "onFade");
             _player.Connect("healthChanged", this, "onHealthChanged");
             _player.Connect("on_stamina_changed", this, "onStaminaChanged");
+            _player.Connect("on_mana_changed", this, "onManaChanged");
             _player.Connect("on_dialog_start", this, "startDialog");
             _player.Connect("on_pause", this, "_onPause");
             _player.Connect("on_ability_add", this, "addAbility");
+            _player.Connect("on_ability_remove", this, "removeAbility");
             _player.Connect("reloadAbility", this, "reloadAbility");
             _player.Connect("reloadDodge", this, "reloadDodge");
             _player.Connect("sayNoToAbility", this, "pleaseSayNoToAbility");
@@ -74,6 +82,9 @@ namespace Galatime
             DodgeTextTimer = new Timer();
             DodgeTextTimer.Connect("timeout", this, "_reloadingDodge");
             AddChild(DodgeTextTimer);
+
+            _versionText = GetNode<Godot.Label>("Version");
+            _versionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
         }
 
         public void onFade(string type)
@@ -112,9 +123,22 @@ namespace Galatime
             _textStamina.Text = stamina + " STAM";
         }
 
+        public void onManaChanged(float mana)
+        {
+            // _staminaAnimation.Play("pulse");
+            _mana.Value = mana;
+            _textMana.Text = mana + " MANA";
+        }
+
         public void addAbility(GalatimeAbility ab, int i)
         {
             _abilitiesContainer.GetChild<AbilityContainer>(i).load(ab.texture, ab.reload);
+            GD.Print(ab.texture.GetPath());
+        }
+
+        public void removeAbility(int i)
+        {
+            _abilitiesContainer.GetChild<AbilityContainer>(i).unload();
         }
 
         public void reloadDodge()

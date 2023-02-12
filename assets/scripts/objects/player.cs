@@ -16,19 +16,23 @@ namespace Galatime
 
         // Variables
         private int slots = 16;
-        private float mana, ultimate = 100f;
+        public float mana { get; private set; }
         public float stamina { get; private set; }
+        public float xp;
         private bool _isPause = false;
         private bool _isDodge = false;
         private bool _canDodge = true;
 
-        private PackedScene[] _abilities = new PackedScene[3];
-        private Timer[] _abilitiesTimers = new Timer[3];
-        private int[] _abiltiesReloadTimes = new int[3];
+        public PackedScene[] _abilities = new PackedScene[3];
+        public Timer[] _abilitiesTimers = new Timer[3];
+        public int[] _abiltiesReloadTimes = new int[3];
 
         private Timer _staminaCountdownTimer;
         private Timer _staminaRegenTimer;
+        private Timer _manaCountdownTimer;
+        private Timer _manaRegenTimer;
         private Timer _dodgeTimer;
+        private Timer _abilityCountdownTimer;
 
         private Vector2 _vectorRotation;
 
@@ -54,10 +58,12 @@ namespace Galatime
         [Signal] public delegate void fade(string type);
         [Signal] public delegate void healthChanged(float health);
         [Signal] public delegate void on_stamina_changed(float stamina);
+        [Signal] public delegate void on_mana_changed(float mana);
         [Signal] public delegate void on_interact();
         [Signal] public delegate void on_dialog_start(string id);
         [Signal] public delegate void on_dialog_end();
         [Signal] public delegate void on_ability_add(GalatimeAbility ab);
+        [Signal] public delegate void on_ability_remove(int i);
         [Signal] public delegate void reloadAbility(int i);
         [Signal] public delegate void reloadDodge();
         [Signal] public delegate void sayNoToAbility(int i);
@@ -91,9 +97,9 @@ namespace Galatime
                 elementDebug += element.DamageMultipliers[item] + ", ";
             }
 
-            _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 0);
-            _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 1);
-            _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 2);
+            // _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 0);
+            // _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 1);
+            // _playerVariables.setAbility(GalatimeGlobals.getAbilityById("flamethrower"), 2);
 
             stats = new EntityStats
             {
@@ -116,7 +122,9 @@ namespace Galatime
 
             EmitSignal("fade", "out");
 
-            stamina = 150;
+            stamina = stats.stamina;
+            mana = stats.mana;
+            health = stats.health;
 
             cameraOffset = Vector2.Zero;
 
@@ -132,11 +140,28 @@ namespace Galatime
             _staminaRegenTimer.Connect("timeout", this, "_regenStamina");
             AddChild(_staminaRegenTimer);
 
+            _manaCountdownTimer = new Timer();
+            _manaCountdownTimer.WaitTime = 5f;
+            _manaCountdownTimer.OneShot = true;
+            _manaCountdownTimer.Connect("timeout", this, "_onCountdownManaRegen");
+            AddChild(_manaCountdownTimer);
+
+            _manaRegenTimer = new Timer();
+            _manaRegenTimer.WaitTime = 1f;
+            _manaRegenTimer.OneShot = false;
+            _manaRegenTimer.Connect("timeout", this, "_regenMana");
+            AddChild(_manaRegenTimer);
+
             _dodgeTimer = new Timer();
             _dodgeTimer.WaitTime = 2f;
             _dodgeTimer.OneShot = true;
             _dodgeTimer.Connect("timeout", this, "_onCountdownDodge");
             AddChild(_dodgeTimer);
+
+            _abilityCountdownTimer = new Timer();
+            _abilityCountdownTimer.WaitTime = 1f;
+            _abilityCountdownTimer.OneShot = true;
+            AddChild(_abilityCountdownTimer);
         }
 
         private void _SetAnimation(Vector2 animationVelocity, bool idle)
@@ -177,42 +202,63 @@ namespace Galatime
             EmitSignal("on_ability_add", ability, i);
             var binds = new Godot.Collections.Array();
             binds.Add(i);
+            if (_abilitiesTimers[i] != null) _abilitiesTimers[i].Stop();
+            _abiltiesReloadTimes[i] = 0;
             _abilitiesTimers[i] = new Timer();
             _abilitiesTimers[i].Connect("timeout", this, "_abilitiesCountdown", binds);
             AddChild(_abilitiesTimers[i]);
+        }
+
+        public void removeAbility(int i)
+        {
+            _abilities[i] = null;
+            if (_abilitiesTimers[i] != null) _abilitiesTimers[i].Stop();
+            _abiltiesReloadTimes[i] = 0;
+            EmitSignal("on_ability_remove", i);
         }
 
         private void _abilitiesCountdown(int i)
         {
             if (_abiltiesReloadTimes[i] <= 0) _abilitiesTimers[i].Stop();
             _abiltiesReloadTimes[i]--;
+            GD.Print(_abiltiesReloadTimes[i] + " time");
         }
 
         private void _useAbility(int i)
         {
             try
             {
-                if (_abiltiesReloadTimes[i] <= 0)
+                if (_abiltiesReloadTimes[i] <= 0 && _abilityCountdownTimer.TimeLeft == 0)
                 {
+                    _abilityCountdownTimer.Start();
                     var ability = _abilities[i].Instance<GalatimeAbility>();
-                    if (ability.costs.ContainsKey("stamina")) { 
-                        if (stamina - ability.costs["stamina"] < 0) 
-                        { 
-                            EmitSignal("sayNoToAbility", i); return; 
-                        } 
+                    if (ability.costs.ContainsKey("stamina"))
+                    {
+                        if (stamina - ability.costs["stamina"] < 0)
+                        {
+                            EmitSignal("sayNoToAbility", i); return;
+                        }
+                        reduceStamina(ability.costs["stamina"]);
                     }
-                    if (ability.costs.ContainsKey("mana")) {
-                        if (stamina - ability.costs["mana"] < 0) {
-                            EmitSignal("sayNoToAbility", i); return; 
-                        } 
+                    if (ability.costs.ContainsKey("mana"))
+                    {
+                        if (mana - ability.costs["mana"] < 0)
+                        {
+                            EmitSignal("sayNoToAbility", i); return;
+                        }
+                        reduceMana(ability.costs["mana"]);
+                        GD.Print($"mana cost {ability.costs["mana"]}");
                     }
                     GetParent().AddChild(ability);
                     EmitSignal("reloadAbility", i);
                     ability.execute(this, stats.physicalAttack, stats.magicalAttack);
-                    reduceStamina(ability.costs["stamina"]);
                     _abilitiesTimers[i].Stop();
                     _abilitiesTimers[i].Start();
                     _abiltiesReloadTimes[i] = (int)Math.Round(ability.reload);
+                }
+                else
+                {
+                    EmitSignal("sayNoToAbility", i); return;
                 }
             }
             catch (Exception ex)
@@ -295,18 +341,25 @@ namespace Galatime
 
         public void _abilitiesChanged()
         {
-            GD.Print("worksasfakjwlofghakwjfjkawfg");
             var obj = (Godot.Collections.Dictionary)PlayerVariables.abilities;
-            GD.Print(obj);
             for (int i = 0; i < obj.Count; i++)
             {
                 var ability = (Godot.Collections.Dictionary)obj[i];
                 if (ability.Contains("path"))
                 {
-                    addAbility((string)ability["path"], i);
+                    var existAbility = _abilities[i];
+                    if (existAbility != null)
+                    {
+                        if ((string)ability["path"] != existAbility.ResourcePath) addAbility((string)ability["path"], i);
+                    }
+                    else
+                    {
+                        addAbility((string)ability["path"], i);
+                    }
                 }
                 else
                 {
+                    removeAbility(i);
                     GD.PushWarning("no path " + i);
                 }
             }
@@ -315,8 +368,15 @@ namespace Galatime
         public void reduceStamina(float stam)
         {
             stamina -= stam;
-            stamina = Mathf.Clamp(stamina, 0, 150);
+            stamina = Mathf.Clamp(stamina, 0, stats.stamina);
             _OnStaminaChanged(stamina);
+        }
+
+        public void reduceMana(float man)
+        {
+            mana -= man;
+            mana = Mathf.Clamp(mana, 0, stats.mana);
+            _OnManaChanged(mana);
         }
 
         private void _OnStaminaChanged(float stam)
@@ -332,17 +392,39 @@ namespace Galatime
             _staminaRegenTimer.Start();
         }
 
+        private void _OnManaChanged(float mana)
+        {
+            _manaRegenTimer.Stop();
+            _manaCountdownTimer.Start();
+            EmitSignal("on_mana_changed", mana);
+        }
+
+        public void _onCountdownManaRegen()
+        {
+            _manaCountdownTimer.Stop();
+            _manaRegenTimer.Start();
+        }
+
         public void _regenStamina()
         {
             stamina += 10;
-            stamina = Mathf.Clamp(stamina, 0, 150);
+            stamina = Mathf.Clamp(stamina, 0, stats.stamina);
             EmitSignal("on_stamina_changed", stamina);
-            if (stamina >= 150) _staminaRegenTimer.Stop();
+            heal(5);
+            if (stamina >= stats.stamina) _staminaRegenTimer.Stop();
+        }
+
+        public void _regenMana()
+        {
+            mana += 10;
+            mana = Mathf.Clamp(mana, 0, stats.mana);
+            EmitSignal("on_mana_changed", mana);
+            if (mana >= stats.mana) _manaRegenTimer.Stop();
         }
 
         public override void _Process(float delta)
         {
-            _debug.Text = $"hp {health} stamina {stamina} mana {mana} ultimate {ultimate} element {element.name}";
+            _debug.Text = $"hp {health} stamina {stamina} mana {mana} element {element.name}";
         }
 
         private void _onItemsChanged()
@@ -397,14 +479,14 @@ namespace Galatime
 
             if (@event.IsActionPressed("game_dodge"))
             {
-                if (stamina - 20 >= 0 && _canDodge)
+                if (stamina - 20 >= 0 && _canDodge && canMove)
                 {
                     _canDodge = false;
                     _isDodge = true;
                     float direction = weapon.Rotation + 3.14159f;
                     setKnockback(1200, direction);
                     _trailParticles.Emitting = true;
-                    reduceStamina(20);
+                    reduceStamina(15);
                     _dodgeTimer.Start();
                     EmitSignal("reloadDodge");
                     await ToSignal(GetTree().CreateTimer(0.3f), "timeout");

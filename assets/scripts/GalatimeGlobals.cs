@@ -1,5 +1,8 @@
 using Godot;
 using System;
+using Discord;
+using DiscordRPC;
+using Galatime;
 
 public sealed class GalatimeGlobals : Node
 {
@@ -7,6 +10,12 @@ public sealed class GalatimeGlobals : Node
     public static Godot.Collections.Dictionary ablitiesList = new Godot.Collections.Dictionary();
     public static string pathListItems = "res://assets/data/json/items.json";
     public static string pathListAbilities = "res://assets/data/json/abilities.json";
+
+    //itemList = _getItemsFromJson();
+    //ablitiesList = _getAbilitiesFromJson();
+    //1071756821158699068
+
+    public Discord.Discord discord;
 
     /// <summary>
     /// Slot type for inventory
@@ -17,11 +26,43 @@ public sealed class GalatimeGlobals : Node
         slotSword
     }
 
-
-    public override void _Ready()
+    public override async void _Ready()
     {
         itemList = _getItemsFromJson();
         ablitiesList = _getAbilitiesFromJson();
+
+        discord = new Discord.Discord(1071756821158699068, (System.UInt64)Discord.CreateFlags.NoRequireDiscord);
+        var activityManager = discord.GetActivityManager();
+
+        var activity = new Activity()
+        {
+            Assets =
+            {
+                LargeImage = "default",
+                LargeText = "GalaTime " + GalatimeConstants.version,
+                SmallImage = "day_1",
+                SmallText = "1st day"
+            },
+            Timestamps =
+            {
+                Start = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+            },
+            State = "In Play",
+            Details = ""
+        };
+
+        activityManager.UpdateActivity(activity, (res) =>
+        {
+            if (res == Discord.Result.Ok)
+            {
+                GD.Print("Everything is fine!");
+            }
+        });
+    }
+
+    public override void _Process(float delta)
+    {
+        if (discord != null) discord.RunCallbacks();
     }
 
     private static Godot.Collections.Dictionary _getAbilitiesFromJson()

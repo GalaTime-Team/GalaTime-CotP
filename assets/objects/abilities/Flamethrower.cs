@@ -18,7 +18,7 @@ namespace Galatime
             GD.Load("res://sprites/gui/abilities/ignis/flamethrower.png") as Texture,
             5,
             2f,
-            new System.Collections.Generic.Dictionary<string, float>() { { "stamina", 0 } }
+            new System.Collections.Generic.Dictionary<string, float>() { { "mana", 10 } }
         )
         { }
 

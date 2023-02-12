@@ -8,7 +8,7 @@ namespace Galatime {
     {
         private Vector2 _velocity;
 
-        public float speed = 10;
+        public float speed = 500;
         public bool canMove = true;
 
         private AnimationPlayer _animationPlayer;
@@ -20,7 +20,7 @@ namespace Galatime {
             GD.Load("res://sprites/gui/abilities/ignis/fire_ball.png") as Texture,
             5,
             2f,
-            new System.Collections.Generic.Dictionary<string, float>() { { "stamina", 10 } }
+            new System.Collections.Generic.Dictionary<string, float>() { { "mana", 10 } }
         ) { }
 
         public override async void _Ready()
@@ -73,7 +73,8 @@ namespace Galatime {
         {
             if (canMove)
             {
-                _kinematicBody.MoveAndCollide(_velocity.Rotated(Rotation) * speed);
+                if (_kinematicBody.IsOnWall()) destroy();
+                _kinematicBody.MoveAndSlide(_velocity.Rotated(Rotation) * speed);
             }
         }
     }

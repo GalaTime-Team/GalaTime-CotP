@@ -12,6 +12,8 @@ namespace Galatime {
         public Timer clockTimer;
         public Timer textTimer;
 
+        public Texture defaultTexture = GD.Load<Texture>("res://sprites/gui/abilities/empty.png"); 
+
         private float _remaining;
         private float _delay;
         private float _shakeAmount = 0;
@@ -52,6 +54,12 @@ namespace Galatime {
             reloadTime = reload;
         }
 
+        public void unload()
+        {
+            sprite.TextureUnder = defaultTexture;
+            reloadTime = 2;
+        }
+
         public void startReload()
         {
             // if (reloadTime <= 0) GD.Print("Ability is less that 0"); return;
@@ -73,6 +81,13 @@ namespace Galatime {
             _shakeAmount += 2;
             animationPlayer.Stop();
             animationPlayer.Play("no");
+        }
+
+        public void click() 
+        {
+            _shakeAmount += 0.5f;
+            animationPlayer.Stop();
+            animationPlayer.Play("click");
         }
 
         public async void _loading()

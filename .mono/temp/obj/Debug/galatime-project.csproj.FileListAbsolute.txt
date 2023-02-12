@@ -10,3 +10,12 @@ D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.pdb
 D:\Projects\galatime-project\.mono\temp\bin\Debug\galatime-project.deps.json
 D:\Projects\galatime-project\.mono\temp\bin\Debug\Microsoft.CSharp.dll
 D:\Projects\galatime-project\.mono\temp\obj\Debug\galatime-project.csproj.CopyComplete
+D:\Projects\galatime-project\.mono\temp\bin\Debug\DiscordRPC.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\Microsoft.Win32.Registry.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\Newtonsoft.Json.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\System.Buffers.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\System.Memory.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\System.Numerics.Vectors.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\System.Security.AccessControl.dll
+D:\Projects\galatime-project\.mono\temp\bin\Debug\System.Security.Principal.Windows.dll

@@ -39,6 +39,11 @@ namespace Galatime
                     var ab = abilityContainers[i] as AbilityContainer;
                     ab.load(icon, 2);
                 }
+                else
+                {
+                    var ab = abilityContainers[i] as AbilityContainer;
+                    ab.unload();
+                }
             }
         }
 
@@ -49,7 +54,33 @@ namespace Galatime
                 var @mouseEvent = @event as InputEventMouseButton;
                 if (@mouseEvent.ButtonIndex == 1 && mouseEvent.Pressed)
                 {
+                    var abilityContainer = abilityContainers[id] as AbilityContainer;
+                    for (int i = 0; i < PlayerVariables.abilities.Count; i++)
+                    {
+                        var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
+                        if (ability.Contains("id"))
+                        {
+                            if ((string)ability["id"] == choiseId)
+                            {
+                                GD.Print(i + " id " + _playerVariables.isAbilityReloaded(i));
+                                if (_playerVariables.isAbilityReloaded(i) && _playerVariables.isAbilityReloaded(id))
+                                {
+                                    var previous = (Godot.Collections.Dictionary)PlayerVariables.abilities[id];
+                                    _playerVariables.setAbility(GalatimeGlobals.getAbilityById(choiseId), id);
+                                    _playerVariables.setAbility(previous, i);
+                                    abilityContainer.click();
+                                    return;
+                                }
+                                else
+                                {
+                                    abilityContainer.no();
+                                    return;
+                                }
+                            }
+                        }
+                    }
                     _playerVariables.setAbility(GalatimeGlobals.getAbilityById(choiseId), id);
+                    abilityContainer.click();
                 }
             }
         }

@@ -8,7 +8,7 @@ namespace Galatime {
     {
         private Vector2 _velocity;
 
-        public float speed = 10;
+        public float speed = 500;
         public bool canMove = true;
 
         private AnimationPlayer _animationPlayer;
@@ -40,7 +40,7 @@ namespace Galatime {
         public async void execute(float rotation, float physicalAttack, float magicalAttack, Vector2 position)
         {
             var rand = new Random();
-            Rotation = rotation + (float)rand.NextDouble() / 10 * rand.Next(-1, 2);
+            Rotation = rotation + (float)rand.NextDouble() / 5 * rand.Next(-1, 2);
             _kinematicBody.GlobalPosition = position;
             _velocity.x += 1;
             _animationPlayer.Play("intro");
@@ -64,7 +64,7 @@ namespace Galatime {
             if (canMove)
             {
                 if (_kinematicBody.IsOnWall()) destroy();
-                _kinematicBody.MoveAndCollide(_velocity.Rotated(Rotation) * speed);
+                _kinematicBody.MoveAndSlide(_velocity.Rotated(Rotation) * speed);
             }
         }
     }

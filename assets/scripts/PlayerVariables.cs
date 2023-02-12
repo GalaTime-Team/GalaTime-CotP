@@ -1,3 +1,4 @@
+﻿using Galatime;
 using Godot;
 using System;
 
@@ -13,6 +14,8 @@ public class PlayerVariables : Node
     [Signal] public delegate void items_changed();
     [Signal] public delegate void abilities_changed();
 
+    public static Player player;
+
     public override void _Ready()
     {
         for (int i = 0; i < slots; i++)
@@ -26,6 +29,24 @@ public class PlayerVariables : Node
             abilities.Add(i, new Godot.Collections.Dictionary());
         }
         EmitSignal("abilities_changed", abilities);
+
+        player = GetTree().GetNodesInGroup("player")[0] as Player;
+    }
+
+    public bool isAbilityReloaded(int id)
+    {
+        if (player == null)
+        {
+            GD.PrintErr("Сouldn't find a player, return false"); return false;
+        }
+        if (player._abiltiesReloadTimes[id] <= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 
@@ -113,6 +134,23 @@ public class PlayerVariables : Node
         }
         abilities[slot] = ability;
         EmitSignal("abilities_changed");
+    }
+
+    /// <summary>
+    /// Removes ability item from slot
+    /// </summary>
+    /// <param name="slot">Item slot to delete</param>
+    /// <returns>Previous ability</returns>
+    public Godot.Collections.Dictionary removeAbility(int slot)
+    {
+        // Get pervious item to return
+        Godot.Collections.Dictionary previousItem = new Godot.Collections.Dictionary();
+        if (abilities.Contains(slot)) previousItem = (Godot.Collections.Dictionary)abilities[slot];
+        // Remove item
+        abilities[slot] = new Godot.Collections.Dictionary();
+        // Send item_changed signal to GUI
+        EmitSignal("abilities_changed");
+        return previousItem;
     }
 
     /// <summary> Set inventory item to slot </summary>

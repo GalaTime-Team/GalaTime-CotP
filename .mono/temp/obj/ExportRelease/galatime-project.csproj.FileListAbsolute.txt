@@ -8,3 +8,14 @@ D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.Assem
 D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.csproj.CoreCompileInputs.cache
 D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.dll
 D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.pdb
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\DiscordRPC.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\Microsoft.CSharp.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\Microsoft.Win32.Registry.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\Newtonsoft.Json.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\System.Buffers.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\System.Memory.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\System.Numerics.Vectors.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\System.Runtime.CompilerServices.Unsafe.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\System.Security.AccessControl.dll
+D:\Projects\galatime-project\.mono\temp\bin\ExportRelease\System.Security.Principal.Windows.dll
+D:\Projects\galatime-project\.mono\temp\obj\ExportRelease\galatime-project.csproj.CopyComplete

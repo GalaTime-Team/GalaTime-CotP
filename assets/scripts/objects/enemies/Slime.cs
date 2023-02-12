@@ -16,7 +16,9 @@ public class Slime : Entity
     private Area2D _weapon;
     private AnimationPlayer _animationPlayer;
 
-    public new EntityStats stats = new EntityStats 
+    private Timer _attackCountdownTimer;
+
+    public EntityStats stats = new EntityStats 
     {
         physicalAttack = 21,
         magicalAttack = 22,
@@ -42,14 +44,23 @@ public class Slime : Entity
         _player = GetNode<Player>("/root/Node2D/Player");
         _line = GetNode<Line2D>("Line");
 
+        health = stats.health;
+
         _sprite = GetNode<Sprite>("Body/Sprite");
         _navigation = GetNode<NavigationAgent2D>("Body/NavigationAgent");
 
         _weapon = GetNode<Area2D>("Body/Weapon");
 
-        health = 10;
-
         _weapon.Connect("body_entered", this, "_attack");
+        _weapon.Connect("body_exited", this, "_onAreaExit");
+
+        _attackCountdownTimer = new Timer();
+        _attackCountdownTimer.WaitTime = 1f;
+        _attackCountdownTimer.OneShot = true;
+        _attackCountdownTimer.Connect("timeout", this, "justHit");
+        AddChild(_attackCountdownTimer);
+
+        _animationPlayer.Play("intro");
     }
 
     public override void _moveProcess()
@@ -77,7 +88,7 @@ public class Slime : Entity
         _animationPlayer.Play("outro");
     }
 
-    public void _attack(KinematicBody2D body)
+    public async void _attack(KinematicBody2D body)
     {
         if (!_deathState)
         {
@@ -90,8 +101,26 @@ public class Slime : Entity
             if (parent.HasMethod("hit"))
             {
                 parent.hit(30, stats.physicalAttack, element, DamageType.physical, 250, damageRotation);
+                _attackCountdownTimer.Start();
             }
         }
+    }
+
+    public void justHit()
+    {
+        var bodies = _weapon.GetOverlappingBodies()[0] as KinematicBody2D;
+        Entity parent = bodies.GetParent<Entity>();
+        float damageRotation = _sprite.GlobalTransform.origin.AngleToPoint(bodies.GlobalTransform.origin);
+        if (parent.HasMethod("hit"))
+        {
+            parent.hit(30, stats.physicalAttack, element, DamageType.physical, 250, damageRotation);
+            _attackCountdownTimer.Start();
+        }
+    }
+
+    public void _onAreaExit(KinematicBody2D body)
+    {
+        _attackCountdownTimer.Stop();
     }
 
     public void move() {

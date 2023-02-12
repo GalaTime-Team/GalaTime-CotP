@@ -21,7 +21,7 @@ namespace Galatime
             GD.Load("res://sprites/gui/abilities/ignis/blue_fire_ball.png") as Texture,
             10,
             2f,
-            new System.Collections.Generic.Dictionary<string, float>() { { "stamina", 20 } }
+            new System.Collections.Generic.Dictionary<string, float>() { { "mana", 10 }, { "stamina", 5 } }
         )
         { }
 

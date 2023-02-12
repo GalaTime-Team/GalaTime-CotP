@@ -45,9 +45,9 @@ namespace Galatime {
             }
         }
 
-        public void _display(string abilityId)
+        public void _display(Godot.Collections.Dictionary abilityId)
         {
-            var ability = GalatimeGlobals.getAbilityById(abilityId);
+            var ability = abilityId;
             if (ability != null && ability.Count != 0)
             {
                 nameNode.Text = ability.Contains("name") ? (string)ability["name"] : "Undefined item";
