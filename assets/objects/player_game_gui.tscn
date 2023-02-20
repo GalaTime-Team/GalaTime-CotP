@@ -5,7 +5,7 @@
 [ext_resource path="res://sprites/gui/status/hp_progress_outline.png" type="Texture" id=3]
 [ext_resource path="res://sprites/gui/status/stamina_progress.png" type="Texture" id=4]
 [ext_resource path="res://sprites/gui/status/hp_progress.png" type="Texture" id=5]
-[ext_resource path="res://assets/scripts/objects/gui/PlayerGui.cs" type="Script" id=6]
+[ext_resource path="res://assets/scripts/gui/PlayerGui.cs" type="Script" id=6]
 [ext_resource path="res://sprites/gui/dialog/characters/arthur/surprised/suprised.tres" type="Texture" id=7]
 [ext_resource path="res://assets/objects/InventoryTooltip.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/fonts/m5x7.tres" type="DynamicFont" id=9]
@@ -838,6 +838,7 @@ bbcode_enabled = true
 bbcode_text = "Hp: [color=white]70[/color]
 Stamina: [color=white]65[/color]
 Mana: [color=white]65[/color]
+XP: [rainbow]0[/rainbow]
 
 Physic Attack: [color=white]75[/color]
 Magic Attack: [color=white]80[/color]
@@ -848,6 +849,7 @@ Magic Defence: [color=white]75[/color]"
 text = "Hp: 70
 Stamina: 65
 Mana: 65
+XP: 0
 
 Physic Attack: 75
 Magic Attack: 80
@@ -872,5 +874,5 @@ visible = false
 position = Vector2( 994, 322 )
 scale = Vector2( 2, 2 )
 frames = SubResource( 45 )
-frame = 11
+frame = 21
 playing = true

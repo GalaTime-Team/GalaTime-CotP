@@ -12,7 +12,7 @@ namespace Galatime
         private AnimationPlayer _fadeAnimation;
         // private AnimationPlayer _staminaAnimation;
 
-        private Node _player;
+        private Player _player;
 
         // Stats
         private TextureProgress _health;
@@ -25,6 +25,7 @@ namespace Galatime
         private Godot.Label _textHealth;
         private Godot.Label _textMana;
         private Godot.Label _dodgeCountdownText;
+        private RichTextLabel _textStats;
         public Timer DodgeTextTimer;
 
         private Godot.Label _versionText;
@@ -46,7 +47,7 @@ namespace Galatime
             _fadeAnimation = GetNode<AnimationPlayer>("fadeAnimation");
             // _staminaAnimation = GetNode<AnimationPlayer>("status/stamina_animation");
 
-            _player = GetNode("/root/Node2D/Player");
+            _player = PlayerVariables.player;
 
             // Stats
             _health = GetNode<TextureProgress>("HealthProgress");
@@ -58,6 +59,7 @@ namespace Galatime
             _textStamina = GetNode<Godot.Label>("stamina_text");
             _textMana = GetNode<Godot.Label>("mana_text");
             _textHealth = GetNode<Godot.Label>("hp_text");
+            _textStats = GetNode<RichTextLabel>("PauseContainer/Stats");
             _dodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
 
             _dialogBox = GetNode<NinePatchRect>("DialogBox");
@@ -66,17 +68,9 @@ namespace Galatime
 
             _abilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
 
-            _player.Connect("fade", this, "onFade");
             _player.Connect("healthChanged", this, "onHealthChanged");
             _player.Connect("on_stamina_changed", this, "onStaminaChanged");
             _player.Connect("on_mana_changed", this, "onManaChanged");
-            _player.Connect("on_dialog_start", this, "startDialog");
-            _player.Connect("on_pause", this, "_onPause");
-            _player.Connect("on_ability_add", this, "addAbility");
-            _player.Connect("on_ability_remove", this, "removeAbility");
-            _player.Connect("reloadAbility", this, "reloadAbility");
-            _player.Connect("reloadDodge", this, "reloadDodge");
-            _player.Connect("sayNoToAbility", this, "pleaseSayNoToAbility");
             GetNode<PlayerVariables>("/root/PlayerVariables").Connect("items_changed", this, "displayItem");
 
             DodgeTextTimer = new Timer();
@@ -128,6 +122,20 @@ namespace Galatime
             // _staminaAnimation.Play("pulse");
             _mana.Value = mana;
             _textMana.Text = mana + " MANA";
+        }
+
+        public void changeStats(EntityStats entityStats, float XP)
+        {
+            _textStats.BbcodeText = 
+                $"Hp: [color=white]{entityStats.health}[/color]\r\n" +
+                $"Stamina: [color=white]{entityStats.stamina}[/color]\r\n" +
+                $"Mana: [color=white]{entityStats.mana}[/color]\r\n" +
+                $"XP: [rainbow]{XP}[/rainbow]\r\n\r\n" +
+                $"Physic Attack: [color=white]{entityStats.physicalAttack}[/color]\r\n" +
+                $"Magic Attack: [color=white]{entityStats.magicalAttack}[/color]\r\n" +
+                $"Agility: [color=white]{entityStats.agility}[/color]\r\n\r\n" +
+                $"Physic Defence: [color=white]{entityStats.physicalDefence}[/color]\r\n" +
+                $"Magic Defence: [color=white]{entityStats.magicalAttack}[/color]";
         }
 
         public void addAbility(GalatimeAbility ab, int i)
@@ -188,7 +196,7 @@ namespace Galatime
             //_healthDrain.Value = _localHp;
         //}
 
-        private void _onPause(bool visible)
+        public void pause(bool visible)
         {
             EmitSignal("on_pause");
             _pauseContainer.Visible = visible;

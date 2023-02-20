@@ -1,4 +1,4 @@
-    using Godot;
+using Godot;
 using System;
 using Galatime;
 using System.Collections.Generic;
@@ -9,7 +9,6 @@ public class Slime : Entity
 {
     private Player _player = null;
     private Vector2[] _path = null;
-    private Line2D _line = null;
     private NavigationAgent2D _navigation = null;
 
     private Sprite _sprite;
@@ -18,7 +17,7 @@ public class Slime : Entity
 
     private Timer _attackCountdownTimer;
 
-    public EntityStats stats = new EntityStats 
+    public EntityStats stats = new EntityStats
     {
         physicalAttack = 21,
         magicalAttack = 22,
@@ -31,25 +30,24 @@ public class Slime : Entity
     };
 
     private bool _canMoveTest = true;
-    public new float speed = 100;
+    public new float speed = 200;
     [Export] public float r = 1;
 
     public override void _Ready()
     {
         element = GalatimeElement.Aqua;
-        body = GetNode<KinematicBody2D>("Body");
-        damageEffectPoint = GetNode<Position2D>("Body/DamageEffectPoint");
-        _animationPlayer = GetNode<AnimationPlayer>("Body/AnimationPlayer");
+        body = this;
+        _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
-        _player = GetNode<Player>("/root/Node2D/Player");
-        _line = GetNode<Line2D>("Line");
+        _player = PlayerVariables.player;
 
         health = stats.health;
+        droppedXp = 10;
 
-        _sprite = GetNode<Sprite>("Body/Sprite");
-        _navigation = GetNode<NavigationAgent2D>("Body/NavigationAgent");
+        _sprite = GetNode<Sprite>("Sprite");
+        _navigation = GetNode<NavigationAgent2D>("NavigationAgent");
 
-        _weapon = GetNode<Area2D>("Body/Weapon");
+        _weapon = GetNode<Area2D>("Weapon");
 
         _weapon.Connect("body_entered", this, "_attack");
         _weapon.Connect("body_exited", this, "_onAreaExit");
@@ -65,7 +63,6 @@ public class Slime : Entity
 
     public override void _moveProcess()
     {
-        _line.GlobalPosition = Vector2.Zero;
         if (!_deathState) move(); else velocity = Vector2.Zero;
     }
 
@@ -83,6 +80,7 @@ public class Slime : Entity
         lootPool.Add(barrelItem);
 
         _dropLoot(damageRotation);
+        _dropXp();
 
         _canMoveTest = false;
         _animationPlayer.Play("outro");
@@ -92,16 +90,12 @@ public class Slime : Entity
     {
         if (!_deathState)
         {
-            Entity parent = body.GetParent<Entity>();
-            // !!! NEEDS REWORK !!!
-            GalatimeElement element = GalatimeElement.Aqua;
-
-            // Get angle of damage
-            float damageRotation = _sprite.GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
-            if (parent.HasMethod("hit"))
+            if (body is Entity entity)
             {
-                parent.hit(30, stats.physicalAttack, element, DamageType.physical, 250, damageRotation);
                 _attackCountdownTimer.Start();
+                GalatimeElement element = GalatimeElement.Aqua;
+                float damageRotation = GlobalTransform.origin.AngleToPoint(entity.GlobalTransform.origin);
+                entity.hit(20, stats.magicalAttack, element, DamageType.physical, 500, damageRotation);
             }
         }
     }
@@ -109,12 +103,12 @@ public class Slime : Entity
     public void justHit()
     {
         var bodies = _weapon.GetOverlappingBodies()[0] as KinematicBody2D;
-        Entity parent = bodies.GetParent<Entity>();
-        float damageRotation = _sprite.GlobalTransform.origin.AngleToPoint(bodies.GlobalTransform.origin);
-        if (parent.HasMethod("hit"))
+        if (bodies is Entity entity)
         {
-            parent.hit(30, stats.physicalAttack, element, DamageType.physical, 250, damageRotation);
             _attackCountdownTimer.Start();
+            GalatimeElement element = GalatimeElement.Aqua;
+            float damageRotation = GlobalTransform.origin.AngleToPoint(entity.GlobalTransform.origin);
+            entity.hit(20, stats.magicalAttack, element, DamageType.physical, 500, damageRotation);
         }
     }
 
@@ -123,15 +117,25 @@ public class Slime : Entity
         _attackCountdownTimer.Stop();
     }
 
-    public void move() {
+    public void move()
+    {
+        var enemies = GetTree().GetNodesInGroup("ally");
+        Entity enemy = null;
+        List<object> NonTypedEnemies = new List<object>();
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            NonTypedEnemies.Add(enemies[i]);
+        }
+        var sortedEnemies = NonTypedEnemies.OrderBy(x => x as Entity != null ? body.GlobalPosition.DistanceTo((x as Entity).GlobalPosition) : 0).ToList();
+        sortedEnemies.RemoveAll(x => x as Entity != null ? (x as Entity)._deathState : false);
+        if (sortedEnemies.ToList().Count > 0) enemy = sortedEnemies[0] as Entity;
         try
         {
             Vector2 vectorPath = Vector2.Zero;
-            _navigation.SetTargetLocation(_player.body.GlobalPosition);
-            _line.Points = _navigation.GetNavPath();
+            _navigation.SetTargetLocation(enemy.GlobalPosition);
             vectorPath = body.GlobalPosition.DirectionTo(_navigation.GetNextLocation()) * speed;
             _navigation.SetVelocity(vectorPath);
-            float rotation = body.GlobalTransform.origin.AngleToPoint(_player.body.GlobalTransform.origin);
+            float rotation = body.GlobalTransform.origin.AngleToPoint(enemy.GlobalTransform.origin);
             _weapon.Rotation = rotation + r;
             float rotationDeg = Mathf.Rad2Deg(rotation);
             float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
@@ -140,8 +144,7 @@ public class Slime : Entity
         }
         catch (Exception err)
         {
-            GD.PrintErr("CAN'T MOVE " + _path.Length);
-        }
+            GD.PrintErr("CAN'T MOVE");
         }
     }
-    
+} 

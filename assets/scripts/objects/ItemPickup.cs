@@ -20,8 +20,7 @@ namespace Galatime
         public Particles2D particles;
         public Area2D pickupArea;
 
-        private KinematicBody2D _playerBody;
-        private Node2D _playerNode;
+        private Player _playerNode;
 
         public async override void _Ready()
         {
@@ -32,8 +31,7 @@ namespace Galatime
             particles = GetNode<Particles2D>("Particles");
             pickupArea = GetNode<Area2D>("PickupArea");
 
-            _playerBody = GetNode<KinematicBody2D>(GalatimeConstants.playerBodyPath);
-            _playerNode = GetNode<Node2D>(GalatimeConstants.playerPath);
+            _playerNode = PlayerVariables.player;
 
             pickupArea.Connect("body_entered", this, "_onEntered");
 
@@ -47,7 +45,7 @@ namespace Galatime
 
         public void _onEntered(Node node)
         {
-            if (node == _playerBody)
+            if (node == _playerNode.body)
             {
                 GetNode<PlayerVariables>("/root/PlayerVariables").addItem(item, quantity);
                 QueueFree();

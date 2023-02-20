@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/icon-old.png-ef3e6d17d7749552bbaf2a4da8904927.stex"
+path="res://.import/xp_orb_stage_0.png-b04395e5496a98bdb97a150324a40922.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://icon-old.png"
-dest_files=[ "res://.import/icon-old.png-ef3e6d17d7749552bbaf2a4da8904927.stex" ]
+source_file="res://sprites/test/xp_orb_stage_0.png"
+dest_files=[ "res://.import/xp_orb_stage_0.png-b04395e5496a98bdb97a150324a40922.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

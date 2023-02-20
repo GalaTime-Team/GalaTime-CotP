@@ -1,6 +1,6 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://sprites/testbarrel.png" type="Texture" id=1]
+[ext_resource path="res://sprites/test/xp_orb_stage_0.png" type="Texture" id=1]
 [ext_resource path="res://assets/scripts/objects/ExperienceOrb.cs" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=41]
@@ -24,7 +24,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.2, 0.3 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 1, 1 ), Vector2( 1.2, 1.2 ), Vector2( 0.5, 0.5 ) ]
+"values": [ Vector2( 4, 4 ), Vector2( 4.5, 4.5 ), Vector2( 0.5, 0.5 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:modulate")
@@ -53,6 +53,23 @@ tracks/2/keys = {
 } ]
 }
 
+[sub_resource type="Animation" id=45]
+resource_name = "loop"
+length = 1.5
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 1 ), Color( 1, 0.392157, 0, 1 ), Color( 1, 1, 0, 1 ), Color( 0, 1, 0, 1 ), Color( 0, 1, 0, 1 ), Color( 0, 0, 1, 1 ), Color( 1, 0, 1, 1 ), Color( 1, 0, 0, 1 ) ]
+}
+
 [node name="ExperienceOrb" type="KinematicBody2D"]
 z_index = 2
 collision_layer = 0
@@ -60,24 +77,29 @@ collision_mask = 0
 script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
+modulate = Color( 0.637004, 0, 1, 1 )
+scale = Vector2( 4, 4 )
 texture = ExtResource( 1 )
 __meta__ = {
 "_edit_lock_": true
 }
 
 [node name="Collision" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource( 41 )
 __meta__ = {
 "_edit_lock_": true
 }
 
 [node name="Collision2" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource( 41 )
 __meta__ = {
 "_edit_lock_": true
 }
 
 [node name="PickupArea" type="Area2D" parent="."]
+visible = false
 __meta__ = {
 "_edit_lock_": true
 }
@@ -91,3 +113,7 @@ __meta__ = {
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/idle = SubResource( 44 )
 anims/outro = SubResource( 43 )
+
+[node name="HUEAnimationPlayer" type="AnimationPlayer" parent="."]
+reset_on_save = false
+anims/loop = SubResource( 45 )

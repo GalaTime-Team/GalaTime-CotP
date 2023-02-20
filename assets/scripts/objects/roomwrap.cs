@@ -24,8 +24,8 @@ namespace Galatime {
 
             _area.Connect("body_entered", this, "_onEnter");
 
-            _player = GetNode("/root/Node2D/Player");
-            Connect("wrap", _player, "_onWrap");
+            // _player = GetNode("/root/Node2D/Player");
+            // Connect("wrap", _player, "_onWrap");
         }
 
         private void _onEnter(Node node)

@@ -61,17 +61,12 @@ public class GoldenHolderSword : Area2D
 
     public void _on_body_entered(KinematicBody2D body)
     {
-        GD.Print("body_entered");
-        // Get scripted node
-        Entity parent = body.GetParent<Entity>();
-        // !!! NEEDS REWORK !!!
-        GalatimeElement element = new GalatimeElement();
-
-        // Get angle of damage
-        float damageRotation = GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
-        if (parent.HasMethod("hit"))
+        GD.Print("body entered");
+        if (body is Entity entity)
         {
-            parent.hit(10, _physicalAttack, element, DamageType.physical, 500, damageRotation);
+            GalatimeElement element = new GalatimeElement();
+            float damageRotation = GlobalTransform.origin.AngleToPoint(entity.GlobalTransform.origin);
+            entity.hit(10, _physicalAttack, element, DamageType.physical, 500, damageRotation);
         }
     }
 }

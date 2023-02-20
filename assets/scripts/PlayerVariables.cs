@@ -39,6 +39,7 @@ public class PlayerVariables : Node
         {
             GD.PrintErr("Сouldn't find a player, return false"); return false;
         }
+    
         if (player._abiltiesReloadTimes[id] <= 0)
         {
             return true;

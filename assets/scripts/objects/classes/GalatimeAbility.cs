@@ -19,6 +19,6 @@ namespace Galatime
             this.costs = costs;
     }
 
-        public abstract void execute(Player p, float physicalAttack, float magicalAttack);
+        public abstract void execute(HumanoidCharacter p, float physicalAttack, float magicalAttack);
     }
 }

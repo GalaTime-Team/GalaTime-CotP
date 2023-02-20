@@ -35,24 +35,21 @@ namespace Galatime
 
         public void _bodyEntered(KinematicBody2D body, float physicalAttack, float magicalAttack)
         {
-            Entity parent = body.GetParent<Entity>();
-            GalatimeElement element = GalatimeElement.Ignis;
-
-            // Get angle of damage
-            float damageRotation = _kinematicBody.GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
-            if (parent.HasMethod("hit"))
+            if (body is Entity entity)
             {
-                parent.hit(25, magicalAttack, element, DamageType.magical, 500, damageRotation);
+                GalatimeElement element = GalatimeElement.Ignis;
+                float damageRotation = _kinematicBody.GlobalTransform.origin.AngleToPoint(entity.GlobalTransform.origin);
+                entity.hit(25, magicalAttack, element, DamageType.magical, 500, damageRotation);
                 destroy();
             }
         }
 
-        public override async void execute(Player p, float physicalAttack, float magicalAttack)
+        public override async void execute(HumanoidCharacter p, float physicalAttack, float magicalAttack)
         {
             Rotation = p.weapon.Rotation;
             _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
 
-            p.cameraShakeAmount += 20;
+            if (p is Player player) player.cameraShakeAmount += 20;
             _velocity.x += 1;
 
             _animationPlayer.Play("intro");

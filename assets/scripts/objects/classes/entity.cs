@@ -6,25 +6,27 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Galatime
 {
-    public class Entity : Node2D
+    public class Entity : KinematicBody2D
     {
         [Export] public float speed = 200f;
         public Vector2 velocity = Vector2.Zero;
 
-        public PackedScene scene = (PackedScene)GD.Load("res://assets/objects/DamageAnimationPlayer.tscn");
+        public PackedScene damageEffectScene = (PackedScene)GD.Load("res://assets/objects/DamageAnimationPlayer.tscn");
+        public PackedScene damageAudioScene = (PackedScene)GD.Load("res://assets/objects/DamageAudioPlayer.tscn");
 
         public GalatimeElement element = null;
         public KinematicBody2D body = null;
-        public Position2D damageEffectPoint = null;
         public AnimationPlayer damageSpritePlayer = null;
+        public AudioStreamPlayer2D damageAudioPlayer = null;
 
         public EntityStats stats = new EntityStats();
         public List<dynamic> lootPool = new List<dynamic>();
+        public int droppedXp;
         public bool _deathState = false;
 
         public float health = 0;
 
-        public Vector2 _knockbackVelocity = Vector2.Zero;
+        private Vector2 _knockbackVelocity = Vector2.Zero;
 
         [Signal] delegate void _onDamage();
 
@@ -44,12 +46,18 @@ namespace Galatime
             // Damage animation
             if (damageSpritePlayer == null)
             {
-                Node damageSpritePlayerInstance = scene.Instance();
+                AnimationPlayer damageSpritePlayerInstance = damageEffectScene.Instance<AnimationPlayer>();
                 body.AddChild(damageSpritePlayerInstance);
-                damageSpritePlayer = body.GetNode<AnimationPlayer>("DamageAnimationPlayer");
 
-                Animation damageAnimation = damageSpritePlayer.GetAnimation("damage");
+                Animation damageAnimation = damageSpritePlayerInstance.GetAnimation("damage");
                 damageAnimation.TrackSetPath(0, "Sprite:modulate");
+            }
+
+            if (damageAudioPlayer == null)
+            {
+                var damageAudioPlayerInstance = damageAudioScene.Instance<AudioStreamPlayer2D>();
+                damageAudioPlayer = damageAudioPlayerInstance;
+                body.AddChild(damageAudioPlayerInstance);
             }
 
             // Calculating damage
@@ -94,6 +102,11 @@ namespace Galatime
                 damageSpritePlayer.Stop();
                 damageSpritePlayer.Play("damage");
             }
+
+                
+            var rand = new Random();
+            damageAudioPlayer.PitchScale = (float)(1.1 - rand.NextDouble() / 9);
+            damageAudioPlayer.Play();
 
             // Final
             setKnockback(knockback, damageRotation);
@@ -171,11 +184,20 @@ namespace Galatime
             }
         }
 
+        public void _dropXp()
+        {
+            PackedScene xpOrbScene = GD.Load<PackedScene>("res://assets/objects/ExperienceOrb.tscn");
+            var xpOrb = xpOrbScene.Instance<ExperienceOrb>();
+            xpOrb.quantity = droppedXp;
+            xpOrb.GlobalPosition = body.GlobalPosition;
+            GetParent().AddChild(xpOrb);
+        }
+
         public void heal(float amount, int timeToHeal = 0)
         {
             if (damageSpritePlayer == null)
             {
-                Node damageSpritePlayerInstance = scene.Instance();
+                Node damageSpritePlayerInstance = damageEffectScene.Instance();
                 body.AddChild(damageSpritePlayerInstance);
                 damageSpritePlayer = body.GetNode<AnimationPlayer>("DamageAnimationPlayer");
 

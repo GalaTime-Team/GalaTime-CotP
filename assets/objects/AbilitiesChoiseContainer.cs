@@ -58,11 +58,11 @@ namespace Galatime
                     for (int i = 0; i < PlayerVariables.abilities.Count; i++)
                     {
                         var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
+                        GD.Print(" reloaded? " + _playerVariables.isAbilityReloaded(i) + " " + _playerVariables.isAbilityReloaded(id));
                         if (ability.Contains("id"))
                         {
                             if ((string)ability["id"] == choiseId)
                             {
-                                GD.Print(i + " id " + _playerVariables.isAbilityReloaded(i));
                                 if (_playerVariables.isAbilityReloaded(i) && _playerVariables.isAbilityReloaded(id))
                                 {
                                     var previous = (Godot.Collections.Dictionary)PlayerVariables.abilities[id];
@@ -79,8 +79,16 @@ namespace Galatime
                             }
                         }
                     }
-                    _playerVariables.setAbility(GalatimeGlobals.getAbilityById(choiseId), id);
-                    abilityContainer.click();
+                    if (_playerVariables.isAbilityReloaded(id))
+                    {
+                        _playerVariables.setAbility(GalatimeGlobals.getAbilityById(choiseId), id);
+                        abilityContainer.click();
+                    }
+                    else
+                    {
+                        abilityContainer.no();
+                        return;
+                    }
                 }
             }
         }

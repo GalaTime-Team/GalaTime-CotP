@@ -10,7 +10,7 @@ namespace Galatime
         public Timer shotTimer;
         public PackedScene projectiveScene;
 
-        public Player p;
+        public HumanoidCharacter p;
 
         public Sprite sprite;
 
@@ -36,7 +36,7 @@ namespace Galatime
             sprite.Rotation = p.weapon.Rotation;
         }
 
-        public override async void execute(Player p, float physicalAttack, float magicalAttack)
+        public override async void execute(HumanoidCharacter p, float physicalAttack, float magicalAttack)
         {
             projectiveScene = GD.Load<PackedScene>("res://assets/objects/abilities/FlamethrowerShells.tscn");
 
@@ -64,7 +64,7 @@ namespace Galatime
 
         private void _onTimeoutShot(float physicalAttack, float magicalAttack, Sprite spr)
         {
-            p.cameraShakeAmount += 0.4f;
+            if (p is Player player) player.cameraShakeAmount += 0.4f;
             FlamethrowerShells ability = projectiveScene.Instance<FlamethrowerShells>();
             var position = spr.GlobalPosition;
             AddChild(ability);

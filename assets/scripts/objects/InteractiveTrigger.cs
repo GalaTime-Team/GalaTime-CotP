@@ -22,8 +22,7 @@ namespace Galatime
         private Area2D _collisionArea;
         private ShaderMaterial _shader;
 
-        private KinematicBody2D _playerBody;
-        private Node2D _playerNode;
+        private Player _playerNode;
 
         private Tween tween;
         public override void _Ready()
@@ -35,8 +34,7 @@ namespace Galatime
             _collisionArea.Connect("body_exited", this, "_onExit");
 
             _shader = GD.Load<ShaderMaterial>("res://assets/shaders/outline.tres").Duplicate() as ShaderMaterial;
-            _playerBody = GetNode<KinematicBody2D>(Galatime.GalatimeConstants.playerBodyPath);
-            _playerNode = GetNode<Node2D>(Galatime.GalatimeConstants.playerPath);
+            _playerNode = PlayerVariables.player;
 
             _playerNode.Connect("on_interact", this, "_OnInteract");
             _playerNode.Connect("on_dialog_end", this, "_OnDialogEnd");
@@ -49,7 +47,7 @@ namespace Galatime
 
         public void _onEntered(Node node)
         {
-            if (node == _playerBody)
+            if (node == _playerNode.body)
             {
                 _interactShaderInterpolate(0, 0.02f, 0.1f);
             }
@@ -59,7 +57,7 @@ namespace Galatime
         {
             if (canInteract)
             {
-                if (node == _playerBody)
+                if (node == _playerNode.body)
                 {
                     _interactShaderInterpolate(0.02f, 0, 0.1f);
                 }
@@ -81,7 +79,7 @@ namespace Galatime
             if (canInteract)
             {
                 Godot.Collections.Array bodies = _collisionArea.GetOverlappingBodies();
-                if (bodies.Contains(_playerBody))
+                if (bodies.Contains(_playerNode.body))
                 {
                     GD.Print(_executeNode.HasMethod(method));
                     _executeNode.Call(method, args);

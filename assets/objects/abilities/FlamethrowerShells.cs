@@ -26,14 +26,11 @@ namespace Galatime {
 
         public void _bodyEntered(KinematicBody2D body, float physicalAttack, float magicalAttack)
         {
-            Entity parent = body.GetParent<Entity>();
-            GalatimeElement element = GalatimeElement.Ignis;
-
-            // Get angle of damage
-            float damageRotation = _kinematicBody.GlobalTransform.origin.AngleToPoint(body.GlobalTransform.origin);
-            if (parent.HasMethod("hit"))
+            if (body is Entity entity)
             {
-                parent.hit(2, magicalAttack, element, DamageType.magical, 100, damageRotation);
+                GalatimeElement element = GalatimeElement.Ignis;
+                float damageRotation = _kinematicBody.GlobalTransform.origin.AngleToPoint(entity.GlobalTransform.origin);
+                entity.hit(2, magicalAttack, element, DamageType.magical, 50, damageRotation);
             }
         }
 
@@ -49,7 +46,7 @@ namespace Galatime {
             binds.Add(magicalAttack);
             _damageArea.Connect("body_entered", this, "_bodyEntered", binds);
 
-            await ToSignal(GetTree().CreateTimer(0.4f + (float)rand.NextDouble() / 10), "timeout");
+            await ToSignal(GetTree().CreateTimer(0.5f + (float)rand.NextDouble() / 10), "timeout");
             destroy();
         }
 
