@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class fade : Node2D
+public partial class fade : Node2D
 {
     // Variables
     private string _fadeType = "out";
@@ -9,18 +9,18 @@ public class fade : Node2D
     // Nodes
     private AnimationPlayer _animation;
     private Node2D _player;
-    private Sprite _fade;
+    private Sprite2D _fade;
 
     public override void _Ready()
     {
         // Get Nodes
         _animation = GetNode<AnimationPlayer>("animation");
-        _fade = GetNode<Sprite>("fade");
+        _fade = GetNode<Sprite2D>("fade");
         _player = GetParent<Node2D>();
 
         // Connect
-        _player.Connect("fade", this, "_Fade");
-        _animation.Connect("animation_finished", this, "setVisibility");
+        _player.Connect("fade",new Callable(this,"_Fade"));
+        _animation.Connect("animation_finished",new Callable(this,"setVisibility"));
 
         // Start
         _fade.Visible = true; 

@@ -1,13 +1,14 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
-path="res://.import/sword_swing.wav-6d3bac08dcfa307a510dff10805be7e9.sample"
+type="AudioStreamWAV"
+uid="uid://cup6id065tl4f"
+path="res://.godot/imported/sword_swing.wav-6d3bac08dcfa307a510dff10805be7e9.sample"
 
 [deps]
 
 source_file="res://assets/audios/sounds/sword_swing.wav"
-dest_files=[ "res://.import/sword_swing.wav-6d3bac08dcfa307a510dff10805be7e9.sample" ]
+dest_files=["res://.godot/imported/sword_swing.wav-6d3bac08dcfa307a510dff10805be7e9.sample"]
 
 [params]
 

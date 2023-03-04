@@ -1,10 +1,10 @@
 using Godot;
 using System;
 using Discord;
-using DiscordRPC;
 using Galatime;
+using System.IO;
 
-public sealed class GalatimeGlobals : Node
+public sealed partial class GalatimeGlobals : Node
 {
     public static Godot.Collections.Dictionary itemList = new Godot.Collections.Dictionary();
     public static Godot.Collections.Dictionary ablitiesList = new Godot.Collections.Dictionary();
@@ -60,19 +60,19 @@ public sealed class GalatimeGlobals : Node
         });
     }
 
-    public override void _Process(float delta)
+    public override void _Process(double delta)
     {
         if (discord != null) discord.RunCallbacks();
     }
 
     private static Godot.Collections.Dictionary _getAbilitiesFromJson()
     {
-        File file = new File();
-        if (file.FileExists(pathListItems))
+        if (Godot.FileAccess.FileExists(pathListItems))
         {
-            file.Open(pathListAbilities, File.ModeFlags.Read);
-            Godot.Collections.Dictionary data = (Godot.Collections.Dictionary)JSON.Parse(file.GetAsText()).Result;
-            return data;
+            var file = Godot.FileAccess.Open(pathListAbilities, Godot.FileAccess.ModeFlags.Read);
+            var json = new Json();
+            json.Parse(file.GetAsText());
+            return (Godot.Collections.Dictionary)json.Data;
         }
         else
         {
@@ -83,12 +83,12 @@ public sealed class GalatimeGlobals : Node
 
     private static Godot.Collections.Dictionary _getItemsFromJson()
     {
-        File file = new File();
-        if (file.FileExists(pathListItems))
+        if (Godot.FileAccess.FileExists(pathListItems))
         {
-            file.Open(pathListItems, File.ModeFlags.Read);
-            Godot.Collections.Dictionary data = (Godot.Collections.Dictionary)JSON.Parse(file.GetAsText()).Result;
-            return data;
+            var file = Godot.FileAccess.Open(pathListItems, Godot.FileAccess.ModeFlags.Read);
+            var json = new Json();
+            json.Parse(file.GetAsText());
+            return (Godot.Collections.Dictionary)json.Data;
         }
         else
         {
@@ -99,10 +99,9 @@ public sealed class GalatimeGlobals : Node
 
     public static Godot.Collections.Dictionary getItemById(string id)
     {
-        File file = new File();
         if (itemList.Count >= 0)
         {
-            if (itemList.Contains(id))
+            if (itemList.ContainsKey(id))
             {
                 return (Godot.Collections.Dictionary)itemList[id];
             }
@@ -121,10 +120,9 @@ public sealed class GalatimeGlobals : Node
 
     public static Godot.Collections.Dictionary getAbilityById(string id)
     {
-        File file = new File();
         if (ablitiesList.Count >= 0)
         {
-            if (ablitiesList.Contains(id))
+            if (ablitiesList.ContainsKey(id))
             {
                 return (Godot.Collections.Dictionary)ablitiesList[id];
             }

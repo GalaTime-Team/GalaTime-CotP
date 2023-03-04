@@ -5,17 +5,17 @@ using System.Security.Cryptography;
 
 namespace Galatime
 {
-    public class Flamethrower : GalatimeAbility
+    public partial class Flamethrower : GalatimeAbility
     {
         public Timer shotTimer;
         public PackedScene projectiveScene;
 
         public HumanoidCharacter p;
 
-        public Sprite sprite;
+        public Sprite2D sprite;
 
         public Flamethrower() : base(
-            GD.Load("res://sprites/gui/abilities/ignis/flamethrower.png") as Texture,
+            GD.Load("res://sprites/gui/abilities/ignis/flamethrower.png") as Texture2D,
             5,
             2f,
             new System.Collections.Generic.Dictionary<string, float>() { { "mana", 10 } }
@@ -24,13 +24,13 @@ namespace Galatime
 
         public override async void _Ready()
         {
-            sprite = GetNode<Sprite>("Sprite");
+            sprite = GetNode<Sprite2D>("Sprite2D");
 
             shotTimer = new Timer();
             shotTimer.WaitTime = 0.05f;
         }
 
-        public override void _PhysicsProcess(float delta)
+        public override void _PhysicsProcess(double delta)
         {
             sprite.GlobalPosition = p.weapon.GlobalPosition;
             sprite.Rotation = p.weapon.Rotation;
@@ -50,7 +50,7 @@ namespace Galatime
             binds.Add(magicalAttack);
             binds.Add(sprite);
 
-            shotTimer.Connect("timeout", this, "_onTimeoutShot", binds);
+            shotTimer.Timeout += () => _onTimeoutShot(physicalAttack, magicalAttack, sprite); 
             AddChild(shotTimer);
             shotTimer.Start();
 
@@ -62,10 +62,10 @@ namespace Galatime
             QueueFree();
         }
 
-        private void _onTimeoutShot(float physicalAttack, float magicalAttack, Sprite spr)
+        private void _onTimeoutShot(float physicalAttack, float magicalAttack, Sprite2D spr)
         {
             if (p is Player player) player.cameraShakeAmount += 0.4f;
-            FlamethrowerShells ability = projectiveScene.Instance<FlamethrowerShells>();
+            FlamethrowerShells ability = projectiveScene.Instantiate<FlamethrowerShells>();
             var position = spr.GlobalPosition;
             AddChild(ability);
             ability.execute(spr.Rotation, physicalAttack, magicalAttack, position);

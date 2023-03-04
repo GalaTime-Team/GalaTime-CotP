@@ -4,7 +4,7 @@ using System.Reflection;
 
 using Galatime;
 
-public class slot_container : GridContainer
+public partial class slot_container : GridContainer
 {
     public Tooltip tooltip;
     public DragPreview dragPreview;
@@ -13,31 +13,29 @@ public class slot_container : GridContainer
 
     private int _previousItemId; 
 
-    [Signal] public delegate void guiChanged();
+    [Signal] public delegate void guiChangedEventHandler();
 
     public override void _Ready()
     {
-        Control gui = GetNode<Control>("../../");
+        PlayerGui gui = GetNode<PlayerGui>("../../");
 
         tooltip = GetNode<Tooltip>("../Tooltip");
         dragPreview = GetNode<DragPreview>("../DragPreview");
 
         playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
-        gui.Connect("items_changed", this, "_on_inventory_items_changed");
-        gui.Connect("on_pause", this, "_onPause");
+        gui.items_changed += () => _on_inventory_items_changed();
+        gui.on_pause += (bool visible) => _onPause();
         PackedScene slot = GD.Load<PackedScene>("res://assets/objects/Slot.tscn");
         for (int i = 0; i < playerVariables.slots; i++)
         {
-            Slot ItemSlot = (Slot)slot.Instance();
+            Slot ItemSlot = (Slot)slot.Instantiate();
             ItemSlot.slotType = Slot.InventorySlotType.INVENTORY;
             if (i == 0) ItemSlot.slotType = Slot.InventorySlotType.WEAPON;
 
-            Godot.Collections.Array binds = new Godot.Collections.Array();
-            binds.Add(ItemSlot);
-            ItemSlot.Connect("mouse_entered", this, "_mouseEnterSlot", binds);
-            ItemSlot.Connect("mouse_exited", this, "_mouseExitSlot");
-            ItemSlot.Connect("gui_input", this, "_guiInputSlot", binds);
+            ItemSlot.MouseEntered += () => _mouseEnterSlot(ItemSlot);
+            ItemSlot.MouseExited += () => _mouseExitSlot();
+            ItemSlot.GuiInput += (InputEvent @event) => _guiInputSlot(@event, ItemSlot);
 
             AddChild(ItemSlot);
         }
@@ -83,21 +81,22 @@ public class slot_container : GridContainer
         if (@event is InputEventMouseButton)
         {
             var @mouseEvent = @event as InputEventMouseButton;
-            if (@mouseEvent.ButtonIndex == 1 && mouseEvent.Pressed)
+            if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
             {
                 dragItem(item);
+                GD.Print("get input");
             }
         }
-    }
+    }   
     public void dragItem(TextureRect nodeItem)
     {
         var inventoryItem = (Godot.Collections.Dictionary)PlayerVariables.inventory[nodeItem.GetIndex()];
         var draggedItem = (Godot.Collections.Dictionary)dragPreview.Get("draggedItem");
-        tooltip.Call("_hide");
+        tooltip._hide();
         if (inventoryItem != null && draggedItem == null)
         {
             GD.Print("pick");
-            dragPreview.Call("setDraggedItem", playerVariables.removeItem(nodeItem.GetIndex()));
+            dragPreview.setDraggedItem(playerVariables.removeItem(nodeItem.GetIndex()));
             _previousItemId = nodeItem.GetIndex();
         }
         else if (inventoryItem.Count <= 0 && draggedItem.Count >= 0)
@@ -115,12 +114,12 @@ public class slot_container : GridContainer
         {
             GD.Print("swap");
             GD.Print(draggedItem.Count);
-            if (nodeItem.GetIndex() == 0 && playerVariables.getItemType(inventoryItem) == "weapon")
+            if (nodeItem.GetIndex() == 0 && playerVariables.getItemType(inventoryItem) == "weapon" && draggedItem.Count > 0)
             {
                 dragPreview.prevent();
                 return;
             }
-            dragPreview.Call("setDraggedItem", playerVariables.setItem(draggedItem, nodeItem.GetIndex()));
+            dragPreview.setDraggedItem(playerVariables.setItem(draggedItem, nodeItem.GetIndex()));
             _previousItemId = nodeItem.GetIndex();
         }
     }

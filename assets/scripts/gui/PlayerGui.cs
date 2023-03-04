@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 
 namespace Galatime
 {
-    public class PlayerGui : Control
+    public partial class PlayerGui : Control
     {
         // Nodes
         private AnimationPlayer _fadeAnimation;
@@ -15,10 +15,10 @@ namespace Galatime
         private Player _player;
 
         // Stats
-        private TextureProgress _health;
-        private TextureProgress _stamina;
-        private TextureProgress _mana;
-        private TextureProgress _healthDrain;
+        private TextureProgressBar _health;
+        private TextureProgressBar _stamina;
+        private TextureProgressBar _mana;
+        private TextureProgressBar _healthDrain;
 
         // Text Stats
         private Godot.Label _textStamina;
@@ -36,11 +36,13 @@ namespace Galatime
 
         private HBoxContainer _abilitiesContainer;
 
+        private GridContainer _statsContainer;
+
         private float _localHp = 0f;
         private float _remainingDodge;
 
-        [Signal] public delegate void items_changed();
-        [Signal] public delegate void on_pause(bool visible);
+        [Signal] public delegate void items_changedEventHandler();
+        [Signal] public delegate void on_pauseEventHandler(bool visible);
 
         public override void _Ready()
         {
@@ -50,10 +52,10 @@ namespace Galatime
             _player = PlayerVariables.player;
 
             // Stats
-            _health = GetNode<TextureProgress>("HealthProgress");
-            _stamina = GetNode<TextureProgress>("StaminaProgress");
-            _mana = GetNode<TextureProgress>("ManaProgress");
-            // _healthDrain = GetNode<TextureProgress>("status/hp_drain");
+            _health = GetNode<TextureProgressBar>("HealthProgress");
+            _stamina = GetNode<TextureProgressBar>("StaminaProgress");
+            _mana = GetNode<TextureProgressBar>("ManaProgress");
+            // _healthDrain = GetNode<TextureProgressBar>("status/hp_drain");
 
             // Text Stats
             _textStamina = GetNode<Godot.Label>("stamina_text");
@@ -68,13 +70,15 @@ namespace Galatime
 
             _abilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
 
-            _player.Connect("healthChanged", this, "onHealthChanged");
-            _player.Connect("on_stamina_changed", this, "onStaminaChanged");
-            _player.Connect("on_mana_changed", this, "onManaChanged");
-            GetNode<PlayerVariables>("/root/PlayerVariables").Connect("items_changed", this, "displayItem");
+            _statsContainer = GetNode<GridContainer>("PauseContainer/StatsContainer/Stats");
+
+            _player.Connect("healthChanged",new Callable(this,"onHealthChanged"));
+            _player.Connect("on_stamina_changed",new Callable(this,"onStaminaChanged"));
+            _player.Connect("on_mana_changed",new Callable(this,"onManaChanged"));
+            GetNode<PlayerVariables>("/root/PlayerVariables").Connect("items_changed",new Callable(this,"displayItem"));
 
             DodgeTextTimer = new Timer();
-            DodgeTextTimer.Connect("timeout", this, "_reloadingDodge");
+            DodgeTextTimer.Connect("timeout",new Callable(this,"_reloadingDodge"));
             AddChild(DodgeTextTimer);
 
             _versionText = GetNode<Godot.Label>("Version");
@@ -107,7 +111,7 @@ namespace Galatime
             _health.Value = health;
             _textHealth.Text = health + " HP";
             // SceneTree tree = GetTree();
-            // tree.CreateTimer(2f).Connect("timeout", this, "_hpDrain");
+            // tree.CreateTimer(2f).Connect("timeout",new Callable(this,"_hpDrain"));
         }
 
         public void onStaminaChanged(float stamina)
@@ -126,7 +130,7 @@ namespace Galatime
 
         public void changeStats(EntityStats entityStats, float XP)
         {
-            _textStats.BbcodeText = 
+            _textStats.Text =
                 $"Hp: [color=white]{entityStats.health}[/color]\r\n" +
                 $"Stamina: [color=white]{entityStats.stamina}[/color]\r\n" +
                 $"Mana: [color=white]{entityStats.mana}[/color]\r\n" +
@@ -136,12 +140,38 @@ namespace Galatime
                 $"Agility: [color=white]{entityStats.agility}[/color]\r\n\r\n" +
                 $"Physic Defence: [color=white]{entityStats.physicalDefence}[/color]\r\n" +
                 $"Magic Defence: [color=white]{entityStats.magicalAttack}[/color]";
+
+            if (_statsContainer.GetChildCount() <= 0)
+            {
+                var statContainerScene = GD.Load<PackedScene>("res://assets/objects/gui/StatContainer.tscn");
+                for (int i = 0; i < 8; i++)
+                {
+                    var instance = statContainerScene.Instantiate<StatContainer>();
+                    _statsContainer.AddChild(instance);
+                    instance.Connect("on_upgrade",new Callable(this,"_onUpgradeStat"));
+                }
+            }
+
+            var statContainers = _statsContainer.GetChildren();
+            (statContainers[0] as StatContainer).loadData(entityStats.health, (int)XP);
+            (statContainers[1] as StatContainer).loadData(entityStats.stamina, (int)XP);
+            (statContainers[2] as StatContainer).loadData(entityStats.mana, (int)XP);
+            (statContainers[3] as StatContainer).loadData(entityStats.physicalAttack, (int)XP);
+            (statContainers[4] as StatContainer).loadData(entityStats.magicalAttack, (int)XP);
+            (statContainers[5] as StatContainer).loadData(entityStats.physicalDefence, (int)XP);
+            (statContainers[6] as StatContainer).loadData(entityStats.magicalDefence, (int)XP);
+            (statContainers[7] as StatContainer).loadData(entityStats.agility, (int)XP);
+
+        }
+
+        public void _onUpgradeStat(int id)
+        {
+            PlayerVariables.upgradeStat((EntityStatType)id);
         }
 
         public void addAbility(GalatimeAbility ab, int i)
         {
             _abilitiesContainer.GetChild<AbilityContainer>(i).load(ab.texture, ab.reload);
-            GD.Print(ab.texture.GetPath());
         }
 
         public void removeAbility(int i)
@@ -183,7 +213,7 @@ namespace Galatime
         }
 
         public void displayItem() {
-            EmitSignal("items_changed");
+            EmitSignal(SignalName.items_changed);
         }
  
         //public void _hpDrain()
@@ -198,7 +228,7 @@ namespace Galatime
 
         public void pause(bool visible)
         {
-            EmitSignal("on_pause");
+            EmitSignal(SignalName.on_pause);
             _pauseContainer.Visible = visible;
         }
     }

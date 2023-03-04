@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "galatime-project", "galatime-project.csproj", "{ED3C69B4-8D59-481D-8928-134EF0FA4DFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "galatime-project", "galatime-project.csproj", "{7DED57D6-63C4-43E1-9A52-55A1E9CD9EBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,11 +9,11 @@ Global
 	ExportRelease|Any CPU = ExportRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{ED3C69B4-8D59-481D-8928-134EF0FA4DFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED3C69B4-8D59-481D-8928-134EF0FA4DFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED3C69B4-8D59-481D-8928-134EF0FA4DFA}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
-		{ED3C69B4-8D59-481D-8928-134EF0FA4DFA}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
-		{ED3C69B4-8D59-481D-8928-134EF0FA4DFA}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
-		{ED3C69B4-8D59-481D-8928-134EF0FA4DFA}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{7DED57D6-63C4-43E1-9A52-55A1E9CD9EBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DED57D6-63C4-43E1-9A52-55A1E9CD9EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DED57D6-63C4-43E1-9A52-55A1E9CD9EBE}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{7DED57D6-63C4-43E1-9A52-55A1E9CD9EBE}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{7DED57D6-63C4-43E1-9A52-55A1E9CD9EBE}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{7DED57D6-63C4-43E1-9A52-55A1E9CD9EBE}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
 	EndGlobalSection
 EndGlobal

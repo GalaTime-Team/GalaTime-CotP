@@ -1,116 +1,116 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=3 uid="uid://bljwt8h81gnrn"]
 
-[ext_resource path="res://assets/shaders/outline.tres" type="Material" id=1]
-[ext_resource path="res://sprites/gui/abilities/ignis/fire_ball.png" type="Texture" id=2]
-[ext_resource path="res://assets/scripts/objects/ItemPickup.cs" type="Script" id=4]
+[ext_resource type="Material" uid="uid://c03pkwmq2pu55" path="res://assets/shaders/outline.tres" id="1"]
+[ext_resource type="Texture2D" uid="uid://c0m1c1mfviwl6" path="res://sprites/gui/abilities/ignis/fire_ball.png" id="2"]
+[ext_resource type="Script" path="res://assets/scripts/objects/ItemPickup.cs" id="4"]
 
-[sub_resource type="CircleShape2D" id=22]
+[sub_resource type="CircleShape2D" id="22"]
 radius = 17.0
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id="5"]
 resource_name = "idle"
-loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath("Sprite:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.5, 1 ),
-"transitions": PoolRealArray( 2, 2, 2 ),
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(2, 2, 2),
 "update": 0,
-"values": [ Vector2( 2, 2 ), Vector2( 1.5, 1.5 ), Vector2( 2, 2 ) ]
+"values": [Vector2(2, 2), Vector2(1.5, 1.5), Vector2(2, 2)]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Sprite2:scale")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.5, 1 ),
-"transitions": PoolRealArray( 2, 2, 2 ),
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(2, 2, 2),
 "update": 0,
-"values": [ Vector2( 2, 2 ), Vector2( 1.5, 1.5 ), Vector2( 2, 2 ) ]
+"values": [Vector2(2, 2), Vector2(1.5, 1.5), Vector2(2, 2)]
 }
 tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath("Sprite3:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.5, 1 ),
-"transitions": PoolRealArray( 2, 2, 2 ),
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(2, 2, 2),
 "update": 0,
-"values": [ Vector2( 2, 2 ), Vector2( 1.5, 1.5 ), Vector2( 2, 2 ) ]
+"values": [Vector2(2, 2), Vector2(1.5, 1.5), Vector2(2, 2)]
 }
 
-[sub_resource type="Curve" id=20]
-_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lkhhp"]
+_data = {
+"idle": SubResource("5")
+}
 
-[sub_resource type="CurveTexture" id=19]
-curve = SubResource( 20 )
+[sub_resource type="Curve" id="20"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
 
-[sub_resource type="ParticlesMaterial" id=21]
-gravity = Vector3( 0, 0, 0 )
-tangential_accel = -12.0
-scale = 10.0
-scale_curve = SubResource( 19 )
+[sub_resource type="CurveTexture" id="19"]
+curve = SubResource("20")
 
-[sub_resource type="RectangleShape2D" id=23]
-extents = Vector2( 20, 20 )
+[sub_resource type="ParticleProcessMaterial" id="21"]
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("19")
 
-[node name="ItemPickup" type="KinematicBody2D"]
-position = Vector2( 0, 187 )
+[sub_resource type="RectangleShape2D" id="23"]
+
+[node name="ItemPickup" type="CharacterBody2D"]
 z_index = 2
+position = Vector2(0, 187)
 collision_layer = 0
-script = ExtResource( 4 )
-spawnVelocity = Vector2( 100, 100 )
+collision_mask = 0
+script = ExtResource("4")
+spawnVelocity = Vector2(100, 100)
 itemId = "golden_holder_sword"
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-shape = SubResource( 22 )
+shape = SubResource("22")
 
-[node name="Sprite3" type="Sprite" parent="."]
+[node name="Sprite3" type="Sprite2D" parent="."]
 visible = false
-material = ExtResource( 1 )
-scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
-texture = ExtResource( 2 )
+material = ExtResource("1")
+scale = Vector2(2, 2)
+texture = ExtResource("2")
 
-[node name="Sprite" type="Sprite" parent="."]
-material = ExtResource( 1 )
-scale = Vector2( 1.96447, 1.96447 )
+[node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = 2
-texture = ExtResource( 2 )
+material = ExtResource("1")
+scale = Vector2(2, 2)
+texture = ExtResource("2")
 
-[node name="Sprite2" type="Sprite" parent="."]
+[node name="Sprite2" type="Sprite2D" parent="."]
 visible = false
-material = ExtResource( 1 )
-scale = Vector2( 1.96447, 1.96447 )
 z_index = 2
-texture = ExtResource( 2 )
+material = ExtResource("1")
+scale = Vector2(2, 2)
+texture = ExtResource("2")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/idle = SubResource( 5 )
+libraries = {
+"": SubResource("AnimationLibrary_lkhhp")
+}
 
-[node name="Particles" type="Particles2D" parent="."]
-rotation = -1.5708
+[node name="Particles" type="GPUParticles2D" parent="."]
 z_index = 1
+rotation = -1.5708
 amount = 32
+process_material = SubResource("21")
 lifetime = 0.3
-local_coords = false
-process_material = SubResource( 21 )
 
 [node name="PickupArea" type="Area2D" parent="."]
-__meta__ = {
-"_edit_lock_": true
-}
+collision_layer = 0
+collision_mask = 2
 
 [node name="Collision" type="CollisionShape2D" parent="PickupArea"]
-shape = SubResource( 23 )
-__meta__ = {
-"_edit_lock_": true
-}
+shape = SubResource("23")

@@ -2,7 +2,7 @@ using Galatime;
 using Godot;
 using System;
 
-public class HumanoidCharacter : Entity
+public partial class HumanoidCharacter : Entity
 {
     protected bool _isDodge = false;
     protected bool _canDodge = true;
@@ -24,13 +24,13 @@ public class HumanoidCharacter : Entity
 
     protected AnimationPlayer _animationPlayer;
 
-    protected Sprite _sprite;
-    protected Particles2D _trailParticles;
+    protected Sprite2D _sprite;
+    protected GpuParticles2D _trailParticles;
 
     public Hand weapon;
 
-    [Signal] public delegate void on_stamina_changed(float stamina);
-    [Signal] public delegate void on_mana_changed(float mana);
+    [Signal] public delegate void on_stamina_changedEventHandler(float stamina);
+    [Signal] public delegate void on_mana_changedEventHandler(float mana);
 
     protected float mana;
     public float Mana
@@ -39,7 +39,7 @@ public class HumanoidCharacter : Entity
         set
         {
             mana = value;
-            mana = Mathf.Clamp(mana, 0, stats.mana);
+            mana = Mathf.Clamp(mana, 0, stats.mana.value);
             _manaRegenTimer.Stop();
             _manaCountdownTimer.Start();
             EmitSignal("on_mana_changed", mana);
@@ -53,7 +53,7 @@ public class HumanoidCharacter : Entity
         set
         {
             stamina = value;
-            stamina = Mathf.Clamp(stamina, 0, stats.stamina);
+            stamina = Mathf.Clamp(stamina, 0, stats.stamina.value);
             _staminaRegenTimer.Stop();
             _staminaCountdownTimer.Start();
             EmitSignal("on_stamina_changed", stamina);
@@ -65,7 +65,7 @@ public class HumanoidCharacter : Entity
         _dodgeTimer = new Timer();
         _dodgeTimer.WaitTime = 2f;
         _dodgeTimer.OneShot = true;
-        _dodgeTimer.Connect("timeout", this, "_onCountdownDodge");
+        _dodgeTimer.Connect("timeout",new Callable(this,"_onCountdownDodge"));
         AddChild(_dodgeTimer);
 
         _abilityCountdownTimer = new Timer();
@@ -76,25 +76,25 @@ public class HumanoidCharacter : Entity
         _staminaCountdownTimer = new Timer();
         _staminaCountdownTimer.WaitTime = 5f;
         _staminaCountdownTimer.OneShot = true;
-        _staminaCountdownTimer.Connect("timeout", this, "_onCountdownStaminaRegen");
+        _staminaCountdownTimer.Connect("timeout",new Callable(this,"_onCountdownStaminaRegen"));
         AddChild(_staminaCountdownTimer);
 
         _staminaRegenTimer = new Timer();
         _staminaRegenTimer.WaitTime = 1f;
         _staminaRegenTimer.OneShot = false;
-        _staminaRegenTimer.Connect("timeout", this, "_regenStamina");
+        _staminaRegenTimer.Connect("timeout",new Callable(this,"_regenStamina"));
         AddChild(_staminaRegenTimer);
 
         _manaCountdownTimer = new Timer();
         _manaCountdownTimer.WaitTime = 5f;
         _manaCountdownTimer.OneShot = true;
-        _manaCountdownTimer.Connect("timeout", this, "_onCountdownManaRegen");
+        _manaCountdownTimer.Connect("timeout",new Callable(this,"_onCountdownManaRegen"));
         AddChild(_manaCountdownTimer);
 
         _manaRegenTimer = new Timer();
         _manaRegenTimer.WaitTime = 1f;
         _manaRegenTimer.OneShot = false;
-        _manaRegenTimer.Connect("timeout", this, "_regenMana");
+        _manaRegenTimer.Connect("timeout",new Callable(this,"_regenMana"));
         AddChild(_manaRegenTimer);
     }
 
@@ -113,18 +113,18 @@ public class HumanoidCharacter : Entity
     protected void _regenStamina()
     {
         stamina += 10;
-        stamina = Mathf.Clamp(stamina, 0, stats.stamina);
+        stamina = Mathf.Clamp(stamina, 0, stats.stamina.value);
         EmitSignal("on_stamina_changed", stamina);
         heal(5);
-        if (stamina >= stats.stamina) _staminaRegenTimer.Stop();
+        if (stamina >= stats.stamina.value) _staminaRegenTimer.Stop();
     }
 
     protected void _regenMana()
     {
         mana += 10;
-        mana = Mathf.Clamp(mana, 0, stats.mana);
+        mana = Mathf.Clamp(mana, 0, stats.mana.value);
         EmitSignal("on_mana_changed", mana);
-        if (mana >= stats.mana) _manaRegenTimer.Stop();
+        if (mana >= stats.mana.value) _manaRegenTimer.Stop();
     }
 
     protected void _setLayerToWeapon(bool toUp)
@@ -135,14 +135,14 @@ public class HumanoidCharacter : Entity
     public virtual GalatimeAbility addAbility(string scenePath, int i)
     {
         PackedScene scene = GD.Load<PackedScene>(scenePath);
-        GalatimeAbility ability = scene.Instance<GalatimeAbility>();
+        GalatimeAbility ability = scene.Instantiate<GalatimeAbility>();
         _abilities[i] = scene;
         var binds = new Godot.Collections.Array();
         binds.Add(i);
         if (_abilitiesTimers[i] != null) _abilitiesTimers[i].Stop();
         _abiltiesReloadTimes[i] = 0;
         _abilitiesTimers[i] = new Timer();
-        _abilitiesTimers[i].Connect("timeout", this, "_abilitiesCountdown", binds);
+        _abilitiesTimers[i].Timeout += () => _abilitiesCountdown(i);
         AddChild(_abilitiesTimers[i]);
         return ability;
     }
@@ -168,7 +168,7 @@ public class HumanoidCharacter : Entity
             if (_abiltiesReloadTimes[i] <= 0 && _abilityCountdownTimer.TimeLeft == 0)
             {
                 _abilityCountdownTimer.Start();
-                var ability = _abilities[i].Instance<GalatimeAbility>();
+                var ability = _abilities[i].Instantiate<GalatimeAbility>();
                 if (ability.costs.ContainsKey("stamina"))
                 {
                     if (stamina - ability.costs["stamina"] < 0)
@@ -187,7 +187,7 @@ public class HumanoidCharacter : Entity
                     GD.Print($"mana cost {ability.costs["mana"]}");
                 }
                 GetParent().AddChild(ability);
-                ability.execute(this, stats.physicalAttack, stats.magicalAttack);
+                ability.execute(this, stats.physicalAttack.value, stats.magicalAttack.value);
                 _abilitiesTimers[i].Stop();
                 _abilitiesTimers[i].Start();
                 _abiltiesReloadTimes[i] = (int)Math.Round(ability.reload);
@@ -208,10 +208,10 @@ public class HumanoidCharacter : Entity
 
     protected async void dodge()
     {
-        if (Stamina - 20 >= 0 && _dodgeTimer.TimeLeft <= 0 && canMove)
+        if (Stamina - 15 >= 0 && _dodgeTimer.TimeLeft <= 0 && canMove)
         {
             _isDodge = true;
-            float direction = weapon.Rotation + 3.14159f;
+            float direction = weapon.Rotation;
             setKnockback(1200, direction);
             _trailParticles.Emitting = true;
             Stamina -= 15;
@@ -239,13 +239,13 @@ public class HumanoidCharacter : Entity
     {
         _setLayerToWeapon(_animationPlayer.CurrentAnimation == "idle_up" || _animationPlayer.CurrentAnimation == "walk_up" ? false : true);
         if (idle) _animationPlayer.Stop();  
-        if (animationVelocity.y != 0)
+        if (animationVelocity.Y != 0)
         {
-            if (animationVelocity.y <= -1 && _animationPlayer.CurrentAnimation != "walk_up")
+            if (animationVelocity.Y <= -1 && _animationPlayer.CurrentAnimation != "walk_up")
             {
                 if (!idle) _animationPlayer.Play("walk_up"); else _animationPlayer.Play("idle_up");
             }
-            if (animationVelocity.y >= 1 && _animationPlayer.CurrentAnimation != "walk_down")
+            if (animationVelocity.Y >= 1 && _animationPlayer.CurrentAnimation != "walk_down")
             {
                 if (!idle) _animationPlayer.Play("walk_down"); else _animationPlayer.Play("idle_down");
                 _setLayerToWeapon(true);
@@ -253,11 +253,11 @@ public class HumanoidCharacter : Entity
         }
         else
         {
-            if (animationVelocity.x >= 1 && _animationPlayer.CurrentAnimation != "walk_right")
+            if (animationVelocity.X >= 1 && _animationPlayer.CurrentAnimation != "walk_right")
             {
                 if (!idle) _animationPlayer.Play("walk_right"); else _animationPlayer.Play("idle_right");
             }
-            if (animationVelocity.x <= -1 && _animationPlayer.CurrentAnimation != "walk_left")
+            if (animationVelocity.X <= -1 && _animationPlayer.CurrentAnimation != "walk_left")
             {
                 if (!idle) _animationPlayer.Play("walk_left"); else _animationPlayer.Play("idle_left");
             }

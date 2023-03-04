@@ -1,0 +1,973 @@
+[gd_scene load_steps=70 format=3 uid="uid://s184ap1aunq3"]
+
+[ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bus3tixdqgvjr" path="res://sprites/gui/status/hp_progress_outline.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dhtevbnd5q0i2" path="res://sprites/gui/status/stamina_progress.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://eenddgdqm3fn" path="res://sprites/gui/status/hp_progress.png" id="5"]
+[ext_resource type="Script" path="res://assets/scripts/gui/PlayerGui.cs" id="6"]
+[ext_resource type="Texture2D" uid="uid://di2bm2xc4vued" path="res://sprites/gui/dialog/characters/arthur/surprised/suprised.tres" id="7"]
+[ext_resource type="PackedScene" uid="uid://copiga1ncueyb" path="res://assets/objects/InventoryTooltip.tscn" id="8"]
+[ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="9_lrd2i"]
+[ext_resource type="Script" path="res://assets/objects/slot_container.cs" id="10"]
+[ext_resource type="Texture2D" uid="uid://ddp232l64r5h8" path="res://sprites/test/arthur-icon.png" id="11"]
+[ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="12"]
+[ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://sprites/gui/dialog-background.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://sprites/gui/status/mana_progress.png" id="14"]
+[ext_resource type="Script" path="res://assets/scripts/objects/DialogBox.cs" id="15"]
+[ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="15_bhhfw"]
+[ext_resource type="PackedScene" uid="uid://m2won44lnrfe" path="res://assets/objects/DragPreview.tscn" id="16"]
+[ext_resource type="Texture2D" uid="uid://dxw5mvqypf6i3" path="res://sprites/test/member-icon.png" id="17"]
+[ext_resource type="PackedScene" uid="uid://dgxbid7xdal5c" path="res://assets/objects/gui/AbilityContainer.tscn" id="18"]
+[ext_resource type="AudioStream" uid="uid://h1mkg7qkc6ls" path="res://assets/audios/sounds/talkbeeps/lol.wav" id="19"]
+[ext_resource type="PackedScene" uid="uid://4ivx2u2xw1y6" path="res://assets/objects/gui/AbilityContainerItem.tscn" id="20"]
+[ext_resource type="Texture2D" uid="uid://taa2qjiaumyn" path="res://sprites/test/loading_full.png" id="22"]
+[ext_resource type="Texture2D" uid="uid://dbliidd2bq780" path="res://sprites/characters/test/dodge_icon.png" id="24"]
+[ext_resource type="Script" path="res://assets/objects/AbilitiesContainer.cs" id="25"]
+[ext_resource type="Script" path="res://assets/scripts/gui/PausePagesButtonsContainer.cs" id="27"]
+[ext_resource type="Script" path="res://assets/objects/AbilitiesChoiseContainer.cs" id="29"]
+
+[sub_resource type="Animation" id="1"]
+length = 0.001
+
+[sub_resource type="Animation" id="2"]
+resource_name = "in"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("fade:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="3"]
+resource_name = "out"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("fade:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_u6x0b"]
+_data = {
+"RESET": SubResource("1"),
+"in": SubResource("2"),
+"out": SubResource("3")
+}
+
+[sub_resource type="Theme" id="12"]
+
+[sub_resource type="Animation" id="10"]
+resource_name = "loop"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Skip:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="11"]
+resource_name = "start"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Skip:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_a538s"]
+_data = {
+"loop": SubResource("10"),
+"start": SubResource("11")
+}
+
+[sub_resource type="Shader" id="5"]
+code = "/*
+    å‰²ã‚ŒãŸã‚¬ãƒ©ã‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ by ã‚ã‚‹ã‚‹ï¼ˆãã®ã‚‚ã¨ çµè¡£ï¼‰
+    Broken Glass Effect Shader by @arlez80
+
+    MIT License
+*/
+
+shader_type canvas_item;
+render_mode unshaded;
+
+uniform float scale = 20.0;
+uniform float shift = 0.05;
+uniform float seed = 0.0;
+
+vec2 random( vec2 pos )
+{ 
+    return fract(
+        sin(
+            vec2(
+                dot(pos, vec2(12.9898,78.233))
+            ,    dot(pos, vec2(-148.998,-65.233))
+            )
+        ) * 43758.5453
+    );
+}
+
+void fragment( )
+{
+    vec2 v = UV * scale + vec2( seed, seed );
+    vec2 v_floor = floor( v );
+    vec2 v_fract = fract( v );
+
+    vec2 min_p = vec2( 0.0, 0.0 );
+    float min_dist = 2.0;
+
+    for( int y = -1; y <= 1; y ++ ) {
+        for( int x = -1; x <= 1; x ++ ) {
+            vec2 n = vec2( float( x ), float( y ) );
+            vec2 p = random( v_floor + n );
+            float d = distance( v_fract, p + n );
+
+            min_p = mix( min_p, p, float( d < min_dist ) );
+            min_dist = min( min_dist, d );
+        }
+    }
+
+    // thanks advice to reddit user u/e344fde6bf
+    COLOR = textureLod( SCREEN_TEXTURE, SCREEN_UV + min_p * shift, 0.0 );
+}"
+
+[sub_resource type="ShaderMaterial" id="6"]
+shader = SubResource("5")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qcv63"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="AtlasTexture" id="14"]
+atlas = ExtResource("22")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="15"]
+atlas = ExtResource("22")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="16"]
+atlas = ExtResource("22")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="17"]
+atlas = ExtResource("22")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="18"]
+atlas = ExtResource("22")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="19"]
+atlas = ExtResource("22")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="20"]
+atlas = ExtResource("22")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="21"]
+atlas = ExtResource("22")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="22"]
+atlas = ExtResource("22")
+region = Rect2(256, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="23"]
+atlas = ExtResource("22")
+region = Rect2(288, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="24"]
+atlas = ExtResource("22")
+region = Rect2(320, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="25"]
+atlas = ExtResource("22")
+region = Rect2(352, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="26"]
+atlas = ExtResource("22")
+region = Rect2(384, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="27"]
+atlas = ExtResource("22")
+region = Rect2(416, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="28"]
+atlas = ExtResource("22")
+region = Rect2(448, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="29"]
+atlas = ExtResource("22")
+region = Rect2(480, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="30"]
+atlas = ExtResource("22")
+region = Rect2(512, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="31"]
+atlas = ExtResource("22")
+region = Rect2(544, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="32"]
+atlas = ExtResource("22")
+region = Rect2(576, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="33"]
+atlas = ExtResource("22")
+region = Rect2(608, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="34"]
+atlas = ExtResource("22")
+region = Rect2(640, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="35"]
+atlas = ExtResource("22")
+region = Rect2(672, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="36"]
+atlas = ExtResource("22")
+region = Rect2(704, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="37"]
+atlas = ExtResource("22")
+region = Rect2(736, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="38"]
+atlas = ExtResource("22")
+region = Rect2(768, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="39"]
+atlas = ExtResource("22")
+region = Rect2(800, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="40"]
+atlas = ExtResource("22")
+region = Rect2(832, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="41"]
+atlas = ExtResource("22")
+region = Rect2(864, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="42"]
+atlas = ExtResource("22")
+region = Rect2(896, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="43"]
+atlas = ExtResource("22")
+region = Rect2(928, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="44"]
+atlas = ExtResource("22")
+region = Rect2(960, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="45"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("14")
+}, {
+"duration": 1.0,
+"texture": SubResource("15")
+}, {
+"duration": 1.0,
+"texture": SubResource("16")
+}, {
+"duration": 1.0,
+"texture": SubResource("17")
+}, {
+"duration": 1.0,
+"texture": SubResource("18")
+}, {
+"duration": 1.0,
+"texture": SubResource("19")
+}, {
+"duration": 1.0,
+"texture": SubResource("20")
+}, {
+"duration": 1.0,
+"texture": SubResource("21")
+}, {
+"duration": 1.0,
+"texture": SubResource("22")
+}, {
+"duration": 1.0,
+"texture": SubResource("23")
+}, {
+"duration": 1.0,
+"texture": SubResource("24")
+}, {
+"duration": 1.0,
+"texture": SubResource("25")
+}, {
+"duration": 1.0,
+"texture": SubResource("26")
+}, {
+"duration": 1.0,
+"texture": SubResource("27")
+}, {
+"duration": 1.0,
+"texture": SubResource("28")
+}, {
+"duration": 1.0,
+"texture": SubResource("29")
+}, {
+"duration": 1.0,
+"texture": SubResource("30")
+}, {
+"duration": 1.0,
+"texture": SubResource("31")
+}, {
+"duration": 1.0,
+"texture": SubResource("32")
+}, {
+"duration": 1.0,
+"texture": SubResource("33")
+}, {
+"duration": 1.0,
+"texture": SubResource("34")
+}, {
+"duration": 1.0,
+"texture": SubResource("35")
+}, {
+"duration": 1.0,
+"texture": SubResource("36")
+}, {
+"duration": 1.0,
+"texture": SubResource("37")
+}, {
+"duration": 1.0,
+"texture": SubResource("38")
+}, {
+"duration": 1.0,
+"texture": SubResource("39")
+}, {
+"duration": 1.0,
+"texture": SubResource("40")
+}, {
+"duration": 1.0,
+"texture": SubResource("41")
+}, {
+"duration": 1.0,
+"texture": SubResource("42")
+}, {
+"duration": 1.0,
+"texture": SubResource("43")
+}, {
+"duration": 1.0,
+"texture": SubResource("44")
+}],
+"loop": true,
+"name": &"default",
+"speed": 15.0
+}]
+
+[node name="PlayerGui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6")
+
+[node name="LeftCenter" type="VBoxContainer" parent="."]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = -10.0
+offset_right = 38.0
+offset_bottom = 10.0
+scale = Vector2(2, 2)
+pivot_offset = Vector2(0, 10)
+
+[node name="DodgeContainer" type="HBoxContainer" parent="LeftCenter"]
+visible = false
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="LeftCenter/DodgeContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource("24")
+
+[node name="Countdown" type="Label" parent="LeftCenter/DodgeContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="fade" type="PanelContainer" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -287.0
+offset_top = -305.0
+offset_right = 1401.0
+offset_bottom = 911.0
+mouse_filter = 2
+
+[node name="HealthProgress" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 32.0
+offset_right = 61.0
+offset_bottom = 35.0
+scale = Vector2(4, 4)
+mouse_filter = 2
+max_value = 70.0
+value = 70.0
+texture_progress = ExtResource("5")
+
+[node name="HealthOutline" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 53.0
+offset_bottom = 31.0
+scale = Vector2(4, 4)
+texture = ExtResource("3")
+metadata/_edit_lock_ = true
+
+[node name="StaminaProgress" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 67.0
+offset_right = 74.0
+offset_bottom = 70.0
+scale = Vector2(4, 4)
+mouse_filter = 2
+max_value = 65.0
+value = 65.0
+texture_progress = ExtResource("4")
+
+[node name="StaminaOutline" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 52.0
+offset_right = 63.0
+offset_bottom = 61.0
+scale = Vector2(4, 4)
+texture = ExtResource("1")
+metadata/_edit_lock_ = true
+
+[node name="ManaProgress" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 96.0
+offset_right = 61.0
+offset_bottom = 99.0
+scale = Vector2(4, 4)
+mouse_filter = 2
+max_value = 65.0
+value = 65.0
+texture_progress = ExtResource("14")
+
+[node name="Mana" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 80.0
+offset_right = 53.0
+offset_bottom = 89.0
+scale = Vector2(4, 4)
+texture = ExtResource("2")
+metadata/_edit_lock_ = true
+
+[node name="stamina_text" type="Label" parent="."]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 48.0
+offset_right = 211.0
+offset_bottom = 64.0
+scale = Vector2(3, 3)
+theme_override_fonts/font = ExtResource("9_lrd2i")
+text = "65 STAM"
+
+[node name="hp_text" type="Label" parent="."]
+layout_mode = 1
+offset_left = 156.0
+offset_top = 16.0
+offset_right = 191.0
+offset_bottom = 32.0
+scale = Vector2(3, 3)
+theme_override_fonts/font = ExtResource("9_lrd2i")
+text = "70 HP	"
+autowrap_mode = 1
+
+[node name="mana_text" type="Label" parent="."]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 80.0
+offset_right = 201.0
+offset_bottom = 96.0
+scale = Vector2(3, 3)
+theme_override_fonts/font = ExtResource("9_lrd2i")
+text = "65 MANA"
+
+[node name="fadeAnimation" type="AnimationPlayer" parent="."]
+process_mode = 1
+libraries = {
+"": SubResource("AnimationLibrary_u6x0b")
+}
+
+[node name="AbilitiesContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -332.0
+offset_top = -100.0
+offset_right = -276.0
+offset_bottom = -67.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(3, 3)
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="AbilityContainer3" parent="AbilitiesContainer" instance=ExtResource("18")]
+layout_mode = 2
+
+[node name="AbilityContainer" parent="AbilitiesContainer" instance=ExtResource("18")]
+layout_mode = 2
+
+[node name="AbilityContainer2" parent="AbilitiesContainer" instance=ExtResource("18")]
+layout_mode = 2
+
+[node name="DialogBox" type="NinePatchRect" parent="."]
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -288.0
+offset_top = -168.0
+offset_bottom = -80.0
+scale = Vector2(2, 2)
+texture = ExtResource("13")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+script = ExtResource("15")
+
+[node name="CharacterPortrait" type="TextureRect" parent="DialogBox"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 0
+offset_left = -24.0
+offset_top = -18.0
+offset_right = 232.0
+offset_bottom = 238.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("7")
+expand_mode = 1
+
+[node name="Skip" type="Label" parent="DialogBox"]
+layout_mode = 0
+offset_left = 260.0
+offset_top = 68.0
+offset_right = 280.0
+offset_bottom = 84.0
+theme_override_fonts/font = ExtResource("12")
+text = "Skip"
+
+[node name="DialogText" type="RichTextLabel" parent="DialogBox"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -60.0
+offset_top = 22.0
+offset_right = 136.0
+offset_bottom = 84.0
+grow_horizontal = 2
+size_flags_horizontal = 5
+theme = SubResource("12")
+theme_override_fonts/normal_font = ExtResource("12")
+bbcode_enabled = true
+text = "You need to find a special potion. But if you will go to the forest it's very dangerous. But hope always with you"
+scroll_active = false
+visible_characters_behavior = 1
+
+[node name="CharacterName" type="Label" parent="DialogBox"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 10.0
+offset_right = 227.0
+offset_bottom = 27.0
+theme_override_fonts/font = ExtResource("15_bhhfw")
+text = "Name of the character"
+
+[node name="Voice" type="AudioStreamPlayer" parent="DialogBox"]
+stream = ExtResource("19")
+
+[node name="SkipAnimationPlayer" type="AnimationPlayer" parent="DialogBox"]
+libraries = {
+"": SubResource("AnimationLibrary_a538s")
+}
+
+[node name="shader" type="ColorRect" parent="."]
+visible = false
+material = SubResource("6")
+layout_mode = 0
+offset_right = 1024.0
+offset_bottom = 600.0
+mouse_filter = 2
+
+[node name="shader2" type="ColorRect" parent="."]
+visible = false
+material = SubResource("6")
+layout_mode = 0
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 1030.0
+offset_bottom = 606.0
+mouse_filter = 2
+
+[node name="Version" type="Label" parent="."]
+visible = false
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -192.0
+offset_top = -48.0
+offset_right = -8.0
+offset_bottom = -8.0
+clip_text = true
+
+[node name="PauseContainer" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+
+[node name="StatsContainer" type="Control" parent="PauseContainer"]
+anchors_preset = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+
+[node name="Label" type="Label" parent="PauseContainer/StatsContainer"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -68.0
+offset_top = -178.0
+offset_right = -2.0
+offset_bottom = -171.0
+scale = Vector2(2, 2)
+theme_override_fonts/font = ExtResource("12")
+text = "Arthur stats"
+
+[node name="Background" type="NinePatchRect" parent="PauseContainer/StatsContainer"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -476.0
+offset_top = -148.0
+offset_right = -1.0
+offset_bottom = 22.0
+scale = Vector2(2, 2)
+texture = ExtResource("13")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+
+[node name="Stats" type="GridContainer" parent="PauseContainer/StatsContainer"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -454.0
+offset_top = -129.0
+offset_bottom = 15.0
+scale = Vector2(2, 2)
+columns = 3
+
+[node name="Members" type="VBoxContainer" parent="PauseContainer/StatsContainer"]
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -227.0
+offset_top = -146.0
+offset_right = -195.0
+offset_bottom = 10.6555
+
+[node name="Arthur" type="NinePatchRect" parent="PauseContainer/StatsContainer/Members"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 0
+texture = ExtResource("13")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+
+[node name="Icon" type="TextureRect" parent="PauseContainer/StatsContainer/Members/Arthur"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 0
+offset_right = 32.0
+offset_bottom = 32.0
+texture = ExtResource("11")
+
+[node name="Member" type="NinePatchRect" parent="PauseContainer/StatsContainer/Members"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 0
+texture = ExtResource("13")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+
+[node name="Icon" type="TextureRect" parent="PauseContainer/StatsContainer/Members/Member"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 0
+offset_right = 32.0
+offset_bottom = 32.0
+texture = ExtResource("17")
+
+[node name="AbilitiesContainer" type="ScrollContainer" parent="PauseContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -300.0
+offset_right = 512.0
+offset_bottom = 212.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("25")
+
+[node name="Panel" type="Panel" parent="PauseContainer/AbilitiesContainer"]
+custom_minimum_size = Vector2(1024, 512)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qcv63")
+
+[node name="AbilitiesChoiseContainer" type="VBoxContainer" parent="PauseContainer/AbilitiesContainer/Panel"]
+layout_mode = 0
+offset_left = 204.0
+offset_top = 70.0
+offset_right = 300.0
+offset_bottom = 101.0
+scale = Vector2(2, 2)
+pivot_offset = Vector2(40, 0)
+theme_override_constants/separation = -10
+script = ExtResource("29")
+
+[node name="Label" type="Label" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("12")
+text = "Which to replace?"
+
+[node name="AbilitiesContainer" type="HBoxContainer" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+alignment = 2
+
+[node name="AbilityContainer3" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer/AbilitiesContainer" instance=ExtResource("18")]
+layout_mode = 2
+
+[node name="AbilityContainer" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer/AbilitiesContainer" instance=ExtResource("18")]
+layout_mode = 2
+
+[node name="AbilityContainer2" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer/AbilitiesContainer" instance=ExtResource("18")]
+layout_mode = 2
+
+[node name="AbilityItem" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 126.0
+offset_right = 136.0
+offset_bottom = 142.0
+
+[node name="AbilityItem2" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
+layout_mode = 0
+offset_left = 375.0
+offset_top = 171.0
+offset_right = 391.0
+offset_bottom = 187.0
+abilityName = "flamethrower"
+
+[node name="AbilityItem3" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 312.0
+offset_right = 136.0
+offset_bottom = 328.0
+abilityName = "firewave"
+
+[node name="AbilityItem4" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
+layout_mode = 0
+offset_left = 375.0
+offset_top = 354.0
+offset_right = 391.0
+offset_bottom = 370.0
+abilityName = "blue_fireball"
+
+[node name="inventory" type="GridContainer" parent="PauseContainer"]
+visible = false
+clip_contents = true
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -76.0
+offset_top = -70.0
+offset_bottom = 6.0
+scale = Vector2(2, 2)
+columns = 4
+script = ExtResource("10")
+
+[node name="AbilitiesLabel" type="Label" parent="PauseContainer"]
+visible = false
+layout_mode = 0
+offset_left = 612.0
+offset_top = 145.0
+offset_right = 653.0
+offset_bottom = 152.0
+text = "Abilities"
+
+[node name="Backpack" type="Label" parent="PauseContainer"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 777.0
+offset_top = -29.0
+offset_right = 821.0
+offset_bottom = -22.0
+text = "Backpack"
+
+[node name="Stats" type="RichTextLabel" parent="PauseContainer"]
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 232.0
+offset_top = -271.0
+offset_right = 392.0
+offset_bottom = -161.0
+bbcode_enabled = true
+text = "Hp: 70
+Stamina: 65
+Mana: 65
+XP: 0
+
+Physic Attack: 75
+Magic Attack: 80
+Agility: 60
+
+Physic Defence: 65
+Magic Defence: 75"
+scroll_active = false
+
+[node name="DragPreview" parent="PauseContainer" instance=ExtResource("16")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
+scale = Vector2(2, 2)
+
+[node name="Tooltip" parent="PauseContainer" instance=ExtResource("8")]
+visible = false
+layout_mode = 0
+scale = Vector2(2, 2)
+mouse_filter = 2
+
+[node name="PausePagesButtonsContainer" type="HBoxContainer" parent="PauseContainer"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -221.0
+offset_top = -68.0
+offset_right = -1.0
+offset_bottom = -28.0
+scale = Vector2(2, 2)
+theme_override_constants/separation = 14
+script = ExtResource("27")
+
+[node name="0" type="Label" parent="PauseContainer/PausePagesButtonsContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = ExtResource("12")
+text = "Inventory"
+
+[node name="2" type="Label" parent="PauseContainer/PausePagesButtonsContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = ExtResource("12")
+text = "Upgrading & Stats"
+
+[node name="3" type="Label" parent="PauseContainer/PausePagesButtonsContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = ExtResource("12")
+text = "Abilities"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(994, 322)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("45")
+frame = 6

@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class NPCharacter : Node
+public partial class NPCharacter : Node
 {
     // Declare member variables here. Examples:
     // private int a = 2;
@@ -14,7 +14,7 @@ public class NPCharacter : Node
     }
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
+//  public override void _Process(double delta)
 //  {
 //      
 //  }

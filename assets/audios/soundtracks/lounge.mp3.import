@@ -2,14 +2,18 @@
 
 importer="mp3"
 type="AudioStreamMP3"
-path="res://.import/lounge.mp3-5aeba482f823b725af30804ba728c99a.mp3str"
+uid="uid://cu3rco4pgw0ma"
+path="res://.godot/imported/lounge.mp3-5aeba482f823b725af30804ba728c99a.mp3str"
 
 [deps]
 
 source_file="res://assets/audios/soundtracks/lounge.mp3"
-dest_files=[ "res://.import/lounge.mp3-5aeba482f823b725af30804ba728c99a.mp3str" ]
+dest_files=["res://.godot/imported/lounge.mp3-5aeba482f823b725af30804ba728c99a.mp3str"]
 
 [params]
 
 loop=true
 loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

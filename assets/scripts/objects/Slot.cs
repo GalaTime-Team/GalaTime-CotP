@@ -2,11 +2,11 @@ using Godot;
 using System;
 
 namespace Galatime {
-    public class Slot : TextureRect
+    public partial class Slot : TextureRect
     {
-        Texture defaultTexture = GD.Load<Texture>("res://sprites/gui/inventory/slot.png");
-        Texture weaponTexture = GD.Load<Texture>("res://sprites/gui/inventory/slot-weapon.png");
-        //Texture selectedTexture = GD.Load<Texture>("res://images/item_slot_selected_background.png");
+        Texture2D defaultTexture = GD.Load<Texture2D>("res://sprites/gui/inventory/slot.png");
+        Texture2D weaponTexture = GD.Load<Texture2D>("res://sprites/gui/inventory/slot-weapon.png");
+        //Texture2D selectedTexture = GD.Load<Texture2D>("res://images/item_slot_selected_background.png");
 
         public enum InventorySlotType
         {

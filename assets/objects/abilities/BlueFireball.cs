@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 
 namespace Galatime
 {
-    public class BlueFireball : GalatimeAbility
+    public partial class BlueFireball : GalatimeAbility
     {
         private Vector2 _velocity;
 
@@ -13,12 +13,12 @@ namespace Galatime
         public bool canMove = true;
 
         private AnimationPlayer _animationPlayer;
-        private Sprite _sprite;
-        private KinematicBody2D _kinematicBody;
+        private Sprite2D _sprite;
+        private CharacterBody2D _kinematicBody;
         private Area2D _damageArea;
 
         public BlueFireball() : base(
-            GD.Load("res://sprites/gui/abilities/ignis/blue_fire_ball.png") as Texture,
+            GD.Load("res://sprites/gui/abilities/ignis/blue_fire_ball.png") as Texture2D,
             10,
             2f,
             new System.Collections.Generic.Dictionary<string, float>() { { "mana", 10 }, { "stamina", 5 } }
@@ -27,18 +27,18 @@ namespace Galatime
 
         public override async void _Ready()
         {
-            _animationPlayer = GetNode<AnimationPlayer>("KinematicBody/AnimationPlayer");
-            _sprite = GetNode<Sprite>("KinematicBody/Sprite");
-            _kinematicBody = GetNode<KinematicBody2D>("KinematicBody");
-            _damageArea = GetNode<Area2D>("KinematicBody/DamageArea");
+            _animationPlayer = GetNode<AnimationPlayer>("CharacterBody3D/AnimationPlayer");
+            _sprite = GetNode<Sprite2D>("CharacterBody3D/Sprite2D");
+            _kinematicBody = GetNode<CharacterBody2D>("CharacterBody3D");
+            _damageArea = GetNode<Area2D>("CharacterBody3D/DamageArea");
         }
 
-        public void _bodyEntered(KinematicBody2D body, float physicalAttack, float magicalAttack)
+        public void _bodyEntered(Node2D body, float physicalAttack, float magicalAttack)
         {
             if (body is Entity entity)
             {
                 GalatimeElement element = GalatimeElement.Ignis;
-                float damageRotation = _kinematicBody.GlobalTransform.origin.AngleToPoint(entity.GlobalTransform.origin);
+                float damageRotation = _kinematicBody.GlobalPosition.AngleToPoint(entity.GlobalPosition);
                 entity.hit(25, magicalAttack, element, DamageType.magical, 500, damageRotation);
                 destroy();
             }
@@ -50,13 +50,10 @@ namespace Galatime
             _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
 
             if (p is Player player) player.cameraShakeAmount += 20;
-            _velocity.x += 1;
+            _velocity.X += 1;
 
             _animationPlayer.Play("intro");
-            var binds = new Godot.Collections.Array();
-            binds.Add(physicalAttack);
-            binds.Add(magicalAttack);
-            _damageArea.Connect("body_entered", this, "_bodyEntered", binds);
+            _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, physicalAttack, magicalAttack);
 
             await ToSignal(GetTree().CreateTimer(duration), "timeout");
             destroy();
@@ -68,7 +65,7 @@ namespace Galatime
             _animationPlayer.Play("outro");
         }
 
-        public override void _PhysicsProcess(float delta)
+        public override void _PhysicsProcess(double delta)
         {
             if (canMove)
             {

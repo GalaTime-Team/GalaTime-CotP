@@ -1,14 +1,16 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://c03pkwmq2pu55"]
 
-[sub_resource type="Shader" id=5]
+[sub_resource type="Shader" id="5"]
 code = "shader_type canvas_item;
 render_mode unshaded;
+
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
 
 uniform int intensity = 50;
 uniform float precision : hint_range(0,0.02);
 
 //If not using a texture, will blend between these two colors
-uniform vec4 outline_color : hint_color;
+uniform vec4 outline_color : source_color;
 
 uniform bool use_outline_uv;	//Use the outline_uv for coloring or not. Recomended not, but sometimes might be good.
 
@@ -61,7 +63,7 @@ void fragment()
 				
 				//Is our sample empty? Is there something nearby?
 				if(outline_sample.a > final_color.a){
-					final_color = outline_color
+					final_color = outline_color;
 				}
 			}
 		}
@@ -70,8 +72,8 @@ void fragment()
 }"
 
 [resource]
-shader = SubResource( 5 )
-shader_param/intensity = 50
-shader_param/precision = 0.02
-shader_param/outline_color = Color( 1, 1, 1, 1 )
-shader_param/use_outline_uv = false
+shader = SubResource("5")
+shader_parameter/intensity = 50
+shader_parameter/precision = 0.02
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/use_outline_uv = null

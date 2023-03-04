@@ -3,7 +3,7 @@ using System;
 
 namespace Galatime
 {
-    public class ItemPickup : KinematicBody2D
+    public partial class ItemPickup : CharacterBody2D
     {
         public Vector2 velocity = Vector2.Zero;
 
@@ -14,10 +14,10 @@ namespace Galatime
         public Godot.Collections.Dictionary item;
 
         public AnimationPlayer animationPlayer;
-        public Sprite sprite;
-        public Sprite sprite2;
-        public Sprite sprite3;
-        public Particles2D particles;
+        public Sprite2D sprite;
+        public Sprite2D sprite2;
+        public Sprite2D sprite3;
+        public GpuParticles2D particles;
         public Area2D pickupArea;
 
         private Player _playerNode;
@@ -25,27 +25,28 @@ namespace Galatime
         public async override void _Ready()
         {
             animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
-            sprite = GetNode<Sprite>("Sprite");
-            sprite2 = GetNode<Sprite>("Sprite2");
-            sprite3 = GetNode<Sprite>("Sprite3");
-            particles = GetNode<Particles2D>("Particles");
+            sprite = GetNode<Sprite2D>("Sprite2D");
+            sprite2 = GetNode<Sprite2D>("Sprite2");
+            sprite3 = GetNode<Sprite2D>("Sprite3");
+            particles = GetNode<GpuParticles2D>("Particles");
             pickupArea = GetNode<Area2D>("PickupArea");
 
             _playerNode = PlayerVariables.player;
 
-            pickupArea.Connect("body_entered", this, "_onEntered");
+            pickupArea.BodyEntered += (Node2D node) => _onEntered(node);
 
             DisplayItem(itemId);
-            velocity = spawnVelocity;
-            animationPlayer.Play("idle");
+            velocity = spawnVelocity;   
+            // animationPlayer.Play("idle");
 
-            Random rnd = new Random();
-            RotationDegrees = rnd.Next(0, 360);
+            // Random rnd = new Random();
+            // RotationDegrees = rnd.Next(0, 360);
         }
 
-        public void _onEntered(Node node)
+        public void _onEntered(Node2D node)
         {
-            if (node == _playerNode.body)
+            GD.Print(node);
+            if (node is Player)
             {
                 GetNode<PlayerVariables>("/root/PlayerVariables").addItem(item, quantity);
                 QueueFree();
@@ -60,16 +61,16 @@ namespace Galatime
             GD.Print("res://sprites/" + icon);
             if (item != null)
             {
-                var itemTexture = GD.Load<Texture>("res://sprites/" + icon);
+                var itemTexture = GD.Load<Texture2D>("res://sprites/" + icon);
                 sprite.Texture = itemTexture;
                 GD.Print("item quantity pickup" + quantity);
                 if (quantity >= 2)
                 {
                     var spriteNewPosition = new Vector2();
-                    spriteNewPosition.y = -6;
+                    spriteNewPosition.Y = -6;
                     sprite.Position = spriteNewPosition;
                     var sprite2NewPosition = new Vector2();
-                    sprite2NewPosition.y = 6;
+                    sprite2NewPosition.Y = 6;
                     sprite2.Position = sprite2NewPosition;
                     sprite2.Texture = itemTexture;
                     sprite2.Visible = true;
@@ -77,12 +78,12 @@ namespace Galatime
                 if (quantity >= 5)
                 {
                     var sprite2NewPosition = new Vector2();
-                    sprite2NewPosition.y = 6;
-                    sprite2NewPosition.x = -6;
+                    sprite2NewPosition.Y = 6;
+                    sprite2NewPosition.X = -6;
                     sprite2.Position = sprite2NewPosition;
                     var sprite3NewPosition = new Vector2();
-                    sprite3NewPosition.y = 6;
-                    sprite3NewPosition.x = 6;
+                    sprite3NewPosition.Y = 6;
+                    sprite3NewPosition.X = 6;
                     sprite3.Position = sprite3NewPosition;
                     sprite3.Texture = itemTexture;
                     sprite3.Visible = true;
@@ -94,12 +95,13 @@ namespace Galatime
             }
         }
 
-        public override void _PhysicsProcess(float delta)
+        public override void _PhysicsProcess(double delta)
         {
-            velocity = velocity.LinearInterpolate(Vector2.Zero, 0.02f);
+            velocity = velocity.Lerp(Vector2.Zero, 0.02f);
             particles.Emitting = velocity.Length() <= 10 ? false : true;
-            RotationDegrees += velocity.Length() / 10;
-            MoveAndSlide(velocity);
+            //RotationDegrees += velocity.Length() / 10;
+            Velocity = velocity;
+            MoveAndSlide();
         }
     }
 }

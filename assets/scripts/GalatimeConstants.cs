@@ -3,13 +3,27 @@ using System;
 
 namespace Galatime
 {
+    public enum StatsType
+    {
+        PhysicalAttack,
+        MagicalAttack,
+        PhysicalDefence,
+        MagicalDefence,
+        Health,
+        Mana,
+        Stamina,
+        Agility,
+        StaminaRegen,
+        ManaRegen
+    }
+
     public readonly struct GalatimeConstants {
         /// <summary>
-        /// Path to Player node path
+        /// Path3D to Player node path
         /// </summary>
         public const string playerPath = "/root/Node2D/Player";
         /// <summary>
-        /// Path to Player body node path
+        /// Path3D to Player body node path
         /// </summary>
         public const string playerBodyPath = "/root/Node2D/Player/player_body";
         public const string version = "0.4.0";

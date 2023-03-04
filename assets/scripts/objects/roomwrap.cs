@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 namespace Galatime {
-    public class roomwrap : Node2D
+    public partial class roomwrap : Node2D
     {
         // Exports
         [Export(PropertyHint.File)] public string Scene;
@@ -14,18 +14,18 @@ namespace Galatime {
         private Node _player;
 
         // Signals
-        [Signal] delegate void wrap();
-        [Signal] delegate void fade(string type);
+        [Signal] public delegate void wrapEventHandler();
+        [Signal] public delegate void fadeEventHandler(string type);
 
         public override void _Ready()
         {
             // Get Nodes
             _area = GetNode<Area2D>("wrap");
 
-            _area.Connect("body_entered", this, "_onEnter");
+            _area.Connect("body_entered",new Callable(this,"_onEnter"));
 
             // _player = GetNode("/root/Node2D/Player");
-            // Connect("wrap", _player, "_onWrap");
+            // Connect("wrap",new Callable(_player,"_onWrap"));
         }
 
         private void _onEnter(Node node)
@@ -42,7 +42,7 @@ namespace Galatime {
 
                 delay.Start();
 
-                delay.Connect("timeout", this, "_onDelayTimeout");
+                delay.Connect("timeout",new Callable(this,"_onDelayTimeout"));
             }
         }
         private void _onDelayTimeout()
@@ -54,11 +54,11 @@ namespace Galatime {
         {
             SceneTree tree = GetTree();
             GD.Print("To scene " + Scene);
-            tree.ChangeScene(Scene);
+            tree.ChangeSceneToFile(Scene);
         }
 
         //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-        //  public override void _Process(float delta)
+        //  public override void _Process(double delta)
         //  {
         //      
         //  }

@@ -2,17 +2,17 @@ using Godot;
 using System;
 
 namespace Galatime {
-    public class AbilityContainer : VBoxContainer
+    public partial class AbilityContainer : Control
     {
         public Label label;
-        public TextureProgress sprite;
+        public TextureProgressBar sprite;
         public AnimationPlayer animationPlayer;
         public float reloadTime;
 
         public Timer clockTimer;
         public Timer textTimer;
 
-        public Texture defaultTexture = GD.Load<Texture>("res://sprites/gui/abilities/empty.png"); 
+        public Texture2D defaultTexture = GD.Load<Texture2D>("res://sprites/gui/abilities/empty.png"); 
 
         private float _remaining;
         private float _delay;
@@ -20,17 +20,17 @@ namespace Galatime {
 
         public override void _Ready()
         {
-            sprite = GetNode<TextureProgress>("Sprite");
+            sprite = GetNode<TextureProgressBar>("Sprite2D");
             label = GetNode<Label>("Label");
             clockTimer = GetNode<Timer>("ClockTimer");
             textTimer = GetNode<Timer>("TextTimer");
             animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
-            textTimer.Connect("timeout", this, "_textLoading");
-            clockTimer.Connect("timeout", this, "_loading");
+            textTimer.Connect("timeout",new Callable(this,"_textLoading"));
+            clockTimer.Connect("timeout",new Callable(this,"_loading"));
         }
 
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             _shake();
         }
@@ -40,15 +40,15 @@ namespace Galatime {
             var shakeOffset = new Vector2();
 
             Random rnd = new();
-            shakeOffset.x = rnd.Next(-1, 2) * _shakeAmount;
-            shakeOffset.y = rnd.Next(-1, 2) * _shakeAmount + 10;
+            shakeOffset.X = rnd.Next(-1, 2) * _shakeAmount;
+            shakeOffset.Y = rnd.Next(-1, 2) * _shakeAmount + 10;
 
             _shakeAmount = Mathf.Lerp(_shakeAmount, 0, 0.05f);
 
-            sprite.RectPosition = shakeOffset;
+            sprite.Position = shakeOffset;
         }
 
-        public void load(Texture texture, float reload)
+        public void load(Texture2D texture, float reload)
         {
             sprite.TextureUnder = texture;
             reloadTime = reload;

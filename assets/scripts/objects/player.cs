@@ -5,263 +5,266 @@ using System.Collections.Generic;
 
 namespace Galatime
 {
-    public class Player : HumanoidCharacter
-    {
-        // Exports
-        [Export] public bool canInteract = true;
-        [Export] public Vector2 cameraOffset;   
-        public float cameraShakeAmount = 0;
+	public partial class Player : HumanoidCharacter
+	{
+		// Exports
+		[Export] public bool canInteract = true;
+		[Export] public Vector2 cameraOffset;   
+		public float cameraShakeAmount = 0;
 
-        // Variables
-        private int slots = 16;
-        private int xp;
-        public int Xp
-        {
-            get { return xp; }
-            set
-            {
-                _playerGui.changeStats(stats, Xp);
-                xp = value;
-            }
-        }
+		// Variables
+		private int slots = 16;
+		private int xp;
+		public int Xp
+		{
+			get { return xp; }
+			set
+			{
+				xp = value;
+				_playerGui.changeStats(stats, Xp);
+			}
+		}
 
-        private PlayerGui _playerGui;
+		private PlayerGui _playerGui;
 
-        private bool _isPause = false;
-             
-        // Nodes
-        private KinematicBody2D _body;
+		private bool _isPause = false;
+			 
+		// Nodes
+		private CharacterBody2D _body;
 
-        private Camera2D _camera;
+		private Camera2D _camera;
 
-        private RichTextLabel _debug;
+		private RichTextLabel _debug;
 
-        private PlayerVariables _playerVariables;
+		private PlayerVariables _playerVariables;
 
-        // Signals
-        [Signal] public delegate void on_pause(bool visible);
-        [Signal] public delegate void healthChanged(float health);
-        [Signal] public delegate void on_interact();
-        [Signal] public delegate void on_dialog_end();
-        [Signal] public delegate void reloadDodge();
+		// Signals
+		[Signal] public delegate void on_pauseEventHandler(bool visible);
+		[Signal] public delegate void healthChangedEventHandler(float health);
+		[Signal] public delegate void on_interactEventHandler();
+		[Signal] public delegate void on_dialog_endEventHandler();
+		[Signal] public delegate void reloadDodgeEventHandler();
 
-        public override void _Ready()
-        {
-            base._Ready();
-            // Get Nodes
-            _animationPlayer = GetNode<AnimationPlayer>("Animation");
+		public override void _Ready()
+		{
+			base._Ready();
+			// Get Nodes
+			_animationPlayer = GetNode<AnimationPlayer>("Animation");
 
-            body = this;
+			body = this;
 
-            weapon = GetNode<Hand>("Hand");
+			weapon = GetNode<Hand>("Hand");
 
-            _camera = GetNode<Camera2D>("Camera");
+			_camera = GetNode<Camera2D>("Camera3D");
 
-            _sprite = GetNode<Sprite>("Sprite");
-            _trailParticles = GetNode<Particles2D>("TrailParticles");   
+			_sprite = GetNode<Sprite2D>("Sprite2D");
+			_trailParticles = GetNode<GpuParticles2D>("TrailParticles");   
 
-            _playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            _playerVariables.Connect("items_changed", this, "_onItemsChanged");
-            _playerVariables.Connect("abilities_changed", this, "_abilitiesChanged");
+			_playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+			_playerVariables.Connect("items_changed",new Callable(this,"_onItemsChanged"));
+			_playerVariables.Connect("abilities_changed",new Callable(this,"_abilitiesChanged"));
 
-            _playerGui = GetNode<PlayerGui>("CanvasLayer/player_game_gui");
+			_playerGui = GetNode<PlayerGui>("CanvasLayer/PlayerGui");
 
-            element = GalatimeElement.Ignis + GalatimeElement.Chaos;
+			element = GalatimeElement.Ignis + GalatimeElement.Chaos;
 
-            stats = new EntityStats
-            {
-                physicalAttack = 75,
-                magicalAttack = 80,
-                physicalDefence = 65,
-                magicalDefense = 75,
-                health = 70,
-                mana = 65,
-                stamina = 65,
-                agility = 60
-            };
+			stats = new EntityStats(
+				physicalAttack: 75,
+				magicalAttack: 80,
+				physicalDefence: 65,
+				magicalDefence: 75,
+				health: 70,
+				mana: 65,
+				stamina: 65,
+				agility: 60
+			);
+			GD.Print($"{stats.physicalAttack.value}, {stats.magicalAttack.value}");
 
-            // Start
-            canMove = true;
+			// Start
+			canMove = true;
 
-            _animationPlayer.PlaybackSpeed = speed / 100;
+			_animationPlayer.SpeedScale = speed / 100;
 
-            stamina = stats.stamina;
-            mana = stats.mana;
-            health = stats.health;
-            cameraOffset = Vector2.Zero;
+			stamina = stats.stamina.value;
+			mana = stats.stamina.value;
+			health = stats.stamina.value;
+			cameraOffset = Vector2.Zero;
 
-            body.GlobalPosition = GlobalPosition;
-        }
+			body.GlobalPosition = GlobalPosition;
 
-        private void _SetMove()
-        {
-            Vector2 inputVelocity = Vector2.Zero;
-            // Vector2 windowPosition = OS.WindowPosition;
+			_playerGui.changeStats(stats, Xp);
+		}
 
-            if (Input.IsActionPressed("game_move_up"))
-            {
-                inputVelocity.y -= 1;
-                // windowPosition.y -= 1;
-            }
-            if (Input.IsActionPressed("game_move_down"))
-            {
-                inputVelocity.y += 1;
-                // windowPosition.y += 1;
-            }
-            if (Input.IsActionPressed("game_move_right"))
-            {
-                inputVelocity.x += 1;
-                // windowPosition.x += 1;
-            }   
-            if (Input.IsActionPressed("game_move_left"))
-            {
-                inputVelocity.x -= 1;
-                // windowPosition.x -= 1;
-            }
-           inputVelocity = inputVelocity.Normalized() * speed;
+		private void _SetMove()
+		{
+			Vector2 inputVelocity = Vector2.Zero;
+			// Vector2 windowPosition = OS.WindowPosition;
 
-            // OS.WindowPosition = windowPosition;
-            if (canMove && !_isDodge) velocity = inputVelocity; else velocity = Vector2.Zero;
+			if (Input.IsActionPressed("game_move_up"))
+			{
+				inputVelocity.Y -= 1;
+				// windowPosition.Y -= 1;
+			}
+			if (Input.IsActionPressed("game_move_down"))
+			{
+				inputVelocity.Y += 1;
+				// windowPosition.Y += 1;
+			}
+			if (Input.IsActionPressed("game_move_right"))
+			{
+				inputVelocity.X += 1;
+				// windowPosition.x += 1;
+			}   
+			if (Input.IsActionPressed("game_move_left"))
+			{
+				inputVelocity.X -= 1;
+				// windowPosition.x -= 1;
+			}
+		   inputVelocity = inputVelocity.Normalized() * speed;
 
-            weapon.LookAt(GetGlobalMousePosition());
-            _SetAnimation(_vectorRotation, velocity.Length() == 0 ? true : false);
-            _setCameraPosition();
-        }
+			// OS.WindowPosition = windowPosition;
+			if (canMove && !_isDodge) velocity = inputVelocity; else velocity = Vector2.Zero;
 
-        private void _setCameraPosition()
-        {
-            _camera.GlobalPosition = _camera.GlobalPosition.LinearInterpolate((weapon.GlobalPosition + (GetGlobalMousePosition() - weapon.GlobalPosition) / 5) + cameraOffset, 0.05f);
-        }
+			weapon.LookAt(GetGlobalMousePosition());
+			_SetAnimation(_vectorRotation, velocity.Length() == 0 ? true : false);
+			_setCameraPosition();
+		}
 
-        public override void _moveProcess()
-        {
-            if (!_isPause) _SetMove(); else velocity = Vector2.Zero;
-            var shakeOffset = new Vector2();
-            
-            Random rnd = new();
-            shakeOffset.x = rnd.Next(-1, 1) * cameraShakeAmount;
-            shakeOffset.y = rnd.Next(-1, 1) * cameraShakeAmount;
+		private void _setCameraPosition()
+		{
+			_camera.GlobalPosition = _camera.GlobalPosition.Lerp((weapon.GlobalPosition + (GetGlobalMousePosition() - weapon.GlobalPosition) / 5) + cameraOffset, 0.05f);
+		}
 
-            _camera.Offset = shakeOffset;
+		public override void _moveProcess()
+		{
+			if (!_isPause) _SetMove(); else velocity = Vector2.Zero;
+			var shakeOffset = new Vector2();
+			
+			Random rnd = new();
+			shakeOffset.X = rnd.Next(-1, 1) * cameraShakeAmount;
+			shakeOffset.Y = rnd.Next(-1, 1) * cameraShakeAmount;
 
-            cameraShakeAmount = Mathf.Lerp(cameraShakeAmount, 0, 0.05f);
-        }
+			_camera.Offset = shakeOffset;
 
-        public override void _healthChangedEvent(float health)
-        {
-            EmitSignal("healthChanged", health);
-        }
+			cameraShakeAmount = Mathf.Lerp(cameraShakeAmount, 0, 0.05f);
+		}
 
-        public void _abilitiesChanged()
-        {
-            var obj = (Godot.Collections.Dictionary)PlayerVariables.abilities;
-            for (int i = 0; i < obj.Count; i++)
-            {
-                var ability = (Godot.Collections.Dictionary)obj[i];
-                if (ability.Contains("path"))
-                {
-                    var existAbility = _abilities[i];
-                    if (existAbility != null)
-                    {
-                        if ((string)ability["path"] != existAbility.ResourcePath) addAbility((string)ability["path"], i);
-                    }
-                    else
-                    {
-                        addAbility((string)ability["path"], i);
-                    }
-                }
-                else
-                {
-                    removeAbility(i);
-                    GD.PushWarning("no path " + i);
-                }
-            }
-        }
+		public override void _healthChangedEvent(float health)
+		{
+			EmitSignal(SignalName.healthChanged, health);
+		}
 
-        public override GalatimeAbility addAbility(string scenePath, int i)
-        {
-            var ability = base.addAbility(scenePath, i);
-            _playerGui.addAbility(ability, i);
-            return ability;
-        }
+		public void _abilitiesChanged()
+		{
+			var obj = (Godot.Collections.Dictionary)PlayerVariables.abilities;
+			for (int i = 0; i < obj.Count; i++)
+			{
+				var ability = (Godot.Collections.Dictionary)obj[i];
+				if (ability.ContainsKey("path"))
+				{
+					var existAbility = _abilities[i];
+					if (existAbility != null)
+					{
+						if ((string)ability["path"] != existAbility.ResourcePath) addAbility((string)ability["path"], i);
+					}
+					else
+					{
+						addAbility((string)ability["path"], i);
+					}
+				}
+				else
+				{
+					removeAbility(i);
+					GD.PushWarning("no path " + i);
+				}
+			}
+		}
 
-        protected override bool _useAbility(int i)
-        {
-            var result = base._useAbility(i);
-            if (!result)
-            {
-                _playerGui.pleaseSayNoToAbility(i);
-                return result;
-            }
-            _playerGui.reloadAbility(i);
-            return result;
-        }
+		public override GalatimeAbility addAbility(string scenePath, int i)
+		{
+			var ability = base.addAbility(scenePath, i);
+			_playerGui.addAbility(ability, i);
+			return ability;
+		}
 
-        protected override void removeAbility(int i)
-        {
-            base.removeAbility(i);
-            _playerGui.removeAbility(i);
-        }
+		protected override bool _useAbility(int i)
+		{
+			var result = base._useAbility(i);
+			if (!result)
+			{
+				_playerGui.pleaseSayNoToAbility(i);
+				return result;
+			}
+			_playerGui.reloadAbility(i);
+			return result;
+		}
 
-        public override void _Process(float delta)
-        {
-            // _debug.Text = $"hp {health} stamina {stamina} mana {mana} element {element.name}";
-        }
+		protected override void removeAbility(int i)
+		{
+			base.removeAbility(i);
+			_playerGui.removeAbility(i);
+		}
 
-        private void _onItemsChanged()
-        {       
-            var obj = (Godot.Collections.Dictionary)PlayerVariables.inventory[0];
-            if (weapon._item != null && obj.Count != 0) return;
-            weapon.takeItem(obj);
-        }
+		public override void _Process(double delta)
+		{
+			// _debug.Text = $"hp {health} stamina {stamina} mana {mana} element {element.name}";
+		}
 
-        public void startDialog(string id)
-        {
-            _playerGui.startDialog(id, this);
-        }
+		private void _onItemsChanged()
+		{       
+			var obj = (Godot.Collections.Dictionary)PlayerVariables.inventory[0];
+			if (weapon._item != null && obj.Count != 0) return;
+			weapon.takeItem(obj);
+		}
 
-        public override async void _UnhandledInput(InputEvent @event)
-        {
-            if (@event is InputEventMouseMotion)
-            {
-                setDirectionByWeapon();
-            }
-            if (@event.IsActionPressed("ui_cancel"))
-            {
-                if (_isPause)
-                {
-                    _isPause = false;
-                    _playerGui.pause(_isPause);
-                    return;
-                }
-                if (!_isPause)
-                {
-                    _isPause = true;
-                    _playerGui.pause(_isPause);
-                    return;
-                }
-            }
-            if (@event.IsActionPressed("game_attack"))
-            {
-                weapon.attack(stats.physicalAttack, stats.magicalAttack);
-            }
+		public void startDialog(string id)
+		{
+			_playerGui.startDialog(id, this);
+		}
 
-            if (@event.IsActionPressed("game_dodge"))
-            {
-                dodge();
-            }
+		public override async void _UnhandledInput(InputEvent @event)
+		{
+			if (@event is InputEventMouseMotion)
+			{
+				setDirectionByWeapon();
+			}
+			if (@event.IsActionPressed("ui_cancel"))
+			{
+				if (_isPause)
+				{
+					_isPause = false;
+					_playerGui.pause(_isPause);
+					return;
+				}
+				if (!_isPause)
+				{
+					_isPause = true;
+					_playerGui.pause(_isPause);
+					return;
+				}
+			}
+			if (@event.IsActionPressed("game_attack"))
+			{
+				GD.Print(stats.physicalAttack.value, stats.magicalAttack.value);
+				weapon.attack(stats.physicalAttack.value, stats.magicalAttack.value);
+			}
 
-            if (@event.IsActionPressed("game_ability_1")) _useAbility(0);
-            if (@event.IsActionPressed("game_ability_2")) _useAbility(1);
-            if (@event.IsActionPressed("game_ability_3")) _useAbility(2);
+			if (@event.IsActionPressed("game_dodge"))
+			{
+				dodge();
+			}
 
-            if (@event.IsActionPressed("ui_accept"))
-            {
-                if (canInteract)
-                {
-                    EmitSignal("on_interact");
-                }
-            }
-        }
-    }
+			if (@event.IsActionPressed("game_ability_1")) _useAbility(0);
+			if (@event.IsActionPressed("game_ability_2")) _useAbility(1);
+			if (@event.IsActionPressed("game_ability_3")) _useAbility(2);
+
+			if (@event.IsActionPressed("ui_accept"))
+			{
+				if (canInteract)
+				{
+					EmitSignal("on_interact");
+				}
+			}
+		}
+	}
 }

@@ -1,26 +1,26 @@
-[gd_resource type="AnimatedTexture" load_steps=8 format=2]
+[gd_resource type="AnimatedTexture" load_steps=8 format=3 uid="uid://dru38wdj2ljb7"]
 
-[ext_resource path="res://sprites/gui/dialog/characters/arthur/anoyed/5.png" type="Texture" id=1]
-[ext_resource path="res://sprites/gui/dialog/characters/arthur/anoyed/3.png" type="Texture" id=2]
-[ext_resource path="res://sprites/gui/dialog/characters/arthur/anoyed/6.png" type="Texture" id=3]
-[ext_resource path="res://sprites/gui/dialog/characters/arthur/anoyed/4.png" type="Texture" id=4]
-[ext_resource path="res://sprites/gui/dialog/characters/arthur/anoyed/2.png" type="Texture" id=5]
-[ext_resource path="res://sprites/gui/dialog/characters/arthur/anoyed/1.png" type="Texture" id=6]
-[ext_resource path="res://sprites/gui/dialog/characters/arthur/anoyed/0.png" type="Texture" id=7]
+[ext_resource type="Texture2D" uid="uid://1032mc7utern" path="res://sprites/gui/dialog/characters/arthur/anoyed/5.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bq446vpragq" path="res://sprites/gui/dialog/characters/arthur/anoyed/3.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dpel72nw6t5hm" path="res://sprites/gui/dialog/characters/arthur/anoyed/6.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dch7b2r21iebl" path="res://sprites/gui/dialog/characters/arthur/anoyed/4.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://dpjaktapcfjgw" path="res://sprites/gui/dialog/characters/arthur/anoyed/2.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://bveuj3i44c3t5" path="res://sprites/gui/dialog/characters/arthur/anoyed/1.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://cwpubahnug525" path="res://sprites/gui/dialog/characters/arthur/anoyed/0.png" id="7"]
 
 [resource]
 frames = 7
-fps = 10.0
-frame_0/texture = ExtResource( 7 )
-frame_1/texture = ExtResource( 6 )
-frame_1/delay_sec = 0.0
-frame_2/texture = ExtResource( 5 )
-frame_2/delay_sec = 0.0
-frame_3/texture = ExtResource( 2 )
-frame_3/delay_sec = 0.0
-frame_4/texture = ExtResource( 4 )
-frame_4/delay_sec = 0.0
-frame_5/texture = ExtResource( 1 )
-frame_5/delay_sec = 0.0
-frame_6/texture = ExtResource( 3 )
-frame_6/delay_sec = 0.0
+speed_scale = 15.0
+frame_0/texture = ExtResource("7")
+frame_1/texture = ExtResource("6")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("5")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("2")
+frame_3/duration = 1.0
+frame_4/texture = ExtResource("4")
+frame_4/duration = 1.0
+frame_5/texture = ExtResource("1")
+frame_5/duration = 1.0
+frame_6/texture = ExtResource("3")
+frame_6/duration = 1.0

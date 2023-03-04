@@ -1,8 +1,8 @@
-﻿using Galatime;
+using Galatime;
 using Godot;
 using System;
 
-public class PlayerVariables : Node
+public partial class PlayerVariables : Node
 {
     public int slots = 16;
     public int abilitySlots = 3;
@@ -11,8 +11,8 @@ public class PlayerVariables : Node
     public static Godot.Collections.Dictionary inventory = new Godot.Collections.Dictionary();
     public static Godot.Collections.Dictionary abilities = new Godot.Collections.Dictionary();
 
-    [Signal] public delegate void items_changed();
-    [Signal] public delegate void abilities_changed();
+    [Signal] public delegate void items_changedEventHandler();
+    [Signal] public delegate void abilities_changedEventHandler();
 
     public static Player player;
 
@@ -33,6 +33,49 @@ public class PlayerVariables : Node
         player = GetTree().GetNodesInGroup("player")[0] as Player;
     }
 
+    /// <summary>
+    /// Upgrades a certain stat of an ally or player
+    /// The cost is determined by the amount of upgrade, will return <c>false</c> if not enough currency or reached the maximum for the upgrade.
+    /// </summary>
+    /// <param name="id">Needed stats to upgrade</param>
+    /// <returns>Is the upgrading successful?</returns>
+
+    public static bool upgradeStat(EntityStatType id)
+    {
+        if (player.Xp < 100) return false;
+        switch (id)
+        {
+            case EntityStatType.physicalAttack:
+                player.stats.physicalAttack.value += 5;
+                break;
+            case EntityStatType.magicalAttack:
+                player.stats.magicalAttack.value += 5;
+                break;
+            case EntityStatType.physicalDefence:
+                player.stats.physicalDefence.value += 5;
+                break;
+            case EntityStatType.magicalDefence:
+                player.stats.magicalDefence.value += 5;
+                break;
+            case EntityStatType.health:
+                player.stats.health.value += 5;
+                break;
+            case EntityStatType.mana:
+                player.stats.mana.value += 5;
+                break;
+            case EntityStatType.stamina:
+                player.stats.stamina.value += 5;
+                break;
+            case EntityStatType.agility:
+                player.stats.agility.value += 5;
+                break;
+            default:
+                break;
+        }
+        player.Xp -= 100;
+        return true;
+    }
+ 
     public bool isAbilityReloaded(int id)
     {
         if (player == null)
@@ -55,7 +98,7 @@ public class PlayerVariables : Node
     {
         for (var i = 0; i < inventory.Count; i++)
         {
-            if ((inventory[i] as Godot.Collections.Dictionary).Count == 0)
+            if (((Godot.Collections.Dictionary)inventory[i]).Count == 0)
             {
                 return i;
             }
@@ -65,12 +108,12 @@ public class PlayerVariables : Node
 
     public bool isStackable(Godot.Collections.Dictionary item)
     {
-        return item.Contains("stackable") && (bool)item["stackable"];
+        return item.ContainsKey("stackable") && (bool)item["stackable"];
     }
 
     public string getItemType(Godot.Collections.Dictionary item)
     {
-        if (item.Contains("type"))
+        if (item.ContainsKey("type"))
         {
             return (string)item["type"];
         }
@@ -146,7 +189,7 @@ public class PlayerVariables : Node
     {
         // Get pervious item to return
         Godot.Collections.Dictionary previousItem = new Godot.Collections.Dictionary();
-        if (abilities.Contains(slot)) previousItem = (Godot.Collections.Dictionary)abilities[slot];
+        if (abilities.ContainsKey(slot)) previousItem = (Godot.Collections.Dictionary)abilities[slot];
         // Remove item
         abilities[slot] = new Godot.Collections.Dictionary();
         // Send item_changed signal to GUI
@@ -159,7 +202,7 @@ public class PlayerVariables : Node
     {
         // Get pervious item to return
         Godot.Collections.Dictionary previousItem = new Godot.Collections.Dictionary();
-        if (inventory.Contains(slot)) previousItem = (Godot.Collections.Dictionary)inventory[slot];
+        if (inventory.ContainsKey(slot)) previousItem = (Godot.Collections.Dictionary)inventory[slot];
         // Remove item
         inventory.Remove(slot);
         // Set item
@@ -175,7 +218,7 @@ public class PlayerVariables : Node
     {
         // Get pervious item to return
         Godot.Collections.Dictionary previousItem = new Godot.Collections.Dictionary();
-        if (inventory.Contains(slot)) previousItem = (Godot.Collections.Dictionary)inventory[slot];
+        if (inventory.ContainsKey(slot)) previousItem = (Godot.Collections.Dictionary)inventory[slot];
         // Remove item
         inventory[slot] = new Godot.Collections.Dictionary();
         // Send item_changed signal to GUI
@@ -186,7 +229,7 @@ public class PlayerVariables : Node
     public void setQuantity(int slot, int amount)
     {
         Godot.Collections.Dictionary item = (Godot.Collections.Dictionary)inventory[slot];
-        if (item.Contains("quantity")) item["quantity"] = amount + (int)item["quantity"];
+        if (item.ContainsKey("quantity")) item["quantity"] = amount + (int)item["quantity"];
         else item.Add("quantity", amount);
 
         GD.Print("ITEM QUANTITY: " + item["quantity"]);

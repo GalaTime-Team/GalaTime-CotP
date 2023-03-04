@@ -1,119 +1,119 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=3 uid="uid://c7lb6tm0mdi2y"]
 
-[ext_resource path="res://sprites/test/xp_orb_stage_0.png" type="Texture" id=1]
-[ext_resource path="res://assets/scripts/objects/ExperienceOrb.cs" type="Script" id=2]
+[ext_resource type="Texture2D" uid="uid://b0l77o2lp0yy0" path="res://sprites/test/xp_orb_stage_0.png" id="1"]
+[ext_resource type="Script" path="res://assets/scripts/objects/ExperienceOrb.cs" id="2"]
 
-[sub_resource type="RectangleShape2D" id=41]
+[sub_resource type="RectangleShape2D" id="41"]
 
-[sub_resource type="RectangleShape2D" id=42]
-extents = Vector2( 20, 20 )
+[sub_resource type="RectangleShape2D" id="42"]
 
-[sub_resource type="Animation" id=44]
+[sub_resource type="Animation" id="44"]
 resource_name = "idle"
 
-[sub_resource type="Animation" id=43]
+[sub_resource type="Animation" id="43"]
 resource_name = "outro"
 length = 0.3
 tracks/0/type = "value"
-tracks/0/path = NodePath("Sprite:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2, 0.3 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [ Vector2( 4, 4 ), Vector2( 4.5, 4.5 ), Vector2( 0.5, 0.5 ) ]
+"values": [Vector2(4, 4), Vector2(4.5, 4.5), Vector2(0.5, 0.5)]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Sprite:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.2, 0.3 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PackedFloat32Array(0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
 tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0.3 ),
-"transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [  ],
-"method": "queue_free"
-} ]
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
 }
 
-[sub_resource type="Animation" id=45]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_38g56"]
+_data = {
+"idle": SubResource("44"),
+"outro": SubResource("43")
+}
+
+[sub_resource type="Animation" id="45"]
 resource_name = "loop"
 length = 1.5
-loop = true
+loop_mode = 1
 tracks/0/type = "value"
-tracks/0/path = NodePath("Sprite:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [ Color( 1, 0, 0, 1 ), Color( 1, 0.392157, 0, 1 ), Color( 1, 1, 0, 1 ), Color( 0, 1, 0, 1 ), Color( 0, 1, 0, 1 ), Color( 0, 0, 1, 1 ), Color( 1, 0, 1, 1 ), Color( 1, 0, 0, 1 ) ]
+"values": [Color(1, 0, 0, 1), Color(1, 0.392157, 0, 1), Color(1, 1, 0, 1), Color(0, 1, 0, 1), Color(0, 1, 0, 1), Color(0, 0, 1, 1), Color(1, 0, 1, 1), Color(1, 0, 0, 1)]
 }
 
-[node name="ExperienceOrb" type="KinematicBody2D"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5tfpy"]
+_data = {
+"loop": SubResource("45")
+}
+
+[node name="ExperienceOrb" type="CharacterBody2D"]
 z_index = 2
 collision_layer = 0
 collision_mask = 0
-script = ExtResource( 2 )
+script = ExtResource("2")
 
-[node name="Sprite" type="Sprite" parent="."]
-modulate = Color( 0.637004, 0, 1, 1 )
-scale = Vector2( 4, 4 )
-texture = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0.745323, 0, 1)
+scale = Vector2(4, 4)
+texture = ExtResource("1")
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 visible = false
-shape = SubResource( 41 )
-__meta__ = {
-"_edit_lock_": true
-}
+shape = SubResource("41")
 
 [node name="Collision2" type="CollisionShape2D" parent="."]
 visible = false
-shape = SubResource( 41 )
-__meta__ = {
-"_edit_lock_": true
-}
+shape = SubResource("41")
 
 [node name="PickupArea" type="Area2D" parent="."]
 visible = false
-__meta__ = {
-"_edit_lock_": true
-}
+collision_layer = 0
+collision_mask = 2
 
 [node name="Collision" type="CollisionShape2D" parent="PickupArea"]
-shape = SubResource( 42 )
-__meta__ = {
-"_edit_lock_": true
-}
+shape = SubResource("42")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/idle = SubResource( 44 )
-anims/outro = SubResource( 43 )
+libraries = {
+"": SubResource("AnimationLibrary_38g56")
+}
 
 [node name="HUEAnimationPlayer" type="AnimationPlayer" parent="."]
 reset_on_save = false
-anims/loop = SubResource( 45 )
+libraries = {
+"": SubResource("AnimationLibrary_5tfpy")
+}

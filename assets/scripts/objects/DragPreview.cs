@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 namespace Galatime {
-    public class DragPreview : Control
+    public partial class DragPreview : Control
     {
         TextureRect ItemIcon;
         Label ItemQuantity;
@@ -20,18 +20,18 @@ namespace Galatime {
             GetNode<AnimationPlayer>("AnimationPlayer").Play("idle");
         }
 
-        public override void _Process(float delta)
+        public override void _Process(double delta)
         {
             if (draggedItem != null && draggedItem.Count != 0)
             {
                 Vector2 position = GetGlobalMousePosition();
-                position.x -= 16;
-                position.y += 2;
-                RectPosition = position;
+                position.X -= 16;
+                position.Y += 2;
+                Position = position;
             }
             else
             {
-                RectPosition = Vector2.Zero;
+                Position = Vector2.Zero;
                 ItemIcon.Texture = null;
                 ItemQuantity.Text = "";
             }
@@ -46,8 +46,9 @@ namespace Galatime {
                 string icon = (string)ItemAssets["icon"];
                 if (i != null)
                 {
-                    ItemIcon.Texture = GD.Load<Texture>("res://sprites/" + icon);
-                    if (i.Contains("quantity"))
+                    ItemIcon.Texture = GD.Load<Texture2D>("res://sprites/" + icon);
+                    GD.Print("wlololll");
+                    if (i.ContainsKey("quantity"))
                     {
                         ItemQuantity.Text = ((int)i["quantity"]).ToString();
                     }
@@ -59,13 +60,13 @@ namespace Galatime {
                 }
                 else
                 {
-                    //ItemIcon.Texture = null;
+                    //ItemIcon.Texture2D = null;
                     //ItemQuantity.Text = "";
                 }
             }
             else
             {
-                //ItemIcon.Texture = null;
+                //ItemIcon.Texture2D = null;
                 //ItemQuantity.Text = "";
             }
         }

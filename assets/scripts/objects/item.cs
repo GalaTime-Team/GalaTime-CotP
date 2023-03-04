@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class item : Control
+public partial class item : Control
 {
     // Nodes
     TextureRect ItemIcon;
@@ -20,14 +20,15 @@ public class item : Control
     public void DisplayItem(Godot.Collections.Dictionary i, bool _playAnimation = false)
     {
         data = i;
+        GD.Print(i);
         if (i.Count != 0)
         {
             Godot.Collections.Dictionary ItemAssets = (Godot.Collections.Dictionary)i["assets"];
             string icon = (string)ItemAssets["icon"];
             if (i != null)
             {
-                ItemIcon.Texture = GD.Load<Texture>("res://sprites/" + icon);
-                if (i.Contains("quantity"))
+                ItemIcon.Texture = GD.Load<Texture2D>("res://sprites/" + icon);
+                if (i.ContainsKey("quantity"))
                 {
                     ItemQuantity.Text = ((int)i["quantity"]).ToString();
                 }

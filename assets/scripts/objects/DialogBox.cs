@@ -4,11 +4,11 @@ using Galatime;
 using System.Collections.Generic;
 using System.Net.Sockets;
 
-public class DialogBox : NinePatchRect
+public partial class DialogBox : NinePatchRect
 {
     private string _dialogsPath = "res://assets/data/json/dialogs.json";
     private string _charactersPath = "res://assets/data/json/talking-characters.json";
-    private RichTextLabel _textNode;
+    private RichTextLabel _textNode;    
     private Label _characterName;
     private TextureRect _characterPortrait;
     private AnimationPlayer _skipAnimationPlayer;
@@ -30,21 +30,22 @@ public class DialogBox : NinePatchRect
         _delay = new Timer();
         _delay.WaitTime = 0.04f;
         _delay.OneShot = false;
-        _delay.Connect("timeout", this, "_letterAppend");
+        _delay.Timeout += () => _letterAppend();
         AddChild(_delay);
     }
 
     public Godot.Collections.Array _getDialogFromJSON(string id)
     {
-        File file = new File();
-        if (file.FileExists(_dialogsPath))
+        if (Godot.FileAccess.FileExists(_dialogsPath))
         {
-            file.Open(_dialogsPath, File.ModeFlags.Read);
-            Godot.Collections.Dictionary data = (Godot.Collections.Dictionary)JSON.Parse(file.GetAsText()).Result;
+            var file = Godot.FileAccess.Open(_dialogsPath, Godot.FileAccess.ModeFlags.Read);
+            var json = new Json();
+            json.Parse(file.GetAsText());
             Godot.Collections.Array dialog = new Godot.Collections.Array();
             try
             {
-                dialog = (Godot.Collections.Array)data[id];
+                var dialogData = ((Godot.Collections.Dictionary)json.Data);
+                dialog = (Godot.Collections.Array)dialogData[id];
             }
             catch (System.Exception e)
             {
@@ -61,19 +62,20 @@ public class DialogBox : NinePatchRect
 
     public Godot.Collections.Dictionary _getCharacterFromJSON(string name)
     {
-        File file = new File();
-        if (file.FileExists(_charactersPath))
+        if (Godot.FileAccess.FileExists(_dialogsPath))
         {
-            file.Open(_charactersPath, File.ModeFlags.Read);
-            Godot.Collections.Dictionary data = (Godot.Collections.Dictionary)JSON.Parse(file.GetAsText()).Result;
+            var file = Godot.FileAccess.Open(_charactersPath, Godot.FileAccess.ModeFlags.Read);
+            var json = new Json();
+            json.Parse(file.GetAsText());
             Godot.Collections.Dictionary character = new Godot.Collections.Dictionary();
             try
             {
-                character = (Godot.Collections.Dictionary)data[name];
+                var charactersData = ((Godot.Collections.Dictionary)json.Data);
+                character = (Godot.Collections.Dictionary)charactersData[name];
             }
             catch (System.Exception e)
             {
-                GD.PrintErr("DIALOG: Invalid dialog " + name + ". " + e.Message);
+                GD.PrintErr("DIALOG: Invalid character " + name + ". " + e.Message);
             }
             return character;
         }
@@ -93,7 +95,7 @@ public class DialogBox : NinePatchRect
 
         if (_dialog != new Godot.Collections.Array())
         {
-            _textNode.BbcodeText = "";
+            _textNode.Text = "";
             Visible = true;
             canSkip = true;
 
@@ -114,12 +116,19 @@ public class DialogBox : NinePatchRect
         _resetValues();
     }
 
+    public string stripBBCode(string str)
+    {
+        var regex = new RegEx();
+        regex.Compile("\\[.+?\\]");
+        return regex.Sub(str, "", true);
+    }
+
     public void _letterAppend()
     {
         // GD.Print("CurrentLetter: " + _textNode.VisibleCharacters + ". Current phrase: " + currentPhrase);
         try
         {
-            if (_textNode.VisibleCharacters >= _textNode.Text.Length) { _delay.Stop(); _skipAnimationPlayer.Play("loop"); canSkip = true; return; } else { _textNode.VisibleCharacters += 1; }
+            if (_textNode.VisibleCharacters >= stripBBCode(_textNode.Text).Length) { _delay.Stop(); _skipAnimationPlayer.Play("loop"); canSkip = true; return; } else { _textNode.VisibleCharacters += 1; }
             _dialogAudio.Play();
         }
         catch (System.Exception)
@@ -134,15 +143,15 @@ public class DialogBox : NinePatchRect
     {
         _skipAnimationPlayer.Play("start");
         canSkip = false;
-        Godot.Collections.Dictionary phrase = (Godot.Collections.Dictionary)_dialog[phraseId];
+        var phrase = (Godot.Collections.Dictionary)_dialog[phraseId];
 
-        if (phrase.Contains("actions"))
+        if (phrase.ContainsKey("actions"))
         {
-            var actionsData = phrase["actions"] as Godot.Collections.Array;
-            var action = actionsData[0] as string;
+            var actionsData = (Godot.Collections.Array)phrase["actions"];
+            var action = (string)actionsData[0];
             actionsData.RemoveAt(0);
             var args = actionsData;
-            if (args.Count != 0)
+            if (args.Count != 0)    
             {
                 GD.Print(action, args, "more arg");
                 Callv(action, args);
@@ -158,13 +167,13 @@ public class DialogBox : NinePatchRect
             GD.Print("dont actions");
         }
 
-        if (phrase.Contains("character") && phrase.Contains("text"))
+        if (phrase.ContainsKey("character") && phrase.ContainsKey("text"))
         {
             Godot.Collections.Dictionary character = _getCharacterFromJSON((string)phrase["character"]);
-            _textNode.VisibleCharacters = 0;
-            _textNode.BbcodeText = (string)phrase["text"];
 
-            Texture texture = GD.Load<Texture>((string)character[(string)phrase["emotion"]]);
+            _textNode.VisibleCharacters = 0;
+            _textNode.Text = (string)phrase["text"];
+            Texture2D texture = GD.Load<Texture2D>((string)character[(string)phrase["emotion"]]);
             _characterName.Text = (string)character["name"];
             if (texture is AnimatedTexture)
             {
@@ -189,8 +198,8 @@ public class DialogBox : NinePatchRect
 
     public void setCameraOffset(string x, string y)
     {
-        _player.cameraOffset.x = int.Parse(x);
-        _player.cameraOffset.y = int.Parse(y);
+        _player.cameraOffset.X = int.Parse(x);
+        _player.cameraOffset.Y = int.Parse(y);
     }
 
     public void toggleMove()
@@ -204,7 +213,7 @@ public class DialogBox : NinePatchRect
         _player.Set("can_move", true);
         _delay.Stop();
 
-        _textNode.BbcodeText = "";
+        _textNode.Text = "";
         _textNode.VisibleCharacters = -1;
 
         currentPhrase = 0;

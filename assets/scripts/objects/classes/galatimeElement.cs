@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace Galatime
 {
-    public class GalatimeElementDamageResult {
+    public partial class GalatimeElementDamageResult {
         public float damage = 0;
         public float multiplier = 1;
         public string type = "equal";
     }
 
-    public class GalatimeElement : Godot.Object
+    public partial class GalatimeElement : Godot.Node
     {
         public int id = 0;
         public string name = "Default";

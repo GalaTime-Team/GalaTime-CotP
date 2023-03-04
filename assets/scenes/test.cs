@@ -2,10 +2,10 @@ using Galatime;
 using Godot;
 using System;
 
-public class test : Node2D
+public partial class test : Node2D
 {
-    public override void _Ready()
-    {
-
-    }
+	public override void _Ready()
+	{
+		PlayerVariables.player.startDialog("test_0");
+	}
 }

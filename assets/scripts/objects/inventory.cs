@@ -1,10 +1,10 @@
 using Godot;
 using System;
 
-public class inventory : Node
+public partial class inventory : Node
 {
     // Signals
-    [Signal] delegate void items_changed(int items);
+    [Signal] public delegate void items_changedEventHandler(int items);
 
     // Variables
     public int slots = 16;
@@ -20,12 +20,12 @@ public class inventory : Node
 
     public Godot.Collections.Dictionary ReadFromJson(string path)
     {
-        File file = new File();
-        if (file.FileExists(path))
+        if (Godot.FileAccess.FileExists(path))
         {
-            file.Open(path, File.ModeFlags.Read);
-            Godot.Collections.Dictionary data = (Godot.Collections.Dictionary)JSON.Parse(file.GetAsText()).Result;
-            return data;
+            var file = Godot.FileAccess.Open(path, Godot.FileAccess.ModeFlags.Read);
+            var json = new Json();
+            json.Parse(file.GetAsText());
+            return (Godot.Collections.Dictionary)json.Data;
         }
         else
         {

@@ -5,29 +5,17 @@ using System.Collections.Generic;
 using Godot.Collections;
 using System.Linq;
 
-public class Slime : Entity
+public partial class Slime : Entity
 {
     private Player _player = null;
     private Vector2[] _path = null;
     private NavigationAgent2D _navigation = null;
 
-    private Sprite _sprite;
+    private Sprite2D _sprite;
     private Area2D _weapon;
     private AnimationPlayer _animationPlayer;
 
-    private Timer _attackCountdownTimer;
-
-    public EntityStats stats = new EntityStats
-    {
-        physicalAttack = 21,
-        magicalAttack = 22,
-        physicalDefence = 10,
-        magicalDefense = 34,
-        health = 19,
-        mana = 15,
-        stamina = 12,
-        agility = 46
-    };
+    private Timer _attackCountdownTimer; 
 
     private bool _canMoveTest = true;
     public new float speed = 200;
@@ -40,22 +28,29 @@ public class Slime : Entity
         _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
         _player = PlayerVariables.player;
+        stats = new EntityStats(
+                physicalAttack: 21,
+                magicalAttack: 25,
+                physicalDefence: 10,
+                magicalDefence: 34,
+                health: 19
+            );
 
-        health = stats.health;
+        health = stats.health.value;
         droppedXp = 10;
 
-        _sprite = GetNode<Sprite>("Sprite");
-        _navigation = GetNode<NavigationAgent2D>("NavigationAgent");
+        _sprite = GetNode<Sprite2D>("Sprite2D");
+        _navigation = GetNode<NavigationAgent2D>("NavigationAgent3D");
 
         _weapon = GetNode<Area2D>("Weapon");
 
-        _weapon.Connect("body_entered", this, "_attack");
-        _weapon.Connect("body_exited", this, "_onAreaExit");
+        _weapon.Connect("body_entered",new Callable(this,"_attack"));
+        _weapon.Connect("body_exited",new Callable(this,"_onAreaExit"));
 
         _attackCountdownTimer = new Timer();
         _attackCountdownTimer.WaitTime = 1f;
         _attackCountdownTimer.OneShot = true;
-        _attackCountdownTimer.Connect("timeout", this, "justHit");
+        _attackCountdownTimer.Connect("timeout",new Callable(this,"justHit"));
         AddChild(_attackCountdownTimer);
 
         _animationPlayer.Play("intro");
@@ -63,7 +58,7 @@ public class Slime : Entity
 
     public override void _moveProcess()
     {
-        if (!_deathState) move(); else velocity = Vector2.Zero;
+        if (!DeathState) move(); else velocity = Vector2.Zero;
     }
 
     public override void _deathEvent(float damageRotation = 0f)
@@ -86,33 +81,33 @@ public class Slime : Entity
         _animationPlayer.Play("outro");
     }
 
-    public async void _attack(KinematicBody2D body)
+    public async void _attack(CharacterBody2D body)
     {
-        if (!_deathState)
+        if (!DeathState)
         {
             if (body is Entity entity)
             {
                 _attackCountdownTimer.Start();
                 GalatimeElement element = GalatimeElement.Aqua;
-                float damageRotation = GlobalTransform.origin.AngleToPoint(entity.GlobalTransform.origin);
-                entity.hit(20, stats.magicalAttack, element, DamageType.physical, 500, damageRotation);
+                float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
+                entity.hit(20, stats.magicalAttack.value, element, DamageType.physical, 500, damageRotation);
             }
         }
     }
 
     public void justHit()
     {
-        var bodies = _weapon.GetOverlappingBodies()[0] as KinematicBody2D;
+        var bodies = _weapon.GetOverlappingBodies()[0] as CharacterBody2D;
         if (bodies is Entity entity)
         {
             _attackCountdownTimer.Start();
             GalatimeElement element = GalatimeElement.Aqua;
-            float damageRotation = GlobalTransform.origin.AngleToPoint(entity.GlobalTransform.origin);
-            entity.hit(20, stats.magicalAttack, element, DamageType.physical, 500, damageRotation);
+            float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
+            entity.hit(20, stats.magicalAttack.value, element, DamageType.physical, 500, damageRotation);
         }
     }
 
-    public void _onAreaExit(KinematicBody2D body)
+    public void _onAreaExit(CharacterBody2D body)
     {
         _attackCountdownTimer.Stop();
     }
@@ -127,24 +122,31 @@ public class Slime : Entity
             NonTypedEnemies.Add(enemies[i]);
         }
         var sortedEnemies = NonTypedEnemies.OrderBy(x => x as Entity != null ? body.GlobalPosition.DistanceTo((x as Entity).GlobalPosition) : 0).ToList();
-        sortedEnemies.RemoveAll(x => x as Entity != null ? (x as Entity)._deathState : false);
+        sortedEnemies.RemoveAll(x => x as Entity != null ? (x as Entity).DeathState : false);
         if (sortedEnemies.ToList().Count > 0) enemy = sortedEnemies[0] as Entity;
-        try
+        if (enemy != null)
         {
-            Vector2 vectorPath = Vector2.Zero;
-            _navigation.SetTargetLocation(enemy.GlobalPosition);
-            vectorPath = body.GlobalPosition.DirectionTo(_navigation.GetNextLocation()) * speed;
-            _navigation.SetVelocity(vectorPath);
-            float rotation = body.GlobalTransform.origin.AngleToPoint(enemy.GlobalTransform.origin);
-            _weapon.Rotation = rotation + r;
-            float rotationDeg = Mathf.Rad2Deg(rotation);
-            float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
-            if (rotationDegPositive >= 90) _sprite.FlipH = true; else _sprite.FlipH = false;
-            velocity = vectorPath;
+            try
+            {
+                Vector2 vectorPath = Vector2.Zero;
+                _navigation.TargetPosition = enemy.GlobalPosition;
+                vectorPath = body.GlobalPosition.DirectionTo(_navigation.GetNextPathPosition()) * speed;
+                _navigation.SetVelocity(vectorPath);
+                float rotation = body.GlobalPosition.AngleToPoint(enemy.GlobalPosition);
+                _weapon.Rotation = rotation;
+                float rotationDeg = Mathf.RadToDeg(rotation);
+                float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
+                if (rotationDegPositive >= 90) _sprite.FlipH = true; else _sprite.FlipH = false;
+                velocity = vectorPath;
+            }
+            catch (Exception err)
+            {
+                GD.PrintErr("CAN'T MOVE");
+            }
         }
-        catch (Exception err)
+        else
         {
-            GD.PrintErr("CAN'T MOVE");
+            velocity = Vector2.Zero;
         }
     }
 } 

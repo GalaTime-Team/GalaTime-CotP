@@ -3,11 +3,11 @@ using System;
 
 namespace Galatime
 {
-    public class AbilitiesChoiseContainer : VBoxContainer
+    public partial class AbilitiesChoiseContainer : VBoxContainer
     {
         private PlayerVariables _playerVariables;
         private HBoxContainer _abilitiesContainer;
-        private Godot.Collections.Array abilityContainers;
+        private Godot.Collections.Array<Node> abilityContainers;
 
         public string choiseId = "unknow";
 
@@ -19,13 +19,13 @@ namespace Galatime
             for (int i = 0; i < abilityContainers.Count; i++)
             {
                 var abilityContainer = abilityContainers[i] as AbilityContainer;
-                var binds = new Godot.Collections.Array();
-                binds.Add(i);
-                abilityContainer.Connect("gui_input", this, "_abilityInput", binds);
+                var id = i;
+                abilityContainer.GuiInput += (InputEvent @event) => _abilityInput(@event, id);
+                //Connect("gui_input",new Callable(this,"_abilityInput"),binds);
             }
 
             _playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            _playerVariables.Connect("abilities_changed", this, "_onAbilitiesChanged");
+            _playerVariables.Connect("abilities_changed",new Callable(this,"_onAbilitiesChanged"));
         }
 
         private void _onAbilitiesChanged()
@@ -33,9 +33,9 @@ namespace Galatime
             for (int i = 0; i < PlayerVariables.abilities.Count; i++)
             {
                 var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
-                if (ability.Contains("icon"))
+                if (ability.ContainsKey("icon"))
                 {
-                    var icon = GD.Load((string)ability["icon"]) as Texture;
+                    var icon = GD.Load((string)ability["icon"]) as Texture2D;
                     var ab = abilityContainers[i] as AbilityContainer;
                     ab.load(icon, 2);
                 }
@@ -52,14 +52,14 @@ namespace Galatime
             if (@event is InputEventMouseButton)
             {
                 var @mouseEvent = @event as InputEventMouseButton;
-                if (@mouseEvent.ButtonIndex == 1 && mouseEvent.Pressed)
+                if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
                 {
                     var abilityContainer = abilityContainers[id] as AbilityContainer;
                     for (int i = 0; i < PlayerVariables.abilities.Count; i++)
                     {
                         var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
                         GD.Print(" reloaded? " + _playerVariables.isAbilityReloaded(i) + " " + _playerVariables.isAbilityReloaded(id));
-                        if (ability.Contains("id"))
+                        if (ability.ContainsKey("id"))
                         {
                             if ((string)ability["id"] == choiseId)
                             {

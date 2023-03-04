@@ -1,13 +1,14 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
-path="res://.import/shatter.wav-2aae618a1fe166a6bba06b8f0920f23c.sample"
+type="AudioStreamWAV"
+uid="uid://f6cl2y4ni7b5"
+path="res://.godot/imported/shatter.wav-2aae618a1fe166a6bba06b8f0920f23c.sample"
 
 [deps]
 
 source_file="res://assets/audios/sounds/shatter.wav"
-dest_files=[ "res://.import/shatter.wav-2aae618a1fe166a6bba06b8f0920f23c.sample" ]
+dest_files=["res://.godot/imported/shatter.wav-2aae618a1fe166a6bba06b8f0920f23c.sample"]
 
 [params]
 

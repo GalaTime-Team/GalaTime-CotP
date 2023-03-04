@@ -2,14 +2,18 @@
 
 importer="mp3"
 type="AudioStreamMP3"
-path="res://.import/sword_intro.mp3-e76803b7de3c201ce5b29b09d261cadd.mp3str"
+uid="uid://c7q7hg4kj80ew"
+path="res://.godot/imported/sword_intro.mp3-e76803b7de3c201ce5b29b09d261cadd.mp3str"
 
 [deps]
 
 source_file="res://assets/audios/sounds/sword_intro.mp3"
-dest_files=[ "res://.import/sword_intro.mp3-e76803b7de3c201ce5b29b09d261cadd.mp3str" ]
+dest_files=["res://.godot/imported/sword_intro.mp3-e76803b7de3c201ce5b29b09d261cadd.mp3str"]
 
 [params]
 
 loop=false
 loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

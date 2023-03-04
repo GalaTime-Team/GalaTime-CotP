@@ -3,7 +3,7 @@ using System;
 
 namespace Galatime
 {
-    public class AbilityContainerItem : TextureRect
+    public partial class AbilityContainerItem : TextureRect
     {
         private Tooltip _tooltip;
         private AbilitiesChoiseContainer abilityChoiseContainer;
@@ -19,36 +19,31 @@ namespace Galatime
         {
             _tooltip = GetNode<Tooltip>("../../../Tooltip");
             abilityChoiseContainer = GetNode<AbilitiesChoiseContainer>("../AbilitiesChoiseContainer");
-            _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
             abilityData = GalatimeGlobals.getAbilityById(abilityName);
 
-            if (abilityData.Contains("icon")) Texture = GD.Load<Texture>((string)abilityData["icon"]);
+            if (abilityData.ContainsKey("icon")) Texture = GD.Load<Texture2D>((string)abilityData["icon"]);
 
-            Connect("mouse_entered", this, "_mouseEnter");
-            Connect("gui_input", this, "_guiInput");
-            Connect("mouse_exited", this, "_mouseExit");
-
-            _animationPlayer.Play("idle");
+            Connect("mouse_entered",new Callable(this,"_mouseEnter"));
+            Connect("gui_input",new Callable(this,"_guiInput"));
+            Connect("mouse_exited",new Callable(this,"_mouseExit"));
 
             _playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            _playerVariables.Connect("abilities_changed", this, "_onAbilitiesChanged");
+            _playerVariables.Connect("abilities_changed",new Callable(this,"_onAbilitiesChanged"));
         }
 
         public void _onAbilitiesChanged()
         {
             for (int i = 0; i < PlayerVariables.abilities.Count; i++)
             {
-                var ability = PlayerVariables.abilities[i] as Godot.Collections.Dictionary;
-                if (ability.Contains("id"))
+                var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
+                if (ability.ContainsKey("id"))
                 {
                     if ((string)ability["id"] == abilityName)
                     {
-                        setUsing();
                         return;
                     }
                 }
             }
-            setUsing(true);
         }
 
         public void _mouseEnter()
@@ -61,23 +56,18 @@ namespace Galatime
             _tooltip._hide();
         }
 
-        public void setUsing(bool idle = false)
-        {
-            _animationPlayer.Play(idle ? "idle" : "using");
-        }
-
         public void _guiInput(InputEvent @event)
         {
             if (@event is InputEventMouseButton)
             {
                 var @mouseEvent = @event as InputEventMouseButton;
-                if (@mouseEvent.ButtonIndex == 1 && mouseEvent.Pressed)
+                if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
                 {
-                    var position = RectGlobalPosition;
-                    position.x -= 32;
-                    position.y -= 48;
+                    var position = GlobalPosition;
+                    position.X -= 80;
+                    position.Y -= 70;
                     abilityChoiseContainer.Visible = true;
-                    abilityChoiseContainer.RectGlobalPosition = position;
+                    abilityChoiseContainer.GlobalPosition = position;
                     abilityChoiseContainer.choiseId = abilityName;
                 }
             }
