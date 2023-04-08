@@ -26,7 +26,8 @@ namespace Galatime
         /// Path3D to Player body node path
         /// </summary>
         public const string playerBodyPath = "/root/Node2D/Player/player_body";
-        public const string version = "0.4.0";
-        public const string versionDescription = "No bugs update\nPREVIEW BUILD";
+        public const string version = "0.5.0";
+        public const string versionDescription = "Upgrade Update\nPREVIEW BUILD";
+        public const string savesPath = "user://saves/";
     }
 }

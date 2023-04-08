@@ -39,7 +39,7 @@
             speed = 300f;
             _animationPlayer.SpeedScale = speed / 100;
 
-            stats = new EntityStats(
+            Stats = new EntityStats(
                 physicalAttack: 75,
                 magicalAttack: 80,
                 physicalDefence: 65,
@@ -72,8 +72,6 @@
             addAbility("res://assets/objects/abilities/Flamethrower.tscn", 0);
             addAbility("res://assets/objects/abilities/fireball.tscn", 1);
             addAbility("res://assets/objects/abilities/firewave.tscn", 2);
-
-            weapon.takeItem(GalatimeGlobals.getItemById("golden_holder_sword"));
         }
         public override void _moveProcess()
         {
@@ -82,6 +80,7 @@
             float pathRotation = 0;
             if (currentEnemy != null)
             {
+                if (weapon._item == null) weapon.takeItem(GalatimeGlobals.getItemById("golden_holder_sword")); 
                 _rayCast.TargetPosition = Vector2.Right.Rotated(GlobalPosition.AngleToPoint(currentEnemy.GlobalPosition)) * 200;
                 _navigation.TargetPosition = currentEnemy.GlobalPosition;
                 vectorPath = body.GlobalPosition.DirectionTo(_navigation.GetNextPathPosition());
@@ -124,7 +123,7 @@
                     {
                         var rotation = body.GlobalPosition.AngleToPoint(currentEnemy.GlobalPosition);
                         weapon.Rotation = rotation;
-                        weapon.attack(stats.physicalAttack.value, stats.magicalAttack.value);
+                        weapon.attack(Stats.physicalAttack.value, Stats.magicalAttack.value);
                     }
                 }
                 velocity = vectorPath;
@@ -155,6 +154,8 @@
 
         private void _defaultMotion()
         {
+            if (weapon._item != null) weapon.takeItem(new Godot.Collections.Dictionary());    
+
             var allies = GetTree().GetNodesInGroup("ally");
             var followTo = allies[followOrder] as CharacterBody2D;
             Vector2 vectorPath = Vector2.Zero;

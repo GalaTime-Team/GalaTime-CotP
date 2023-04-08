@@ -27,7 +27,6 @@ public partial class PausePagesButtonsContainer : HBoxContainer
         {
             if (mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
             {
-                GD.Print("Esss");
                 for (int i = 0; i < pagesNodes.Count; i++)
                 {
                     if (pagesNodes[i] != null)
@@ -42,8 +41,6 @@ public partial class PausePagesButtonsContainer : HBoxContainer
                         GD.PushWarning("Can't switch page, page is null");
                     }
                 }
-                GD.Print(pagesNodes);
-                GD.Print(id);
                 if (pagesNodes[id] != null)
                 {
                     var button = (Label)pagesButtons[id];
@@ -56,7 +53,6 @@ public partial class PausePagesButtonsContainer : HBoxContainer
                     styleBox.BorderWidthBottom = 3;
                     button.AddThemeColorOverride("font_color", new Color(0, 0, 0));
                     button.AddThemeStyleboxOverride("normal", styleBox);
-                    GD.Print(button.HasThemeStyleboxOverride("normal")); 
                     ((Control)pagesNodes[id]).Visible = true;
                 }
             }

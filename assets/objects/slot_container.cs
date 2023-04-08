@@ -64,6 +64,8 @@ public partial class slot_container : GridContainer
                 Item.DisplayItem((Godot.Collections.Dictionary)PlayerVariables.inventory[i]);
             }
         }
+        dragPreview.draggedItem = null;
+        dragPreview.setDraggedItem(null);
     }
 
     public void _mouseEnterSlot(Slot item)

@@ -110,7 +110,6 @@ public partial class DialogBox : NinePatchRect
 
     public void endDialog()
     {
-        GD.Print("yes");
         Visible = false;
         canSkip = false;
         _resetValues();
@@ -173,7 +172,8 @@ public partial class DialogBox : NinePatchRect
 
             _textNode.VisibleCharacters = 0;
             _textNode.Text = (string)phrase["text"];
-            Texture2D texture = GD.Load<Texture2D>((string)character[(string)phrase["emotion"]]);
+            var emotion = (string)phrase["emotion"];
+            Texture2D texture = GD.Load<Texture2D>((string)character[emotion]);
             _characterName.Text = (string)character["name"];
             if (texture is AnimatedTexture)
             {
@@ -205,7 +205,6 @@ public partial class DialogBox : NinePatchRect
     public void toggleMove()
     {
         _player.canMove = !_player.canMove;
-        GD.Print("working");
     }
 
     private void _resetValues()

@@ -30,7 +30,7 @@ namespace Galatime
             _collisionArea.Connect("body_exited",new Callable(this,"_onExit"));
 
             _shader = GD.Load<ShaderMaterial>("res://assets/shaders/outline.tres").Duplicate() as ShaderMaterial;
-            _playerNode = PlayerVariables.player;
+            _playerNode = GetTree().GetNodesInGroup("player")[0] as Player;
 
             _playerNode.Connect("on_interact",new Callable(this,"_OnInteract"));
             _playerNode.Connect("on_dialog_end",new Callable(this,"_OnDialogEnd"));

@@ -21,7 +21,8 @@ namespace Galatime
 			set
 			{
 				xp = value;
-				_playerGui.changeStats(stats, Xp);
+				_playerGui.changeStats(Stats, xp);
+				PlayerVariables.invokeXpChangedEvent(xp);
 			}
 		}
 
@@ -68,7 +69,7 @@ namespace Galatime
 
 			element = GalatimeElement.Ignis + GalatimeElement.Chaos;
 
-			stats = new EntityStats(
+			Stats = new EntityStats(
 				physicalAttack: 75,
 				magicalAttack: 80,
 				physicalDefence: 65,
@@ -78,21 +79,21 @@ namespace Galatime
 				stamina: 65,
 				agility: 60
 			);
-			GD.Print($"{stats.physicalAttack.value}, {stats.magicalAttack.value}");
 
 			// Start
 			canMove = true;
 
 			_animationPlayer.SpeedScale = speed / 100;
 
-			stamina = stats.stamina.value;
-			mana = stats.stamina.value;
-			health = stats.stamina.value;
+			stamina = Stats.stamina.value;
+			mana = Stats.mana.value;
+			Health = Stats.health.value;
 			cameraOffset = Vector2.Zero;
 
 			body.GlobalPosition = GlobalPosition;
 
-			_playerGui.changeStats(stats, Xp);
+			_playerGui.changeStats(Stats, Xp);
+			Xp += 10000;
 		}
 
 		private void _SetMove()
@@ -245,8 +246,7 @@ namespace Galatime
 			}
 			if (@event.IsActionPressed("game_attack"))
 			{
-				GD.Print(stats.physicalAttack.value, stats.magicalAttack.value);
-				weapon.attack(stats.physicalAttack.value, stats.magicalAttack.value);
+				weapon.attack(Stats.physicalAttack.value, Stats.magicalAttack.value);
 			}
 
 			if (@event.IsActionPressed("game_dodge"))

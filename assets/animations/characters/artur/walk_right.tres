@@ -1,22 +1,26 @@
-[gd_resource type="Animation" load_steps=4 format=2]
+[gd_resource type="Animation" load_steps=9 format=3 uid="uid://chwhjkjfct2xe"]
 
-[ext_resource path="res://sprites/characters/artur/arthur_right_2.png" type="Texture2D" id=1]
-[ext_resource path="res://sprites/characters/artur/arthur_right_0.png" type="Texture2D" id=2]
-[ext_resource path="res://sprites/characters/artur/arthur_right_1.png" type="Texture2D" id=3]
+[ext_resource type="Texture2D" uid="uid://bbxqskr02auk1" path="res://sprites/characters/artur/arthur_right_2.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bcumrxlm7hekp" path="res://sprites/characters/artur/arthur_right_1.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://bsse4bhqnbkfm" path="res://sprites/characters/artur/arthur_right_3.png" id="3_5262e"]
+[ext_resource type="Texture2D" uid="uid://bp5153wkh0b8d" path="res://sprites/characters/artur/arthur_right_4.png" id="4_uaqs7"]
+[ext_resource type="Texture2D" uid="uid://kvjdq303iv3p" path="res://sprites/characters/artur/arthur_right_5.png" id="5_1uvnt"]
+[ext_resource type="Texture2D" uid="uid://b0vjtk7t6klbu" path="res://sprites/characters/artur/arthur_right_6.png" id="6_khg7h"]
+[ext_resource type="Texture2D" uid="uid://brqnwxm5eeeg5" path="res://sprites/characters/artur/arthur_right_7.png" id="7_y7gcs"]
+[ext_resource type="Texture2D" uid="uid://bv43mto7ht860" path="res://sprites/characters/artur/arthur_right_8.png" id="8_xhfob"]
 
 [resource]
 resource_name = "walk_right"
-length = 1.2
-loop = true
+length = 2.3
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Sprite2D:texture")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PackedFloat32Array( 0, 0.3, 0.6, 0.9 ),
-"transitions": PackedFloat32Array( 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 2 ), ExtResource( 1 ) ]
+"values": [ExtResource("3"), ExtResource("1"), ExtResource("3_5262e"), ExtResource("4_uaqs7"), ExtResource("5_1uvnt"), ExtResource("6_khg7h"), ExtResource("7_y7gcs"), ExtResource("8_xhfob")]
 }

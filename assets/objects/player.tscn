@@ -1,18 +1,18 @@
 [gd_scene load_steps=22 format=3 uid="uid://dxkmenalovoja"]
 
 [ext_resource type="PackedScene" uid="uid://s184ap1aunq3" path="res://assets/objects/PlayerGui.tscn" id="1"]
-[ext_resource type="Animation" path="res://assets/animations/characters/artur/walk_left.tres" id="2"]
-[ext_resource type="Animation" path="res://assets/animations/characters/artur/walk_down.tres" id="3"]
-[ext_resource type="Animation" path="res://assets/animations/characters/artur/walk_right.tres" id="4"]
-[ext_resource type="Animation" path="res://assets/animations/characters/artur/walk_up.tres" id="5"]
-[ext_resource type="Animation" path="res://assets/animations/characters/artur/idle_left.tres" id="6"]
+[ext_resource type="Animation" uid="uid://co6srb7oraj3q" path="res://assets/animations/characters/artur/walk_left.tres" id="2"]
+[ext_resource type="Animation" uid="uid://g82xlv1qh4dx" path="res://assets/animations/characters/artur/walk_down.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://0qwxj0q11rw3" path="res://sprites/characters/artur/arthur_up_8.png" id="3_e45b5"]
+[ext_resource type="Animation" uid="uid://chwhjkjfct2xe" path="res://assets/animations/characters/artur/walk_right.tres" id="4"]
+[ext_resource type="Animation" uid="uid://c1sxvrqaexeyd" path="res://assets/animations/characters/artur/walk_up.tres" id="5"]
+[ext_resource type="Animation" uid="uid://cujxvxahqev2b" path="res://assets/animations/characters/artur/idle_left.tres" id="6"]
 [ext_resource type="Animation" path="res://assets/animations/characters/artur/fade_in.tres" id="7"]
-[ext_resource type="Animation" path="res://assets/animations/characters/artur/idle_up.tres" id="8"]
-[ext_resource type="Animation" path="res://assets/animations/characters/artur/idle_right.tres" id="9"]
+[ext_resource type="Animation" uid="uid://bgsskthjuyooq" path="res://assets/animations/characters/artur/idle_up.tres" id="8"]
+[ext_resource type="Animation" uid="uid://8p6sai8frm0r" path="res://assets/animations/characters/artur/idle_right.tres" id="9"]
 [ext_resource type="Script" path="res://assets/scripts/objects/Player.cs" id="10"]
-[ext_resource type="Texture2D" uid="uid://c6hpmkfrydd2t" path="res://sprites/characters/artur/arthur_down_0.png" id="11"]
 [ext_resource type="Script" path="res://assets/scripts/objects/Hand.cs" id="12"]
-[ext_resource type="Texture2D" uid="uid://bj2seovr1igem" path="res://sprites/characters/artur/arthur_down_1.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://cw61pjdcs013a" path="res://sprites/characters/artur/arthur_down_1.png" id="14"]
 
 [sub_resource type="Gradient" id="18"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
@@ -44,7 +44,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ExtResource("11")]
+"values": [ExtResource("14")]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jfmqd"]
@@ -63,7 +63,7 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="20"]
-size = Vector2(30, 30)
+size = Vector2(49, 50)
 
 [node name="Player" type="CharacterBody2D" groups=["ally", "player"]]
 z_index = -1
@@ -72,6 +72,7 @@ collision_layer = 2
 script = ExtResource("10")
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
+emitting = false
 amount = 4
 process_material = SubResource("17")
 texture = ExtResource("14")
@@ -82,8 +83,9 @@ z_index = 4096
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = 1
+y_sort_enabled = true
 scale = Vector2(4, 4)
-texture = ExtResource("11")
+texture = ExtResource("3_e45b5")
 
 [node name="Hand" type="Marker2D" parent="."]
 position = Vector2(0, 30)
@@ -95,7 +97,8 @@ libraries = {
 }
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, 30)
+z_index = 3
+position = Vector2(0.5, 30)
 shape = SubResource("20")
 
 [node name="Timer" type="Timer" parent="."]

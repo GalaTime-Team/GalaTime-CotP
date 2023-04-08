@@ -1,24 +1,25 @@
 {
-    "fireball": {
-        "name": "Fireball",
+	"fireball": {
+		"name": "Fireball",
 		"id": "fireball",
 		"description": "A large projectile that does medium area damage",
 		"element": "Ignis",
-        "reload": 5,
+		"reload": 5,
 		"costs": {
 			"mana": 10
 		},
 		"power": 20,
 		"duration": 2,
 		"path": "res://assets/objects/abilities/fireball.tscn",
-		"icon": "res://sprites/gui/abilities/ignis/fire_ball.png"
-    },
+		"icon": "res://sprites/gui/abilities/ignis/fire_ball.png",
+		"cost": 150
+	},
 	"blue_fireball": {
-        "name": "Blue Fireball",
+		"name": "Blue Fireball",
 		"id": "blue_fireball",
 		"description": "Same fireball, but with more damage and reload",
 		"element": "Ignis",
-        "reload": 10,
+		"reload": 10,
 		"costs": {
 			"mana": 10,
 			"stamina": 5
@@ -26,34 +27,55 @@
 		"power": 25,
 		"duration": 2,
 		"path": "res://assets/objects/abilities/blueFireball.tscn",
-		"icon": "res://sprites/gui/abilities/ignis/blue_fire_ball.png"
-    },
+		"icon": "res://sprites/gui/abilities/ignis/blue_fire_ball.png",
+		"required": ["bluefire"],
+		"cost": 200
+	},
 	"flamethrower": {
 		"name": "Flamethrower",
 		"id": "flamethrower",
 		"description": "Breathes out flames and dealing damage to a large area",
 		"element": "Ignis",
-        "reload": 5,
+		"reload": 5,
 		"costs": {
 			"mana": 10
 		},
 		"power": 2,
 		"duration": 2,
 		"path": "res://assets/objects/abilities/Flamethrower.tscn",
-		"icon": "res://sprites/gui/abilities/ignis/flamethrower.png"
+		"icon": "res://sprites/gui/abilities/ignis/flamethrower.png",
+		"required": ["fireball"],
+		"cost": 150
 	},
 	"firewave": {
 		"name": "Fire Wave",
 		"id": "firewave",
 		"description": "Deals damage to a very large area",
 		"element": "Ignis",
-        "reload": 20,
+		"reload": 20,
 		"costs": {
 			"mana": 10
 		},
 		"power": 20,
 		"duration": 2,
 		"path": "res://assets/objects/abilities/firewave.tscn",
-		"icon": "res://sprites/gui/abilities/ignis/firewave.png"
+		"icon": "res://sprites/gui/abilities/ignis/firewave.png",
+		"required": ["flamethrower"],
+		"cost": 150
+	},
+	"bluefire": {
+		"name": "Blue Fire",
+		"id": "bluefire",
+		"description": "Increase magical and physical attack",
+		"element": "Ignis",	
+		"reload": 90,
+		"costs": {
+			"mana": 30
+		},
+		"duration": 30,
+		"path": "res://assets/objects/abilities/BlueFire.tscn",
+		"icon": "res://sprites/gui/abilities/ignis/blue_fire.png",
+		"required": ["fireball"],
+		"cost": 200
 	}
 }

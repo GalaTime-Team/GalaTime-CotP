@@ -39,6 +39,14 @@
 		{"text": "I'm not a fan of reading", "character": "arthur", "emotion": "unsure"},
 		{"actions": ["toggleMove"]}
 	],
+	"test_5": [
+		{"text": "Bro", "character": "arthur", "emotion": "surprised", "actions": ["toggleMove"]}, 
+		{"text": "...", "character": "arthur", "emotion": "surprised"}, 
+		{"text": "it's...", "character": "arthur", "emotion": "surprised"},
+		{"text": "it's...", "character": "arthur", "emotion": "surprised"},
+		{"text": "PERFECTION", "character": "arthur", "emotion": "flustered"},
+		{"actions": ["toggleMove"]}
+	],
 	"tutorial_0": [ 
         {"text": "Okay, let me teach you some basic combat skills", "character": "rafael", "emotion": "ready", "actions": ["toggleMove"]}, 
 		{"text": "To use the sword, use the [color=yellow]left mouse button[/color] to attack", "character": "rafael", "emotion": "netrual"}, 

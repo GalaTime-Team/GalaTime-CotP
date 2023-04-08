@@ -48,7 +48,6 @@ public partial class Weapon : Area2D
     }
 
     public void _on_body_entered(CharacterBody2D body) {
-        GD.Print("body_entered");
         // Get scripted node
         Node2D parent = body.GetParent<Node2D>();
         // !!! NEEDS REWORK !!!

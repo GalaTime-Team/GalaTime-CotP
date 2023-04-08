@@ -39,7 +39,7 @@ public partial class HumanoidCharacter : Entity
         set
         {
             mana = value;
-            mana = Mathf.Clamp(mana, 0, stats.mana.value);
+            mana = Mathf.Clamp(mana, 0, Stats.mana.value);
             _manaRegenTimer.Stop();
             _manaCountdownTimer.Start();
             EmitSignal("on_mana_changed", mana);
@@ -53,7 +53,7 @@ public partial class HumanoidCharacter : Entity
         set
         {
             stamina = value;
-            stamina = Mathf.Clamp(stamina, 0, stats.stamina.value);
+            stamina = Mathf.Clamp(stamina, 0, Stats.stamina.value);
             _staminaRegenTimer.Stop();
             _staminaCountdownTimer.Start();
             EmitSignal("on_stamina_changed", stamina);
@@ -62,6 +62,8 @@ public partial class HumanoidCharacter : Entity
 
     public override void _Ready()
     {
+        base._Ready();
+
         _dodgeTimer = new Timer();
         _dodgeTimer.WaitTime = 2f;
         _dodgeTimer.OneShot = true;
@@ -113,18 +115,18 @@ public partial class HumanoidCharacter : Entity
     protected void _regenStamina()
     {
         stamina += 10;
-        stamina = Mathf.Clamp(stamina, 0, stats.stamina.value);
+        stamina = Mathf.Clamp(stamina, 0, Stats.stamina.value);
         EmitSignal("on_stamina_changed", stamina);
         heal(5);
-        if (stamina >= stats.stamina.value) _staminaRegenTimer.Stop();
+        if (stamina >= Stats.stamina.value) _staminaRegenTimer.Stop();
     }
 
     protected void _regenMana()
     {
         mana += 10;
-        mana = Mathf.Clamp(mana, 0, stats.mana.value);
+        mana = Mathf.Clamp(mana, 0, Stats.mana.value);
         EmitSignal("on_mana_changed", mana);
-        if (mana >= stats.mana.value) _manaRegenTimer.Stop();
+        if (mana >= Stats.mana.value) _manaRegenTimer.Stop();
     }
 
     protected void _setLayerToWeapon(bool toUp)
@@ -187,7 +189,7 @@ public partial class HumanoidCharacter : Entity
                     GD.Print($"mana cost {ability.costs["mana"]}");
                 }
                 GetParent().AddChild(ability);
-                ability.execute(this, stats.physicalAttack.value, stats.magicalAttack.value);
+                ability.execute(this, Stats.physicalAttack.value, Stats.magicalAttack.value);
                 _abilitiesTimers[i].Stop();
                 _abilitiesTimers[i].Start();
                 _abiltiesReloadTimes[i] = (int)Math.Round(ability.reload);
@@ -237,8 +239,7 @@ public partial class HumanoidCharacter : Entity
 
     protected void _SetAnimation(Vector2 animationVelocity, bool idle)
     {
-        _setLayerToWeapon(_animationPlayer.CurrentAnimation == "idle_up" || _animationPlayer.CurrentAnimation == "walk_up" ? false : true);
-        if (idle) _animationPlayer.Stop();  
+        if (idle) _animationPlayer.Stop();
         if (animationVelocity.Y != 0)
         {
             if (animationVelocity.Y <= -1 && _animationPlayer.CurrentAnimation != "walk_up")
@@ -262,6 +263,7 @@ public partial class HumanoidCharacter : Entity
                 if (!idle) _animationPlayer.Play("walk_left"); else _animationPlayer.Play("idle_left");
             }
         }
+        _setLayerToWeapon(_animationPlayer.CurrentAnimation == "idle_up" || _animationPlayer.CurrentAnimation == "walk_up" ? false : true);
         _trailParticles.Texture = _sprite.Texture;
     }
 }

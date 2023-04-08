@@ -148,6 +148,7 @@ libraries = {
 shape = SubResource("4")
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+bus = &"Sounds"
 
 [node name="Line2D" type="Line2D" parent="CharacterBody3D"]
 scale = Vector2(1, 1e-05)

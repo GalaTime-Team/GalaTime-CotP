@@ -21,6 +21,12 @@ namespace Galatime
 
     public partial class StatContainer : VBoxContainer
     {
+        public enum Status
+        {
+            noEnough,
+            ok
+        }
+
         [Signal] public delegate void on_upgradeEventHandler(int id);
 
         private PlayerGui playerGui;
@@ -31,6 +37,7 @@ namespace Galatime
         private Label amountLabel;
         private TextureRect iconTextureRect;
         private RichTextLabel neededCurencyLabel;
+        private AnimationPlayer animationPlayer;
 
         private Tooltip tooltip;
 
@@ -45,13 +52,30 @@ namespace Galatime
             neededCurencyLabel = GetNode<RichTextLabel>("UpgradeContainer/NeededCurencyLabel");
             iconTextureRect = GetNode<TextureRect>("Container/TextureRect");
             nameLabel = GetNode<Label>("Label");
+            animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
             tooltip = GetNode<Tooltip>("../../../Tooltip");
 
             upgradeButton = GetNode<Label>("UpgradeContainer/UpgradeButton");
-            upgradeButton.Connect("mouse_entered",new Callable(this,"_onUpgradeButtonMouseEntered"));
-            upgradeButton.Connect("mouse_exited",new Callable(this,"_onUpgradeButtonMouseExited"));
-            upgradeButton.Connect("gui_input",new Callable(this,"_onUpgradeButtonGuiInput"));
+            upgradeButton.Connect("mouse_entered", new Callable(this, "_onUpgradeButtonMouseEntered"));
+            upgradeButton.Connect("mouse_exited", new Callable(this, "_onUpgradeButtonMouseExited"));
+            upgradeButton.Connect("gui_input", new Callable(this, "_onUpgradeButtonGuiInput"));
+        }
+
+        public void playAnimation(Status status)
+        {
+            animationPlayer.Stop();
+            switch (status)
+            {
+                case Status.noEnough:
+                    animationPlayer.Play("no");
+                    break;
+                case Status.ok:
+                    animationPlayer.Play("levelup");
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void _onUpgradeButtonMouseEntered()
@@ -84,7 +108,7 @@ namespace Galatime
             amountProgressBar.Value = stat.value;
             amountLabel.Text = $"{stat.value}/150";
             nameLabel.Text = stat.name;
-            neededCurencyLabel.Text = $"100/{xpAmount} [rainbow]XP[/rainbow]";
+            neededCurencyLabel.Text = $"100/{xpAmount} [color=32cd32]XP[/color]";
 
             this.stat = stat;
         }

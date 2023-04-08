@@ -3,19 +3,27 @@ using System;
 using Discord;
 using Galatime;
 using System.IO;
+using YamlDotNet;
+using System.Collections.Generic;
 
 public sealed partial class GalatimeGlobals : Node
 {
     public static Godot.Collections.Dictionary itemList = new Godot.Collections.Dictionary();
     public static Godot.Collections.Dictionary ablitiesList = new Godot.Collections.Dictionary();
+    public static Godot.Collections.Array tipsList = new Godot.Collections.Array();
     public static string pathListItems = "res://assets/data/json/items.json";
     public static string pathListAbilities = "res://assets/data/json/abilities.json";
+    public static string pathListTips = "res://assets/data/json/tips.json";
+
+    public static PackedScene loadingScene;
 
     //itemList = _getItemsFromJson();
     //ablitiesList = _getAbilitiesFromJson();
     //1071756821158699068
 
-    public Discord.Discord discord;
+    public static Discord.Discord discord;
+    public static Discord.ActivityManager activityManager;
+    public static Activity currentActivity;
 
     /// <summary>
     /// Slot type for inventory
@@ -26,43 +34,236 @@ public sealed partial class GalatimeGlobals : Node
         slotSword
     }
 
+    //private static bool discordActivityDisabled;
+    //public static bool DiscordActivityDisabled
+    //{
+    //    get
+    //    {
+    //        return discordActivityDisabled;
+    //    }
+    //    set
+    //    {
+    //        discordActivityDisabled = value;
+    //        if (discordActivityDisabled)
+    //        {
+    //            activityManager.ClearActivity((result) =>
+    //            {
+    //                if (result == Discord.Result.Ok)
+    //                {
+
+    //                    Console.WriteLine("Success!");
+    //                }
+    //                else
+    //                {
+    //                    Console.WriteLine("Failed");
+    //                }
+    //            });
+    //        }
+    //        else
+    //        {
+    //            activityManager.UpdateActivity(currentActivity, (res) =>
+    //            {
+    //                if (res == Discord.Result.Ok)
+    //                {
+    //                    GD.Print("Everything is fine!");
+    //                }
+    //            });
+    //        }
+    //    }
+    //}
+
     public override async void _Ready()
     {
+        loadingScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/Loading.tscn");
+
         itemList = _getItemsFromJson();
         ablitiesList = _getAbilitiesFromJson();
+        tipsList = _getTipsFromJson();
 
-        discord = new Discord.Discord(1071756821158699068, (System.UInt64)Discord.CreateFlags.NoRequireDiscord);
-        var activityManager = discord.GetActivityManager();
+        //discord = new Discord.Discord(1071756821158699068, (System.UInt64)Discord.CreateFlags.NoRequireDiscord);
+        //activityManager = discord.GetActivityManager();
 
-        var activity = new Activity()
-        {
-            Assets =
-            {
-                LargeImage = "default",
-                LargeText = "GalaTime " + GalatimeConstants.version,
-                SmallImage = "day_1",
-                SmallText = "1st day"
-            },
-            Timestamps =
-            {
-                Start = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
-            },
-            State = "In Play",
-            Details = ""
-        };
+        //if (!DiscordActivityDisabled)
+        //{
+        //    currentActivity = new Activity()
+        //    {
+        //        Assets =
+        //        {
+        //            LargeImage = "default",
+        //            LargeText = "GalaTime " + GalatimeConstants.version,
+        //            SmallImage = "",
+        //            SmallText = ""
+        //        },
+        //        Timestamps =
+        //        {
+        //            Start = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
+        //        },
+        //        State = "In main menu",
+        //        Details = ""
+        //    };
 
-        activityManager.UpdateActivity(activity, (res) =>
-        {
-            if (res == Discord.Result.Ok)
-            {
-                GD.Print("Everything is fine!");
-            }
-        });
+        //    activityManager.UpdateActivity(currentActivity, (res) =>
+        //    {
+        //        if (res == Discord.Result.Ok)
+        //        {
+        //            GD.Print("Everything is fine!");
+        //        }
+        //    });
+        //}
     }
 
     public override void _Process(double delta)
     {
-        if (discord != null) discord.RunCallbacks();
+        // if (discord != null) discord.RunCallbacks();
+    }
+
+    public static void loadScene(Node currentScene, string nextScene)
+    {
+        var loadingSceneInstance = loadingScene.Instantiate<Loading>();
+        loadingSceneInstance.sceneName = nextScene;
+        currentScene.GetTree().Root.AddChild(loadingSceneInstance);
+    }
+
+    /// <summary>
+    /// Checks for the presence of saves and also creates them if they are absent
+    /// </summary>
+    public static void checkSaves()
+    {
+        if (!DirAccess.DirExistsAbsolute(GalatimeConstants.savesPath))
+        {
+            DirAccess.MakeDirAbsolute(GalatimeConstants.savesPath);
+        }
+        var savesCount = getSaves().Count;
+        if (savesCount <= 5)
+        {
+            for (int i = 1; i <= 5 - savesCount; i++)
+            {
+                createBlankSave(i);
+            }
+        }
+    }
+
+    public static System.Collections.Generic.Dictionary<string, string> loadSettingsConfig()
+    {
+        string SETTINGS_FILE_PATH = "user://settings.yml";
+
+        GD.Print($"Settings path: {SETTINGS_FILE_PATH}");
+
+        var file = Godot.FileAccess.Open(SETTINGS_FILE_PATH, Godot.FileAccess.ModeFlags.Read);
+
+        var deserializer = new YamlDotNet.Serialization.Deserializer();
+        var data = deserializer.Deserialize<System.Collections.Generic.Dictionary<string, string>>(file.GetAsText());
+
+        file.Close();
+
+        return data;
+    }
+
+    public static void updateSettingsConfig(double musicVolume = 1, double soundsVolume = 1, bool discordActivityDisabled = false)
+    {
+        string SETTINGS_FILE_PATH = "user://settings.yml";
+
+        GD.Print($"Settings path: {SETTINGS_FILE_PATH}");
+
+        var file = Godot.FileAccess.Open(SETTINGS_FILE_PATH, Godot.FileAccess.ModeFlags.Write);
+
+        var serializer = new YamlDotNet.Serialization.Serializer();
+        var saveData = getSettingsData(musicVolume, soundsVolume, discordActivityDisabled);
+        var saveYaml = serializer.Serialize(saveData);
+
+        file.StoreString(saveYaml);
+
+        file.Close();
+    }
+
+    private static System.Collections.Generic.Dictionary<string, object> getSettingsData(double musicVolume = 1, double soundsVolume = 1, bool discordActivityDisable = false)
+    {
+        var saveData = new System.Collections.Generic.Dictionary<string, object>();
+        saveData.Add("music_volume", musicVolume);
+        saveData.Add("sounds_volume", soundsVolume);
+        // saveData.Add("discord_presence_disabled", discordActivityDisable);
+        saveData.Add("config_version", 1);
+
+        return saveData;
+    }
+
+    public static Godot.Collections.Array<Godot.Collections.Dictionary> getSaves()
+    {
+        var saves = DirAccess.Open(GalatimeConstants.savesPath);
+        var results = new Godot.Collections.Array<Godot.Collections.Dictionary>();
+
+        if (saves != null)
+        {
+            saves.ListDirBegin();
+            var fileName = saves.GetNext();
+            while (fileName != "")
+            {
+                // GD.Print($"user://saves/{fileName}");
+                var file = Godot.FileAccess.Open($"{GalatimeConstants.savesPath}{fileName}", Godot.FileAccess.ModeFlags.Read);
+                var json = new Json();
+                var parsedJson = json.Parse(file.GetAsText());
+                if (parsedJson == Error.Ok)
+                {
+                    results.Add((Godot.Collections.Dictionary)json.Data);
+                }
+                else
+                {
+                    GD.Print(json.Data + " " + json.Data.GetType() + " " + parsedJson);
+                }
+                fileName = saves.GetNext();
+            }
+        }
+
+        return results;
+    }
+
+    public static void createBlankSave(int saveId)
+    {
+        string SAVE_FILE_PATH = GalatimeConstants.savesPath;
+        SAVE_FILE_PATH += "save" + saveId + ".json";
+
+        GD.Print($"Save path: {SAVE_FILE_PATH}");
+
+        var file = Godot.FileAccess.Open(SAVE_FILE_PATH, Godot.FileAccess.ModeFlags.Write);
+
+        var saveData = getBlankSaveData(saveId);
+        var saveJson = Json.Stringify(saveData, "\t");
+
+        file.StoreString(saveJson);
+
+        file.Close();
+    }
+
+    public static void save(int saveId)
+    {
+    }
+
+    private static Godot.Collections.Dictionary getBlankSaveData(int saveId)
+    {
+        var saveData = new Godot.Collections.Dictionary();
+        saveData.Add("DO_NOT_MODIFY_THIS_FILE_ONLY_MODIFY_IF_YOU_KNOW_WHAT_YOURE_DOING", 0);
+        saveData.Add("id", saveId);
+        saveData.Add("chapter", 1);
+        saveData.Add("day", 1);
+        saveData.Add("playtime", 0);
+
+        return saveData;
+    }
+
+    private static Godot.Collections.Array _getTipsFromJson()
+    {
+        if (Godot.FileAccess.FileExists(pathListTips))
+        {
+            var file = Godot.FileAccess.Open(pathListTips, Godot.FileAccess.ModeFlags.Read);
+            var json = new Json();
+            json.Parse(file.GetAsText());
+            return (Godot.Collections.Array)((Godot.Collections.Dictionary)json.Data)["tips"];
+        }
+        else
+        {
+            GD.PrintErr("GLOBALS: Invalid path for tips");
+            return new Godot.Collections.Array();
+        }
     }
 
     private static Godot.Collections.Dictionary _getAbilitiesFromJson()

@@ -37,7 +37,6 @@ namespace Galatime
 
         public void animationFinished(StringName name)
         {
-            GD.Print(name);
             if (name == "intro")
             {
                 _animationPlayer.Play("loop");
@@ -60,7 +59,7 @@ namespace Galatime
             _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
 
             _velocity.X += 1;
-            if (p is Player player) player.cameraShakeAmount += 10;
+            if (PlayerVariables.player is Player player) player.cameraShakeAmount += 10;
 
             _animationPlayer.Play("intro");
             _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, physicalAttack, magicalAttack);

@@ -57,9 +57,8 @@ namespace Galatime
             if (_item is Area2D a)
             {
                 var result = (Godot.Collections.Array)_item.Call("get_overlapping_bodies");
-                GD.Print(result);
                 return result;
-            }
+              }
             else
             {
                 return new Godot.Collections.Array();

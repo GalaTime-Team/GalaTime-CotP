@@ -9,7 +9,7 @@ namespace Galatime
         private HBoxContainer _abilitiesContainer;
         private Godot.Collections.Array<Node> abilityContainers;
 
-        public string choiseId = "unknow";
+        public string choiseId = "unknown";
 
         public override void _Ready()
         {
@@ -58,12 +58,12 @@ namespace Galatime
                     for (int i = 0; i < PlayerVariables.abilities.Count; i++)
                     {
                         var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
-                        GD.Print(" reloaded? " + _playerVariables.isAbilityReloaded(i) + " " + _playerVariables.isAbilityReloaded(id));
+                        GD.Print(" reloaded? " + PlayerVariables.isAbilityReloaded(i) + " " + PlayerVariables.isAbilityReloaded(id));
                         if (ability.ContainsKey("id"))
                         {
                             if ((string)ability["id"] == choiseId)
                             {
-                                if (_playerVariables.isAbilityReloaded(i) && _playerVariables.isAbilityReloaded(id))
+                                if (PlayerVariables.isAbilityReloaded(i) && PlayerVariables.isAbilityReloaded(id))
                                 {
                                     var previous = (Godot.Collections.Dictionary)PlayerVariables.abilities[id];
                                     _playerVariables.setAbility(GalatimeGlobals.getAbilityById(choiseId), id);
@@ -79,7 +79,7 @@ namespace Galatime
                             }
                         }
                     }
-                    if (_playerVariables.isAbilityReloaded(id))
+                    if (PlayerVariables.isAbilityReloaded(id))
                     {
                         _playerVariables.setAbility(GalatimeGlobals.getAbilityById(choiseId), id);
                         abilityContainer.click();

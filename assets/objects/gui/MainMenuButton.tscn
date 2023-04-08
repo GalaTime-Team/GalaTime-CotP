@@ -1,0 +1,42 @@
+[gd_scene load_steps=10 format=3 uid="uid://c4qtsh4p8hear"]
+
+[ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="1_ht07l"]
+[ext_resource type="Script" path="res://assets/scripts/gui/MainMenuButton.cs" id="2_15t6f"]
+[ext_resource type="AudioStream" uid="uid://bmeffvddx6dpx" path="res://assets/audios/sounds/button_sfx.mp3" id="3_2mt4m"]
+[ext_resource type="AudioStream" uid="uid://jrsuouvekni1" path="res://assets/audios/sounds/button_sfx_accept.mp3" id="4_r3oiq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_63aav"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_etqi1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_40yop"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_g83nr"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uhs4h"]
+
+[node name="MainMenuButton" type="Button"]
+offset_right = 112.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_ht07l")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_63aav")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_etqi1")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_40yop")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_g83nr")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_uhs4h")
+text = "Button"
+script = ExtResource("2_15t6f")
+
+[node name="AudioStreamPlayerButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_2mt4m")
+bus = &"Sounds"
+
+[node name="AudioStreamPlayerButtonAccept" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_r3oiq")
+volume_db = 10.0
+bus = &"Sounds"

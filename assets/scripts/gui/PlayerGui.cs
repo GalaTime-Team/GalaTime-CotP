@@ -148,7 +148,7 @@ namespace Galatime
                 {
                     var instance = statContainerScene.Instantiate<StatContainer>();
                     _statsContainer.AddChild(instance);
-                    instance.Connect("on_upgrade",new Callable(this,"_onUpgradeStat"));
+                    instance.on_upgrade += (int id) => _onUpgradeStat(id, instance);
                 }
             }
 
@@ -164,9 +164,17 @@ namespace Galatime
 
         }
 
-        public void _onUpgradeStat(int id)
+        public void _onUpgradeStat(int id, StatContainer instance)
         {
-            PlayerVariables.upgradeStat((EntityStatType)id);
+            var result = PlayerVariables.upgradeStat((EntityStatType)id);
+            if (!result)
+            {
+                instance.playAnimation(StatContainer.Status.noEnough);
+            }
+            else
+            {
+                instance.playAnimation(StatContainer.Status.ok);
+            }
         }
 
         public void addAbility(GalatimeAbility ab, int i)

@@ -5,7 +5,7 @@ public struct damageEffectColors {
     public static Color equal = new Color(1, 1, 1);
 
     public static Color plus = new Color(1, 0.9f, 0);
-    public static Color minus = new Color(1, 1, 1);
+    public static Color minus = new Color(0.78f, 0.78f, 0.78f);
     public static Color heal = new Color(0, 1, 0);
 }
 
@@ -63,7 +63,7 @@ public partial class damage_effect : Node2D
             default:
                 break;
         }
-        _text.Set("custom_colors/font_color", color);
+        _text.Set("theme_override_colors/font_color", color);
 
         if (type != "heal")
         {

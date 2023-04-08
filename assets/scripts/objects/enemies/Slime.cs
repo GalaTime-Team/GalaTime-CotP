@@ -14,56 +14,71 @@ public partial class Slime : Entity
     private Sprite2D _sprite;
     private Area2D _weapon;
     private AnimationPlayer _animationPlayer;
+    private CollisionShape2D _collision;
 
-    private Timer _attackCountdownTimer; 
+    private Timer _attackCountdownTimer;
+
+    private PackedScene slimeScene;
 
     private bool _canMoveTest = true;
     public new float speed = 200;
     [Export] public float r = 1;
+    public int stage = 2;
 
-    public override void _Ready()
+    public override async void _Ready()
     {
+        base._Ready();
+
         element = GalatimeElement.Aqua;
         body = this;
         _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
+        slimeScene = ResourceLoader.Load<PackedScene>("res://assets/objects/enemy/slime.tscn");
+
         _player = PlayerVariables.player;
-        stats = new EntityStats(
+        Stats = new EntityStats(
                 physicalAttack: 21,
                 magicalAttack: 25,
                 physicalDefence: 10,
                 magicalDefence: 34,
-                health: 19
+                health: 5
             );
 
-        health = stats.health.value;
         droppedXp = 10;
 
         _sprite = GetNode<Sprite2D>("Sprite2D");
         _navigation = GetNode<NavigationAgent2D>("NavigationAgent3D");
+        _collision = GetNode<CollisionShape2D>("CollisionShape2D");
 
         _weapon = GetNode<Area2D>("Weapon");
 
-        _weapon.Connect("body_entered",new Callable(this,"_attack"));
-        _weapon.Connect("body_exited",new Callable(this,"_onAreaExit"));
+        _weapon.Connect("body_entered", new Callable(this, "_attack"));
+        _weapon.Connect("body_exited", new Callable(this, "_onAreaExit"));
 
         _attackCountdownTimer = new Timer();
         _attackCountdownTimer.WaitTime = 1f;
         _attackCountdownTimer.OneShot = true;
-        _attackCountdownTimer.Connect("timeout",new Callable(this,"justHit"));
+        _attackCountdownTimer.Connect("timeout", new Callable(this, "justHit"));
         AddChild(_attackCountdownTimer);
 
         _animationPlayer.Play("intro");
-    }
 
-    public override void _moveProcess()
-    {
-        if (!DeathState) move(); else velocity = Vector2.Zero;
-    }
+        Stats.health.value += 10 * stage;
+        Health = Stats.health.value;
 
-    public override void _deathEvent(float damageRotation = 0f)
-    {
-        base._deathEvent();
+        speed -= 50 * stage;
+
+        var scale = Vector2.One;
+        scale.X += Math.Max(1.5f + stage + 0.5f, 4);
+        scale.Y += Math.Max(1.5f + stage + 0.5f, 4);   
+        _sprite.Scale = scale;
+
+        if (stage == 1)
+        {
+            var smallSlimeTexture = GD.Load<Texture2D>("res://sprites/small_slime.png");
+            _sprite.Texture = smallSlimeTexture;
+        }
+
         dynamic barrelItem = new
         {
             id = "barrel",
@@ -74,11 +89,41 @@ public partial class Slime : Entity
 
         lootPool.Add(barrelItem);
 
-        _dropLoot(damageRotation);
-        _dropXp();
+        await ToSignal(GetTree().CreateTimer(1f), SceneTreeTimer.SignalName.Timeout);
+
+        _collision.Disabled = false;
+    }
+
+    public override void _moveProcess()
+    {
+        if (!DeathState) move(); else velocity = Vector2.Zero;
+    }
+
+    public override void _deathEvent(float damageRotation = 0f)
+    {
+        base._deathEvent();
 
         _canMoveTest = false;
         _animationPlayer.Play("outro");
+
+        if (stage >= 2)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                var slimeInstance = slimeScene.Instantiate<Slime>();
+                slimeInstance.stage = stage - 1;
+                var position = GlobalPosition;
+                position.Y -= i == 0 ? 40 : -40;
+                slimeInstance.GlobalPosition = position;
+                GetParent().AddChild(slimeInstance);
+                slimeInstance.setKnockback(500, i == 0 ? damageRotation - Mathf.DegToRad(45) : damageRotation + Mathf.DegToRad(45));
+            }
+        }
+        else
+        {
+            _dropXp();
+            _dropLoot(damageRotation);
+        }
     }
 
     public async void _attack(CharacterBody2D body)
@@ -90,7 +135,7 @@ public partial class Slime : Entity
                 _attackCountdownTimer.Start();
                 GalatimeElement element = GalatimeElement.Aqua;
                 float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.hit(20, stats.magicalAttack.value, element, DamageType.physical, 500, damageRotation);
+                entity.hit(20 + 10 * stage, Stats.magicalAttack.value, element, DamageType.physical, 500, damageRotation);
             }
         }
     }
@@ -103,7 +148,7 @@ public partial class Slime : Entity
             _attackCountdownTimer.Start();
             GalatimeElement element = GalatimeElement.Aqua;
             float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-            entity.hit(20, stats.magicalAttack.value, element, DamageType.physical, 500, damageRotation);
+            entity.hit(20 + 10 * stage, Stats.magicalAttack.value, element, DamageType.physical, 500, damageRotation);
         }
     }
 
@@ -136,7 +181,7 @@ public partial class Slime : Entity
                 _weapon.Rotation = rotation;
                 float rotationDeg = Mathf.RadToDeg(rotation);
                 float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
-                if (rotationDegPositive >= 90) _sprite.FlipH = true; else _sprite.FlipH = false;
+                if (rotationDegPositive <= 90) _sprite.FlipH = true; else _sprite.FlipH = false;
                 velocity = vectorPath;
             }
             catch (Exception err)

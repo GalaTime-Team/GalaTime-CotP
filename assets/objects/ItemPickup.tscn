@@ -68,7 +68,6 @@ scale_curve = SubResource("19")
 z_index = 2
 position = Vector2(0, 187)
 collision_layer = 0
-collision_mask = 0
 script = ExtResource("4")
 spawnVelocity = Vector2(100, 100)
 itemId = "golden_holder_sword"

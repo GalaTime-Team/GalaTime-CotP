@@ -11,16 +11,20 @@ namespace Galatime
         [Export] public float speed = 200f;
         public Vector2 velocity = Vector2.Zero;
 
-        public PackedScene damageEffectScene = (PackedScene)GD.Load("res://assets/objects/DamageAnimationPlayer.tscn");
-        public PackedScene damageAudioScene = (PackedScene)GD.Load("res://assets/objects/DamageAudioPlayer.tscn");
-        public PackedScene damageEffect = (PackedScene)GD.Load("res://assets/objects/gui/damage_effect.tscn");
+        public PackedScene damageEffectScene;
+        public PackedScene damageAudioScene;
+        public PackedScene damageEffect;
+        public PackedScene itemPickupScene;
+        public PackedScene xpOrbScene;
 
         public GalatimeElement element = null;
         public CharacterBody2D body = null;
         public AnimationPlayer damageSpritePlayer = null;
         public AudioStreamPlayer2D damageAudioPlayer = null;
 
-        public EntityStats stats = new EntityStats();
+        public Timer damageDelay = null;
+
+        public EntityStats Stats = new EntityStats();
         public List<dynamic> lootPool = new List<dynamic>();
         public int droppedXp;
         private bool _deathState;
@@ -36,11 +40,41 @@ namespace Galatime
             }
         }
 
-        public float health = 0;
+        private float health = 0;
+        public float Health
+        {
+            get
+            {
+                return health;
+            }
+            set
+            {
+                health = value;
+                health = Math.Min(Stats.health.value, health);
+                health = (float)Math.Round(health, 2);
+                _healthChangedEvent(health);
+            }
+        }
 
         private Vector2 _knockbackVelocity = Vector2.Zero;
 
         [Signal] public delegate void _onDamageEventHandler();
+
+        public override void _Ready()
+        {
+            base._Ready();
+
+            damageEffectScene = ResourceLoader.Load<PackedScene>("res://assets/objects/DamageAnimationPlayer.tscn");
+            damageAudioScene = ResourceLoader.Load<PackedScene>("res://assets/objects/DamageAudioPlayer.tscn");
+            damageEffect = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/damage_effect.tscn");
+            itemPickupScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ItemPickup.tscn");
+            xpOrbScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ExperienceOrb.tscn");
+
+            damageDelay = new Timer();
+            damageDelay.WaitTime = 0.1f;
+            damageDelay.OneShot = true;
+            AddChild(damageDelay);
+        }
 
         /// <summary>
         /// Damages and reduces entity health. If health is less than 0 it will call the function <c>_deathEvent()</c>. 
@@ -54,17 +88,20 @@ namespace Galatime
         /// <param name="damageRotation">In radians, will knockback this way. 100 is small knockback</param>
         public void hit(float power, float attackStat, GalatimeElement elemen, DamageType type = DamageType.physical, float knockback = 0f, float damageRotation = 0f)
         {
-            if (DeathState) return;
+            GD.Print("Time left: " + damageDelay.TimeLeft);
+            if (DeathState || damageDelay.TimeLeft > 0) return;
+            damageDelay.Start();
             // Damage animation
             if (damageSpritePlayer == null)
             {
-                AnimationPlayer damageSpritePlayerInstance = damageEffectScene.Instantiate<AnimationPlayer>();
+                AnimationPlayer damageSpritePlayerInstance = damageEffectScene.Instantiate<AnimationPlayer>();  
+                damageSpritePlayer = damageSpritePlayerInstance;
                 body.AddChild(damageSpritePlayerInstance);
 
                 Animation damageAnimation = damageSpritePlayerInstance.GetAnimation("damage");
                 damageAnimation.TrackSetPath(0, "Sprite2D:modulate");
             }
-
+                
             if (damageAudioPlayer == null)
             {
                 var damageAudioPlayerInstance = damageAudioScene.Instantiate<AudioStreamPlayer2D>();
@@ -77,11 +114,11 @@ namespace Galatime
 
             if (type == DamageType.physical)
             {
-                damageN = attackStat * (power / 10) / stats.physicalDefence.value;
+                damageN = attackStat * (power / 10) / Stats.physicalDefence.value;
             }
             if (type == DamageType.magical)
             {
-                damageN = attackStat * (power / 10) / stats.magicalDefence.value;
+                damageN = attackStat * (power / 10) / Stats.magicalDefence.value;
             }
 
             // Calculating weaknesess
@@ -94,8 +131,8 @@ namespace Galatime
             {
                 damage = element.getReceivedDamage(elemen, damageN);
                 damageN = damage.damage;
-                if (type == DamageType.magical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.magicalDefence.value + " RECEIVER MAGICAL DEFENCE.");
-                if (type == DamageType.physical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.physicalDefence.value + " RECEIVER PHYSICAL DEFENCE.");
+                // if (type == DamageType.magical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.magicalDefence.value + " RECEIVER MAGICAL DEFENCE.");
+                // if (type == DamageType.physical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.physicalDefence.value + " RECEIVER PHYSICAL DEFENCE.");
             }
 
             // Damage effect
@@ -113,7 +150,7 @@ namespace Galatime
                 damageSpritePlayer.Stop();
                 damageSpritePlayer.Play("damage");
             }
-
+                
                 
             var rand = new Random();
             damageAudioPlayer.PitchScale = (float)(1.1 - rand.NextDouble() / 9);
@@ -122,11 +159,8 @@ namespace Galatime
             // Final
             setKnockback(knockback, damageRotation);
 
-            health -= damageN;
-            health = (float)Math.Round(health, 2);
-            _healthChangedEvent(health);
-            GD.Print(health);
-            if (health <= 0)
+            Health -= damageN;
+            if (Health <= 0)
             {
                 _deathEvent(damageRotation);
             }
@@ -144,7 +178,6 @@ namespace Galatime
             velocity += _knockbackVelocity;
             Velocity = velocity;
             MoveAndSlide();
-
         }
 
         /// <summary>
@@ -175,7 +208,6 @@ namespace Galatime
         /// <param name="damageRotation"></param>
         public virtual void _dropLoot(float damageRotation)
         {
-            PackedScene itemPickupScene = GD.Load<PackedScene>("res://assets/objects/ItemPickup.tscn");
             var rnd = new Random();
 
             for (int i = 0; i < lootPool.Count; i++)
@@ -199,7 +231,6 @@ namespace Galatime
 
         public void _dropXp()
         {
-            PackedScene xpOrbScene = GD.Load<PackedScene>("res://assets/objects/ExperienceOrb.tscn");
             var xpOrb = xpOrbScene.Instantiate<ExperienceOrb>();
             xpOrb.quantity = droppedXp;
             xpOrb.GlobalPosition = body.GlobalPosition;
@@ -224,7 +255,6 @@ namespace Galatime
                 damageSpritePlayer.Play("heal");
             }
 
-            PackedScene damageEffect = (PackedScene)GD.Load("res://assets/objects/gui/damage_effect.tscn");
             Node2D damageEffectInstance = damageEffect.Instantiate() as Node2D;
 
             damageEffectInstance.Set("number", amount);
@@ -234,9 +264,7 @@ namespace Galatime
             damageEffectInstance.GlobalPosition = body.GlobalPosition;
             AddChild(damageEffectInstance);
 
-            health += amount;
-            health = Math.Min(stats.health.value, health);
-            _healthChangedEvent(health);
+            Health += amount;
         }
 
         public void effect(GalatimeElement type, int duration)

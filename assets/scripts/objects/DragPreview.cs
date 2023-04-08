@@ -47,7 +47,6 @@ namespace Galatime {
                 if (i != null)
                 {
                     ItemIcon.Texture = GD.Load<Texture2D>("res://sprites/" + icon);
-                    GD.Print("wlololll");
                     if (i.ContainsKey("quantity"))
                     {
                         ItemQuantity.Text = ((int)i["quantity"]).ToString();

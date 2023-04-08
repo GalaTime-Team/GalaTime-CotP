@@ -28,6 +28,7 @@ public partial class GoldenHolderSword : Area2D
         {
             var rand = new Random();
             _audio.PitchScale = (float)(rand.NextDouble() * (1.1 - 0.9) + 0.9);
+            _audio.Play();
 
             // Play animation
             _animation.Stop();

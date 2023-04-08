@@ -185,3 +185,4 @@ libraries = {
 }
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+bus = &"Sounds"
