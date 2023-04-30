@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dno0k3g6k4twv"]
+[gd_scene load_steps=26 format=3 uid="uid://dno0k3g6k4twv"]
 
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="1_5fg5f"]
 [ext_resource type="Script" path="res://assets/scenes/MainMenu.cs" id="1_juf2d"]
@@ -27,16 +27,157 @@ bg_color = Color(0.811765, 0.811765, 0, 1)
 
 [sub_resource type="Animation" id="Animation_ancfh"]
 length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraTransition:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(580, -632)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CameraTransition:zoom")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CameraTransition:enabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CanvasModulate:color")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_mrraw"]
 resource_name = "idle"
 length = 2.0
 loop_mode = 1
 
+[sub_resource type="Animation" id="Animation_xdh61"]
+resource_name = "start"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraTransition:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(3, 1),
+"update": 0,
+"values": [Vector2(576, 324), Vector2(580, -632)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CameraTransition:zoom")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3, 0.6),
+"transitions": PackedFloat32Array(3, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.5, 1.5)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CameraTransition:enabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CanvasModulate:color")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.2, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0, 0, 0, 1)]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("..")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_onStartAnimationEnded"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../AudioStreamPlayerMenu:volume_db")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.4, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, -80.0]
+}
+tracks/6/type = "audio"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../AudioStreamPlayerWhoosh")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("12_hmhgi")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/6/use_blend = true
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_h4px0"]
 _data = {
 "RESET": SubResource("Animation_ancfh"),
-"idle": SubResource("Animation_mrraw")
+"idle": SubResource("Animation_mrraw"),
+"start": SubResource("Animation_xdh61")
 }
 
 [sub_resource type="Gradient" id="Gradient_lokjq"]
@@ -330,10 +471,16 @@ metadata/ScaleHoverExitedOverride = Vector2(2, 2)
 metadata/ScaleHoverOverride = Vector2(2.25, 2.25)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="StartMenuContainer"]
-speed_scale = 0.3
+speed_scale = 0.4
 libraries = {
 "": SubResource("AnimationLibrary_h4px0")
 }
+
+[node name="CameraTransition" type="Camera2D" parent="StartMenuContainer"]
+position = Vector2(580, -632)
+enabled = false
+
+[node name="CanvasModulate" type="CanvasModulate" parent="StartMenuContainer"]
 
 [node name="MainMenuContainer" type="Control" parent="."]
 layout_mode = 1
@@ -707,6 +854,5 @@ stream = ExtResource("6_p1ru6")
 bus = &"Sounds"
 
 [node name="AudioStreamPlayerWhoosh" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("12_hmhgi")
 autoplay = true
 bus = &"Sounds"

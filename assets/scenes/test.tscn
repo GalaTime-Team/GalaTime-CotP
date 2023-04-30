@@ -612,7 +612,7 @@ script = ExtResource("10")
 
 [node name="Player" parent="." instance=ExtResource("1")]
 position = Vector2(480, 154)
-speed = 300.0
+speed = 250.0
 metadata/_edit_lock_ = true
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]

@@ -20,3 +20,4 @@ assets/diagrams/
 .vscode/
 Builds/
 GPSDK/
+Properties/launchSettings.json

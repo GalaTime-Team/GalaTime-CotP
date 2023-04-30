@@ -1,6 +1,8 @@
 using Galatime;
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Galatime 
 {
@@ -16,10 +18,18 @@ namespace Galatime
         public int slots = 16;
         public int abilitySlots = 3;
         public int currentItem = -1;
+        public static int currentSave = 1;
+
+        private bool _isLoaded = false;
+        public bool isLoaded
+        {
+            get { return _isLoaded; } private set { _isLoaded = value; }
+        }
 
         public static Godot.Collections.Dictionary inventory = new Godot.Collections.Dictionary();
         public static Godot.Collections.Dictionary abilities = new Godot.Collections.Dictionary();
         public static Godot.Collections.Array<string> learnedAbilities = new Godot.Collections.Array<string>();
+        public static Timer playtimeTimer;
 
         [Signal] public delegate void items_changedEventHandler();
         [Signal] public delegate void abilities_changedEventHandler();
@@ -28,7 +38,22 @@ namespace Galatime
         public delegate void onXpChangedEventHandler(float amount);
         public static event onXpChangedEventHandler onXpChanged;
 
-        public static Player player;
+        public delegate void onPlayerIsReadyEventHandler(Player instance);
+        public static event onPlayerIsReadyEventHandler onPlayerIsReady;
+
+        private static Player _player;
+        public static Player Player
+        {
+            get
+            {
+                return _player;
+            }
+            set
+            {
+                _player = value;
+                onPlayerIsReady?.Invoke(_player);
+            }
+        }
 
         public override void _Ready()
         {
@@ -44,26 +69,89 @@ namespace Galatime
             }
             EmitSignal("abilities_changed", abilities);
 
-            GetTree().TreeChanged += _checkForPlayer;
+            onPlayerIsReady += loadSave;
         }
+
+        
 
         public static void invokeXpChangedEvent(float xp)
         {
             onXpChanged(xp);
         }
 
-        public void _checkForPlayer()
+        public void loadSave(Player instance)
         {
-            base._EnterTree();
-            if (GetTree().GetNodesInGroup("player").Count > 0 && player is null)
+            if (isLoaded == true) return;
+
+            try
             {
-                GD.PrintRich("[color=purple]GALATIME GLOBALS[/color]: [color=lime]Player is found[/color]");
-                player = GetTree().GetNodesInGroup("player")[0] as Player;
+                var saveData = GalatimeGlobals.loadSave(currentSave);
+
+                //var inventoryUndeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
+                //inventory = convertKeysToInt(inventoryUndeserialized);
+                Godot.Collections.Dictionary abilitiesUndeserialized = (Godot.Collections.Dictionary)saveData["equiped_abilities"];
+                var abilitiesUnconverted = convertKeysToInt(abilitiesUndeserialized);
+                for (int i = 0; i < abilitiesUnconverted.Count; i++)
+                {
+                    var ability = (Godot.Collections.Dictionary)abilitiesUnconverted[i];
+                    if (ability.ContainsKey("id")) abilities[i] = GalatimeGlobals.getAbilityById((string)ability["id"]);
+                }
+
+                Godot.Collections.Dictionary inventoryUndeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
+                var inventoryUnconverted = convertKeysToInt(inventoryUndeserialized);
+                for (int i = 0; i < abilitiesUnconverted.Count; i++)
+                {
+                    var item = (Godot.Collections.Dictionary)inventoryUnconverted[i];
+                    if (item.ContainsKey("id"))
+                    {
+                        inventory[i] = GalatimeGlobals.getItemById((string)item["id"]);
+                        if (item.ContainsKey("quantity")) ((Godot.Collections.Dictionary)inventory[i])["quantity"] = (Single)item["quantity"];
+                    }
+                }
+                Godot.Collections.Dictionary stats = (Godot.Collections.Dictionary)saveData["stats"];
+                foreach (string key in stats.Keys.Select(v => (string)v))
+                {
+                    Player.Stats[key].Value = (int)stats[key];
+                }
+
+                Player.Xp = (int)saveData["xp"];
+                learnedAbilities = (Godot.Collections.Array<string>)saveData["learned_abilities"];
+
+                // playtimeTimer.Start();
+
+                // GD.Print($"LOADED: {abilities}");
+                GD.Print($"LOADED");
+
+                EmitSignal("items_changed");
+                EmitSignal("abilities_changed");
+                EmitSignal("ability_learned");
+
+                isLoaded = true;
             }
-            if (GetTree().GetNodesInGroup("player").Count <= 0)
+            catch (Exception e)
             {
-                GD.PrintRich("[color=purple]GALATIME GLOBALS[/color]: [color=red]Player is not found[/color]");
+                GD.PrintRich("Error when loading save: " + e.Message + e.Source + e.StackTrace);
             }
+        }
+
+        public Godot.Collections.Dictionary convertKeysToInt(Godot.Collections.Dictionary dict)
+        {
+            Godot.Collections.Dictionary newDict = new Godot.Collections.Dictionary();
+            foreach (var key in dict.Keys)
+            {
+                int newKey;
+                if (int.TryParse(key.ToString(), out newKey))
+                {
+                    // GD.Print($"Trying to convert: {newKey}, {dict[key]}");
+                    newDict.Add(newKey, dict[key]);
+                    // GD.Print(newDict);
+                }
+                else
+                {
+                    GD.Print("Error: Cannot convert key to int: " + key);
+                }
+            }
+            return newDict;
         }
 
         /// <summary>
@@ -75,37 +163,15 @@ namespace Galatime
 
         public static bool upgradeStat(EntityStatType id)
         {
-            if (player.Xp < 100) return false;
-            switch (id)
+            if (Player.Xp < 100) return false;
+
+            Player.Stats[id].Value += 5;
+            if (id == EntityStatType.health)
             {
-                case EntityStatType.physicalAttack:
-                    player.Stats.physicalAttack.value += 5;
-                    break;
-                case EntityStatType.magicalAttack:
-                    player.Stats.magicalAttack.value += 5;
-                    break;
-                case EntityStatType.physicalDefence:
-                    player.Stats.physicalDefence.value += 5;
-                    break;
-                case EntityStatType.magicalDefence:
-                    player.Stats.magicalDefence.value += 5;
-                    break;
-                case EntityStatType.health:
-                    player.Stats.health.value += 5;
-                    break;
-                case EntityStatType.mana:
-                    player.Stats.mana.value += 5;
-                    break;
-                case EntityStatType.stamina:
-                    player.Stats.stamina.value += 5;
-                    break;
-                case EntityStatType.agility:
-                    player.Stats.agility.value += 5;
-                    break;
-                default:
-                    break;
+                Player.heal(5);
             }
-            player.Xp -= 100;
+
+            Player.Xp -= 100;
             return true;
         }
         /// <summary>
@@ -147,7 +213,7 @@ namespace Galatime
             if (abilityData.ContainsKey("cost"))
             {
                 var cost = (Single)abilityData["cost"];
-                if (player.Xp - cost <= 0)
+                if (Player.Xp - cost <= 0)
                 {
                     return LearnedStatus.noEnoughCurrency;
                 }
@@ -155,7 +221,7 @@ namespace Galatime
 
             if (!test)
             {
-                player.Xp -= (int)abilityData["cost"];
+                Player.Xp -= (int)abilityData["cost"];
                 learnedAbilities.Add((string)abilityData["id"]);
                 EmitSignal(SignalName.ability_learned);
             }
@@ -165,12 +231,12 @@ namespace Galatime
 
         public static bool isAbilityReloaded(int id)
         {
-            if (player == null)
+            if (Player == null)
             {
                 GD.PrintErr("Сouldn't find a player, return false"); return false;
             }
 
-            if (player._abiltiesReloadTimes[id] <= 0)
+            if (Player._abiltiesReloadTimes[id] <= 0)
             {
                 return true;
             }

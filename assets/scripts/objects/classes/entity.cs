@@ -50,7 +50,7 @@ namespace Galatime
             set
             {
                 health = value;
-                health = Math.Min(Stats.health.value, health);
+                health = Math.Min(Stats[EntityStatType.health].Value, health);
                 health = (float)Math.Round(health, 2);
                 _healthChangedEvent(health);
             }
@@ -71,7 +71,7 @@ namespace Galatime
             xpOrbScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ExperienceOrb.tscn");
 
             damageDelay = new Timer();
-            damageDelay.WaitTime = 0.1f;
+            damageDelay.WaitTime = 0.1f;    
             damageDelay.OneShot = true;
             AddChild(damageDelay);
         }
@@ -114,11 +114,11 @@ namespace Galatime
 
             if (type == DamageType.physical)
             {
-                damageN = attackStat * (power / 10) / Stats.physicalDefence.value;
+                damageN = attackStat * (power / 10) / Stats[EntityStatType.physicalDefence].Value;
             }
             if (type == DamageType.magical)
             {
-                damageN = attackStat * (power / 10) / Stats.magicalDefence.value;
+                damageN = attackStat * (power / 10) / Stats[EntityStatType.magicalDefence].Value;
             }
 
             // Calculating weaknesess

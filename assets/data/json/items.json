@@ -1,6 +1,7 @@
 {
     "golden_holder_sword": {
         "name": "Golden holder sword",
+		"id": "golden_holder_sword",
 		"description": "A standard sword given to all who came to this kingdom. May it be faithful to you... AUCH, that's sharp!",
         "type": "weapon",
         "assets": {

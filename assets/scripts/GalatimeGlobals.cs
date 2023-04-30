@@ -5,6 +5,7 @@ using Galatime;
 using System.IO;
 using YamlDotNet;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 public sealed partial class GalatimeGlobals : Node
 {
@@ -16,6 +17,7 @@ public sealed partial class GalatimeGlobals : Node
     public static string pathListTips = "res://assets/data/json/tips.json";
 
     public static PackedScene loadingScene;
+    public static PackedScene saveProcessScene;
 
     //itemList = _getItemsFromJson();
     //ablitiesList = _getAbilitiesFromJson();
@@ -75,6 +77,7 @@ public sealed partial class GalatimeGlobals : Node
     public override async void _Ready()
     {
         loadingScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/Loading.tscn");
+        saveProcessScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/SavingProcess.tscn");
 
         itemList = _getItemsFromJson();
         ablitiesList = _getAbilitiesFromJson();
@@ -159,21 +162,31 @@ public sealed partial class GalatimeGlobals : Node
         return data;
     }
 
-    public static void updateSettingsConfig(double musicVolume = 1, double soundsVolume = 1, bool discordActivityDisabled = false)
+    public static void updateSettingsConfig(Node currentScene, double musicVolume = 1, double soundsVolume = 1, bool discordActivityDisabled = false)
     {
+        var saveProcessSceneInstance = saveProcessScene.Instantiate<SavingProcess>();
+        currentScene.GetTree().Root.AddChild(saveProcessSceneInstance);
+
         string SETTINGS_FILE_PATH = "user://settings.yml";
 
         GD.Print($"Settings path: {SETTINGS_FILE_PATH}");
 
         var file = Godot.FileAccess.Open(SETTINGS_FILE_PATH, Godot.FileAccess.ModeFlags.Write);
+        if (Godot.FileAccess.GetOpenError() != Error.Ok)
+        {
+            saveProcessSceneInstance._playFailedAnimation();
+            GD.Print("Error when saving a config: " + Godot.FileAccess.GetOpenError().ToString());
+        }
+        else
+        {
+            var serializer = new YamlDotNet.Serialization.Serializer();
+            var saveData = getSettingsData(musicVolume, soundsVolume, discordActivityDisabled);
+            var saveYaml = serializer.Serialize(saveData);
 
-        var serializer = new YamlDotNet.Serialization.Serializer();
-        var saveData = getSettingsData(musicVolume, soundsVolume, discordActivityDisabled);
-        var saveYaml = serializer.Serialize(saveData);
+            file.StoreString(saveYaml);
 
-        file.StoreString(saveYaml);
-
-        file.Close();
+            file.Close();
+        }
     }
 
     private static System.Collections.Generic.Dictionary<string, object> getSettingsData(double musicVolume = 1, double soundsVolume = 1, bool discordActivityDisable = false)
@@ -234,8 +247,95 @@ public sealed partial class GalatimeGlobals : Node
         file.Close();
     }
 
-    public static void save(int saveId)
+    public static Godot.Collections.Dictionary loadSave(int saveId)
     {
+        string SAVE_FILE_PATH = GalatimeConstants.savesPath;
+        SAVE_FILE_PATH += "save" + saveId + ".json";
+
+        var file = Godot.FileAccess.Open(SAVE_FILE_PATH, Godot.FileAccess.ModeFlags.Read);
+
+        var saveData = (Godot.Collections.Dictionary)Json.ParseString(file.GetAsText());
+
+        file.Close();
+
+        return saveData;
+    }
+
+    public static void save(int saveId, Node? currentScene)
+    {
+        var saveProcessSceneInstance = saveProcessScene.Instantiate<SavingProcess>();
+        if (currentScene != null)
+        {
+            currentScene.GetTree().Root.AddChild(saveProcessSceneInstance);
+        }
+
+        string SAVE_FILE_PATH = GalatimeConstants.savesPath;
+        SAVE_FILE_PATH += "save" + saveId + ".json";
+
+        var file = Godot.FileAccess.Open(SAVE_FILE_PATH, Godot.FileAccess.ModeFlags.Write);
+
+        if (Godot.FileAccess.GetOpenError() != Error.Ok)
+        {
+            if (currentScene != null) saveProcessSceneInstance._playFailedAnimation();
+            GD.Print("Error when saving a config: " + Godot.FileAccess.GetOpenError().ToString());
+        }
+        else
+        {
+            var saveData = getSaveData(saveId);
+            var saveJson = Json.Stringify(saveData, "\t");
+
+            file.StoreString(saveJson);
+
+            file.Close();
+        }
+    }
+
+    private static Godot.Collections.Dictionary getSaveData(int saveId)
+    {
+        var saveData = new Godot.Collections.Dictionary();
+        saveData.Add("DO_NOT_MODIFY_THIS_FILE_ONLY_MODIFY_IF_YOU_KNOW_WHAT_YOURE_DOING", 0);
+        saveData.Add("id", saveId);
+        saveData.Add("chapter", 1);
+        saveData.Add("day", 1);
+        saveData.Add("playtime", 0);
+        saveData.Add("learned_abilities", PlayerVariables.learnedAbilities);
+        var inventory = new Godot.Collections.Dictionary();
+        for (int i = 0; i < PlayerVariables.inventory.Count; i++)
+        {
+            var item = (Godot.Collections.Dictionary)PlayerVariables.inventory[i];
+            if (!item.ContainsKey("id"))
+            {
+                inventory.Add(i, new Godot.Collections.Dictionary());
+            }
+            else
+            {
+                inventory.Add(i, new Godot.Collections.Dictionary {
+                    { "id", item["id"] },
+                    { "quantity", item.ContainsKey("quantity") ? item["quantity"] : 1 }
+                });
+            }
+        }
+        saveData.Add("inventory", inventory);
+        var abilities = new Godot.Collections.Dictionary();
+        for (int i = 0; i < PlayerVariables.abilities.Count; i++)
+        {
+            var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
+            abilities.Add(i, new Godot.Collections.Dictionary());
+            if (ability.ContainsKey("id"))
+            {
+                ((Godot.Collections.Dictionary)abilities[i]).Add("id", ability["id"]);
+            }
+        }
+        saveData.Add("equiped_abilities", abilities);
+        var stats = new Godot.Collections.Dictionary();
+        for (int i = 0; i < PlayerVariables.Player.Stats.Count; i++)
+        {
+            var stat = PlayerVariables.Player.Stats[i];
+            stats.Add(stat.id, stat.Value);
+        }
+        saveData.Add("stats", stats);
+        saveData.Add("xp", PlayerVariables.Player.Xp);
+        return saveData;
     }
 
     private static Godot.Collections.Dictionary getBlankSaveData(int saveId)
@@ -246,6 +346,9 @@ public sealed partial class GalatimeGlobals : Node
         saveData.Add("chapter", 1);
         saveData.Add("day", 1);
         saveData.Add("playtime", 0);
+        saveData.Add("learned_abilities", new Godot.Collections.Dictionary());
+        saveData.Add("inventory", new Godot.Collections.Dictionary());
+        saveData.Add("equiped_abilities", new Godot.Collections.Dictionary());
 
         return saveData;
     }

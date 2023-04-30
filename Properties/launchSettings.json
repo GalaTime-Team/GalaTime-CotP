@@ -3,7 +3,7 @@
     "galatime-project": {
       "commandName": "Project"
     },
-    "Profile 1": {
+    "Play": {
       "commandName": "Executable",
       "executablePath": "C:\\Users\\Пользователь\\OneDrive\\Рабочий стол\\Godot_v4.0-stable_mono_win64\\Godot_v4.0-stable_mono_win64_console.exe",
       "commandLineArgs": "--path D:\\Projects\\galatime-project --verbose",

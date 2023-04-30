@@ -35,10 +35,12 @@ public partial class BlueFire : GalatimeAbility
 	{
 		this.p = p;
 
-		p.Stats.magicalAttack.value += 30;
-		p.Stats.physicalAttack.value += 30;
+		var newStats = p.Stats;
 
-		spawnVisualsTimer.Start();
+		p.Stats[EntityStatType.magicalAttack].Value += 30;
+        p.Stats[EntityStatType.physicalAttack].Value += 30;
+
+        spawnVisualsTimer.Start();
 
 		await ToSignal(GetTree().CreateTimer(duration), "timeout");
 		destroy();
@@ -62,8 +64,8 @@ public partial class BlueFire : GalatimeAbility
 
     public async void destroy()
 	{
-        p.Stats.magicalAttack.value -= 30;
-        p.Stats.physicalAttack.value -= 30;
+		p.Stats[EntityStatType.magicalAttack].Value -= 30;
+        p.Stats[EntityStatType.magicalAttack].Value -= 30;
 
 		foreach (var v in visuals)
 		{

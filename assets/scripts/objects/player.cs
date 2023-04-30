@@ -29,7 +29,7 @@ namespace Galatime
 		private PlayerGui _playerGui;
 
 		private bool _isPause = false;
-			 
+
 		// Nodes
 		private CharacterBody2D _body;
 
@@ -59,11 +59,11 @@ namespace Galatime
 			_camera = GetNode<Camera2D>("Camera3D");
 
 			_sprite = GetNode<Sprite2D>("Sprite2D");
-			_trailParticles = GetNode<GpuParticles2D>("TrailParticles");   
+			_trailParticles = GetNode<GpuParticles2D>("TrailParticles");
 
 			_playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-			_playerVariables.Connect("items_changed",new Callable(this,"_onItemsChanged"));
-			_playerVariables.Connect("abilities_changed",new Callable(this,"_abilitiesChanged"));
+			_playerVariables.Connect("items_changed", new Callable(this, "_onItemsChanged"));
+			_playerVariables.Connect("abilities_changed", new Callable(this, "_abilitiesChanged"));
 
 			_playerGui = GetNode<PlayerGui>("CanvasLayer/PlayerGui");
 
@@ -83,22 +83,33 @@ namespace Galatime
 			// Start
 			canMove = true;
 
-			_animationPlayer.SpeedScale = speed / 100;
+			Stamina = Stats[EntityStatType.stamina].Value;
+			Mana = Stats[EntityStatType.mana].Value;
+			Health = Stats[EntityStatType.health].Value;
 
-			stamina = Stats.stamina.value;
-			mana = Stats.mana.value;
-			Health = Stats.health.value;
 			cameraOffset = Vector2.Zero;
 
 			body.GlobalPosition = GlobalPosition;
 
 			_playerGui.changeStats(Stats, Xp);
-			Xp += 10000;
+
+            Stats.statsChanged += _onStatsChanged;
+
+            PlayerVariables.Player = this;
+			GD.Print("!!! PLAYER IS LOADED !!!");
+		}
+
+		private void _onStatsChanged(EntityStats stats)
+		{
+			GD.Print("PLAYER STATS CHANGED!!!");
+			Health = Stats[EntityStatType.health].Value;
+			Mana = Stats[EntityStatType.mana].Value;
+			Stamina = Stats[EntityStatType.stamina].Value;
 		}
 
 		private void _SetMove()
 		{
-			Vector2 inputVelocity = Vector2.Zero;
+            Vector2 inputVelocity = Vector2.Zero;
 			// Vector2 windowPosition = OS.WindowPosition;
 
 			if (Input.IsActionPressed("game_move_up"))
@@ -140,7 +151,7 @@ namespace Galatime
 		{
 			if (!_isPause) _SetMove(); else velocity = Vector2.Zero;
 			var shakeOffset = new Vector2();
-			
+
 			Random rnd = new();
 			shakeOffset.X = rnd.Next(-1, 1) * cameraShakeAmount;
 			shakeOffset.Y = rnd.Next(-1, 1) * cameraShakeAmount;
@@ -152,7 +163,7 @@ namespace Galatime
 
 		public override void _healthChangedEvent(float health)
 		{
-			EmitSignal(SignalName.healthChanged, health);
+			_playerGui.onHealthChanged(health);
 		}
 
 		public void _abilitiesChanged()
@@ -212,7 +223,7 @@ namespace Galatime
 		}
 
 		private void _onItemsChanged()
-		{       
+		{
 			var obj = (Godot.Collections.Dictionary)PlayerVariables.inventory[0];
 			if (weapon._item != null && obj.Count != 0) return;
 			weapon.takeItem(obj);
@@ -246,12 +257,13 @@ namespace Galatime
 			}
 			if (@event.IsActionPressed("game_attack"))
 			{
-				weapon.attack(Stats.physicalAttack.value, Stats.magicalAttack.value);
+				weapon.attack(Stats[EntityStatType.physicalAttack].Value, Stats[EntityStatType.magicalAttack].Value);
 			}
 
 			if (@event.IsActionPressed("game_dodge"))
 			{
 				dodge();
+				GalatimeGlobals.save(1, _playerGui);
 			}
 
 			if (@event.IsActionPressed("game_ability_1")) _useAbility(0);

@@ -105,8 +105,8 @@ namespace Galatime
         {
             var texture = GD.Load<Texture2D>(stat.iconPath);
             iconTextureRect.Texture = texture != null ? texture : null;
-            amountProgressBar.Value = stat.value;
-            amountLabel.Text = $"{stat.value}/150";
+            amountProgressBar.Value = stat.Value;
+            amountLabel.Text = $"{stat.Value}/150";
             nameLabel.Text = stat.name;
             neededCurencyLabel.Text = $"100/{xpAmount} [color=32cd32]XP[/color]";
 

@@ -35,7 +35,7 @@ public partial class Slime : Entity
 
         slimeScene = ResourceLoader.Load<PackedScene>("res://assets/objects/enemy/slime.tscn");
 
-        _player = PlayerVariables.player;
+        _player = PlayerVariables.Player;
         Stats = new EntityStats(
                 physicalAttack: 21,
                 magicalAttack: 25,
@@ -63,8 +63,8 @@ public partial class Slime : Entity
 
         _animationPlayer.Play("intro");
 
-        Stats.health.value += 10 * stage;
-        Health = Stats.health.value;
+        Stats[EntityStatType.health].Value += 10 * stage;
+        Health = Stats[EntityStatType.health].Value;
 
         speed -= 50 * stage;
 
@@ -135,7 +135,7 @@ public partial class Slime : Entity
                 _attackCountdownTimer.Start();
                 GalatimeElement element = GalatimeElement.Aqua;
                 float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.hit(20 + 10 * stage, Stats.magicalAttack.value, element, DamageType.physical, 500, damageRotation);
+                entity.hit(20 + 10 * stage, Stats[EntityStatType.magicalAttack].Value, element, DamageType.physical, 500, damageRotation);
             }
         }
     }
@@ -148,7 +148,7 @@ public partial class Slime : Entity
             _attackCountdownTimer.Start();
             GalatimeElement element = GalatimeElement.Aqua;
             float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-            entity.hit(20 + 10 * stage, Stats.magicalAttack.value, element, DamageType.physical, 500, damageRotation);
+            entity.hit(20 + 10 * stage, Stats[EntityStatType.magicalAttack].Value, element, DamageType.physical, 500, damageRotation);
         }
     }
 

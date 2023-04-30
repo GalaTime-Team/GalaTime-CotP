@@ -35,7 +35,7 @@ resource_name = "in"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("fade:modulate")
+tracks/0/path = NodePath("FadeScreen:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -50,7 +50,7 @@ resource_name = "out"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("fade:modulate")
+tracks/0/path = NodePath("FadeScreen:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -202,16 +202,6 @@ texture = ExtResource("24")
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="fade" type="PanelContainer" parent="."]
-visible = false
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = -287.0
-offset_top = -305.0
-offset_right = 1401.0
-offset_bottom = 911.0
-mouse_filter = 2
-
 [node name="HealthProgress" type="TextureProgressBar" parent="."]
 layout_mode = 0
 offset_left = 36.0
@@ -222,6 +212,7 @@ scale = Vector2(4, 4)
 mouse_filter = 2
 max_value = 70.0
 value = 70.0
+allow_greater = true
 texture_progress = ExtResource("5")
 
 [node name="HealthOutline" type="TextureRect" parent="."]
@@ -243,6 +234,7 @@ scale = Vector2(4, 4)
 mouse_filter = 2
 max_value = 65.0
 value = 65.0
+allow_greater = true
 texture_progress = ExtResource("4")
 
 [node name="StaminaOutline" type="TextureRect" parent="."]
@@ -264,6 +256,7 @@ scale = Vector2(4, 4)
 mouse_filter = 2
 max_value = 65.0
 value = 65.0
+allow_greater = true
 texture_progress = ExtResource("14")
 
 [node name="Mana" type="TextureRect" parent="."]
@@ -804,3 +797,13 @@ mouse_filter = 1
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("12")
 text = "Abilities"
+
+[node name="FadeScreen" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

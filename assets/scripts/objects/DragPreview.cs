@@ -40,7 +40,7 @@ namespace Galatime {
         public void setDraggedItem(Godot.Collections.Dictionary i)
         {
             draggedItem = i;
-            if (i.Count != 0)
+            if (i != null && i.Count != 0)
             {
                 Godot.Collections.Dictionary ItemAssets = (Godot.Collections.Dictionary)i["assets"];
                 string icon = (string)ItemAssets["icon"];

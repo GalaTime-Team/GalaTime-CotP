@@ -34,7 +34,7 @@
             _rayCast = GetNode<RayCast2D>("RayCast3D");
             body = this;
 
-            _player = PlayerVariables.player;
+            _player = PlayerVariables.Player;
 
             speed = 300f;
             _animationPlayer.SpeedScale = speed / 100;
@@ -123,7 +123,7 @@
                     {
                         var rotation = body.GlobalPosition.AngleToPoint(currentEnemy.GlobalPosition);
                         weapon.Rotation = rotation;
-                        weapon.attack(Stats.physicalAttack.value, Stats.magicalAttack.value);
+                        weapon.attack(Stats[EntityStatType.physicalAttack].Value, Stats[EntityStatType.magicalAttack].Value);
                     }
                 }
                 velocity = vectorPath;

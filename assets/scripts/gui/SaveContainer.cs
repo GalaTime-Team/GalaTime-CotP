@@ -10,6 +10,8 @@ namespace Galatime
         public Label deleteButton;
         public Label playButton;
 
+        public int id = 1;
+
         public override void _Ready()
         {
             nameLabel = GetNode<Label>("VBoxContainer/Name");
@@ -36,7 +38,9 @@ namespace Galatime
             if (data != null && data.Count >= 0)
             {
                 GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=cyan]Load data[/color]");
-                nameLabel.Text = "Save " + (data.ContainsKey("id") ? (int)data["id"] : "?");
+                var id = data.ContainsKey("id") ? (int)data["id"] : 0;
+                nameLabel.Text = "Save " + (id == 0 ? "?" : id);
+                this.id = id;
                 descriptionLabel.Text =
                     $"Chapter " + (data.ContainsKey("chapter") ? (int)data["chapter"] : "?")
                     + " - Day " + (data.ContainsKey("day") ? (int)data["day"] : "?")

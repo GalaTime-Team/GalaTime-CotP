@@ -78,7 +78,7 @@ namespace Galatime
             nameNode.Text = stat.name;
             descriptionNode.ParseBbcode($"{stat.description}" +
                 $"\n \n" +
-                $"After the upgrade you will get [color=yellow]{stat.value + 5}[/color]" +
+                $"After the upgrade you will get [color=yellow]{stat.Value + 5}[/color]" +
                 $"\n" +
                 $"Required [rainbow]XP[/rainbow] for upgrade the stat: [color=yellow]100[/color]");
             

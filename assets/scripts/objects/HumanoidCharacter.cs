@@ -32,28 +32,28 @@ public partial class HumanoidCharacter : Entity
     [Signal] public delegate void on_stamina_changedEventHandler(float stamina);
     [Signal] public delegate void on_mana_changedEventHandler(float mana);
 
-    protected float mana;
+    private float mana;
     public float Mana
     {
         get { return mana; }
         set
         {
             mana = value;
-            mana = Mathf.Clamp(mana, 0, Stats.mana.value);
+            mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.mana].Value);
             _manaRegenTimer.Stop();
             _manaCountdownTimer.Start();
             EmitSignal("on_mana_changed", mana);
         }
     }
 
-    protected float stamina;
+    private float stamina;
     public float Stamina
     {
         get { return stamina; }
         set
         {
             stamina = value;
-            stamina = Mathf.Clamp(stamina, 0, Stats.stamina.value);
+            stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.stamina].Value);
             _staminaRegenTimer.Stop();
             _staminaCountdownTimer.Start();
             EmitSignal("on_stamina_changed", stamina);
@@ -67,7 +67,7 @@ public partial class HumanoidCharacter : Entity
         _dodgeTimer = new Timer();
         _dodgeTimer.WaitTime = 2f;
         _dodgeTimer.OneShot = true;
-        _dodgeTimer.Connect("timeout",new Callable(this,"_onCountdownDodge"));
+        _dodgeTimer.Connect("timeout", new Callable(this, "_onCountdownDodge"));
         AddChild(_dodgeTimer);
 
         _abilityCountdownTimer = new Timer();
@@ -78,25 +78,25 @@ public partial class HumanoidCharacter : Entity
         _staminaCountdownTimer = new Timer();
         _staminaCountdownTimer.WaitTime = 5f;
         _staminaCountdownTimer.OneShot = true;
-        _staminaCountdownTimer.Connect("timeout",new Callable(this,"_onCountdownStaminaRegen"));
+        _staminaCountdownTimer.Connect("timeout", new Callable(this, "_onCountdownStaminaRegen"));
         AddChild(_staminaCountdownTimer);
 
         _staminaRegenTimer = new Timer();
         _staminaRegenTimer.WaitTime = 1f;
         _staminaRegenTimer.OneShot = false;
-        _staminaRegenTimer.Connect("timeout",new Callable(this,"_regenStamina"));
+        _staminaRegenTimer.Connect("timeout", new Callable(this, "_regenStamina"));
         AddChild(_staminaRegenTimer);
 
         _manaCountdownTimer = new Timer();
         _manaCountdownTimer.WaitTime = 5f;
         _manaCountdownTimer.OneShot = true;
-        _manaCountdownTimer.Connect("timeout",new Callable(this,"_onCountdownManaRegen"));
+        _manaCountdownTimer.Connect("timeout", new Callable(this, "_onCountdownManaRegen"));
         AddChild(_manaCountdownTimer);
 
         _manaRegenTimer = new Timer();
         _manaRegenTimer.WaitTime = 1f;
         _manaRegenTimer.OneShot = false;
-        _manaRegenTimer.Connect("timeout",new Callable(this,"_regenMana"));
+        _manaRegenTimer.Connect("timeout", new Callable(this, "_regenMana"));
         AddChild(_manaRegenTimer);
     }
 
@@ -115,18 +115,18 @@ public partial class HumanoidCharacter : Entity
     protected void _regenStamina()
     {
         stamina += 10;
-        stamina = Mathf.Clamp(stamina, 0, Stats.stamina.value);
+        stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.stamina].Value);
         EmitSignal("on_stamina_changed", stamina);
         heal(5);
-        if (stamina >= Stats.stamina.value) _staminaRegenTimer.Stop();
+        if (stamina >= Stats[EntityStatType.stamina].Value) _staminaRegenTimer.Stop();
     }
 
     protected void _regenMana()
     {
         mana += 10;
-        mana = Mathf.Clamp(mana, 0, Stats.mana.value);
+        mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.mana].Value);
         EmitSignal("on_mana_changed", mana);
-        if (mana >= Stats.mana.value) _manaRegenTimer.Stop();
+        if (mana >= Stats[EntityStatType.mana].Value) _manaRegenTimer.Stop();
     }
 
     protected void _setLayerToWeapon(bool toUp)
@@ -189,7 +189,7 @@ public partial class HumanoidCharacter : Entity
                     GD.Print($"mana cost {ability.costs["mana"]}");
                 }
                 GetParent().AddChild(ability);
-                ability.execute(this, Stats.physicalAttack.value, Stats.magicalAttack.value);
+                ability.execute(this, Stats[EntityStatType.physicalAttack].Value, Stats[EntityStatType.magicalAttack].Value);
                 _abilitiesTimers[i].Stop();
                 _abilitiesTimers[i].Start();
                 _abiltiesReloadTimes[i] = (int)Math.Round(ability.reload);
@@ -240,6 +240,7 @@ public partial class HumanoidCharacter : Entity
     protected void _SetAnimation(Vector2 animationVelocity, bool idle)
     {
         if (idle) _animationPlayer.Stop();
+        _animationPlayer.SpeedScale = speed / 100;
         if (animationVelocity.Y != 0)
         {
             if (animationVelocity.Y <= -1 && _animationPlayer.CurrentAnimation != "walk_up")

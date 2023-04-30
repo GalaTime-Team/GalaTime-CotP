@@ -1,4 +1,4 @@
-        using Godot;
+using Godot;
 using System;
 using Galatime;
 using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace Galatime
             _fadeAnimation = GetNode<AnimationPlayer>("fadeAnimation");
             // _staminaAnimation = GetNode<AnimationPlayer>("status/stamina_animation");
 
-            _player = PlayerVariables.player;
+            _player = PlayerVariables.Player;
 
             // Stats
             _health = GetNode<TextureProgressBar>("HealthProgress");
@@ -72,17 +72,40 @@ namespace Galatime
 
             _statsContainer = GetNode<GridContainer>("PauseContainer/StatsContainer/Stats");
 
-            _player.Connect("healthChanged",new Callable(this,"onHealthChanged"));
-            _player.Connect("on_stamina_changed",new Callable(this,"onStaminaChanged"));
-            _player.Connect("on_mana_changed",new Callable(this,"onManaChanged"));
-            GetNode<PlayerVariables>("/root/PlayerVariables").Connect("items_changed",new Callable(this,"displayItem"));
+            GetNode<PlayerVariables>("/root/PlayerVariables").Connect("items_changed", new Callable(this, "displayItem"));
 
             DodgeTextTimer = new Timer();
-            DodgeTextTimer.Connect("timeout",new Callable(this,"_reloadingDodge"));
+            DodgeTextTimer.Connect("timeout", new Callable(this, "_reloadingDodge"));
             AddChild(DodgeTextTimer);
 
             _versionText = GetNode<Godot.Label>("Version");
             _versionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
+
+            onFade("out");
+
+            PlayerVariables.onPlayerIsReady += PlayerVariables_onPlayerIsReady;
+        }
+
+        private void PlayerVariables_onPlayerIsReady(Player instance)
+        {
+            instance.Connect("healthChanged", new Callable(this, "onHealthChanged"));
+            instance.Connect("on_stamina_changed", new Callable(this, "onStaminaChanged"));
+            instance.Connect("on_mana_changed", new Callable(this, "onManaChanged"));
+
+            foreach (var stat in instance.Stats)
+            {
+                GD.Print(stat.id + ": " + stat.Value);
+            }
+
+            instance.Stats.statsChanged += _onStatsChanged;
+            instance.Stats.ForceInvokeStatsChangedEvent();
+        }
+
+        private void _onStatsChanged(EntityStats stats)
+        {
+            _health.MaxValue = stats[EntityStatType.health].Value;
+            _stamina.MaxValue = stats[EntityStatType.stamina].Value;
+            _mana.MaxValue = stats[EntityStatType.mana].Value;
         }
 
         public void onFade(string type)
@@ -130,16 +153,16 @@ namespace Galatime
 
         public void changeStats(EntityStats entityStats, float XP)
         {
-            _textStats.Text =
-                $"Hp: [color=white]{entityStats.health}[/color]\r\n" +
-                $"Stamina: [color=white]{entityStats.stamina}[/color]\r\n" +
-                $"Mana: [color=white]{entityStats.mana}[/color]\r\n" +
-                $"XP: [rainbow]{XP}[/rainbow]\r\n\r\n" +
-                $"Physic Attack: [color=white]{entityStats.physicalAttack}[/color]\r\n" +
-                $"Magic Attack: [color=white]{entityStats.magicalAttack}[/color]\r\n" +
-                $"Agility: [color=white]{entityStats.agility}[/color]\r\n\r\n" +
-                $"Physic Defence: [color=white]{entityStats.physicalDefence}[/color]\r\n" +
-                $"Magic Defence: [color=white]{entityStats.magicalAttack}[/color]";
+            //_textStats.Text =
+            //    $"Hp: [color=white]{entityStats.health}[/color]\r\n" +
+            //    $"Stamina: [color=white]{entityStats.stamina}[/color]\r\n" +
+            //    $"Mana: [color=white]{entityStats.mana}[/color]\r\n" +
+            //    $"XP: [rainbow]{XP}[/rainbow]\r\n\r\n" +
+            //    $"Physic Attack: [color=white]{entityStats.physicalAttack}[/color]\r\n" +
+            //    $"Magic Attack: [color=white]{entityStats.magicalAttack}[/color]\r\n" +
+            //    $"Agility: [color=white]{entityStats.agility}[/color]\r\n\r\n" +
+            //    $"Physic Defence: [color=white]{entityStats.physicalDefence}[/color]\r\n" +
+            //    $"Magic Defence: [color=white]{entityStats.magicalAttack}[/color]";
 
             if (_statsContainer.GetChildCount() <= 0)
             {
@@ -153,15 +176,12 @@ namespace Galatime
             }
 
             var statContainers = _statsContainer.GetChildren();
-            (statContainers[0] as StatContainer).loadData(entityStats.health, (int)XP);
-            (statContainers[1] as StatContainer).loadData(entityStats.stamina, (int)XP);
-            (statContainers[2] as StatContainer).loadData(entityStats.mana, (int)XP);
-            (statContainers[3] as StatContainer).loadData(entityStats.physicalAttack, (int)XP);
-            (statContainers[4] as StatContainer).loadData(entityStats.magicalAttack, (int)XP);
-            (statContainers[5] as StatContainer).loadData(entityStats.physicalDefence, (int)XP);
-            (statContainers[6] as StatContainer).loadData(entityStats.magicalDefence, (int)XP);
-            (statContainers[7] as StatContainer).loadData(entityStats.agility, (int)XP);
-
+            for (int i = 0; i < entityStats.Count; i++)
+            {
+                var statContainer = statContainers[i] as StatContainer;
+                var stat = entityStats[i];
+                statContainer.loadData(stat, (int)XP);
+            }
         }
 
         public void _onUpgradeStat(int id, StatContainer instance)

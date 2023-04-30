@@ -62,19 +62,19 @@ namespace Galatime
                 if (abilityData.ContainsKey("name")) nameLabel.Text = $"Learn ability \"{(string)abilityData["name"]}\"?";
                 if (_playerVariables.learnAbility(abilityData, true) == LearnedStatus.noRequiredPath)
                 {
-                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{PlayerVariables.player.Xp} [color=32cd32]XP[/color] You need to open the previous path";
+                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{PlayerVariables.Player.Xp} [color=32cd32]XP[/color] You need to open the previous path";
                     _setButtonDisabled(true);
                     return;
                 }
                 else if (_playerVariables.learnAbility(abilityData, true) == LearnedStatus.noEnoughCurrency)
                 {
                     _setButtonDisabled(true);
-                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{PlayerVariables.player.Xp} [color=32cd32]XP[/color] You don't have enough XP";
+                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{PlayerVariables.Player.Xp} [color=32cd32]XP[/color] You don't have enough XP";
                 }
                 else
                 {
                     _setButtonDisabled(false);
-                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{PlayerVariables.player.Xp} [color=32cd32]XP[/color]";
+                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{PlayerVariables.Player.Xp} [color=32cd32]XP[/color]";
                 }
             }
             catch (Exception e)

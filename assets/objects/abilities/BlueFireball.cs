@@ -25,7 +25,7 @@ namespace Galatime
         )
         { }
 
-        public override async void _Ready()
+        public override void _Ready()
         {
             _animationPlayer = GetNode<AnimationPlayer>("CharacterBody3D/AnimationPlayer");
             _sprite = GetNode<Sprite2D>("CharacterBody3D/Sprite2D");

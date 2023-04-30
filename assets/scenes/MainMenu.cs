@@ -166,7 +166,8 @@ public partial class MainMenu : Control
 
         chapterAnimationPlayer.Play("idle");
 
-        versionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
+        //versionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
+        versionLabel.Text = $"\n\n\nPROPERTY OF GALATIME TEAM";
 
         GetTree().Root.Title = "GalaTime - Main Menu";
     }
@@ -224,6 +225,12 @@ public partial class MainMenu : Control
         }
     }
 
+    /// <summary>
+    /// Displays an accept dialog with the specified reason.
+    /// </summary>
+    /// <param name="reason">The reason for the dialog.</param>
+    /// <param name="callback">The callback function to call when the dialog is accepted or dismissed.</param>
+    /// <param name="invertedColors">Whether to use inverted colors for the dialog.</param>
     public void appearAccept(string reason, OnAccept callback, bool invertedColors = false)
     {
         _beforePopupFocus = _currentFocus;
@@ -260,6 +267,9 @@ public partial class MainMenu : Control
         on_accept = callback;
     }
 
+    /// <summary>
+    /// Hides the accept dialog.
+    /// </summary>
     public void disappearAccept()
     {
         _beforePopupFocus.GrabFocus();
@@ -357,7 +367,7 @@ public partial class MainMenu : Control
 
             var save = saves[i];
             deleteButton.GuiInput += (InputEvent @event) => deleteSaveButtonInput((int)save["id"], deleteButton, @event);
-            playButton.GuiInput += playButtonInput;
+            playButton.GuiInput += (InputEvent @event) => playButtonInput(@event, playButton, instance.id);
 
             visualButtons.Add(deleteButton);
             instance.loadData(saves[i]);
@@ -367,15 +377,27 @@ public partial class MainMenu : Control
         // clearVisualButtonsSaves();
     }
 
-    public void playButtonInput(InputEvent @event)
+    public void playButtonInput(InputEvent @event, Label playButtonInstance, int id)
     {
         if (@event is InputEventMouseButton @eventMouse)
         {
             if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && delayInteract.TimeLeft <= 0)
             {
-                GalatimeGlobals.loadScene(this, "res://assets/scenes/test.tscn");
+                visualButtonInput(playButtonInstance, @eventMouse);
+                chapterAnimationPlayer.Play("start");
+                audioButtonAccept.Play();
+
+                GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
+                PlayerVariables.currentSave = id;
+
+                delayInteract.Start();
             }
         }
+    }
+
+    public void _onStartAnimationEnded()
+    {
+        GalatimeGlobals.loadScene(this, "res://assets/scenes/Lobby.tscn");
     }
 
     public void deleteSaveButtonInput(int saveId, Label button, InputEvent @event)
@@ -452,6 +474,12 @@ public partial class MainMenu : Control
         }
     }
 
+    /// <summary>
+    /// Switches to the specified page.
+    /// </summary>
+    /// <param name="page">
+    /// The name of the page to switch to.
+    /// </param>
     public void switchPage(string page)
     {
         isMainMenu = false;
@@ -518,6 +546,12 @@ public partial class MainMenu : Control
         return SwipeDirection.UP;
     }
 
+    /// <summary>
+    /// Swipes the current page to the specified direction.
+    /// </summary>
+    /// <param name="direction">The direction to swipe the page.</param>
+    /// <param name="previousControl">The control that is currently being displayed.</param>
+    /// <param name="nextControl">The control that will be displayed after the swipe.</param>
     private void _swipePage(SwipeDirection direction, Control previousControl, Control nextControl)
     {
         var tween = GetTree().CreateTween();
@@ -608,7 +642,14 @@ public partial class MainMenu : Control
             button.Set("theme_override_colors/font_color", new Color(1, 1, 1));
         }
     }
-
+    /// <summary>
+    /// Handles input events for a visual button.
+    /// </summary>
+    /// <param name="button">The visual button.</param>
+    /// <param name="event">The input event.</param>
+    /// <remarks>
+    /// This function plays an animation when the button is pressed.
+    /// </remarks>
     public void visualButtonInput(Label button, InputEvent @event)
     {
         if (@event is InputEventMouseButton @eventMouse)
@@ -634,7 +675,14 @@ public partial class MainMenu : Control
         }
     }
 
-        public void resetButtons(bool changeMouse = true)
+    /// <summary>
+    /// Resets the visual buttons to their default state.
+    /// </summary>
+    /// <param name="changeMouse">Whether to change the mouse cursor shape to a pointing hand.</param>
+    /// <remarks>
+    /// This function resets the visual buttons to their default state, including their font color, scale, and mouse cursor shape.
+    /// </remarks>
+    public void resetButtons(bool changeMouse = true)
         {
             updateVisualButtons();
             var tween = GetTree().CreateTween();
@@ -693,7 +741,7 @@ public partial class MainMenu : Control
                 return;
             };
 
-            GalatimeGlobals.updateSettingsConfig(musicVolumeSlider.Value, soundsVolumeSlider.Value, false);
+            GalatimeGlobals.updateSettingsConfig(this, musicVolumeSlider.Value, soundsVolumeSlider.Value, false);
 
             delayInteract.Start();
             resetButtons();
