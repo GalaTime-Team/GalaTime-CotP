@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cde6qc6c7uyfi"]
+[gd_scene load_steps=9 format=3 uid="uid://cde6qc6c7uyfi"]
 
 [ext_resource type="Script" path="res://assets/scripts/gui/Loading.cs" id="1_5kecy"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="2_b0sud"]
@@ -8,6 +8,35 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_twg3j"]
 bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Animation" id="Animation_5sa52"]
+resource_name = "end"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
 
 [sub_resource type="Animation" id="Animation_myfuq"]
 resource_name = "loading"
@@ -28,6 +57,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2wc7d"]
 _data = {
+"end": SubResource("Animation_5sa52"),
 "loading": SubResource("Animation_myfuq")
 }
 

@@ -33,7 +33,7 @@ namespace Galatime
         public GalatimeElementDamageResult getReceivedDamage(GalatimeElement e, float amount) {
             GalatimeElementDamageResult result = new GalatimeElementDamageResult();
             if (!DamageMultipliers.ContainsKey(e.name)) {
-                GD.PushWarning("No element is found, the standard multiplier will be used (1x)");
+                GD.Print("No element is found, the standard multiplier will be used (1x)");
                 result.damage = amount;
                 return result;
             }

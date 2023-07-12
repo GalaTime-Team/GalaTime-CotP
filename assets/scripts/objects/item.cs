@@ -20,7 +20,6 @@ public partial class item : Control
     public void DisplayItem(Godot.Collections.Dictionary i, bool _playAnimation = false)
     {
         data = i;
-        GD.Print(i);
         if (i.Count != 0)
         {
             Godot.Collections.Dictionary ItemAssets = (Godot.Collections.Dictionary)i["assets"];

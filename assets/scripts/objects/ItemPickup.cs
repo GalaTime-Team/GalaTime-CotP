@@ -31,7 +31,8 @@ namespace Galatime
             particles = GetNode<GpuParticles2D>("Particles");
             pickupArea = GetNode<Area2D>("PickupArea");
 
-            _playerNode = PlayerVariables.Player;
+            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            _playerNode = playerVariables.Player;
 
             pickupArea.BodyEntered += (Node2D node) => _onEntered(node);
 

@@ -8,22 +8,9 @@
 [ext_resource type="Texture2D" uid="uid://bu7myollak2fv" path="res://sprites/gui/slider-grabber.png" id="3_bghf8"]
 [ext_resource type="AudioStream" uid="uid://2g3yxwf538f8" path="res://assets/audios/soundtracks/galatime.mp3" id="4_pmnwf"]
 [ext_resource type="AudioStream" uid="uid://jrsuouvekni1" path="res://assets/audios/sounds/button_sfx_accept.mp3" id="6_8xiqm"]
-[ext_resource type="Script" path="res://assets/scripts/gui/LabelButton.cs" id="6_en3bg"]
 [ext_resource type="AudioStream" uid="uid://bmeffvddx6dpx" path="res://assets/audios/sounds/button_sfx.mp3" id="6_p1ru6"]
 [ext_resource type="Texture2D" uid="uid://0rvog4vfe84n" path="res://sprites/godot.png" id="10_lqfxl"]
 [ext_resource type="AudioStream" uid="uid://carmj5xt250vd" path="res://assets/audios/sounds/whoosh-menu.wav" id="12_hmhgi"]
-
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_vivf0"]
-color = Color(0.556863, 0.556863, 0.556863, 1)
-grow_begin = -4.0
-grow_end = -4.0
-thickness = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_50l4a"]
-bg_color = Color(0.8, 0.8, 0.8, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yv60f"]
-bg_color = Color(0.811765, 0.811765, 0, 1)
 
 [sub_resource type="Animation" id="Animation_ancfh"]
 length = 0.001
@@ -74,6 +61,22 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_qfgq4"]
+resource_name = "enter"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../MainMenuContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_mrraw"]
@@ -176,9 +179,22 @@ tracks/6/use_blend = true
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_h4px0"]
 _data = {
 "RESET": SubResource("Animation_ancfh"),
+"enter": SubResource("Animation_qfgq4"),
 "idle": SubResource("Animation_mrraw"),
 "start": SubResource("Animation_xdh61")
 }
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_vivf0"]
+color = Color(0.556863, 0.556863, 0.556863, 1)
+grow_begin = -4.0
+grow_end = -4.0
+thickness = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_50l4a"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yv60f"]
+bg_color = Color(0.811765, 0.811765, 0, 1)
 
 [sub_resource type="Gradient" id="Gradient_lokjq"]
 offsets = PackedFloat32Array(0, 0.179487, 1)
@@ -229,6 +245,13 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_juf2d")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../StartMenuContainer")
+speed_scale = 0.4
+libraries = {
+"": SubResource("AnimationLibrary_h4px0")
+}
 
 [node name="SettingsMenuContainer" type="Control" parent="."]
 layout_mode = 1
@@ -470,12 +493,6 @@ vertical_alignment = 1
 metadata/ScaleHoverExitedOverride = Vector2(2, 2)
 metadata/ScaleHoverOverride = Vector2(2.25, 2.25)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="StartMenuContainer"]
-speed_scale = 0.4
-libraries = {
-"": SubResource("AnimationLibrary_h4px0")
-}
-
 [node name="CameraTransition" type="Camera2D" parent="StartMenuContainer"]
 position = Vector2(580, -632)
 enabled = false
@@ -483,6 +500,7 @@ enabled = false
 [node name="CanvasModulate" type="CanvasModulate" parent="StartMenuContainer"]
 
 [node name="MainMenuContainer" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -498,7 +516,6 @@ position = Vector2(912, 0)
 amount = 1000
 process_material = SubResource("ParticleProcessMaterial_ym4fn")
 lifetime = 10.0
-preprocess = 30.0
 visibility_rect = Rect2(-5000, -5000, 10000, 10000)
 local_coords = true
 
@@ -507,11 +524,11 @@ z_index = -1
 amount = 2000
 process_material = SubResource("ParticleProcessMaterial_abecs")
 lifetime = 10.0
-preprocess = 30.0
 visibility_rect = Rect2(-5000, -5000, 10000, 10000)
 local_coords = true
 
 [node name="GalatimeLogo" type="TextureRect" parent="MainMenuContainer"]
+visible = false
 layout_mode = 2
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -552,7 +569,6 @@ mouse_filter = 0
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_nxd72")
 text = "Start"
-script = ExtResource("6_en3bg")
 metadata/page = "start"
 
 [node name="SettingsButton" type="Label" parent="MainMenuContainer/VBoxContainer" groups=["visual"]]
@@ -815,6 +831,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("10_lqfxl")
 
 [node name="VersionLabel" type="Label" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -835,13 +852,11 @@ clip_text = true
 
 [node name="AudioStreamPlayerMenu" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_pmnwf")
-autoplay = true
 bus = &"Music"
 
 [node name="AudioStreamPlayerMenuMuffled" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_pmnwf")
 volume_db = -80.0
-autoplay = true
 bus = &"Muffled"
 
 [node name="AudioStreamPlayerButtonAccept" type="AudioStreamPlayer" parent="."]

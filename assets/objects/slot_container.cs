@@ -50,18 +50,18 @@ public partial class slot_container : GridContainer
 
     void _on_inventory_items_changed()
     {
-        for (int i = 0; i < PlayerVariables.inventory.Count; i++)
+        for (int i = 0; i < playerVariables.inventory.Count; i++)
         {
             var ItemSlot = GetChild(i);
             var Item = ItemSlot.GetChild<item>(0);
             if (playerVariables.currentItem == i)
             {
-                Item.DisplayItem((Godot.Collections.Dictionary)PlayerVariables.inventory[i], true);
+                Item.DisplayItem((Godot.Collections.Dictionary)playerVariables.inventory[i], true);
                 playerVariables.currentItem = -1;
             }
             else
             {
-                Item.DisplayItem((Godot.Collections.Dictionary)PlayerVariables.inventory[i]);
+                Item.DisplayItem((Godot.Collections.Dictionary)playerVariables.inventory[i]);
             }
         }
         dragPreview.draggedItem = null;
@@ -92,7 +92,7 @@ public partial class slot_container : GridContainer
     }   
     public void dragItem(TextureRect nodeItem)
     {
-        var inventoryItem = (Godot.Collections.Dictionary)PlayerVariables.inventory[nodeItem.GetIndex()];
+        var inventoryItem = (Godot.Collections.Dictionary)playerVariables.inventory[nodeItem.GetIndex()];
         var draggedItem = (Godot.Collections.Dictionary)dragPreview.Get("draggedItem");
         tooltip._hide();
         if (inventoryItem != null && draggedItem == null)

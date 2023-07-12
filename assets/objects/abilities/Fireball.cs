@@ -55,11 +55,13 @@ namespace Galatime {
 
         public override async void execute(HumanoidCharacter p, float physicalAttack, float magicalAttack)
         {
+            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+
             Rotation = p.weapon.Rotation;
             _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
 
             _velocity.X += 1;
-            if (PlayerVariables.Player is Player player) player.cameraShakeAmount += 10;
+            if (playerVariables.Player is Player player) player.cameraShakeAmount += 10;
 
             _animationPlayer.Play("intro");
             _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, physicalAttack, magicalAttack);

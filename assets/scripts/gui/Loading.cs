@@ -18,10 +18,9 @@ namespace Galatime
             animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
             tipsLabel = GetNode<RichTextLabel>("Control/TipsLabel");
 
-            ResourceLoader.LoadThreadedRequest(sceneName);
+            ResourceLoader.LoadThreadedRequest(sceneName, "", false, ResourceLoader.CacheMode.Replace);
 
             animationPlayer.Play("loading");
-
             // tipsLabel.Text = $"Tip: {(string)GalatimeGlobals.tipsList.PickRandom()}";
         }
 
@@ -32,8 +31,12 @@ namespace Galatime
             progressBar.Value = (float)progress[0] * 100;
             if (status == ResourceLoader.ThreadLoadStatus.Loaded)
             {
-                GetTree().ChangeSceneToPacked((PackedScene)ResourceLoader.LoadThreadedGet(sceneName));
+                var instance = (PackedScene)ResourceLoader.LoadThreadedGet(sceneName);
+                GetTree().ChangeSceneToPacked(instance);
                 QueueFree();
+                // GetTree().Root.AddChild(instance);
+                // GetTree().CurrentScene = instance;
+                // animationPlayer.Play("end");
             }
         }
     }

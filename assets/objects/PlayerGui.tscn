@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://s184ap1aunq3"]
+[gd_scene load_steps=39 format=3 uid="uid://s184ap1aunq3"]
 
 [ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
@@ -25,6 +25,7 @@
 [ext_resource type="Texture2D" uid="uid://dbliidd2bq780" path="res://sprites/characters/test/dodge_icon.png" id="24"]
 [ext_resource type="Script" path="res://assets/objects/AbilitiesContainer.cs" id="25"]
 [ext_resource type="Script" path="res://assets/scripts/gui/PausePagesButtonsContainer.cs" id="27"]
+[ext_resource type="Script" path="res://assets/scripts/gui/LeaveLabel.cs" id="27_i8qxk"]
 [ext_resource type="Script" path="res://assets/objects/AbilitiesChoiseContainer.cs" id="29"]
 
 [sub_resource type="Animation" id="1"]
@@ -276,7 +277,7 @@ offset_right = 491.0
 offset_bottom = 62.0
 scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("9_lrd2i")
-text = "65 STAM"
+text = "0 STAM"
 
 [node name="hp_text" type="Label" parent="."]
 layout_mode = 1
@@ -286,7 +287,7 @@ offset_right = 491.0
 offset_bottom = 30.0
 scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("9_lrd2i")
-text = "70 HP	"
+text = "0 HP	"
 autowrap_mode = 1
 
 [node name="mana_text" type="Label" parent="."]
@@ -297,7 +298,7 @@ offset_right = 491.0
 offset_bottom = 94.0
 scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("9_lrd2i")
-text = "65 MANA"
+text = "0 MANA"
 
 [node name="fadeAnimation" type="AnimationPlayer" parent="."]
 process_mode = 1
@@ -424,6 +425,7 @@ offset_bottom = 606.0
 mouse_filter = 2
 
 [node name="Version" type="Label" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -807,3 +809,14 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
+
+[node name="LeaveLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 69.0
+offset_bottom = 41.0
+scale = Vector2(3, 3)
+theme_override_fonts/font = ExtResource("15_bhhfw")
+text = "Leaving"
+script = ExtResource("27_i8qxk")

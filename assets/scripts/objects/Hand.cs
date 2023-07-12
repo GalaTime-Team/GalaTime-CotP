@@ -26,12 +26,12 @@ namespace Galatime
                 }
                 else
                 {
-                    GD.PushWarning("Unable to get the item from " + item);
+                    GD.Print("Unable to get the item from " + item);
                 }
             }
             else
             {
-                GD.PushWarning("Item doesn't have assets " + item);
+                GD.Print("Item doesn't have assets " + item);
             }
         }
 

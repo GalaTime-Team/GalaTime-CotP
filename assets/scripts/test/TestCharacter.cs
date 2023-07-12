@@ -34,7 +34,8 @@
             _rayCast = GetNode<RayCast2D>("RayCast3D");
             body = this;
 
-            _player = PlayerVariables.Player;
+            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            _player = playerVariables.Player;
 
             speed = 300f;
             _animationPlayer.SpeedScale = speed / 100;

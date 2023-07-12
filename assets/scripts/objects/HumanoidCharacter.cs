@@ -29,8 +29,8 @@ public partial class HumanoidCharacter : Entity
 
     public Hand weapon;
 
-    [Signal] public delegate void on_stamina_changedEventHandler(float stamina);
-    [Signal] public delegate void on_mana_changedEventHandler(float mana);
+    // [Signal] public delegate void on_stamina_changedEventHandler(float stamina);
+    // [Signal] public delegate void on_mana_changedEventHandler(float mana);
 
     private float mana;
     public float Mana
@@ -42,7 +42,8 @@ public partial class HumanoidCharacter : Entity
             mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.mana].Value);
             _manaRegenTimer.Stop();
             _manaCountdownTimer.Start();
-            EmitSignal("on_mana_changed", mana);
+            // EmitSignal("on_mana_changed", mana);
+            _onManaChanged(mana);
         }
     }
 
@@ -56,8 +57,17 @@ public partial class HumanoidCharacter : Entity
             stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.stamina].Value);
             _staminaRegenTimer.Stop();
             _staminaCountdownTimer.Start();
-            EmitSignal("on_stamina_changed", stamina);
+            // EmitSignal("on_stamina_changed", stamina);
+            _onStaminaChanged(stamina);
         }
+    }
+
+    protected virtual void _onManaChanged(float mana)
+    {
+    }
+
+    protected virtual void _onStaminaChanged(float stamina)
+    {
     }
 
     public override void _Ready()
@@ -67,35 +77,40 @@ public partial class HumanoidCharacter : Entity
         _dodgeTimer = new Timer();
         _dodgeTimer.WaitTime = 2f;
         _dodgeTimer.OneShot = true;
-        _dodgeTimer.Connect("timeout", new Callable(this, "_onCountdownDodge"));
+        // _dodgeTimer.Connect("timeout", new Callable(this, "_onCountdownDodge"));
         AddChild(_dodgeTimer);
 
         _abilityCountdownTimer = new Timer();
         _abilityCountdownTimer.WaitTime = 1f;
         _abilityCountdownTimer.OneShot = true;
+        _abilityCountdownTimer.Name = "AbilityCountdown";
         AddChild(_abilityCountdownTimer);
 
         _staminaCountdownTimer = new Timer();
         _staminaCountdownTimer.WaitTime = 5f;
         _staminaCountdownTimer.OneShot = true;
+        _staminaCountdownTimer.Name = "StaminaCountdown";
         _staminaCountdownTimer.Connect("timeout", new Callable(this, "_onCountdownStaminaRegen"));
         AddChild(_staminaCountdownTimer);
 
         _staminaRegenTimer = new Timer();
         _staminaRegenTimer.WaitTime = 1f;
         _staminaRegenTimer.OneShot = false;
+        _staminaRegenTimer.Name = "StaminaRegenCountdown";
         _staminaRegenTimer.Connect("timeout", new Callable(this, "_regenStamina"));
         AddChild(_staminaRegenTimer);
 
         _manaCountdownTimer = new Timer();
         _manaCountdownTimer.WaitTime = 5f;
         _manaCountdownTimer.OneShot = true;
+        _manaCountdownTimer.Name = "ManaCountdown";
         _manaCountdownTimer.Connect("timeout", new Callable(this, "_onCountdownManaRegen"));
         AddChild(_manaCountdownTimer);
 
         _manaRegenTimer = new Timer();
         _manaRegenTimer.WaitTime = 1f;
         _manaRegenTimer.OneShot = false;
+        _manaRegenTimer.Name = "ManaRegenCountdown";
         _manaRegenTimer.Connect("timeout", new Callable(this, "_regenMana"));
         AddChild(_manaRegenTimer);
     }
@@ -116,17 +131,18 @@ public partial class HumanoidCharacter : Entity
     {
         stamina += 10;
         stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.stamina].Value);
-        EmitSignal("on_stamina_changed", stamina);
-        heal(5);
+        // EmitSignal("on_stamina_changed", stamina);
         if (stamina >= Stats[EntityStatType.stamina].Value) _staminaRegenTimer.Stop();
+        _onStaminaChanged(stamina);
     }
 
     protected void _regenMana()
     {
         mana += 10;
         mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.mana].Value);
-        EmitSignal("on_mana_changed", mana);
+        // EmitSignal("on_mana_changed", mana);
         if (mana >= Stats[EntityStatType.mana].Value) _manaRegenTimer.Stop();
+        _onManaChanged(mana);
     }
 
     protected void _setLayerToWeapon(bool toUp)

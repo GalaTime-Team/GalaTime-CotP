@@ -7,7 +7,8 @@ public partial class test : Node2D
 {
     public override void _Ready()
     {
-        PlayerVariables.Player.startDialog("test_5");
+        var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+        playerVariables.Player.startDialog("test_5");
         //if (!GalatimeGlobals.DiscordActivityDisabled)
         //{
         //    GalatimeGlobals.currentActivity = new Activity()

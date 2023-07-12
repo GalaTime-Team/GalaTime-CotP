@@ -9,37 +9,36 @@ namespace Galatime
     public partial class PlayerGui : Control
     {
         // Nodes
-        private AnimationPlayer _fadeAnimation;
+        public AnimationPlayer _fadeAnimation;
         // private AnimationPlayer _staminaAnimation;
 
-        private Player _player;
-
         // Stats
-        private TextureProgressBar _health;
-        private TextureProgressBar _stamina;
-        private TextureProgressBar _mana;
-        private TextureProgressBar _healthDrain;
+        public TextureProgressBar _health;
+        public TextureProgressBar _stamina;
+        public TextureProgressBar _mana;
+        public TextureProgressBar _healthDrain;
 
         // Text Stats
-        private Godot.Label _textStamina;
-        private Godot.Label _textHealth;
-        private Godot.Label _textMana;
-        private Godot.Label _dodgeCountdownText;
-        private RichTextLabel _textStats;
+        public Godot.Label _textStamina;
+        public Godot.Label _textHealth;
+        public Godot.Label _textMana;
+        public Godot.Label _dodgeCountdownText;
+        public RichTextLabel _textStats;
         public Timer DodgeTextTimer;
 
-        private Godot.Label _versionText;
+        public Godot.Label _versionText;
 
-        private NinePatchRect _dialogBox;
+        public NinePatchRect _dialogBox;
 
-        private Panel _pauseContainer;
+        public Panel _pauseContainer;
 
-        private HBoxContainer _abilitiesContainer;
+        public HBoxContainer abilitiesContainer;
+        public AbilitiesContainer abilitiesListContainer;
 
-        private GridContainer _statsContainer;
+        public GridContainer _statsContainer;
 
-        private float _localHp = 0f;
-        private float _remainingDodge;
+        public float _localHp = 0f;
+        public float _remainingDodge;
 
         [Signal] public delegate void items_changedEventHandler();
         [Signal] public delegate void on_pauseEventHandler(bool visible);
@@ -48,8 +47,6 @@ namespace Galatime
         {
             _fadeAnimation = GetNode<AnimationPlayer>("fadeAnimation");
             // _staminaAnimation = GetNode<AnimationPlayer>("status/stamina_animation");
-
-            _player = PlayerVariables.Player;
 
             // Stats
             _health = GetNode<TextureProgressBar>("HealthProgress");
@@ -68,40 +65,29 @@ namespace Galatime
 
             _pauseContainer = GetNode<Panel>("PauseContainer");
 
-            _abilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
+            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+
+            abilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
+            abilitiesListContainer = GetNode<AbilitiesContainer>("PauseContainer/AbilitiesContainer");
+            abilitiesListContainer._onAbilityLearned();
 
             _statsContainer = GetNode<GridContainer>("PauseContainer/StatsContainer/Stats");
 
-            GetNode<PlayerVariables>("/root/PlayerVariables").Connect("items_changed", new Callable(this, "displayItem"));
+            playerVariables.Connect("items_changed", new Callable(this, "displayItem"));
 
             DodgeTextTimer = new Timer();
             DodgeTextTimer.Connect("timeout", new Callable(this, "_reloadingDodge"));
             AddChild(DodgeTextTimer);
 
             _versionText = GetNode<Godot.Label>("Version");
-            _versionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
+            // _versionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
+            _versionText.Text = "";
 
+            GD.Print("GUI!!!!");
             onFade("out");
-
-            PlayerVariables.onPlayerIsReady += PlayerVariables_onPlayerIsReady;
         }
 
-        private void PlayerVariables_onPlayerIsReady(Player instance)
-        {
-            instance.Connect("healthChanged", new Callable(this, "onHealthChanged"));
-            instance.Connect("on_stamina_changed", new Callable(this, "onStaminaChanged"));
-            instance.Connect("on_mana_changed", new Callable(this, "onManaChanged"));
-
-            foreach (var stat in instance.Stats)
-            {
-                GD.Print(stat.id + ": " + stat.Value);
-            }
-
-            instance.Stats.statsChanged += _onStatsChanged;
-            instance.Stats.ForceInvokeStatsChangedEvent();
-        }
-
-        private void _onStatsChanged(EntityStats stats)
+        public void _onStatsChanged(EntityStats stats)
         {
             _health.MaxValue = stats[EntityStatType.health].Value;
             _stamina.MaxValue = stats[EntityStatType.stamina].Value;
@@ -186,25 +172,19 @@ namespace Galatime
 
         public void _onUpgradeStat(int id, StatContainer instance)
         {
-            var result = PlayerVariables.upgradeStat((EntityStatType)id);
-            if (!result)
-            {
-                instance.playAnimation(StatContainer.Status.noEnough);
-            }
-            else
-            {
-                instance.playAnimation(StatContainer.Status.ok);
-            }
+            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            var result = playerVariables.upgradeStat((EntityStatType)id);
+            instance.playAnimation(result);
         }
 
         public void addAbility(GalatimeAbility ab, int i)
         {
-            _abilitiesContainer.GetChild<AbilityContainer>(i).load(ab.texture, ab.reload);
+            abilitiesContainer.GetChild<AbilityContainer>(i).load(ab.texture, ab.reload);
         }
 
         public void removeAbility(int i)
         {
-            _abilitiesContainer.GetChild<AbilityContainer>(i).unload();
+            abilitiesContainer.GetChild<AbilityContainer>(i).unload();
         }
 
         public void reloadDodge()
@@ -226,13 +206,13 @@ namespace Galatime
 
         public void reloadAbility(int i)
         {
-            var ability = _abilitiesContainer.GetChild(i) as AbilityContainer;
+            var ability = abilitiesContainer.GetChild(i) as AbilityContainer;
             ability.startReload();
         }
 
         public void pleaseSayNoToAbility(int i)
         {
-            var ability = _abilitiesContainer.GetChild(i) as AbilityContainer;
+            var ability = abilitiesContainer.GetChild(i) as AbilityContainer;
             ability.no();
         }
 

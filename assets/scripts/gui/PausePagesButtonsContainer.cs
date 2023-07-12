@@ -38,7 +38,7 @@ public partial class PausePagesButtonsContainer : HBoxContainer
                     }
                     else
                     {
-                        GD.PushWarning("Can't switch page, page is null");
+                        GD.Print("Can't switch page, page is null");
                     }
                 }
                 if (pagesNodes[id] != null)

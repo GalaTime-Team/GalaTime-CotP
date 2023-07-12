@@ -26,10 +26,10 @@ namespace Galatime
             get { return _isLoaded; } private set { _isLoaded = value; }
         }
 
-        public static Godot.Collections.Dictionary inventory = new Godot.Collections.Dictionary();
-        public static Godot.Collections.Dictionary abilities = new Godot.Collections.Dictionary();
-        public static Godot.Collections.Array<string> learnedAbilities = new Godot.Collections.Array<string>();
-        public static Timer playtimeTimer;
+        public Godot.Collections.Dictionary inventory = new Godot.Collections.Dictionary();
+        public Godot.Collections.Dictionary abilities = new Godot.Collections.Dictionary();
+        public Godot.Collections.Array<string> learnedAbilities = new Godot.Collections.Array<string>();
+        public Timer playtimeTimer;
 
         [Signal] public delegate void items_changedEventHandler();
         [Signal] public delegate void abilities_changedEventHandler();
@@ -38,22 +38,10 @@ namespace Galatime
         public delegate void onXpChangedEventHandler(float amount);
         public static event onXpChangedEventHandler onXpChanged;
 
-        public delegate void onPlayerIsReadyEventHandler(Player instance);
-        public static event onPlayerIsReadyEventHandler onPlayerIsReady;
+        [Signal] public delegate void onPlayerIsReadyEventHandler(Player instance);
 
-        private static Player _player;
-        public static Player Player
-        {
-            get
-            {
-                return _player;
-            }
-            set
-            {
-                _player = value;
-                onPlayerIsReady?.Invoke(_player);
-            }
-        }
+        private Player _player;
+        public Player Player { get; set; }
 
         public override void _Ready()
         {
@@ -72,8 +60,6 @@ namespace Galatime
             onPlayerIsReady += loadSave;
         }
 
-        
-
         public static void invokeXpChangedEvent(float xp)
         {
             onXpChanged(xp);
@@ -81,37 +67,59 @@ namespace Galatime
 
         public void loadSave(Player instance)
         {
-            if (isLoaded == true) return;
+            // if (isLoaded == true) return;
 
             try
             {
+                abilities.Clear();
+                for (int i = 0; i < abilitySlots; i++)
+                {
+                    abilities.Add(i, new Godot.Collections.Dictionary());
+                }
+                inventory.Clear();
+                for (int i = 0; i < slots; i++)
+                {
+                    inventory.Add(i, new Godot.Collections.Dictionary());
+                }
+                learnedAbilities.Clear();
+
                 var saveData = GalatimeGlobals.loadSave(currentSave);
 
                 //var inventoryUndeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
                 //inventory = convertKeysToInt(inventoryUndeserialized);
-                Godot.Collections.Dictionary abilitiesUndeserialized = (Godot.Collections.Dictionary)saveData["equiped_abilities"];
-                var abilitiesUnconverted = convertKeysToInt(abilitiesUndeserialized);
-                for (int i = 0; i < abilitiesUnconverted.Count; i++)
+                if (saveData.ContainsKey("equiped_abilities"))
                 {
-                    var ability = (Godot.Collections.Dictionary)abilitiesUnconverted[i];
-                    if (ability.ContainsKey("id")) abilities[i] = GalatimeGlobals.getAbilityById((string)ability["id"]);
-                }
-
-                Godot.Collections.Dictionary inventoryUndeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
-                var inventoryUnconverted = convertKeysToInt(inventoryUndeserialized);
-                for (int i = 0; i < abilitiesUnconverted.Count; i++)
-                {
-                    var item = (Godot.Collections.Dictionary)inventoryUnconverted[i];
-                    if (item.ContainsKey("id"))
+                    Godot.Collections.Dictionary abilitiesUndeserialized = (Godot.Collections.Dictionary)saveData["equiped_abilities"];
+                    var abilitiesUnconverted = convertKeysToInt(abilitiesUndeserialized);
+                    for (int i = 0; i < abilitiesUnconverted.Count; i++)
                     {
-                        inventory[i] = GalatimeGlobals.getItemById((string)item["id"]);
-                        if (item.ContainsKey("quantity")) ((Godot.Collections.Dictionary)inventory[i])["quantity"] = (Single)item["quantity"];
+                        var ability = (Godot.Collections.Dictionary)abilitiesUnconverted[i];
+                        if (ability.ContainsKey("id")) abilities[i] = GalatimeGlobals.getAbilityById((string)ability["id"]);
                     }
                 }
-                Godot.Collections.Dictionary stats = (Godot.Collections.Dictionary)saveData["stats"];
-                foreach (string key in stats.Keys.Select(v => (string)v))
+
+                if (saveData.ContainsKey("inventory"))
                 {
-                    Player.Stats[key].Value = (int)stats[key];
+                    Godot.Collections.Dictionary inventoryUndeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
+                    var inventoryUnconverted = convertKeysToInt(inventoryUndeserialized);
+                    for (int i = 0; i < inventoryUnconverted.Count; i++)
+                    {
+                        var item = (Godot.Collections.Dictionary)inventoryUnconverted[i];
+                        if (item.ContainsKey("id"))
+                        {
+                            inventory[i] = GalatimeGlobals.getItemById((string)item["id"]);
+                            if (item.ContainsKey("quantity")) ((Godot.Collections.Dictionary)inventory[i])["quantity"] = (Single)item["quantity"];
+                        }
+                    }
+                }
+
+                if (saveData.ContainsKey("stats"))
+                {
+                    Godot.Collections.Dictionary stats = (Godot.Collections.Dictionary)saveData["stats"];
+                    foreach (string key in stats.Keys.Select(v => (string)v))
+                    {
+                        Player.Stats[key].Value = (int)stats[key];
+                    }
                 }
 
                 Player.Xp = (int)saveData["xp"];
@@ -122,16 +130,24 @@ namespace Galatime
                 // GD.Print($"LOADED: {abilities}");
                 GD.Print($"LOADED");
 
+                GD.Print("GUI IS " + GetInstanceId());
+
                 EmitSignal("items_changed");
                 EmitSignal("abilities_changed");
                 EmitSignal("ability_learned");
 
-                isLoaded = true;
+                // isLoaded = true;
             }
             catch (Exception e)
             {
                 GD.PrintRich("Error when loading save: " + e.Message + e.Source + e.StackTrace);
             }
+        }
+
+        public void setPlayerInstance(Player instance)
+        {
+            Player = instance;
+            EmitSignal("onPlayerIsReady", instance);
         }
 
         public Godot.Collections.Dictionary convertKeysToInt(Godot.Collections.Dictionary dict)
@@ -161,9 +177,10 @@ namespace Galatime
         /// <param name="id">Needed stats to upgrade</param>
         /// <returns>Is the upgrading successful?</returns>
 
-        public static bool upgradeStat(EntityStatType id)
+        public StatContainer.Status upgradeStat(EntityStatType id)
         {
-            if (Player.Xp < 100) return false;
+            if (Player.Xp < 100) return StatContainer.Status.noEnough;
+            if (Player.Stats[id].Value >= 150) return StatContainer.Status.maximum;
 
             Player.Stats[id].Value += 5;
             if (id == EntityStatType.health)
@@ -172,14 +189,14 @@ namespace Galatime
             }
 
             Player.Xp -= 100;
-            return true;
+            return StatContainer.Status.ok;
         }
         /// <summary>
         /// Checks if ability is learned
         /// </summary>
         /// <param name="abilityName">ID of the ability</param>
         /// <returns></returns>
-        public static bool abilityIsLearned(string abilityName)
+        public bool abilityIsLearned(string abilityName)
         {
             foreach (var name in learnedAbilities)
             {
@@ -229,7 +246,7 @@ namespace Galatime
             return LearnedStatus.ok;
         }
 
-        public static bool isAbilityReloaded(int id)
+        public bool isAbilityReloaded(int id)
         {
             if (Player == null)
             {
@@ -327,7 +344,7 @@ namespace Galatime
         {
             if (abilities.Count >= 4)
             {
-                GD.PushWarning("Can't set ability up to " + abilities.Count); return;
+                GD.Print("Can't set ability up to " + abilities.Count); return;
             }
             abilities[slot] = ability;
             EmitSignal("abilities_changed");

@@ -25,26 +25,13 @@
 		{"text": "Enjoy the game!", "character": "rafael", "emotion": "ready"},	
 		{"actions": ["toggleMove"]}
 	],
-    "test_1": [
-        {"text": "Hey kid", "character": "slime", "emotion": "netrual"},
-        {"text": "You so [color=red]ass[/color] weak", "character": "slime", "emotion": "netrual"},
-        {"text": "Loser", "character": "slime", "emotion": "netrual"}
-    ],
-	"test_2": [ 
+	"test_1": [ 
 		{"text": "Did I missed something?", "character": "rafael", "emotion": "angry"}, 
 	],
-	"test_4": [
+	"test_2": [
 		{"text": "It's a bookshelf", "character": "arthur", "emotion": "netrual", "actions": ["toggleMove"]}, 
 		{"text": "Apparently someone likes to read", "character": "arthur", "emotion": "explaining"}, 
 		{"text": "I'm not a fan of reading", "character": "arthur", "emotion": "unsure"},
-		{"actions": ["toggleMove"]}
-	],
-	"test_5": [
-		{"text": "Bro", "character": "arthur", "emotion": "surprised", "actions": ["toggleMove"]}, 
-		{"text": "...", "character": "arthur", "emotion": "surprised"}, 
-		{"text": "it's...", "character": "arthur", "emotion": "surprised"},
-		{"text": "it's...", "character": "arthur", "emotion": "surprised"},
-		{"text": "PERFECTION", "character": "arthur", "emotion": "flustered"},
 		{"actions": ["toggleMove"]}
 	],
 	"tutorial_0": [ 

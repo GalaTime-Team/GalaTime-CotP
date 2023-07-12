@@ -35,7 +35,8 @@ public partial class Slime : Entity
 
         slimeScene = ResourceLoader.Load<PackedScene>("res://assets/objects/enemy/slime.tscn");
 
-        _player = PlayerVariables.Player;
+        var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+        _player = playerVariables.Player;
         Stats = new EntityStats(
                 physicalAttack: 21,
                 magicalAttack: 25,

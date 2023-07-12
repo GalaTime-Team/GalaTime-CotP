@@ -24,8 +24,43 @@ namespace Galatime
         public enum Status
         {
             noEnough,
+            maximum,
             ok
         }
+
+        public enum ContainerState
+        {
+            normal,
+            maximum
+        }
+
+        private ContainerState state = ContainerState.normal;
+        public ContainerState State
+        {
+            get
+            {
+                return state;
+            }
+            set
+            {
+                switch (value)
+                {
+                    case ContainerState.normal:
+                        break;
+                    case ContainerState.maximum:
+                        animationPlayer.Stop();
+                        tooltip._hide();
+
+                        upgradeButton.Text = "MAXIMUM";
+                        upgradeButton.MouseDefaultCursorShape = CursorShape.Arrow;
+                        upgradeButton.AddThemeColorOverride("font_color", new Color(1, 0.86274510622025f, 0.19607843458652f));
+                        amountProgressBar.TintProgress = upgradeButtonDefaultColor;
+                        break;
+                }
+                state = value;
+            }
+        }
+
 
         [Signal] public delegate void on_upgradeEventHandler(int id);
 
@@ -57,18 +92,25 @@ namespace Galatime
             tooltip = GetNode<Tooltip>("../../../Tooltip");
 
             upgradeButton = GetNode<Label>("UpgradeContainer/UpgradeButton");
-            upgradeButton.Connect("mouse_entered", new Callable(this, "_onUpgradeButtonMouseEntered"));
-            upgradeButton.Connect("mouse_exited", new Callable(this, "_onUpgradeButtonMouseExited"));
-            upgradeButton.Connect("gui_input", new Callable(this, "_onUpgradeButtonGuiInput"));
+
+            upgradeButton.MouseEntered += _onUpgradeButtonMouseEntered;
+            upgradeButton.MouseExited += _onUpgradeButtonMouseExited;
+            upgradeButton.GuiInput += _onUpgradeButtonGuiInput;
         }
 
         public void playAnimation(Status status)
         {
+            if (stat.Value >= 150)
+            {
+                State = ContainerState.maximum;
+                return;
+            }
             animationPlayer.Stop();
             switch (status)
             {
                 case Status.noEnough:
                     animationPlayer.Play("no");
+                    upgradeButton.Text = "NO ENERGY";
                     break;
                 case Status.ok:
                     animationPlayer.Play("levelup");
@@ -80,12 +122,14 @@ namespace Galatime
 
         private void _onUpgradeButtonMouseEntered()
         {
+            if (State != ContainerState.normal) return;
             upgradeButton.AddThemeColorOverride("font_color", new Color(1f, 1f, 1f));
             tooltip._display(stat);
         }
 
         private void _onUpgradeButtonMouseExited()
         {
+            if (State != ContainerState.normal) return;
             upgradeButton.AddThemeColorOverride("font_color", upgradeButtonDefaultColor);
             tooltip._hide();    
         }
@@ -94,7 +138,7 @@ namespace Galatime
         {
             if (@event is InputEventMouseButton mouseEvent)
             {
-                if (mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
+                if (mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left && State == ContainerState.normal)
                 {
                     EmitSignal(SignalName.on_upgrade, (int)stat.type);
                 }
@@ -103,6 +147,10 @@ namespace Galatime
 
         public void loadData(EntityStat stat, int xpAmount)
         {
+            if (stat.Value >= 150)
+            {
+                State = ContainerState.maximum;
+            }
             var texture = GD.Load<Texture2D>(stat.iconPath);
             iconTextureRect.Texture = texture != null ? texture : null;
             amountProgressBar.Value = stat.Value;

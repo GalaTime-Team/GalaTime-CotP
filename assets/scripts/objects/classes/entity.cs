@@ -43,10 +43,7 @@ namespace Galatime
         private float health = 0;
         public float Health
         {
-            get
-            {
-                return health;
-            }
+            get => health;
             set
             {
                 health = value;

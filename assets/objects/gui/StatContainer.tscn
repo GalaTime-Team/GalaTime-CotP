@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://duj5hm5ehitdv"]
+[gd_scene load_steps=12 format=3 uid="uid://duj5hm5ehitdv"]
 
 [ext_resource type="Script" path="res://assets/scripts/gui/StatContainer.cs" id="2"]
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="2_w13sr"]
@@ -9,17 +9,15 @@
 
 [sub_resource type="Animation" id="Animation_n8ufk"]
 resource_name = "levelup"
-tracks/0/type = "value"
+tracks/0/type = "animation"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Container/AmountProgressBar:tint_progress")
+tracks/0/path = NodePath("ProgressBarAnimationPlayer")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.6),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(0.196078, 0.803922, 0.196078, 1), Color(1, 1, 1, 1)]
+"clips": PackedStringArray("upgraded"),
+"times": PackedFloat32Array(0)
 }
 
 [sub_resource type="Animation" id="Animation_in3w5"]
@@ -43,16 +41,37 @@ tracks/1/path = NodePath("UpgradeContainer/UpgradeButton:text")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.6),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0.6),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": ["NOT ENERGY", "UPGRADE"]
+"values": ["UPGRADE"]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6qmuc"]
 _data = {
 "levelup": SubResource("Animation_n8ufk"),
 "no": SubResource("Animation_in3w5")
+}
+
+[sub_resource type="Animation" id="Animation_pkcsq"]
+resource_name = "upgraded"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Container/AmountProgressBar:tint_progress")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.196078, 0.803922, 0.196078, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1qjpn"]
+_data = {
+"upgraded": SubResource("Animation_pkcsq")
 }
 
 [node name="StatContainer" type="VBoxContainer"]
@@ -123,4 +142,10 @@ scroll_active = false
 reset_on_save = false
 libraries = {
 "": SubResource("AnimationLibrary_6qmuc")
+}
+
+[node name="ProgressBarAnimationPlayer" type="AnimationPlayer" parent="."]
+reset_on_save = false
+libraries = {
+"": SubResource("AnimationLibrary_1qjpn")
 }

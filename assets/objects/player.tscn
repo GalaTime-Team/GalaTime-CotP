@@ -1,6 +1,5 @@
-[gd_scene load_steps=22 format=3 uid="uid://dxkmenalovoja"]
+[gd_scene load_steps=21 format=3 uid="uid://dxkmenalovoja"]
 
-[ext_resource type="PackedScene" uid="uid://s184ap1aunq3" path="res://assets/objects/PlayerGui.tscn" id="1"]
 [ext_resource type="Animation" uid="uid://co6srb7oraj3q" path="res://assets/animations/characters/artur/walk_left.tres" id="2"]
 [ext_resource type="Animation" uid="uid://g82xlv1qh4dx" path="res://assets/animations/characters/artur/walk_down.tres" id="3"]
 [ext_resource type="Texture2D" uid="uid://0qwxj0q11rw3" path="res://sprites/characters/artur/arthur_up_8.png" id="3_e45b5"]
@@ -71,6 +70,8 @@ y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("10")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
 emitting = false
 amount = 4
@@ -102,7 +103,3 @@ position = Vector2(0.5, 30)
 shape = SubResource("20")
 
 [node name="Timer" type="Timer" parent="."]
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="PlayerGui" parent="CanvasLayer" instance=ExtResource("1")]

@@ -1,7 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://c4qtsh4p8hear"]
+[gd_scene load_steps=9 format=3 uid="uid://c4qtsh4p8hear"]
 
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="1_ht07l"]
-[ext_resource type="Script" path="res://assets/scripts/gui/MainMenuButton.cs" id="2_15t6f"]
 [ext_resource type="AudioStream" uid="uid://bmeffvddx6dpx" path="res://assets/audios/sounds/button_sfx.mp3" id="3_2mt4m"]
 [ext_resource type="AudioStream" uid="uid://jrsuouvekni1" path="res://assets/audios/sounds/button_sfx_accept.mp3" id="4_r3oiq"]
 
@@ -30,7 +29,6 @@ theme_override_styles/pressed = SubResource("StyleBoxEmpty_40yop")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_g83nr")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_uhs4h")
 text = "Button"
-script = ExtResource("2_15t6f")
 
 [node name="AudioStreamPlayerButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_2mt4m")

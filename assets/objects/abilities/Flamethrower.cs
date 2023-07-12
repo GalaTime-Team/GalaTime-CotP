@@ -64,7 +64,8 @@ namespace Galatime
 
         private void _onTimeoutShot(float physicalAttack, float magicalAttack, Sprite2D spr)
         {
-            if (PlayerVariables.Player is Player player) player.cameraShakeAmount += 0.4f;
+            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            if (playerVariables.Player is Player player) player.cameraShakeAmount += 0.4f;
             FlamethrowerShells ability = projectiveScene.Instantiate<FlamethrowerShells>();
             var position = spr.GlobalPosition;
             AddChild(ability);

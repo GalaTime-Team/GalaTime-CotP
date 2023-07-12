@@ -24,6 +24,7 @@ theme_override_fonts/font = ExtResource("1_ioeut")
 text = "SAVE 1"
 
 [node name="Description" type="Label" parent="VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
 size_flags_horizontal = 0

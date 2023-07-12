@@ -30,7 +30,7 @@ public partial class MainMenu : Control
     private AudioStreamPlayer audioMenuMuffled;
     private AudioStreamPlayer audioMenuWhoosh;
 
-    private AnimationPlayer chapterAnimationPlayer;
+    private AnimationPlayer AnimationPlayer;
 
     private HSlider musicVolumeSlider;
     private HSlider soundsVolumeSlider;
@@ -76,6 +76,13 @@ public partial class MainMenu : Control
     {
         base._Ready();
 
+        AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+
+        delayInteract = new Timer();
+        delayInteract.OneShot = true;
+        delayInteract.WaitTime = transitionTime;
+        AddChild(delayInteract);
+
         audioButtonHover = GetNode<AudioStreamPlayer>("AudioStreamPlayerButtonHover");
         audioButtonAccept = GetNode<AudioStreamPlayer>("AudioStreamPlayerButtonAccept");
         audioMenu = GetNode<AudioStreamPlayer>("AudioStreamPlayerMenu");
@@ -91,12 +98,13 @@ public partial class MainMenu : Control
         creditsMenu = GetNode<Control>("CreditsContainer");
         acceptContainer = GetNode<Control>("AcceptContainer");
 
-        saveContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/SaveContainer.tscn");
+        var tween = GetTree().CreateTween();
+        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
+        tween.TweenProperty(mainMenu, "modulate", new Color(1f, 1f, 1f), transitionTime);
 
-        delayInteract = new Timer();
-        delayInteract.OneShot = true;
-        delayInteract.WaitTime = transitionTime;
-        AddChild(delayInteract);
+        delayInteract.Start();
+
+        saveContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/SaveContainer.tscn");
 
         // Settings Ready
 
@@ -140,8 +148,6 @@ public partial class MainMenu : Control
 
         acceptName = GetNode<Label>("AcceptContainer/VBoxContainer/Name");
 
-        chapterAnimationPlayer = GetNode<AnimationPlayer>("StartMenuContainer/AnimationPlayer");
-
         //createSaveButton.GuiInput += (InputEvent @event) => createSaveButtonInput(createSaveButton, @event);
 
         updateVisualButtons();
@@ -164,7 +170,7 @@ public partial class MainMenu : Control
         GalatimeGlobals.checkSaves();
         updateSaves();
 
-        chapterAnimationPlayer.Play("idle");
+        AnimationPlayer.Play("idle");
 
         //versionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
         versionLabel.Text = $"\n\n\nPROPERTY OF GALATIME TEAM";
@@ -384,7 +390,7 @@ public partial class MainMenu : Control
             if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && delayInteract.TimeLeft <= 0)
             {
                 visualButtonInput(playButtonInstance, @eventMouse);
-                chapterAnimationPlayer.Play("start");
+                AnimationPlayer.Play("start");
                 audioButtonAccept.Play();
 
                 GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
@@ -397,7 +403,8 @@ public partial class MainMenu : Control
 
     public void _onStartAnimationEnded()
     {
-        GalatimeGlobals.loadScene(this, "res://assets/scenes/Lobby.tscn");
+        var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
+        globals.loadScene("res://assets/scenes/Lobby.tscn");
     }
 
     public void deleteSaveButtonInput(int saveId, Label button, InputEvent @event)
@@ -802,7 +809,7 @@ public partial class MainMenu : Control
                 mouseEvent.ButtonIndex = MouseButton.Left;
                 mouseEvent.Pressed = true;
 
-                _currentFocus.EmitSignal("gui_input", mouseEvent);
+                if (_currentFocus != null) _currentFocus.EmitSignal("gui_input", mouseEvent);
             }
         }
     }

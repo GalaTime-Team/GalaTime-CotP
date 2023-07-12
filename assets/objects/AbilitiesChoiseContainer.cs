@@ -8,12 +8,14 @@ namespace Galatime
         private PlayerVariables _playerVariables;
         private HBoxContainer _abilitiesContainer;
         private Godot.Collections.Array<Node> abilityContainers;
+        private PlayerVariables playerVariables;
 
         public string choiseId = "unknown";
 
         public override void _Ready()
         {
             _abilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
+            playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
             abilityContainers = _abilitiesContainer.GetChildren();
 
             for (int i = 0; i < abilityContainers.Count; i++)
@@ -30,9 +32,9 @@ namespace Galatime
 
         private void _onAbilitiesChanged()
         {
-            for (int i = 0; i < PlayerVariables.abilities.Count; i++)
+            for (int i = 0; i < playerVariables.abilities.Count; i++)
             {
-                var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
+                var ability = (Godot.Collections.Dictionary)playerVariables.abilities[i];
                 if (ability.ContainsKey("icon"))
                 {
                     var icon = GD.Load((string)ability["icon"]) as Texture2D;
@@ -55,17 +57,17 @@ namespace Galatime
                 if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
                 {
                     var abilityContainer = abilityContainers[id] as AbilityContainer;
-                    for (int i = 0; i < PlayerVariables.abilities.Count; i++)
+                    for (int i = 0; i < playerVariables.abilities.Count; i++)
                     {
-                        var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
-                        GD.Print(" reloaded? " + PlayerVariables.isAbilityReloaded(i) + " " + PlayerVariables.isAbilityReloaded(id));
+                        var ability = (Godot.Collections.Dictionary)playerVariables.abilities[i];
+                        GD.Print(" reloaded? " + playerVariables.isAbilityReloaded(i) + " " + playerVariables.isAbilityReloaded(id));
                         if (ability.ContainsKey("id"))
                         {
                             if ((string)ability["id"] == choiseId)
                             {
-                                if (PlayerVariables.isAbilityReloaded(i) && PlayerVariables.isAbilityReloaded(id))
+                                if (playerVariables.isAbilityReloaded(i) && playerVariables.isAbilityReloaded(id))
                                 {
-                                    var previous = (Godot.Collections.Dictionary)PlayerVariables.abilities[id];
+                                    var previous = (Godot.Collections.Dictionary)playerVariables.abilities[id];
                                     _playerVariables.setAbility(GalatimeGlobals.getAbilityById(choiseId), id);
                                     _playerVariables.setAbility(previous, i);
                                     abilityContainer.click();
@@ -79,7 +81,7 @@ namespace Galatime
                             }
                         }
                     }
-                    if (PlayerVariables.isAbilityReloaded(id))
+                    if (playerVariables.isAbilityReloaded(id))
                     {
                         _playerVariables.setAbility(GalatimeGlobals.getAbilityById(choiseId), id);
                         abilityContainer.click();

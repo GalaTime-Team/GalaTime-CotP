@@ -27,6 +27,8 @@ public sealed partial class GalatimeGlobals : Node
     public static Discord.ActivityManager activityManager;
     public static Activity currentActivity;
 
+    public PlayerVariables playerVariables;
+
     /// <summary>
     /// Slot type for inventory
     /// </summary>
@@ -74,14 +76,21 @@ public sealed partial class GalatimeGlobals : Node
     //    }
     //}
 
+    // public Node CurrentScene { get; set; }
+
     public override async void _Ready()
     {
+        playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+
         loadingScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/Loading.tscn");
         saveProcessScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/SavingProcess.tscn");
 
         itemList = _getItemsFromJson();
         ablitiesList = _getAbilitiesFromJson();
         tipsList = _getTipsFromJson();
+        
+        // Viewport root = GetTree().Root;
+        // GetTree().CurrentScene = root.GetChild(root.GetChildCount() - 1);
 
         //discord = new Discord.Discord(1071756821158699068, (System.UInt64)Discord.CreateFlags.NoRequireDiscord);
         //activityManager = discord.GetActivityManager();
@@ -120,11 +129,42 @@ public sealed partial class GalatimeGlobals : Node
         // if (discord != null) discord.RunCallbacks();
     }
 
-    public static void loadScene(Node currentScene, string nextScene)
+    public void loadScene(string nextScene = "res://assets/scenes/MainMenu.tscn")
+    {
+        // var loadingSceneInstance = loadingScene.Instantiate<Loading>();
+        //loadingSceneInstance.sceneName = nextScene;
+        // currentScene.GetTree().Root.AddChild(loadingSceneInstance);
+        CallDeferred(nameof(deferredLoadScene), nextScene);
+    }
+
+
+    public void deferredLoadScene(string path)
     {
         var loadingSceneInstance = loadingScene.Instantiate<Loading>();
-        loadingSceneInstance.sceneName = nextScene;
-        currentScene.GetTree().Root.AddChild(loadingSceneInstance);
+        loadingSceneInstance.sceneName = path;
+        GetTree().Root.AddChild(loadingSceneInstance);
+
+        // Old method
+
+        // It is now safe to remove the current scene
+        // CurrentScene.Free();
+
+        // Load a new scene.
+        // var nextScene = (PackedScene)GD.Load(path);
+
+        // Instance the new scene.
+        // CurrentScene = nextScene.Instantiate();
+
+        // Add it to the active scene, as child of root.
+        // GetTree().Root.AddChild(CurrentScene);
+
+        // Optionally, to make it compatible with the SceneTree.change_scene_to_file() API.
+        // GetTree().CurrentScene = CurrentScene;
+    }
+
+    public static ResourceLoader.ThreadLoadStatus sceneLoadingStatus(string nextScene = "res://assets/scenes/MainMenu.tscn")
+    {
+        return ResourceLoader.LoadThreadedGetStatus("res://assets/scenes/MainMenu.tscn");
     }
 
     /// <summary>
@@ -261,7 +301,7 @@ public sealed partial class GalatimeGlobals : Node
         return saveData;
     }
 
-    public static void save(int saveId, Node? currentScene)
+    public void save(int saveId, Node? currentScene)
     {
         var saveProcessSceneInstance = saveProcessScene.Instantiate<SavingProcess>();
         if (currentScene != null)
@@ -290,7 +330,7 @@ public sealed partial class GalatimeGlobals : Node
         }
     }
 
-    private static Godot.Collections.Dictionary getSaveData(int saveId)
+    private Godot.Collections.Dictionary getSaveData(int saveId)
     {
         var saveData = new Godot.Collections.Dictionary();
         saveData.Add("DO_NOT_MODIFY_THIS_FILE_ONLY_MODIFY_IF_YOU_KNOW_WHAT_YOURE_DOING", 0);
@@ -298,11 +338,11 @@ public sealed partial class GalatimeGlobals : Node
         saveData.Add("chapter", 1);
         saveData.Add("day", 1);
         saveData.Add("playtime", 0);
-        saveData.Add("learned_abilities", PlayerVariables.learnedAbilities);
+        saveData.Add("learned_abilities", playerVariables.learnedAbilities);
         var inventory = new Godot.Collections.Dictionary();
-        for (int i = 0; i < PlayerVariables.inventory.Count; i++)
+        for (int i = 0; i < playerVariables.inventory.Count; i++)
         {
-            var item = (Godot.Collections.Dictionary)PlayerVariables.inventory[i];
+            var item = (Godot.Collections.Dictionary)playerVariables.inventory[i];
             if (!item.ContainsKey("id"))
             {
                 inventory.Add(i, new Godot.Collections.Dictionary());
@@ -317,24 +357,25 @@ public sealed partial class GalatimeGlobals : Node
         }
         saveData.Add("inventory", inventory);
         var abilities = new Godot.Collections.Dictionary();
-        for (int i = 0; i < PlayerVariables.abilities.Count; i++)
+        for (int i = 0; i < playerVariables.abilities.Count; i++)
         {
-            var ability = (Godot.Collections.Dictionary)PlayerVariables.abilities[i];
+            var ability = (Godot.Collections.Dictionary)playerVariables.abilities[i];
             abilities.Add(i, new Godot.Collections.Dictionary());
             if (ability.ContainsKey("id"))
             {
                 ((Godot.Collections.Dictionary)abilities[i]).Add("id", ability["id"]);
             }
         }
+        GD.Print("player state is " + playerVariables.Player == null + " playerVariables " + playerVariables == null);
         saveData.Add("equiped_abilities", abilities);
         var stats = new Godot.Collections.Dictionary();
-        for (int i = 0; i < PlayerVariables.Player.Stats.Count; i++)
+        for (int i = 0; i < playerVariables.Player.Stats.Count; i++)
         {
-            var stat = PlayerVariables.Player.Stats[i];
+            var stat = playerVariables.Player.Stats[i];
             stats.Add(stat.id, stat.Value);
         }
         saveData.Add("stats", stats);
-        saveData.Add("xp", PlayerVariables.Player.Xp);
+        saveData.Add("xp", playerVariables.Player.Xp);
         return saveData;
     }
 

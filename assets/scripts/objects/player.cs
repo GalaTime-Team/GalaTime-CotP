@@ -21,12 +21,12 @@ namespace Galatime
 			set
 			{
 				xp = value;
-				_playerGui.changeStats(Stats, xp);
+				playerGui.changeStats(Stats, xp);
 				PlayerVariables.invokeXpChangedEvent(xp);
 			}
 		}
 
-		private PlayerGui _playerGui;
+		public PlayerGui playerGui;
 
 		private bool _isPause = false;
 
@@ -49,6 +49,7 @@ namespace Galatime
 		public override void _Ready()
 		{
 			base._Ready();
+
 			// Get Nodes
 			_animationPlayer = GetNode<AnimationPlayer>("Animation");
 
@@ -65,7 +66,10 @@ namespace Galatime
 			_playerVariables.Connect("items_changed", new Callable(this, "_onItemsChanged"));
 			_playerVariables.Connect("abilities_changed", new Callable(this, "_abilitiesChanged"));
 
-			_playerGui = GetNode<PlayerGui>("CanvasLayer/PlayerGui");
+			var playerGuiScene = ResourceLoader.Load<PackedScene>("res://assets/objects/PlayerGui.tscn");
+		    playerGui = playerGuiScene.Instantiate<PlayerGui>();
+			GetNode("CanvasLayer").AddChild(playerGui);
+			playerGui.RequestReady();
 
 			element = GalatimeElement.Ignis + GalatimeElement.Chaos;
 
@@ -91,12 +95,12 @@ namespace Galatime
 
 			body.GlobalPosition = GlobalPosition;
 
-			_playerGui.changeStats(Stats, Xp);
+			playerGui.changeStats(Stats, Xp);
 
-            Stats.statsChanged += _onStatsChanged;
+			Stats.statsChanged += _onStatsChanged;
 
-            PlayerVariables.Player = this;
-			GD.Print("!!! PLAYER IS LOADED !!!");
+			GD.Print("PLAYER INSTANCE");
+			_playerVariables.setPlayerInstance(this);
 		}
 
 		private void _onStatsChanged(EntityStats stats)
@@ -105,11 +109,13 @@ namespace Galatime
 			Health = Stats[EntityStatType.health].Value;
 			Mana = Stats[EntityStatType.mana].Value;
 			Stamina = Stats[EntityStatType.stamina].Value;
+
+			playerGui._onStatsChanged(stats);
 		}
 
 		private void _SetMove()
 		{
-            Vector2 inputVelocity = Vector2.Zero;
+			Vector2 inputVelocity = Vector2.Zero;
 			// Vector2 windowPosition = OS.WindowPosition;
 
 			if (Input.IsActionPressed("game_move_up"))
@@ -163,12 +169,24 @@ namespace Galatime
 
 		public override void _healthChangedEvent(float health)
 		{
-			_playerGui.onHealthChanged(health);
+			playerGui.onHealthChanged(health);
 		}
+
+		protected override void _onManaChanged(float mana)
+		{
+			playerGui.onManaChanged(mana);
+			GD.Print("MANA CHANGED");
+		}
+
+		protected override void _onStaminaChanged(float stamina)
+		{
+			playerGui.onStaminaChanged(stamina);
+            GD.Print("STAMINA CHANGED");
+        }
 
 		public void _abilitiesChanged()
 		{
-			var obj = (Godot.Collections.Dictionary)PlayerVariables.abilities;
+			var obj = (Godot.Collections.Dictionary)_playerVariables.abilities;
 			for (int i = 0; i < obj.Count; i++)
 			{
 				var ability = (Godot.Collections.Dictionary)obj[i];
@@ -187,7 +205,7 @@ namespace Galatime
 				else
 				{
 					removeAbility(i);
-					GD.PushWarning("no path " + i);
+					GD.Print("Ability: no path given at " + i);
 				}
 			}
 		}
@@ -195,7 +213,7 @@ namespace Galatime
 		public override GalatimeAbility addAbility(string scenePath, int i)
 		{
 			var ability = base.addAbility(scenePath, i);
-			_playerGui.addAbility(ability, i);
+			playerGui.addAbility(ability, i);
 			return ability;
 		}
 
@@ -204,17 +222,17 @@ namespace Galatime
 			var result = base._useAbility(i);
 			if (!result)
 			{
-				_playerGui.pleaseSayNoToAbility(i);
+				playerGui.pleaseSayNoToAbility(i);
 				return result;
 			}
-			_playerGui.reloadAbility(i);
+			playerGui.reloadAbility(i);
 			return result;
 		}
 
 		protected override void removeAbility(int i)
 		{
 			base.removeAbility(i);
-			_playerGui.removeAbility(i);
+			playerGui.removeAbility(i);
 		}
 
 		public override void _Process(double delta)
@@ -224,14 +242,14 @@ namespace Galatime
 
 		private void _onItemsChanged()
 		{
-			var obj = (Godot.Collections.Dictionary)PlayerVariables.inventory[0];
+			var obj = (Godot.Collections.Dictionary)_playerVariables.inventory[0];
 			if (weapon._item != null && obj.Count != 0) return;
 			weapon.takeItem(obj);
 		}
 
 		public void startDialog(string id)
 		{
-			_playerGui.startDialog(id, this);
+			playerGui.startDialog(id, this);
 		}
 
 		public override async void _UnhandledInput(InputEvent @event)
@@ -245,13 +263,13 @@ namespace Galatime
 				if (_isPause)
 				{
 					_isPause = false;
-					_playerGui.pause(_isPause);
+					playerGui.pause(_isPause);
 					return;
 				}
 				if (!_isPause)
 				{
 					_isPause = true;
-					_playerGui.pause(_isPause);
+					playerGui.pause(_isPause);
 					return;
 				}
 			}
@@ -263,7 +281,8 @@ namespace Galatime
 			if (@event.IsActionPressed("game_dodge"))
 			{
 				dodge();
-				GalatimeGlobals.save(1, _playerGui);
+				var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
+				globals.save(PlayerVariables.currentSave, playerGui);
 			}
 
 			if (@event.IsActionPressed("game_ability_1")) _useAbility(0);
