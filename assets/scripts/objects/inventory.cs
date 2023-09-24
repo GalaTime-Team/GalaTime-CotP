@@ -1,10 +1,11 @@
-using Godot;
 using System;
+using Godot;
 
 public partial class inventory : Node
 {
     // Signals
     [Signal] public delegate void items_changedEventHandler(int items);
+    public Action<int> OnItemsChanged;
 
     // Variables
     public int slots = 16;
@@ -29,7 +30,7 @@ public partial class inventory : Node
         }
         else
         {
-            GD.PrintErr("INVENTORY: Invalid path");
+
             return new Godot.Collections.Dictionary();
         }
     }
@@ -37,13 +38,14 @@ public partial class inventory : Node
     public void SetItem(Godot.Collections.Dictionary item, int i)
     {
         items[i] = item;
-        EmitSignal("items_changed", item);
+        
+        OnItemsChanged?.Invoke(i);
     }
 
     public void RemoveItem(int i)
     {
         items.Remove(i);
-        EmitSignal("items_changed", i);
+        OnItemsChanged?.Invoke(i);
     }
 
     public void SetQuantity(int i, int amount)
@@ -57,9 +59,9 @@ public partial class inventory : Node
         {
             RemoveItem(i);
         }
-        else 
+        else
         {
-            EmitSignal("items_changed", i);
+            OnItemsChanged?.Invoke(i);
         }
 
     }

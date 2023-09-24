@@ -1,7 +1,4 @@
 using Godot;
-using System;
-using Galatime;
-using System.Security.Cryptography;
 
 namespace Galatime
 {
@@ -13,26 +10,18 @@ namespace Galatime
         public bool canMove = true;
 
         private AnimationPlayer _animationPlayer;
-        private Sprite2D _sprite;
+        // private Sprite2D _sprite;
         private CharacterBody2D _kinematicBody;
         private Area2D _damageArea;
 
-        public Firewave() : base(
-            GD.Load("res://sprites/gui/abilities/ignis/firewave.png") as Texture2D,
-            20,
-            6f,
-            new System.Collections.Generic.Dictionary<string, float>() { { "mana", 10 } }
-        )
-        { }
-
-        public override async void _Ready()
+        public override void _Ready()
         {
-            _animationPlayer = GetNode<AnimationPlayer>("CharacterBody3D/AnimationPlayer");
-            _sprite = GetNode<Sprite2D>("CharacterBody3D/Sprite2D");
-            _kinematicBody = GetNode<CharacterBody2D>("CharacterBody3D");
-            _damageArea = GetNode<Area2D>("CharacterBody3D/DamageArea");
+            _animationPlayer = GetNode<AnimationPlayer>("CharacterBody/AnimationPlayer");
+            // _sprite = GetNode<Sprite2D>("CharacterBody/Sprite");
+            _kinematicBody = GetNode<CharacterBody2D>("CharacterBody");
+            _damageArea = GetNode<Area2D>("CharacterBody/DamageArea");
 
-            _animationPlayer.AnimationFinished += (StringName name) => animationFinished(name);
+            _animationPlayer.AnimationFinished += animationFinished;
         }
 
         public void animationFinished(StringName name)
@@ -49,24 +38,24 @@ namespace Galatime
             {
                 GalatimeElement element = GalatimeElement.Ignis;
                 float damageRotation = _kinematicBody.GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.hit(20, magicalAttack, element, DamageType.magical, 500, damageRotation);
+                entity.TakeDamage(20, magicalAttack, element, DamageType.magical, 500, damageRotation);
             }
         }
 
-        public override async void execute(HumanoidCharacter p, float physicalAttack, float magicalAttack)
+        public override async void Execute(HumanoidCharacter p)
         {
             var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
-            Rotation = p.weapon.Rotation;
-            _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
+            Rotation = p.Weapon.Rotation;
+            _kinematicBody.GlobalPosition = p.Weapon.GlobalPosition;
 
             _velocity.X += 1;
-            if (playerVariables.Player is Player player) player.cameraShakeAmount += 10;
+            if (playerVariables.Player is Player player) player.CameraShakeAmount += 10;
 
             _animationPlayer.Play("intro");
-            _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, physicalAttack, magicalAttack);
+            _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, p.Stats[EntityStatType.PhysicalAttack].Value, p.Stats[EntityStatType.MagicalAttack].Value);
 
-            await ToSignal(GetTree().CreateTimer(duration), "timeout");
+            await ToSignal(GetTree().CreateTimer(Data.Duration), "timeout");
             destroy();
         }
 

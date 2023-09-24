@@ -1,4 +1,3 @@
-using Galatime;
 using Godot;
 using System;
 
@@ -12,12 +11,12 @@ namespace Galatime
 
         private Color learnButtonDefaultColor = new Color(0.196078f, 0.803922f, 0.196078f);
         private Color learnButtonDisabledColor = new Color(0.09411764889956f, 0.39215686917305f, 0.09411764889956f);
-        
+
         private bool learnButtonDisabled = false;
 
         private PlayerVariables _playerVariables;
 
-        public Godot.Collections.Dictionary abilityData = new Godot.Collections.Dictionary();
+        public AbilityData abilityData = new();
         private bool _visible;
         public bool visible
         {
@@ -51,6 +50,13 @@ namespace Galatime
             PlayerVariables.onXpChanged += updateData;
         }
 
+        public override void _ExitTree()
+        {
+            PlayerVariables.onXpChanged -= updateData;
+        }
+
+        public string CostXPString => $"{abilityData.CostXP}/{_playerVariables.Player.Xp} [color=32cd32]XP[/color]";
+
         /// <summary>
         /// Updates the data about the stat.
         /// </summary>
@@ -59,22 +65,22 @@ namespace Galatime
         {
             try
             {
-                if (abilityData.ContainsKey("name")) nameLabel.Text = $"Learn ability \"{(string)abilityData["name"]}\"?";
+                nameLabel.Text = $"Learn ability \"{abilityData.Name}\"?";
                 if (_playerVariables.learnAbility(abilityData, true) == LearnedStatus.noRequiredPath)
                 {
-                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{_playerVariables.Player.Xp} [color=32cd32]XP[/color] You need to open the previous path";
+                    learnButtonLabel.Text = $"{CostXPString} You need to open the previous path";
                     _setButtonDisabled(true);
                     return;
                 }
                 else if (_playerVariables.learnAbility(abilityData, true) == LearnedStatus.noEnoughCurrency)
                 {
                     _setButtonDisabled(true);
-                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{_playerVariables.Player.Xp} [color=32cd32]XP[/color] You don't have enough XP";
+                    learnButtonLabel.Text = $"{CostXPString} You don't have enough XP";
                 }
                 else
                 {
                     _setButtonDisabled(false);
-                    learnButtonLabel.Text = $"{(string)abilityData["cost"]}/{_playerVariables.Player.Xp} [color=32cd32]XP[/color]";
+                    learnButtonLabel.Text = CostXPString;
                 }
             }
             catch (Exception e)
@@ -120,7 +126,7 @@ namespace Galatime
             {
                 if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
                 {
-                    if (abilityData != null && abilityData.ContainsKey("id"))
+                    if (!abilityData.IsEmpty)
                     {
                         var result = _playerVariables.learnAbility(abilityData);
                         if (result == LearnedStatus.ok)

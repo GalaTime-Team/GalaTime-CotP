@@ -1,7 +1,5 @@
-using Godot;
 using System;
-using Galatime;
-using static Galatime.GalatimeConstants;
+using Godot;
 
 namespace Galatime
 {
@@ -61,8 +59,7 @@ namespace Galatime
             }
         }
 
-
-        [Signal] public delegate void on_upgradeEventHandler(int id);
+        public Action<int> OnUpgrade;
 
         private PlayerGui playerGui;
 
@@ -71,7 +68,7 @@ namespace Galatime
         private TextureProgressBar amountProgressBar;
         private Label amountLabel;
         private TextureRect iconTextureRect;
-        private RichTextLabel neededCurencyLabel;
+        private RichTextLabel neededCurrencyLabel;
         private AnimationPlayer animationPlayer;
 
         private Tooltip tooltip;
@@ -84,7 +81,7 @@ namespace Galatime
         {
             amountProgressBar = GetNode<TextureProgressBar>("Container/AmountProgressBar");
             amountLabel = GetNode<Label>("Container/AmountLabel");
-            neededCurencyLabel = GetNode<RichTextLabel>("UpgradeContainer/NeededCurencyLabel");
+            neededCurrencyLabel = GetNode<RichTextLabel>("UpgradeContainer/NeededCurencyLabel");
             iconTextureRect = GetNode<TextureRect>("Container/TextureRect");
             nameLabel = GetNode<Label>("Label");
             animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
@@ -124,14 +121,14 @@ namespace Galatime
         {
             if (State != ContainerState.normal) return;
             upgradeButton.AddThemeColorOverride("font_color", new Color(1f, 1f, 1f));
-            tooltip._display(stat);
+            tooltip.Display(stat);
         }
 
         private void _onUpgradeButtonMouseExited()
         {
             if (State != ContainerState.normal) return;
             upgradeButton.AddThemeColorOverride("font_color", upgradeButtonDefaultColor);
-            tooltip._hide();    
+            tooltip._hide();
         }
 
         private void _onUpgradeButtonGuiInput(InputEvent @event)
@@ -140,7 +137,7 @@ namespace Galatime
             {
                 if (mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left && State == ContainerState.normal)
                 {
-                    EmitSignal(SignalName.on_upgrade, (int)stat.type);
+                    OnUpgrade?.Invoke((int)stat.Type);
                 }
             }
         }
@@ -151,12 +148,12 @@ namespace Galatime
             {
                 State = ContainerState.maximum;
             }
-            var texture = GD.Load<Texture2D>(stat.iconPath);
+            var texture = GD.Load<Texture2D>(stat.IconPath);
             iconTextureRect.Texture = texture != null ? texture : null;
             amountProgressBar.Value = stat.Value;
             amountLabel.Text = $"{stat.Value}/150";
-            nameLabel.Text = stat.name;
-            neededCurencyLabel.Text = $"100/{xpAmount} [color=32cd32]XP[/color]";
+            nameLabel.Text = stat.Name;
+            neededCurrencyLabel.Text = $"100/{xpAmount} [color=32cd32]XP[/color]";
 
             this.stat = stat;
         }

@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://dvcqo3s12tkuf"]
 
-[ext_resource type="Script" path="res://assets/objects/abilities/Firewave.cs" id="1"]
-[ext_resource type="AudioStream" uid="uid://bx75a101a77ss" path="res://assets/audios/sounds/firebal.mp3" id="12"]
+[ext_resource type="Script" path="res://assets/objects/abilities/Firewave.cs" id="1_63eig"]
+[ext_resource type="AudioStream" uid="uid://bx75a101a77ss" path="res://assets/audios/sounds/firebal.mp3" id="2_pxsvg"]
 
 [sub_resource type="RectangleShape2D" id="5"]
 size = Vector2(8, 64)
@@ -12,7 +12,7 @@ length = 0.4
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CharacterBody3D/AnimationPlayer")
+tracks/0/path = NodePath("CharacterBody/AnimationPlayer")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -23,14 +23,14 @@ tracks/0/keys = {
 tracks/1/type = "audio"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("CharacterBody3D/Audio")
+tracks/1/path = NodePath("CharacterBody/Audio")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "clips": [{
 "end_offset": 0.3,
 "start_offset": 0.0,
-"stream": ExtResource("12")
+"stream": ExtResource("2_pxsvg")
 }],
 "times": PackedFloat32Array(0)
 }
@@ -38,7 +38,7 @@ tracks/1/use_blend = true
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("CharacterBody3D/Line2D:scale")
+tracks/2/path = NodePath("CharacterBody/Line2D:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -55,14 +55,14 @@ loop_mode = 1
 tracks/0/type = "audio"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CharacterBody3D/Audio")
+tracks/0/path = NodePath("CharacterBody/Audio")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "clips": [{
 "end_offset": 0.2,
 "start_offset": 0.2,
-"stream": ExtResource("12")
+"stream": ExtResource("2_pxsvg")
 }],
 "times": PackedFloat32Array(0)
 }
@@ -88,14 +88,14 @@ tracks/0/keys = {
 tracks/1/type = "audio"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("CharacterBody3D/Audio")
+tracks/1/path = NodePath("CharacterBody/Audio")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.3,
-"stream": ExtResource("12")
+"stream": ExtResource("2_pxsvg")
 }],
 "times": PackedFloat32Array(0)
 }
@@ -103,7 +103,7 @@ tracks/1/use_blend = true
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("CharacterBody3D/Line2D:scale")
+tracks/2/path = NodePath("CharacterBody/Line2D:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -124,33 +124,32 @@ _data = {
 size = Vector2(8, 8)
 
 [node name="Firewave" type="Node2D"]
-script = ExtResource("1")
+script = ExtResource("1_63eig")
 
-[node name="CharacterBody3D" type="CharacterBody2D" parent="."]
+[node name="CharacterBody" type="CharacterBody2D" parent="."]
 z_index = -1
 collision_layer = 0
 collision_mask = 0
 
-[node name="DamageArea" type="Area2D" parent="CharacterBody3D"]
+[node name="DamageArea" type="Area2D" parent="CharacterBody"]
 collision_layer = 0
 collision_mask = 4
 
-[node name="CollisionShape3D" type="CollisionShape2D" parent="CharacterBody3D/DamageArea"]
+[node name="CollisionShape" type="CollisionShape2D" parent="CharacterBody/DamageArea"]
 shape = SubResource("5")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CharacterBody3D"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CharacterBody"]
 root_node = NodePath("../..")
 libraries = {
 "": SubResource("AnimationLibrary_uqupi")
 }
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody3D"]
+[node name="CollisionShape" type="CollisionShape2D" parent="CharacterBody"]
 shape = SubResource("4")
 
-[node name="Audio" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
-bus = &"Sounds"
+[node name="Audio" type="AudioStreamPlayer2D" parent="CharacterBody"]
 
-[node name="Line2D" type="Line2D" parent="CharacterBody3D"]
+[node name="Line2D" type="Line2D" parent="CharacterBody"]
 scale = Vector2(1, 1e-05)
 points = PackedVector2Array(0, -64, 0, 64)
 default_color = Color(1, 0.4, 0.4, 1)

@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/firebal.mp3-8c6ba94494066d8dd2254c1d0a791df0.
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0
 bpm=0
 beat_count=0

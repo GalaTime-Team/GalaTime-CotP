@@ -1,8 +1,8 @@
 [gd_scene load_steps=21 format=3 uid="uid://dxkmenalovoja"]
 
 [ext_resource type="Animation" uid="uid://co6srb7oraj3q" path="res://assets/animations/characters/artur/walk_left.tres" id="2"]
+[ext_resource type="PackedScene" uid="uid://s184ap1aunq3" path="res://assets/objects/PlayerGui.tscn" id="2_e81u3"]
 [ext_resource type="Animation" uid="uid://g82xlv1qh4dx" path="res://assets/animations/characters/artur/walk_down.tres" id="3"]
-[ext_resource type="Texture2D" uid="uid://0qwxj0q11rw3" path="res://sprites/characters/artur/arthur_up_8.png" id="3_e45b5"]
 [ext_resource type="Animation" uid="uid://chwhjkjfct2xe" path="res://assets/animations/characters/artur/walk_right.tres" id="4"]
 [ext_resource type="Animation" uid="uid://c1sxvrqaexeyd" path="res://assets/animations/characters/artur/walk_up.tres" id="5"]
 [ext_resource type="Animation" uid="uid://cujxvxahqev2b" path="res://assets/animations/characters/artur/idle_left.tres" id="6"]
@@ -72,6 +72,8 @@ script = ExtResource("10")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
+[node name="PlayerGui" parent="CanvasLayer" instance=ExtResource("2_e81u3")]
+
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
 emitting = false
 amount = 4
@@ -86,7 +88,7 @@ z_index = 4096
 z_index = 1
 y_sort_enabled = true
 scale = Vector2(4, 4)
-texture = ExtResource("3_e45b5")
+texture = ExtResource("14")
 
 [node name="Hand" type="Marker2D" parent="."]
 position = Vector2(0, 30)

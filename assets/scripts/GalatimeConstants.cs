@@ -1,6 +1,3 @@
-using Godot;
-using System;
-
 namespace Galatime
 {
     public enum StatsType
@@ -17,7 +14,8 @@ namespace Galatime
         ManaRegen
     }
 
-    public readonly struct GalatimeConstants {
+    public readonly struct GalatimeConstants
+    {
         /// <summary>
         /// Path3D to Player node path
         /// </summary>

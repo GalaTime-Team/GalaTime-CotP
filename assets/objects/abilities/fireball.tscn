@@ -1,13 +1,13 @@
-[gd_scene load_steps=36 format=3 uid="uid://bybqhr0y3qgmy"]
+[gd_scene load_steps=35 format=3 uid="uid://bybqhr0y3qgmy"]
 
 [ext_resource type="Texture2D" uid="uid://cn4dyjlfja0qu" path="res://sprites/abilities/fireball/2.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://bayxi1ryv0i57" path="res://sprites/abilities/fireball/26.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="2_t52am"]
 [ext_resource type="Texture2D" uid="uid://cji3ks3g1hi8r" path="res://sprites/abilities/fireball/0.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://bsa4fpwfxje4r" path="res://sprites/abilities/fireball/13.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://c04qb7gbxe0nb" path="res://sprites/abilities/fireball/4.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://bnmk4fp7y4k8j" path="res://sprites/abilities/fireball/17.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://xkxvepm5dhu0" path="res://sprites/abilities/fireball/6.png" id="7"]
-[ext_resource type="Texture2D" uid="uid://dvqwb6s7qvkrp" path="res://sprites/abilities/fireball/28.png" id="8"]
 [ext_resource type="Texture2D" uid="uid://b4yqbyaps7h52" path="res://sprites/abilities/fireball/8.png" id="9"]
 [ext_resource type="Texture2D" uid="uid://w57dfix1t6by" path="res://sprites/abilities/fireball/9.png" id="10"]
 [ext_resource type="Script" path="res://assets/objects/abilities/Fireball.cs" id="11"]
@@ -30,11 +30,20 @@
 [ext_resource type="Texture2D" uid="uid://c0iqum84tirlq" path="res://sprites/abilities/fireball/5.png" id="28"]
 [ext_resource type="Texture2D" uid="uid://6gkcrim0ckcl" path="res://sprites/abilities/fireball/10.png" id="29"]
 
-[sub_resource type="RectangleShape2D" id="5"]
-size = Vector2(32, 32)
-
-[sub_resource type="RectangleShape2D" id="4"]
-size = Vector2(16, 16)
+[sub_resource type="Animation" id="Animation_j0hfu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Projectile/Sprite:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="1"]
 resource_name = "intro"
@@ -43,7 +52,7 @@ step = 0.025
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CharacterBody3D/Sprite2D:texture")
+tracks/0/path = NodePath("Projectile/Sprite:texture")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -55,7 +64,7 @@ tracks/0/keys = {
 tracks/1/type = "audio"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("CharacterBody3D/Audio")
+tracks/1/path = NodePath("Projectile/Audio")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -76,7 +85,7 @@ step = 0.025
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CharacterBody3D/Sprite2D:texture")
+tracks/0/path = NodePath("Projectile/Sprite:texture")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -88,7 +97,7 @@ tracks/0/keys = {
 tracks/1/type = "audio"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("CharacterBody3D/Audio")
+tracks/1/path = NodePath("Projectile/Audio")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -103,19 +112,19 @@ tracks/1/use_blend = true
 
 [sub_resource type="Animation" id="3"]
 resource_name = "outro"
-length = 0.55
+length = 10.0
 step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CharacterBody3D/Sprite2D:texture")
+tracks/0/path = NodePath("Projectile/Sprite:texture")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [ExtResource("24"), ExtResource("21"), ExtResource("26"), ExtResource("25"), ExtResource("22"), ExtResource("20"), ExtResource("2"), ExtResource("23"), ExtResource("8")]
+"values": [ExtResource("24"), ExtResource("21"), ExtResource("26"), ExtResource("25"), ExtResource("22"), ExtResource("20"), ExtResource("2"), ExtResource("23"), null]
 }
 tracks/1/type = "method"
 tracks/1/imported = false
@@ -124,7 +133,7 @@ tracks/1/path = NodePath(".")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.45),
+"times": PackedFloat32Array(10),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -134,7 +143,7 @@ tracks/1/keys = {
 tracks/2/type = "audio"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("CharacterBody3D/Audio")
+tracks/2/path = NodePath("Projectile/Audio")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -146,9 +155,22 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0)
 }
 tracks/2/use_blend = true
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Projectile/Sprite:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.45),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_qg0a2"]
 _data = {
+"RESET": SubResource("Animation_j0hfu"),
 "intro": SubResource("1"),
 "loop": SubResource("2"),
 "outro": SubResource("3")
@@ -157,32 +179,22 @@ _data = {
 [node name="Fireball" type="Node2D"]
 script = ExtResource("11")
 
-[node name="CharacterBody3D" type="CharacterBody2D" parent="."]
-z_index = -1
-collision_layer = 0
+[node name="DurationTimer" type="Timer" parent="."]
+one_shot = true
 
-[node name="DamageArea" type="Area2D" parent="CharacterBody3D"]
-collision_layer = 0
-collision_mask = 4
+[node name="Projectile" parent="." instance=ExtResource("2_t52am")]
+collision_layer = 8
 
-[node name="CollisionShape3D" type="CollisionShape2D" parent="CharacterBody3D/DamageArea"]
-shape = SubResource("5")
-debug_color = Color(0, 0.6, 0.701961, 0.419608)
-
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody3D"]
+[node name="Sprite" type="Sprite2D" parent="Projectile"]
 position = Vector2(0, 8)
 scale = Vector2(6, 6)
-texture = ExtResource("6")
+texture = ExtResource("24")
 flip_h = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody3D"]
-shape = SubResource("4")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CharacterBody3D"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Projectile"]
 root_node = NodePath("../..")
 libraries = {
 "": SubResource("AnimationLibrary_qg0a2")
 }
 
-[node name="Audio" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
-bus = &"Sounds"
+[node name="Audio" type="AudioStreamPlayer2D" parent="Projectile"]

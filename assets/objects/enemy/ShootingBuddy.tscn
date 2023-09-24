@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://bxq575p6ts4n2"]
+
+[ext_resource type="Texture2D" uid="uid://cjp2ay7e3883i" path="res://sprites/slime.png" id="1_81stt"]
+[ext_resource type="Script" path="res://assets/scripts/objects/enemies/ShootingBuddy.cs" id="1_jct1l"]
+[ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="1_lpxxg"]
+[ext_resource type="Texture2D" uid="uid://c6ua2n3er8upx" path="res://sprites/abilities/fireball/7.png" id="2_canot"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bj7j2"]
+radius = 32.0
+
+[node name="ShootingBuddy" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+script = ExtResource("1_jct1l")
+
+[node name="ShootingTimer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[node name="Projectile" parent="." instance=ExtResource("1_lpxxg")]
+visible = false
+collision_layer = 8
+Speed = 300.0
+Power = 40
+TargetTeam = 0
+Accuracy = 0.03
+Moving = false
+
+[node name="Sprite" type="Sprite2D" parent="Projectile"]
+scale = Vector2(4, 4)
+texture = ExtResource("2_canot")
+flip_h = true
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_bj7j2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("1_81stt")

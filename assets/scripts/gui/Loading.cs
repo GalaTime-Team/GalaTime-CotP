@@ -1,7 +1,6 @@
 using Godot;
-using System;
 
-namespace Galatime 
+namespace Galatime
 {
     public partial class Loading : CanvasLayer
     {
@@ -27,7 +26,7 @@ namespace Galatime
         public override void _Process(double delta)
         {
             var status = ResourceLoader.LoadThreadedGetStatus(sceneName, progress);
-            GD.Print(progress + " " + status + " Scene name: " + sceneName);  
+            GD.Print($"{(float)progress[0] * 100}% - {status}. Scene: {sceneName}");
             progressBar.Value = (float)progress[0] * 100;
             if (status == ResourceLoader.ThreadLoadStatus.Loaded)
             {

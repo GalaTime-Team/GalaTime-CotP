@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dddgyou1d5du5"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/enemies/controllers/EnemyRoom.cs" id="1_wmybh"]
+
+[node name="EnemyRoom" type="Node2D"]
+position = Vector2(-148, 356)
+script = ExtResource("1_wmybh")

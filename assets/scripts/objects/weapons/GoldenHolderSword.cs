@@ -37,10 +37,10 @@ public partial class GoldenHolderSword : Area2D
 
             // Delay for disable collision and countdown
             SceneTree tree = GetTree();
-            tree.CreateTimer(countdown).Connect("timeout",new Callable(this,"_resetCountdown"));
+            tree.CreateTimer(countdown).Connect("timeout", new Callable(this, "_resetCountdown"));
 
             // Reset collision
-            tree.CreateTimer(0.05f).Connect("timeout",new Callable(this,"_resetCollision"));
+            tree.CreateTimer(0.05f).Connect("timeout", new Callable(this, "_resetCollision"));
 
             canAttack = false;
 
@@ -58,15 +58,25 @@ public partial class GoldenHolderSword : Area2D
         {
             for (int i = 0; i < bodies.Count; i++)
             {
+                if (bodies[i] is Projectile projectile && projectile.TargetTeam == Galatime.Helpers.Teams.allies && projectile.Moving) Parry(projectile);
                 if (bodies[i] is Entity entity)
                 {
-                    GalatimeElement element = new GalatimeElement();
+                    GalatimeElement element = new();
                     float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                    entity.hit(10, _physicalAttack, element, DamageType.physical, 500, damageRotation);
+                    entity.TakeDamage(10, _physicalAttack, element, DamageType.physical, 500, damageRotation);
                 }
             }
             isAttacking = false;
         }
+    }
+
+    public void Parry(Projectile projectile) {
+        projectile.Rotation = GlobalRotation;
+        projectile.Accuracy = 0f;
+        projectile.Speed *= 3f;
+        projectile.Power = (int)(projectile.Power * 2f);
+        projectile.TargetTeam = Galatime.Helpers.Teams.enemies;
+        projectile.Explosive = true;
     }
 
     public void _resetCollision()
@@ -80,15 +90,5 @@ public partial class GoldenHolderSword : Area2D
         canAttack = true;
         isAttacking = false;
         //SetCollisionMaskValue(2, false);
-    }
-
-    public void _on_body_entered(CharacterBody2D body)
-    {
-        if (body is Entity entity && isAttacking)
-        {
-            GalatimeElement element = new GalatimeElement();
-            float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-            entity.hit(10, _physicalAttack, element, DamageType.physical, 500, damageRotation);
-        }
     }
 }

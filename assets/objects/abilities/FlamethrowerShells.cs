@@ -1,9 +1,8 @@
 using Godot;
 using System;
-using Galatime;
-using System.Security.Cryptography;
 
-namespace Galatime {
+namespace Galatime
+{
     public partial class FlamethrowerShells : Node2D
     {
         private Vector2 _velocity;
@@ -30,7 +29,7 @@ namespace Galatime {
             {
                 GalatimeElement element = GalatimeElement.Ignis;
                 float damageRotation = _kinematicBody.GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.hit(1.5f, magicalAttack, element, DamageType.magical, 50, damageRotation);
+                entity.TakeDamage(3f, magicalAttack, element, DamageType.magical, 50, damageRotation);
             }
         }
 

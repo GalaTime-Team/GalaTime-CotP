@@ -1,7 +1,7 @@
 [gd_scene load_steps=26 format=3 uid="uid://dno0k3g6k4twv"]
 
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="1_5fg5f"]
-[ext_resource type="Script" path="res://assets/scenes/MainMenu.cs" id="1_juf2d"]
+[ext_resource type="Script" path="res://assets/scripts/gui/MainMenu.cs" id="1_ibgb5"]
 [ext_resource type="Texture2D" uid="uid://cn4e5ux0ytoqy" path="res://sprites/gui/galatime_logo.png" id="1_xvngr"]
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="2_nxd72"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="3_7prpa"]
@@ -148,25 +148,13 @@ tracks/4/keys = {
 "method": &"_onStartAnimationEnded"
 }]
 }
-tracks/5/type = "value"
+tracks/5/type = "audio"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("../AudioStreamPlayerMenu:volume_db")
+tracks/5/path = NodePath("../AudioStreamPlayerWhoosh")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0.4, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.0, -80.0]
-}
-tracks/6/type = "audio"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("../AudioStreamPlayerWhoosh")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
@@ -174,7 +162,7 @@ tracks/6/keys = {
 }],
 "times": PackedFloat32Array(0)
 }
-tracks/6/use_blend = true
+tracks/5/use_blend = true
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_h4px0"]
 _data = {
@@ -244,7 +232,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-script = ExtResource("1_juf2d")
+script = ExtResource("1_ibgb5")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../StartMenuContainer")
@@ -500,7 +488,6 @@ enabled = false
 [node name="CanvasModulate" type="CanvasModulate" parent="StartMenuContainer"]
 
 [node name="MainMenuContainer" type="Control" parent="."]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -528,7 +515,6 @@ visibility_rect = Rect2(-5000, -5000, 10000, 10000)
 local_coords = true
 
 [node name="GalatimeLogo" type="TextureRect" parent="MainMenuContainer"]
-visible = false
 layout_mode = 2
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -852,22 +838,21 @@ clip_text = true
 
 [node name="AudioStreamPlayerMenu" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_pmnwf")
+autoplay = true
 bus = &"Music"
 
 [node name="AudioStreamPlayerMenuMuffled" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_pmnwf")
 volume_db = -80.0
+autoplay = true
 bus = &"Muffled"
 
 [node name="AudioStreamPlayerButtonAccept" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_8xiqm")
 volume_db = 10.0
-bus = &"Sounds"
 
 [node name="AudioStreamPlayerButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_p1ru6")
-bus = &"Sounds"
 
 [node name="AudioStreamPlayerWhoosh" type="AudioStreamPlayer" parent="."]
 autoplay = true
-bus = &"Sounds"

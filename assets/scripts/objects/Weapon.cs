@@ -1,6 +1,5 @@
-using Godot;
-using System;
 using Galatime;
+using Godot;
 
 public partial class Weapon : Area2D
 {
@@ -10,14 +9,15 @@ public partial class Weapon : Area2D
     private Node2D _player;
     public override void _Ready()
     {
-        _animation = GetNode<AnimationPlayer>("WeaponAnimationPlayer"); 
+        _animation = GetNode<AnimationPlayer>("WeaponAnimationPlayer");
         _player = GetParent<Node2D>();
 
         // Connect event
         // BodyEntered += (Node2D body) => _on_body_entered(body);
     }
 
-    public void attack() {
+    public void attack()
+    {
         if (canAttack)
         {
             // Play animation
@@ -26,28 +26,31 @@ public partial class Weapon : Area2D
 
             // Delay for disable collision and countdown
             SceneTree tree = GetTree();
-            tree.CreateTimer(countdown).Connect("timeout",new Callable(this,"_resetCountdown"));
+            tree.CreateTimer(countdown).Connect("timeout", new Callable(this, "_resetCountdown"));
 
             // Reset collision
-            tree.CreateTimer(0.05f).Connect("timeout",new Callable(this,"_resetCollision"));
+            tree.CreateTimer(0.05f).Connect("timeout", new Callable(this, "_resetCollision"));
 
             canAttack = false;
 
             // Enable collision
             SetCollisionMaskValue(2, true);
         }
-    } 
+    }
 
-    public void _resetCollision() {
+    public void _resetCollision()
+    {
         SetCollisionMaskValue(2, false);
     }
 
-    public void _resetCountdown() {
+    public void _resetCountdown()
+    {
         canAttack = true;
         SetCollisionMaskValue(2, false);
     }
 
-    public void _on_body_entered(CharacterBody2D body) {
+    public void _on_body_entered(CharacterBody2D body)
+    {
         // Get scripted node
         Node2D parent = body.GetParent<Node2D>();
         // !!! NEEDS REWORK !!!

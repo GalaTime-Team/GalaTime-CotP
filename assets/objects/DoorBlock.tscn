@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://dig3jdhxm6cmi"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/enemies/controllers/Doorblock.cs" id="1_pb2bf"]
+[ext_resource type="Texture2D" uid="uid://d2x1c6qxmihji" path="res://sprites/levels/doorblock_test.png" id="2_81ydx"]
+[ext_resource type="AudioStream" uid="uid://bu5t5xwbx7gn4" path="res://assets/audios/sounds/doorblocked.wav" id="3_uodp8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kovxi"]
+size = Vector2(16, 16)
+
+[node name="Doorblock" type="StaticBody2D"]
+scale = Vector2(4, 8)
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_pb2bf")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_81ydx")
+region_rect = Rect2(0, 0, 15.8869, 16.3211)
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_kovxi")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_uodp8")
+volume_db = 8.0

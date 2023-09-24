@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://m2won44lnrfe"]
+[gd_scene load_steps=7 format=3 uid="uid://m2won44lnrfe"]
 
-[ext_resource type="Texture2D" uid="uid://cijkm50j664ci" path="res://sprites/weapons/swords/icon/golden_holder_sword_icon.png" id="1"]
+[ext_resource type="PackedScene" uid="uid://c2yuew1ydupwh" path="res://assets/objects/ItemContainer.tscn" id="2_bafcq"]
 [ext_resource type="Script" path="res://assets/scripts/objects/DragPreview.cs" id="3"]
-[ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="3_m6lqu"]
 
 [sub_resource type="Animation" id="2"]
 resource_name = "idle"
@@ -11,14 +10,14 @@ loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Icon:rotation")
+tracks/0/path = NodePath("Item:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 1, 2),
 "transitions": PackedFloat32Array(-2, -2, -2),
 "update": 0,
-"values": [0.244346, -0.244346, 0.244346]
+"values": [0.174533, -0.174533, 0.174533]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_n7p63"]
@@ -32,7 +31,7 @@ length = 0.3
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Icon:modulate")
+tracks/0/path = NodePath("Item:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -44,7 +43,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Icon:scale")
+tracks/1/path = NodePath("Item:scale")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -71,24 +70,19 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("3")
 
-[node name="Icon" type="TextureRect" parent="."]
-layout_mode = 0
-offset_right = 16.0
-offset_bottom = 16.0
-rotation = 0.244346
-pivot_offset = Vector2(8, 0)
-texture = ExtResource("1")
-
-[node name="Quantity" type="Label" parent="."]
-layout_mode = 0
-offset_top = 4.0
-offset_right = 15.0
-offset_bottom = 17.0
-theme_override_fonts/font = ExtResource("3_m6lqu")
-text = "	"
-horizontal_alignment = 2
+[node name="Item" parent="." instance=ExtResource("2_bafcq")]
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
+rotation = 0.0566386
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "idle"
 reset_on_save = false
 libraries = {
 "": SubResource("AnimationLibrary_n7p63")
@@ -99,3 +93,5 @@ reset_on_save = false
 libraries = {
 "": SubResource("AnimationLibrary_22e7d")
 }
+
+[editable path="Item"]

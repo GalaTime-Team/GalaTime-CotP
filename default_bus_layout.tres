@@ -1,38 +1,47 @@
-[gd_resource type="AudioBusLayout" load_steps=4 format=3 uid="uid://bbmwupkugava1"]
+[gd_resource type="AudioBusLayout" load_steps=5 format=3 uid="uid://bbmwupkugava1"]
 
-[sub_resource type="AudioEffectLowPassFilter" id="1"]
+[sub_resource type="AudioEffectHighPassFilter" id="AudioEffectHighPassFilter_s6tke"]
+resource_name = "HighPassFilter"
+cutoff_hz = 700.0
+resonance = 1.0
+
+[sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_7aqmo"]
 resource_name = "LowPassFilter"
+resonance = 1.0
+db = 1
 
-[sub_resource type="AudioEffectPitchShift" id="2"]
+[sub_resource type="AudioEffectPitchShift" id="AudioEffectPitchShift_bwo0o"]
 resource_name = "PitchShift"
-pitch_scale = 0.9
+pitch_scale = 0.8
 
-[sub_resource type="AudioEffectBandPassFilter" id="AudioEffectBandPassFilter_takgi"]
-resource_name = "BandPassFilter"
-cutoff_hz = 1000.0
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_1ncp6"]
+resource_name = "Reverb"
+room_size = 0.3
 
 [resource]
-bus/1/name = &"Muffled"
+bus/1/name = &"Music"
 bus/1/solo = false
 bus/1/mute = false
 bus/1/bypass_fx = false
 bus/1/volume_db = 0.000600815
 bus/1/send = &"Master"
-bus/1/effect/0/effect = SubResource("1")
-bus/1/effect/0/enabled = true
-bus/1/effect/1/effect = SubResource("2")
-bus/1/effect/1/enabled = true
-bus/1/effect/2/effect = SubResource("AudioEffectBandPassFilter_takgi")
-bus/1/effect/2/enabled = true
-bus/2/name = &"Music"
+bus/2/name = &"Muffled"
 bus/2/solo = false
 bus/2/mute = false
 bus/2/bypass_fx = false
 bus/2/volume_db = 0.0
 bus/2/send = &"Master"
-bus/3/name = &"Sounds"
+bus/2/effect/0/effect = SubResource("AudioEffectHighPassFilter_s6tke")
+bus/2/effect/0/enabled = true
+bus/2/effect/1/effect = SubResource("AudioEffectLowPassFilter_7aqmo")
+bus/2/effect/1/enabled = true
+bus/2/effect/2/effect = SubResource("AudioEffectPitchShift_bwo0o")
+bus/2/effect/2/enabled = true
+bus/3/name = &"Reverb"
 bus/3/solo = false
 bus/3/mute = false
 bus/3/bypass_fx = false
 bus/3/volume_db = 0.0
 bus/3/send = &"Master"
+bus/3/effect/0/effect = SubResource("AudioEffectReverb_1ncp6")
+bus/3/effect/0/enabled = true

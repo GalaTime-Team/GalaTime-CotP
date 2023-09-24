@@ -1,26 +1,26 @@
 {
-    "golden_holder_sword": {
-        "name": "Golden holder sword",
-		"id": "golden_holder_sword",
-		"description": "A standard sword given to all who came to this kingdom. May it be faithful to you... AUCH, that's sharp!",
-        "type": "weapon",
-        "assets": {
-            "icon": "weapons/swords/icon/golden_holder_sword_icon.png",
-			"object": "res://assets/objects/weapons/GoldenHolderSword.tscn"
-        },
-        "stats": {
-            "damage": 10,
-            "swing_speed": 500
-        },
-        "stackable": false
-    },
-    "barrel": {
-        "name": "Barrel",	
-        "description": "What do I need it for?",
-        "assets": {
-            "icon": "bagtest.png"
-        },
-        "stackable": true,
-		"capacity": 16
-    }
+	"items": [
+		{
+			"name": "Golden holder sword",
+			"id": "golden_holder_sword",
+			"description": "A standard sword given to all who came to this kingdom. May it be faithful to you... AUCH, that's sharp!",
+			"type": "weapon",
+			"icon": "res://sprites/weapons/swords/icon/golden_holder_sword_icon.png",
+			"scene": "res://assets/objects/weapons/GoldenHolderSword.tscn",
+			"stats": {
+				"damage": 10,
+				"swing_speed": 500
+			},
+			"stackable": false,
+			"stack_size": 1
+		},
+		{
+			"name": "Barrel",
+			"id": "barrel",
+			"description": "What do I need it for?",
+			"icon": "res://sprites/bagtest.png",
+			"stackable": true,
+			"stack_size": 16
+		}
+	]
 }

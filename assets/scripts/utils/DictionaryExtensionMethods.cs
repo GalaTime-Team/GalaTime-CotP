@@ -1,5 +1,5 @@
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DictionaryExtension
 {
@@ -10,7 +10,7 @@ namespace DictionaryExtension
             return (otherDictionary ?? new Dictionary<TKey, TValue>())
                 .OrderBy(kvp => kvp.Key)
                 .SequenceEqual((dictionary ?? new Dictionary<TKey, TValue>())
-                                   .OrderBy(kvp => kvp.Key));
+                .OrderBy(kvp => kvp.Key));
         }
     }
 }

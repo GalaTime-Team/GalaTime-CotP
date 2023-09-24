@@ -1,301 +1,276 @@
 using Godot;
 using System;
-using Galatime;
-using System.Collections.Generic;
 
 namespace Galatime
 {
-	public partial class Player : HumanoidCharacter
-	{
-		// Exports
-		[Export] public bool canInteract = true;
-		[Export] public Vector2 cameraOffset;   
-		public float cameraShakeAmount = 0;
+    public partial class Player : HumanoidCharacter
+    {
+        // Exports
+        [Export] public bool CanInteract = true;
+        [Export] public Vector2 CameraOffset;
+        public float CameraShakeAmount = 0;
 
-		// Variables
-		private int slots = 16;
-		private int xp;
-		public int Xp
-		{
-			get { return xp; }
-			set
-			{
-				xp = value;
-				playerGui.changeStats(Stats, xp);
-				PlayerVariables.invokeXpChangedEvent(xp);
-			}
-		}
-
-		public PlayerGui playerGui;
-
-		private bool _isPause = false;
-
-		// Nodes
-		private CharacterBody2D _body;
-
-		private Camera2D _camera;
-
-		private RichTextLabel _debug;
-
-		private PlayerVariables _playerVariables;
-
-		// Signals
-		[Signal] public delegate void on_pauseEventHandler(bool visible);
-		[Signal] public delegate void healthChangedEventHandler(float health);
-		[Signal] public delegate void on_interactEventHandler();
-		[Signal] public delegate void on_dialog_endEventHandler();
-		[Signal] public delegate void reloadDodgeEventHandler();
-
-		public override void _Ready()
-		{
-			base._Ready();
-
-			// Get Nodes
-			_animationPlayer = GetNode<AnimationPlayer>("Animation");
-
-			body = this;
-
-			weapon = GetNode<Hand>("Hand");
-
-			_camera = GetNode<Camera2D>("Camera3D");
-
-			_sprite = GetNode<Sprite2D>("Sprite2D");
-			_trailParticles = GetNode<GpuParticles2D>("TrailParticles");
-
-			_playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-			_playerVariables.Connect("items_changed", new Callable(this, "_onItemsChanged"));
-			_playerVariables.Connect("abilities_changed", new Callable(this, "_abilitiesChanged"));
-
-			var playerGuiScene = ResourceLoader.Load<PackedScene>("res://assets/objects/PlayerGui.tscn");
-		    playerGui = playerGuiScene.Instantiate<PlayerGui>();
-			GetNode("CanvasLayer").AddChild(playerGui);
-			playerGui.RequestReady();
-
-			element = GalatimeElement.Ignis + GalatimeElement.Chaos;
-
-			Stats = new EntityStats(
-				physicalAttack: 75,
-				magicalAttack: 80,
-				physicalDefence: 65,
-				magicalDefence: 75,
-				health: 70,
-				mana: 65,
-				stamina: 65,
-				agility: 60
-			);
-
-			// Start
-			canMove = true;
-
-			Stamina = Stats[EntityStatType.stamina].Value;
-			Mana = Stats[EntityStatType.mana].Value;
-			Health = Stats[EntityStatType.health].Value;
-
-			cameraOffset = Vector2.Zero;
-
-			body.GlobalPosition = GlobalPosition;
-
-			playerGui.changeStats(Stats, Xp);
-
-			Stats.statsChanged += _onStatsChanged;
-
-			GD.Print("PLAYER INSTANCE");
-			_playerVariables.setPlayerInstance(this);
-		}
-
-		private void _onStatsChanged(EntityStats stats)
-		{
-			GD.Print("PLAYER STATS CHANGED!!!");
-			Health = Stats[EntityStatType.health].Value;
-			Mana = Stats[EntityStatType.mana].Value;
-			Stamina = Stats[EntityStatType.stamina].Value;
-
-			playerGui._onStatsChanged(stats);
-		}
-
-		private void _SetMove()
-		{
-			Vector2 inputVelocity = Vector2.Zero;
-			// Vector2 windowPosition = OS.WindowPosition;
-
-			if (Input.IsActionPressed("game_move_up"))
-			{
-				inputVelocity.Y -= 1;
-				// windowPosition.Y -= 1;
-			}
-			if (Input.IsActionPressed("game_move_down"))
-			{
-				inputVelocity.Y += 1;
-				// windowPosition.Y += 1;
-			}
-			if (Input.IsActionPressed("game_move_right"))
-			{
-				inputVelocity.X += 1;
-				// windowPosition.x += 1;
-			}   
-			if (Input.IsActionPressed("game_move_left"))
-			{
-				inputVelocity.X -= 1;
-				// windowPosition.x -= 1;
-			}
-		   inputVelocity = inputVelocity.Normalized() * speed;
-
-			// OS.WindowPosition = windowPosition;
-			if (canMove && !_isDodge) velocity = inputVelocity; else velocity = Vector2.Zero;
-
-			weapon.LookAt(GetGlobalMousePosition());
-			_SetAnimation(_vectorRotation, velocity.Length() == 0 ? true : false);
-			_setCameraPosition();
-		}
-
-		private void _setCameraPosition()
-		{
-			_camera.GlobalPosition = _camera.GlobalPosition.Lerp((weapon.GlobalPosition + (GetGlobalMousePosition() - weapon.GlobalPosition) / 5) + cameraOffset, 0.05f);
-		}
-
-		public override void _moveProcess()
-		{
-			if (!_isPause) _SetMove(); else velocity = Vector2.Zero;
-			var shakeOffset = new Vector2();
-
-			Random rnd = new();
-			shakeOffset.X = rnd.Next(-1, 1) * cameraShakeAmount;
-			shakeOffset.Y = rnd.Next(-1, 1) * cameraShakeAmount;
-
-			_camera.Offset = shakeOffset;
-
-			cameraShakeAmount = Mathf.Lerp(cameraShakeAmount, 0, 0.05f);
-		}
-
-		public override void _healthChangedEvent(float health)
-		{
-			playerGui.onHealthChanged(health);
-		}
-
-		protected override void _onManaChanged(float mana)
-		{
-			playerGui.onManaChanged(mana);
-			GD.Print("MANA CHANGED");
-		}
-
-		protected override void _onStaminaChanged(float stamina)
-		{
-			playerGui.onStaminaChanged(stamina);
-            GD.Print("STAMINA CHANGED");
+        // Variables
+        private int xp;
+        public int Xp
+        {
+            get { return xp; }
+            set
+            {
+                xp = value;
+                PlayerGui.ChangeStats(Stats, xp);
+                PlayerVariables.invokeXpChangedEvent(xp);
+            }
         }
 
-		public void _abilitiesChanged()
-		{
-			var obj = (Godot.Collections.Dictionary)_playerVariables.abilities;
-			for (int i = 0; i < obj.Count; i++)
-			{
-				var ability = (Godot.Collections.Dictionary)obj[i];
-				if (ability.ContainsKey("path"))
-				{
-					var existAbility = _abilities[i];
-					if (existAbility != null)
-					{
-						if ((string)ability["path"] != existAbility.ResourcePath) addAbility((string)ability["path"], i);
-					}
-					else
-					{
-						addAbility((string)ability["path"], i);
-					}
-				}
-				else
-				{
-					removeAbility(i);
-					GD.Print("Ability: no path given at " + i);
-				}
-			}
-		}
+        public PlayerGui PlayerGui;
 
-		public override GalatimeAbility addAbility(string scenePath, int i)
-		{
-			var ability = base.addAbility(scenePath, i);
-			playerGui.addAbility(ability, i);
-			return ability;
-		}
+        private bool _isPause = false;
 
-		protected override bool _useAbility(int i)
-		{
-			var result = base._useAbility(i);
-			if (!result)
-			{
-				playerGui.pleaseSayNoToAbility(i);
-				return result;
-			}
-			playerGui.reloadAbility(i);
-			return result;
-		}
+        // Nodes
+        private Camera2D Camera;
+        private PlayerVariables PlayerVariables;
 
-		protected override void removeAbility(int i)
-		{
-			base.removeAbility(i);
-			playerGui.removeAbility(i);
-		}
+        // Signals
+        [Signal] public delegate void on_pauseEventHandler(bool visible);
+        [Signal] public delegate void healthChangedEventHandler(float health);
+        [Signal] public delegate void on_interactEventHandler();
+        [Signal] public delegate void on_dialog_endEventHandler();
+        [Signal] public delegate void reloadDodgeEventHandler();
 
-		public override void _Process(double delta)
-		{
-			// _debug.Text = $"hp {health} stamina {stamina} mana {mana} element {element.name}";
-		}
+        public override void _Ready()
+        {
+            base._Ready();
 
-		private void _onItemsChanged()
-		{
-			var obj = (Godot.Collections.Dictionary)_playerVariables.inventory[0];
-			if (weapon._item != null && obj.Count != 0) return;
-			weapon.takeItem(obj);
-		}
+            // Get Nodes
+            AnimationPlayer = GetNode<AnimationPlayer>("Animation");
 
-		public void startDialog(string id)
-		{
-			playerGui.startDialog(id, this);
-		}
+            Body = this;
 
-		public override async void _UnhandledInput(InputEvent @event)
-		{
-			if (@event is InputEventMouseMotion)
-			{
-				setDirectionByWeapon();
-			}
-			if (@event.IsActionPressed("ui_cancel"))
-			{
-				if (_isPause)
-				{
-					_isPause = false;
-					playerGui.pause(_isPause);
-					return;
-				}
-				if (!_isPause)
-				{
-					_isPause = true;
-					playerGui.pause(_isPause);
-					return;
-				}
-			}
-			if (@event.IsActionPressed("game_attack"))
-			{
-				weapon.attack(Stats[EntityStatType.physicalAttack].Value, Stats[EntityStatType.magicalAttack].Value);
-			}
+            Weapon = GetNode<Hand>("Hand");
 
-			if (@event.IsActionPressed("game_dodge"))
-			{
-				dodge();
-				var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
-				globals.save(PlayerVariables.currentSave, playerGui);
-			}
+            Camera = GetNode<Camera2D>("Camera3D");
 
-			if (@event.IsActionPressed("game_ability_1")) _useAbility(0);
-			if (@event.IsActionPressed("game_ability_2")) _useAbility(1);
-			if (@event.IsActionPressed("game_ability_3")) _useAbility(2);
+            Sprite = GetNode<Sprite2D>("Sprite2D");
+            TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
 
-			if (@event.IsActionPressed("ui_accept"))
-			{
-				if (canInteract)
-				{
-					EmitSignal("on_interact");
-				}
-			}
-		}
-	}
+            PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            PlayerVariables.OnItemsChanged += _onItemsChanged;
+            PlayerVariables.OnAbilitiesChanged += OnAbilitiesChanged;
+
+            PlayerGui = GetNode<PlayerGui>("CanvasLayer/PlayerGui");
+
+            // var playerGuiScene = ResourceLoader.Load<PackedScene>("res://assets/objects/PlayerGui.tscn");
+            // playerGui = playerGuiScene.Instantiate<PlayerGui>();
+            // GetNode("CanvasLayer").AddChild(playerGui);
+            // playerGui.RequestReady();
+
+            Element = GalatimeElement.Ignis + GalatimeElement.Chaos;
+
+            Stats = new EntityStats(
+                physicalAttack: 75,
+                magicalAttack: 80,
+                physicalDefence: 65,
+                magicalDefence: 75,
+                health: 70,
+                mana: 65,
+                stamina: 65,
+                agility: 60
+            );
+
+            // Start
+            CanMove = true;
+
+            Stamina = Stats[EntityStatType.Stamina].Value;
+            Mana = Stats[EntityStatType.Mana].Value;
+            Health = Stats[EntityStatType.Health].Value;
+
+            CameraOffset = Vector2.Zero;
+
+            Body.GlobalPosition = GlobalPosition;
+
+            PlayerGui.ChangeStats(Stats, Xp);
+
+            Stats.OnStatsChanged += _onStatsChanged;
+
+            PlayerVariables.setPlayerInstance(this);
+        }
+
+        public override void _ExitTree()
+        {
+            Stats.OnStatsChanged -= _onStatsChanged;
+            PlayerVariables.OnItemsChanged -= _onItemsChanged;
+            PlayerVariables.OnAbilitiesChanged -= OnAbilitiesChanged;
+        }
+
+        private void _onStatsChanged(EntityStats stats)
+        {
+            Health = Stats[EntityStatType.Health].Value;
+            Mana = Stats[EntityStatType.Mana].Value;
+            Stamina = Stats[EntityStatType.Stamina].Value;
+
+            PlayerGui.OnStatsChanged(stats);
+        }
+
+        private void _SetMove()
+        {
+            Vector2 inputVelocity = Vector2.Zero;
+            if (Input.IsActionPressed("game_move_up")) inputVelocity.Y -= 1;
+            if (Input.IsActionPressed("game_move_down")) inputVelocity.Y += 1;
+            if (Input.IsActionPressed("game_move_right")) inputVelocity.X += 1;
+            if (Input.IsActionPressed("game_move_left")) inputVelocity.X -= 1;
+            inputVelocity = inputVelocity.Normalized() * Speed;
+
+            if (CanMove && !IsDodge) velocity = inputVelocity; else velocity = Vector2.Zero;
+            setDirectionByWeapon();
+
+            Weapon.LookAt(GetGlobalMousePosition());
+            _SetAnimation(VectorRotation, velocity.Length() == 0 ? true : false);
+            _setCameraPosition();
+        }
+
+        private void _setCameraPosition()
+        {
+            Camera.GlobalPosition = Camera.GlobalPosition.Lerp((Weapon.GlobalPosition + (GetGlobalMousePosition() - Weapon.GlobalPosition) / 5) + CameraOffset, 0.05f);
+        }
+
+        public override void _MoveProcess()
+        {
+            if (!_isPause) _SetMove(); else velocity = Vector2.Zero;
+            var shakeOffset = new Vector2();
+
+            Random rnd = new();
+            shakeOffset.X = rnd.Next(-1, 1) * CameraShakeAmount;
+            shakeOffset.Y = rnd.Next(-1, 1) * CameraShakeAmount;
+
+            Camera.Offset = shakeOffset;
+
+            CameraShakeAmount = Mathf.Lerp(CameraShakeAmount, 0, 0.05f);
+        }
+
+        public override void _HealthChangedEvent(float health)
+        {
+            PlayerGui.OnHealthChanged(health);
+        }
+
+        protected override void OnManaChanged(float mana)
+        {
+            PlayerGui.OnManaChanged(mana);
+        }
+
+        protected override void OnStaminaChanged(float stamina)
+        {
+            PlayerGui.OnStaminaChanged(stamina);
+        }
+
+        private void OnAbilitiesChanged()
+        {
+            for (int i = 0; i < PlayerVariables.abilities.Count; i++)
+            {
+                var ability = PlayerVariables.abilities[i];
+                // Print current ability information
+                GD.PrintRich($"[color=purple]ABILITIES CHANGED FOR PLAYER[/color]: Is empty: {ability.IsEmpty}. Name: {ability.Name}. Index: {i}");
+                if (!ability.IsEmpty)
+                {
+                    var existAbility = Abilities[i];
+                    GD.PrintRich($"[color=green]EXIST ABILITY[/color]: Is empty: {existAbility.IsEmpty}. Name: {existAbility.Name}. Index: {i}");
+                    if (ability != existAbility) addAbility(ability, i);
+                    else addAbility(ability, i);
+                }
+                else
+                {
+                    RemoveAbility(i);
+                }
+            }
+        }
+
+        public override AbilityData addAbility(AbilityData ab, int i)
+        {
+            var ability = base.addAbility(ab, i);
+            PlayerGui.AddAbility(ability, i);
+            return ability;
+        }
+
+        protected override bool _useAbility(int i)
+        {
+            var result = base._useAbility(i);
+            if (!result)
+            {
+                PlayerGui.GetAbilityContainer(i).No();
+                return result;
+            }
+            return result;
+        }
+
+        protected override void _OnAbilityReload(int i)
+        {
+            var ability = Abilities[i];
+            var abilityContainer = PlayerGui.GetAbilityContainer(i);
+            abilityContainer.StartReload(ability.Charges);
+        }
+
+        protected override void RemoveAbility(int i)
+        {
+            base.RemoveAbility(i);
+            PlayerGui.RemoveAbility(i);
+        }
+
+        public override void _Process(double delta)
+        {
+            // _debug.Text = $"hp {health} stamina {stamina} mana {mana} element {element.name}";
+        }
+
+        private void _onItemsChanged()
+        {
+            var obj = PlayerVariables.inventory[0];
+            if (Weapon.Item != null && obj.IsEmpty && obj != Weapon.ItemData) return;
+            Weapon.TakeItem(obj);
+        }
+
+        public void startDialog(string id)
+        {
+            PlayerGui.StartDialog(id, this);
+        }
+
+        public override void _UnhandledInput(InputEvent @event)
+        {
+            if (@event.IsActionPressed("ui_cancel"))
+            {
+                if (_isPause)
+                {
+                    _isPause = false;
+                    PlayerGui.pause(_isPause);
+                    return;
+                }
+                if (!_isPause)
+                {
+                    _isPause = true;
+                    PlayerGui.pause(_isPause);
+                    return;
+                }
+            }
+            if (@event.IsActionPressed("game_attack"))
+            {
+                Weapon.Attack(Stats[EntityStatType.PhysicalAttack].Value, Stats[EntityStatType.MagicalAttack].Value);
+            }
+
+            if (@event.IsActionPressed("game_dodge"))
+            {
+                dodge();
+                var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
+                globals.save(PlayerVariables.currentSave, PlayerGui);
+            }
+
+            // Checking for input for abilities.
+            for (int i = 0; i < PlayerVariables.abilities.Count; i++) if (@event.IsActionPressed($"game_ability_{i+1}")) _useAbility(i);
+
+            if (@event.IsActionPressed("ui_accept"))
+            {
+                if (CanInteract)
+                {
+                    EmitSignal("on_interact");
+                }
+            }
+        }
+    }
 }

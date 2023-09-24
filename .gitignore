@@ -21,3 +21,7 @@ assets/diagrams/
 Builds/
 GPSDK/
 Properties/launchSettings.json
+
+# .csproj
+galatime-project.csproj.old.*
+galatime-project.csproj.user

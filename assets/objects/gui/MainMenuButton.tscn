@@ -32,9 +32,7 @@ text = "Button"
 
 [node name="AudioStreamPlayerButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_2mt4m")
-bus = &"Sounds"
 
 [node name="AudioStreamPlayerButtonAccept" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_r3oiq")
 volume_db = 10.0
-bus = &"Sounds"

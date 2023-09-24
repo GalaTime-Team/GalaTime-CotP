@@ -1,66 +1,39 @@
+namespace Galatime;
+
 using Godot;
-using System;
 
-namespace Galatime {
-    public partial class roomwrap : Node2D
+/// <summary>
+/// Represents a trigger, which transitions to a new room (Scene)
+/// </summary>
+/// <remarks>Don't confuse with <see cref="GalatimeGlobals.LoadScene(string)"/>, because it's loads a scene, but that node is trigger for the room transition</remarks>
+public partial class Roomwrap : Node2D
+{
+    [Export(PropertyHint.File)] public string Scene;
+    [Export] public float AnimationDuration = 0.5f;
+    public Color CustomColor;
+    private Area2D TriggerArea;
+
+    public override void _Ready()
     {
-        // Exports
-        [Export(PropertyHint.File)] public string Scene;
-        [Export] public string PlayerName;
+        TriggerArea = GetNode<Area2D>("TriggerArea");
+        TriggerArea.BodyEntered += OnEnter;
+    }
 
-        // Nodes
-        private Area2D _area;
+    public override void _ExitTree() {
+        TriggerArea.BodyEntered -= OnEnter;
+    }
 
-        private Node _player;
-
-        // Signals
-        [Signal] public delegate void wrapEventHandler();
-        [Signal] public delegate void fadeEventHandler(string type);
-
-        public override void _Ready()
+    private void OnEnter(Node node)
+    {
+        if (node is Player p)
         {
-            // Get Nodes
-            _area = GetNode<Area2D>("wrap");
-
-            _area.Connect("body_entered",new Callable(this,"_onEnter"));
-
-            // _player = GetNode("/root/Node2D/Player");
-            // Connect("wrap",new Callable(_player,"_onWrap"));
+            p.CanMove = false;
+            p.PlayerGui.OnFade(true, AnimationDuration, OnFadeEnded);
         }
-
-        private void _onEnter(Node node)
-        {
-            if (node.Name == PlayerName)
-            {
-                EmitSignal("wrap");
-
-                Timer delay = new Timer();
-                AddChild(delay);
-
-                delay.OneShot = true;
-                delay.WaitTime = 1.0f;
-
-                delay.Start();
-
-                delay.Connect("timeout",new Callable(this,"_onDelayTimeout"));
-            }
-        }
-        private void _onDelayTimeout()
-        {
-            _changeScene();
-        }
-
-        private void _changeScene()
-        {
-            SceneTree tree = GetTree();
-            GD.Print("To scene " + Scene);
-            tree.ChangeSceneToFile(Scene);
-        }
-
-        //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-        //  public override void _Process(double delta)
-        //  {
-        //      
-        //  }
+    }
+    private void OnFadeEnded()
+    {
+        var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
+        globals.LoadScene(Scene);
     }
 }

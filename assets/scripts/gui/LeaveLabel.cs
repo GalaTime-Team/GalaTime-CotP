@@ -7,7 +7,7 @@ public partial class LeaveLabel : Label
     private bool activated = false;
 
     public override void _Ready()
-    {   
+    {
         Modulate = new Color(Modulate.R, Modulate.G, Modulate.B, 0);
     }
 
@@ -21,7 +21,7 @@ public partial class LeaveLabel : Label
             {
                 var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
                 activated = true;
-                globals.loadScene();
+                globals.LoadScene();
             }
         }
         else

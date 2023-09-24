@@ -1,7 +1,7 @@
 [gd_scene load_steps=15 format=3 uid="uid://4ivx2u2xw1y6"]
 
 [ext_resource type="Texture2D" uid="uid://bmile26uh6xa4" path="res://sprites/gui/abilities/ignis/blue fire shield.png" id="1_rcshf"]
-[ext_resource type="Script" path="res://assets/objects/AbilityContainerItem.cs" id="2"]
+[ext_resource type="Script" path="res://assets/scripts/gui/AbilityContainerItem.cs" id="2"]
 [ext_resource type="Texture2D" uid="uid://d28cscijsoyex" path="res://sprites/gui/abilities/closed.png" id="3_ofhl3"]
 [ext_resource type="AudioStream" uid="uid://ckw0f387dspm2" path="res://assets/audios/sounds/learned_ability.mp3" id="5_wnwfd"]
 
@@ -160,12 +160,14 @@ offset_left = -8.0
 offset_top = -8.0
 offset_right = 8.0
 offset_bottom = 8.0
+scale = Vector2(1.36326, 1.36326)
 pivot_offset = Vector2(8, 8)
 texture = ExtResource("1_rcshf")
 script = ExtResource("2")
 abilityName = "fireball"
 
 [node name="Locked" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
 material = SubResource("ShaderMaterial_angww")
 layout_mode = 0
 offset_left = -8.5
@@ -180,4 +182,3 @@ libraries = {
 }
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-bus = &"Sounds"

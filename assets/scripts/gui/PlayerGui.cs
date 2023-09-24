@@ -1,167 +1,185 @@
-using Godot;
-using System;
-using Galatime;
 using System.Collections.Generic;
-using System.Reflection.Emit;
+using System;
+using Godot;
 
 namespace Galatime
 {
     public partial class PlayerGui : Control
     {
-        // Nodes
-        public AnimationPlayer _fadeAnimation;
-        // private AnimationPlayer _staminaAnimation;
+        #region Nodes
+        public AnimationPlayer FadeAnimation;
+        public ColorRect FadeScreen;
 
         // Stats
-        public TextureProgressBar _health;
-        public TextureProgressBar _stamina;
-        public TextureProgressBar _mana;
-        public TextureProgressBar _healthDrain;
+        public ValueBar HealthValueBar;
+        public ValueBar StaminaValueBar;
+        public ValueBar ManaValueBar;
+        public TextureProgressBar HealthDrainProgressBar;
 
         // Text Stats
-        public Godot.Label _textStamina;
-        public Godot.Label _textHealth;
-        public Godot.Label _textMana;
-        public Godot.Label _dodgeCountdownText;
-        public RichTextLabel _textStats;
+        public Godot.Label StaminaLabel;
+        public Godot.Label ManaLabel;
+        public Godot.Label DodgeCountdownText;
+        public RichTextLabel TextStats;
+
         public Timer DodgeTextTimer;
+        public Godot.Label VersionText;
 
-        public Godot.Label _versionText;
+        public NinePatchRect DialogBox;
 
-        public NinePatchRect _dialogBox;
+        public Panel PauseContainer;
 
-        public Panel _pauseContainer;
+        // Abilities
+        public HBoxContainer AbilitiesContainer;
+        public AbilitiesContainer AbilitiesListContainer;
 
-        public HBoxContainer abilitiesContainer;
-        public AbilitiesContainer abilitiesListContainer;
+        // Stats
+        public GridContainer StatsContainer;
 
-        public GridContainer _statsContainer;
+        // Audio
+        public AudioStreamPlayer ParrySound;
+        public ColorRect ParryOverlay;
+        #endregion
 
-        public float _localHp = 0f;
-        public float _remainingDodge;
+        #region Variables
+        public float LocalHp = 0f;
+        public float RemainingDodge;
+        public List<AbilityContainer> AbilityContainers = new();
 
-        [Signal] public delegate void items_changedEventHandler();
-        [Signal] public delegate void on_pauseEventHandler(bool visible);
+        public PlayerVariables PlayerVariables;
+        #endregion
+
+        #region Events
+        public Action OnItemsChanged;
+        public Action<bool> OnPause;
+        #endregion
 
         public override void _Ready()
         {
-            _fadeAnimation = GetNode<AnimationPlayer>("fadeAnimation");
-            // _staminaAnimation = GetNode<AnimationPlayer>("status/stamina_animation");
+            #region Get nodes
+            FadeAnimation = GetNode<AnimationPlayer>("FadeAnimationPlayer");  
+            FadeScreen = GetNode<ColorRect>("FadeScreen");  
 
             // Stats
-            _health = GetNode<TextureProgressBar>("HealthProgress");
-            _stamina = GetNode<TextureProgressBar>("StaminaProgress");
-            _mana = GetNode<TextureProgressBar>("ManaProgress");
-            // _healthDrain = GetNode<TextureProgressBar>("status/hp_drain");
+            HealthValueBar = GetNode<ValueBar>("HealthValueBar");
+            StaminaValueBar = GetNode<ValueBar>("StaminaValueBar");
+            ManaValueBar = GetNode<ValueBar>("ManaValueBar");
 
             // Text Stats
-            _textStamina = GetNode<Godot.Label>("stamina_text");
-            _textMana = GetNode<Godot.Label>("mana_text");
-            _textHealth = GetNode<Godot.Label>("hp_text");
-            _textStats = GetNode<RichTextLabel>("PauseContainer/Stats");
-            _dodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
+            StaminaLabel = GetNode<Godot.Label>("StaminaLabel");
+            ManaLabel = GetNode<Godot.Label>("ManaLabel");
+            TextStats = GetNode<RichTextLabel>("PauseContainer/Stats");
 
-            _dialogBox = GetNode<NinePatchRect>("DialogBox");
+            VersionText = GetNode<Godot.Label>("Version");
+            DodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
 
-            _pauseContainer = GetNode<Panel>("PauseContainer");
+            DialogBox = GetNode<NinePatchRect>("DialogBox");
+            
+            AbilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
+            AbilitiesListContainer = GetNode<AbilitiesContainer>("PauseContainer/AbilitiesContainer");
 
-            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            PauseContainer = GetNode<Panel>("PauseContainer");
+            StatsContainer = GetNode<GridContainer>("PauseContainer/StatsContainer/Stats");
 
-            abilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
-            abilitiesListContainer = GetNode<AbilitiesContainer>("PauseContainer/AbilitiesContainer");
-            abilitiesListContainer._onAbilityLearned();
+            ParrySound = GetNode<AudioStreamPlayer>("ParrySound");
+            ParryOverlay = GetNode<ColorRect>("ParryOverlay");
+            #endregion
+            
+            PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            
+            AbilitiesListContainer._onAbilityLearned();
 
-            _statsContainer = GetNode<GridContainer>("PauseContainer/StatsContainer/Stats");
+            PlayerVariables.OnItemsChanged += DisplayItem;
 
-            playerVariables.Connect("items_changed", new Callable(this, "displayItem"));
-
+            // Setting up dodge timer
             DodgeTextTimer = new Timer();
-            DodgeTextTimer.Connect("timeout", new Callable(this, "_reloadingDodge"));
+            DodgeTextTimer.Timeout += ProcessDodgeReloading;
             AddChild(DodgeTextTimer);
 
-            _versionText = GetNode<Godot.Label>("Version");
-            // _versionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
-            _versionText.Text = "";
+            // Setting up text of the version
+            VersionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
 
-            GD.Print("GUI!!!!");
-            onFade("out");
-        }
-
-        public void _onStatsChanged(EntityStats stats)
-        {
-            _health.MaxValue = stats[EntityStatType.health].Value;
-            _stamina.MaxValue = stats[EntityStatType.stamina].Value;
-            _mana.MaxValue = stats[EntityStatType.mana].Value;
-        }
-
-        public void onFade(string type)
-        {
-            if (type == "in" || type == "out")
-            {
-                GD.Print("Fade " + type);
-                if (_fadeAnimation != null)
-                {
-                    _fadeAnimation.Play(type);
-                }
-                else
-                {
-                    GD.PrintErr("null");
-                }
+            // Loading ability containers scene 
+            var abilityContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/AbilityContainer.tscn");
+            // Adding ability containers
+            for (int i = 0; i < PlayerVariables.abilitySlots; i++) {
+                // Instantiate ability container and add it to the abilities container
+                var instance = abilityContainerScene.Instantiate<AbilityContainer>();
+                AbilitiesContainer.AddChild(instance);
+                AbilityContainers.Add(instance);
             }
-            else
-            {
-                GD.PrintErr("Use \"in\" or \"out\"");
-            }
+
+            OnFade(false);
         }
 
-        public void onHealthChanged(float health)
-        {
-            // _localHp = health;
-            _health.Value = health;
-            _textHealth.Text = health + " HP";
-            // SceneTree tree = GetTree();
-            // tree.CreateTimer(2f).Connect("timeout",new Callable(this,"_hpDrain"));
+        public override void _ExitTree() {
+            PlayerVariables.OnItemsChanged -= DisplayItem;
+
         }
 
-        public void onStaminaChanged(float stamina)
+        public void OnStatsChanged(EntityStats stats)
         {
-            // _staminaAnimation.Play("pulse");
-            _stamina.Value = stamina;
-            _textStamina.Text = stamina + " STAM";
+            HealthValueBar.MaxValue = stats[EntityStatType.Health].Value;
+            StaminaValueBar.MaxValue = stats[EntityStatType.Stamina].Value;
+            ManaValueBar.MaxValue = stats[EntityStatType.Mana].Value;
         }
 
-        public void onManaChanged(float mana)
+
+        /// <summary>
+        /// Makes the fade animation, which fades the screen in and out.
+        /// </summary>
+        /// <param name="type">The type of fade</param>
+        /// <param name="duration">The duration of the fade</param>
+        /// <param name="callback">The callback to call when the fade is finished</param>
+        public void OnFade(bool type, float duration = 0.5f, Action callback = null)
         {
-            // _staminaAnimation.Play("pulse");
-            _mana.Value = mana;
-            _textMana.Text = mana + " MANA";
+            // Make sure the fade screen is visible. I wait it to be hidden in the editor, not in a game.
+            FadeScreen.Visible = true;
+
+            // Start fade by setting the alpha to 0 with ease
+            var tween = GetTree().CreateTween();
+            tween.TweenProperty(FadeScreen, "modulate:a", type ? 1 : 0, duration);
+            tween.Finished += () => callback?.Invoke();
         }
 
-        public void changeStats(EntityStats entityStats, float XP)
-        {
-            //_textStats.Text =
-            //    $"Hp: [color=white]{entityStats.health}[/color]\r\n" +
-            //    $"Stamina: [color=white]{entityStats.stamina}[/color]\r\n" +
-            //    $"Mana: [color=white]{entityStats.mana}[/color]\r\n" +
-            //    $"XP: [rainbow]{XP}[/rainbow]\r\n\r\n" +
-            //    $"Physic Attack: [color=white]{entityStats.physicalAttack}[/color]\r\n" +
-            //    $"Magic Attack: [color=white]{entityStats.magicalAttack}[/color]\r\n" +
-            //    $"Agility: [color=white]{entityStats.agility}[/color]\r\n\r\n" +
-            //    $"Physic Defence: [color=white]{entityStats.physicalDefence}[/color]\r\n" +
-            //    $"Magic Defence: [color=white]{entityStats.magicalAttack}[/color]";
+        public async void ParryEffect() {
+            GetTree().Paused = true;
+            ParryOverlay.Visible = true;
+            ParrySound.Play();  
+            await ToSignal(GetTree().CreateTimer(.36f), "timeout");
+            ParryOverlay.Visible = false;
+            GetTree().Paused = false;
+        }
 
-            if (_statsContainer.GetChildCount() <= 0)
+        public void OnHealthChanged(float health)
+        {   
+            HealthValueBar.Value = health;
+        }
+
+        public void OnStaminaChanged(float stamina)
+        {
+            StaminaValueBar.Value = stamina;
+        }
+
+        public void OnManaChanged(float mana)
+        {
+            ManaValueBar.Value = mana;
+        }
+
+        public void ChangeStats(EntityStats entityStats, float XP)
+        {
+            if (StatsContainer.GetChildCount() <= 0)
             {
                 var statContainerScene = GD.Load<PackedScene>("res://assets/objects/gui/StatContainer.tscn");
                 for (int i = 0; i < 8; i++)
                 {
                     var instance = statContainerScene.Instantiate<StatContainer>();
-                    _statsContainer.AddChild(instance);
-                    instance.on_upgrade += (int id) => _onUpgradeStat(id, instance);
+                    StatsContainer.AddChild(instance);
+                    instance.OnUpgrade += (int id) => OnUpgradeStat(id, instance);
                 }
             }
 
-            var statContainers = _statsContainer.GetChildren();
+            var statContainers = StatsContainer.GetChildren();
             for (int i = 0; i < entityStats.Count; i++)
             {
                 var statContainer = statContainers[i] as StatContainer;
@@ -170,76 +188,60 @@ namespace Galatime
             }
         }
 
-        public void _onUpgradeStat(int id, StatContainer instance)
+        private void OnUpgradeStat(int id, StatContainer instance)
         {
             var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
             var result = playerVariables.upgradeStat((EntityStatType)id);
             instance.playAnimation(result);
         }
 
-        public void addAbility(GalatimeAbility ab, int i)
+        public void AddAbility(AbilityData ab, int i)
         {
-            abilitiesContainer.GetChild<AbilityContainer>(i).load(ab.texture, ab.reload);
+            AbilitiesContainer.GetChild<AbilityContainer>(i).Load(ab);
         }
 
-        public void removeAbility(int i)
+        public void RemoveAbility(int i)
         {
-            abilitiesContainer.GetChild<AbilityContainer>(i).unload();
+            AbilitiesContainer.GetChild<AbilityContainer>(i).Unload();
         }
 
-        public void reloadDodge()
+        public void ReloadDodge()
         {
-            _remainingDodge = 2;
+            RemainingDodge = 2;
             DodgeTextTimer.Start();
-            _reloadingDodge();
+            ProcessDodgeReloading();
         }
 
-        public async void _reloadingDodge()
+        private void ProcessDodgeReloading()
         {
-            _remainingDodge--;
-            _dodgeCountdownText.Text = _remainingDodge + "s";
-            if (_dodgeCountdownText.Text == "-1s")
+            RemainingDodge--;
+            DodgeCountdownText.Text = RemainingDodge + "s";
+            if (DodgeCountdownText.Text == "-1s")
             {
-                DodgeTextTimer.Stop(); _dodgeCountdownText.Text = "";
+                DodgeTextTimer.Stop(); DodgeCountdownText.Text = "";
             }
         }
-
-        public void reloadAbility(int i)
+        
+        public AbilityContainer GetAbilityContainer(int i)
         {
-            var ability = abilitiesContainer.GetChild(i) as AbilityContainer;
-            ability.startReload();
+            var ability = AbilitiesContainer.GetChild(i) as AbilityContainer;
+            return ability;
         }
 
-        public void pleaseSayNoToAbility(int i)
+        public void StartDialog(string id, Player p)
         {
-            var ability = abilitiesContainer.GetChild(i) as AbilityContainer;
-            ability.no();
+            DialogBox.Call("startDialog", id, p);
         }
 
-        public void startDialog(string id, Player p) {
-            _dialogBox.Call("startDialog", id, p);
+        public void DisplayItem()
+        {
+            OnItemsChanged?.Invoke();
         }
-
-        public void displayItem() {
-            EmitSignal(SignalName.items_changed);
-        }
- 
-        //public void _hpDrain()
-        //{
-            //Tween tween = GetNode<Tween>("Tween");
-            //tween.InterpolateProperty(_healthDrain, "value",
-            //_healthDrain.Value, _localHp, 0.3f,
-            //Tween.TransitionType.Linear, Tween.EaseType.InOut);
-            //tween.Start();
-            //_healthDrain.Value = _localHp;
-        //}
 
         public void pause(bool visible)
         {
-            EmitSignal(SignalName.on_pause);
-            _pauseContainer.Visible = visible;
+            OnPause?.Invoke(visible);
+            PauseContainer.Visible = visible;
         }
     }
 }
-
-

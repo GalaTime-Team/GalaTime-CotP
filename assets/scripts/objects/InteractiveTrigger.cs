@@ -1,6 +1,4 @@
 using Godot;
-using System;
-using Galatime;
 
 namespace Galatime
 {
@@ -26,14 +24,14 @@ namespace Galatime
         public override void _Ready()
         {
             _collisionArea = GetNode<Area2D>("CollisionArea");
-            _collisionArea.Connect("body_entered",new Callable(this,"_onEntered"));
-            _collisionArea.Connect("body_exited",new Callable(this,"_onExit"));
+            _collisionArea.Connect("body_entered", new Callable(this, "_onEntered"));
+            _collisionArea.Connect("body_exited", new Callable(this, "_onExit"));
 
             _shader = GD.Load<ShaderMaterial>("res://assets/shaders/outline.tres").Duplicate() as ShaderMaterial;
             _playerNode = GetTree().GetNodesInGroup("player")[0] as Player;
 
-            _playerNode.Connect("on_interact",new Callable(this,"_OnInteract"));
-            _playerNode.Connect("on_dialog_end",new Callable(this,"_OnDialogEnd"));
+            _playerNode.Connect("on_interact", new Callable(this, "_OnInteract"));
+            _playerNode.Connect("on_dialog_end", new Callable(this, "_OnDialogEnd"));
 
             _node = GetNode<Node2D>(visualNode);
             _executeNode = GetNode<Node>(executeNode);
@@ -77,13 +75,13 @@ namespace Galatime
             if (canInteract)
             {
                 Godot.Collections.Array<Node2D> bodies = _collisionArea.GetOverlappingBodies();
-                if (bodies.Contains(_playerNode.body))
+                if (bodies.Contains(_playerNode.Body))
                 {
                     if (_executeNode.HasMethod(method))
                     {
                         if (args.Length > 0)
                         {
-                            _executeNode.Call(method, args); 
+                            _executeNode.Call(method, args);
                             GD.PrintRich("INTERACTIVE TRIGGER: [color=aqua]Called method with multiple args[/color]");
                         }
                         else

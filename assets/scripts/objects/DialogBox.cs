@@ -1,14 +1,11 @@
-using Godot;
-using System;
 using Galatime;
-using System.Collections.Generic;
-using System.Net.Sockets;
+using Godot;
 
 public partial class DialogBox : NinePatchRect
 {
     private string _dialogsPath = "res://assets/data/json/dialogs.json";
     private string _charactersPath = "res://assets/data/json/talking-characters.json";
-    private RichTextLabel _textNode;    
+    private RichTextLabel _textNode;
     private Label _characterName;
     private TextureRect _characterPortrait;
     private AnimationPlayer _skipAnimationPlayer;
@@ -150,7 +147,7 @@ public partial class DialogBox : NinePatchRect
             var action = (string)actionsData[0];
             actionsData.RemoveAt(0);
             var args = actionsData;
-            if (args.Count != 0)    
+            if (args.Count != 0)
             {
                 GD.Print(action, args, "more arg");
                 Callv(action, args);
@@ -198,13 +195,13 @@ public partial class DialogBox : NinePatchRect
 
     public void setCameraOffset(string x, string y)
     {
-        _player.cameraOffset.X = int.Parse(x);
-        _player.cameraOffset.Y = int.Parse(y);
+        _player.CameraOffset.X = int.Parse(x);
+        _player.CameraOffset.Y = int.Parse(y);
     }
 
     public void toggleMove()
     {
-        _player.canMove = !_player.canMove;
+        _player.CanMove = !_player.CanMove;
     }
 
     private void _resetValues()

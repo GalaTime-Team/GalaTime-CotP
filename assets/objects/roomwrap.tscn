@@ -1,15 +1,18 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://cpuy2j7u1neip"]
 
-[ext_resource path="res://assets/scripts/objects/roomwrap.cs" type="Script" id=1]
+[ext_resource type="Script" path="res://assets/scripts/objects/Roomwrap.cs" id="1"]
 
-[sub_resource type="RectangleShape2D" id=1]
-size = Vector2( 35, 35 )
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(128, 192)
 
-[node name="roomwrap" type="Node2D"]
-script = ExtResource( 1 )
+[node name="Roomwrap" type="Node2D"]
+script = ExtResource("1")
+Scene = "res://assets/scenes/test.tscn"
 
-[node name="wrap" type="Area2D" parent="."]
+[node name="TriggerArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
 
-[node name="collision" type="CollisionShape2D" parent="wrap"]
-position = Vector2( 35, 35 )
-shape = SubResource( 1 )
+[node name="Collision" type="CollisionShape2D" parent="TriggerArea"]
+position = Vector2(40, 40)
+shape = SubResource("1")

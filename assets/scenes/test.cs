@@ -1,7 +1,5 @@
-using Discord;
 using Galatime;
 using Godot;
-using System;
 
 public partial class test : Node2D
 {

@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class fade : Node2D
 {
@@ -19,18 +18,18 @@ public partial class fade : Node2D
         _player = GetParent<Node2D>();
 
         // Connect
-        _player.Connect("fade",new Callable(this,"_Fade"));
-        _animation.Connect("animation_finished",new Callable(this,"setVisibility"));
+        _player.Connect("fade", new Callable(this, "_Fade"));
+        _animation.Connect("animation_finished", new Callable(this, "setVisibility"));
 
         // Start
-        _fade.Visible = true; 
+        _fade.Visible = true;
         _animation.Play("fade_out");
     }
 
     public override void _Draw()
     {
         base._Draw();
-    }   
+    }
     public void _Fade(string type)
     {
         _fadeType = type;

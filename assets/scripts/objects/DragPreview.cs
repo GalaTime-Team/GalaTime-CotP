@@ -1,78 +1,46 @@
 using Godot;
-using System;
 
-namespace Galatime {
+namespace Galatime
+{
     public partial class DragPreview : Control
     {
-        TextureRect ItemIcon;
-        Label ItemQuantity;
+        #region Nodes
+        ItemContainer ItemContainer;
+        AnimationPlayer AnimationPlayerStatus;
+        #endregion
 
-        AnimationPlayer animationPlayerStatus;
-
-        public Godot.Collections.Dictionary draggedItem = null;
+        private Item draggedItem = new();
+        /// <summary> The item currently being dragged. When changed it will be displayed. </summary>
+        public Item DraggedItem {
+            get => draggedItem;
+            set {
+                draggedItem = value;
+                ItemContainer.DisplayItem(draggedItem);
+            }
+        }
 
         public override void _Ready()
         {
-            ItemIcon = GetNode<TextureRect>("Icon");
-            ItemQuantity = GetNode<Label>("Quantity");
-            animationPlayerStatus = GetNode<AnimationPlayer>("AnimationPlayerStatus");
-
-            GetNode<AnimationPlayer>("AnimationPlayer").Play("idle");
+            #region Get nodes
+            ItemContainer = GetNode<ItemContainer>("Item");
+            AnimationPlayerStatus = GetNode<AnimationPlayer>("AnimationPlayerStatus");
+            #endregion
         }
 
         public override void _Process(double delta)
         {
-            if (draggedItem != null && draggedItem.Count != 0)
+            if (!draggedItem.IsEmpty)
             {
                 Vector2 position = GetGlobalMousePosition();
                 position.X -= 16;
-                position.Y += 2;
+                position.Y += 8;
                 Position = position;
             }
-            else
-            {
-                Position = Vector2.Zero;
-                ItemIcon.Texture = null;
-                ItemQuantity.Text = "";
-            }
         }
 
-        public void setDraggedItem(Godot.Collections.Dictionary i)
+        public void Prevent()
         {
-            draggedItem = i;
-            if (i != null && i.Count != 0)
-            {
-                Godot.Collections.Dictionary ItemAssets = (Godot.Collections.Dictionary)i["assets"];
-                string icon = (string)ItemAssets["icon"];
-                if (i != null)
-                {
-                    ItemIcon.Texture = GD.Load<Texture2D>("res://sprites/" + icon);
-                    if (i.ContainsKey("quantity"))
-                    {
-                        ItemQuantity.Text = ((int)i["quantity"]).ToString();
-                    }
-                    else
-                    {
-                        ItemQuantity.Text = "";
-                    }
-                    if (!(bool)i["stackable"]) ItemQuantity.Text = "";
-                }
-                else
-                {
-                    //ItemIcon.Texture2D = null;
-                    //ItemQuantity.Text = "";
-                }
-            }
-            else
-            {
-                //ItemIcon.Texture2D = null;
-                //ItemQuantity.Text = "";
-            }
-        }
-
-        public void prevent()
-        {
-            animationPlayerStatus.Play("error");
+            AnimationPlayerStatus.Play("error");
         }
     }
 }

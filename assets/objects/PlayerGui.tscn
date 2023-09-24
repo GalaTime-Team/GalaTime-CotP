@@ -1,15 +1,16 @@
-[gd_scene load_steps=39 format=3 uid="uid://s184ap1aunq3"]
+[gd_scene load_steps=41 format=3 uid="uid://s184ap1aunq3"]
 
 [ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://bus3tixdqgvjr" path="res://sprites/gui/status/hp_progress_outline.png" id="3"]
+[ext_resource type="PackedScene" uid="uid://cttkdqlgrme62" path="res://assets/objects/gui/ValueBar.tscn" id="3_ysutl"]
 [ext_resource type="Texture2D" uid="uid://dhtevbnd5q0i2" path="res://sprites/gui/status/stamina_progress.png" id="4"]
+[ext_resource type="PackedScene" uid="uid://bn3iju7bii6tj" path="res://assets/objects/gui/helpers/ShakeControl.tscn" id="4_bjh2c"]
 [ext_resource type="Texture2D" uid="uid://eenddgdqm3fn" path="res://sprites/gui/status/hp_progress.png" id="5"]
 [ext_resource type="Script" path="res://assets/scripts/gui/PlayerGui.cs" id="6"]
 [ext_resource type="Texture2D" uid="uid://di2bm2xc4vued" path="res://sprites/gui/dialog/characters/arthur/surprised/suprised.tres" id="7"]
 [ext_resource type="PackedScene" uid="uid://copiga1ncueyb" path="res://assets/objects/InventoryTooltip.tscn" id="8"]
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="9_lrd2i"]
-[ext_resource type="Script" path="res://assets/objects/slot_container.cs" id="10"]
 [ext_resource type="Texture2D" uid="uid://ddp232l64r5h8" path="res://sprites/test/arthur-icon.png" id="11"]
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="12"]
 [ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://sprites/gui/dialog-background.png" id="13"]
@@ -18,15 +19,16 @@
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="15_bhhfw"]
 [ext_resource type="PackedScene" uid="uid://m2won44lnrfe" path="res://assets/objects/DragPreview.tscn" id="16"]
 [ext_resource type="Texture2D" uid="uid://dxw5mvqypf6i3" path="res://sprites/test/member-icon.png" id="17"]
-[ext_resource type="PackedScene" uid="uid://dgxbid7xdal5c" path="res://assets/objects/gui/AbilityContainer.tscn" id="18"]
 [ext_resource type="AudioStream" uid="uid://h1mkg7qkc6ls" path="res://assets/audios/sounds/talkbeeps/lol.wav" id="19"]
+[ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesContainer.cs" id="19_h7ltw"]
 [ext_resource type="PackedScene" uid="uid://4ivx2u2xw1y6" path="res://assets/objects/gui/AbilityContainerItem.tscn" id="20"]
+[ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesChoiseContainer.cs" id="20_lbtld"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilityLearnContainer.cs" id="22_r42dr"]
+[ext_resource type="Script" path="res://assets/scripts/gui/SlotContainer.cs" id="23_ajd6p"]
 [ext_resource type="Texture2D" uid="uid://dbliidd2bq780" path="res://sprites/characters/test/dodge_icon.png" id="24"]
-[ext_resource type="Script" path="res://assets/objects/AbilitiesContainer.cs" id="25"]
 [ext_resource type="Script" path="res://assets/scripts/gui/PausePagesButtonsContainer.cs" id="27"]
+[ext_resource type="AudioStream" uid="uid://dfwi2r7vfy2p5" path="res://assets/audios/sounds/parry.wav" id="27_4kcld"]
 [ext_resource type="Script" path="res://assets/scripts/gui/LeaveLabel.cs" id="27_i8qxk"]
-[ext_resource type="Script" path="res://assets/objects/AbilitiesChoiseContainer.cs" id="29"]
 
 [sub_resource type="Animation" id="1"]
 length = 0.001
@@ -203,84 +205,23 @@ texture = ExtResource("24")
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="HealthProgress" type="TextureProgressBar" parent="."]
-layout_mode = 0
-offset_left = 36.0
-offset_top = 32.0
-offset_right = 61.0
-offset_bottom = 35.0
-scale = Vector2(4, 4)
-mouse_filter = 2
-max_value = 70.0
-value = 70.0
-allow_greater = true
-texture_progress = ExtResource("5")
+[node name="HealthValueBar" parent="." instance=ExtResource("3_ysutl")]
+offset_right = 0.0
+offset_bottom = 0.0
+ValueText = "HP"
+TransientTexturePath = "res://sprites/gui/status/transient_progress.png"
+ChangedColor = Color(0.402344, 0.996094, 0.425781, 1)
+NormalColor = Color(1, 1, 1, 1)
+ProgressBarNodePath = NodePath("Progress")
+LabelNodePath = NodePath("ShakeControl/Label")
+TextureNodePath = NodePath("Outline")
+ShakeControlNodePaths = Array[NodePath]([NodePath("ShakeControl")])
 
-[node name="HealthOutline" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 53.0
-offset_bottom = 31.0
-scale = Vector2(4, 4)
-texture = ExtResource("3")
+[node name="ShakeControl" parent="HealthValueBar" instance=ExtResource("4_bjh2c")]
+Amount = 5.0
 
-[node name="StaminaProgress" type="TextureProgressBar" parent="."]
+[node name="Label" type="Label" parent="HealthValueBar/ShakeControl"]
 layout_mode = 0
-offset_left = 48.0
-offset_top = 64.0
-offset_right = 73.0
-offset_bottom = 67.0
-scale = Vector2(4, 4)
-mouse_filter = 2
-max_value = 65.0
-value = 65.0
-allow_greater = true
-texture_progress = ExtResource("4")
-
-[node name="StaminaOutline" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 33.0
-offset_top = 52.0
-offset_right = 62.0
-offset_bottom = 60.0
-scale = Vector2(4, 4)
-texture = ExtResource("1")
-
-[node name="ManaProgress" type="TextureProgressBar" parent="."]
-layout_mode = 0
-offset_left = 36.0
-offset_top = 96.0
-offset_right = 61.0
-offset_bottom = 99.0
-scale = Vector2(4, 4)
-mouse_filter = 2
-max_value = 65.0
-value = 65.0
-allow_greater = true
-texture_progress = ExtResource("14")
-
-[node name="Mana" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 24.0
-offset_top = 80.0
-offset_right = 53.0
-offset_bottom = 89.0
-scale = Vector2(4, 4)
-texture = ExtResource("2")
-
-[node name="stamina_text" type="Label" parent="."]
-layout_mode = 0
-offset_left = 160.0
-offset_top = 46.0
-offset_right = 491.0
-offset_bottom = 62.0
-scale = Vector2(3, 3)
-theme_override_fonts/font = ExtResource("9_lrd2i")
-text = "0 STAM"
-
-[node name="hp_text" type="Label" parent="."]
-layout_mode = 1
 offset_left = 160.0
 offset_top = 14.0
 offset_right = 491.0
@@ -290,7 +231,91 @@ theme_override_fonts/font = ExtResource("9_lrd2i")
 text = "0 HP	"
 autowrap_mode = 1
 
-[node name="mana_text" type="Label" parent="."]
+[node name="Progress" type="TextureProgressBar" parent="HealthValueBar"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 32.0
+offset_right = 61.0
+offset_bottom = 35.0
+scale = Vector2(4, 4)
+mouse_filter = 2
+max_value = 999.0
+value = 999.0
+allow_greater = true
+texture_progress = ExtResource("5")
+
+[node name="Outline" type="TextureRect" parent="HealthValueBar"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 53.0
+offset_bottom = 31.0
+scale = Vector2(4, 4)
+texture = ExtResource("3")
+
+[node name="StaminaValueBar" parent="." instance=ExtResource("3_ysutl")]
+offset_right = 0.0
+offset_bottom = 0.0
+ValueText = "STAM"
+TransientTexturePath = "res://sprites/gui/status/transient_progress.png"
+ChangedColor = Color(0.761719, 0.757813, 0.746094, 1)
+NormalColor = Color(1, 1, 1, 1)
+ProgressBarNodePath = NodePath("Progress")
+LabelNodePath = NodePath("ShakeControl/Label")
+TextureNodePath = NodePath("Outline")
+ShakeControlNodePaths = Array[NodePath]([NodePath("ShakeControl")])
+
+[node name="ShakeControl" parent="StaminaValueBar" instance=ExtResource("4_bjh2c")]
+Amount = 5.0
+
+[node name="Label" type="Label" parent="StaminaValueBar/ShakeControl"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 46.0
+offset_right = 491.0
+offset_bottom = 62.0
+scale = Vector2(3, 3)
+theme_override_fonts/font = ExtResource("9_lrd2i")
+text = "0 STAM"
+
+[node name="Progress" type="TextureProgressBar" parent="StaminaValueBar"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 64.0
+offset_right = 73.0
+offset_bottom = 67.0
+scale = Vector2(4, 4)
+mouse_filter = 2
+max_value = 999.0
+value = 999.0
+allow_greater = true
+texture_progress = ExtResource("4")
+
+[node name="Outline" type="TextureRect" parent="StaminaValueBar"]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 52.0
+offset_right = 62.0
+offset_bottom = 60.0
+scale = Vector2(4, 4)
+texture = ExtResource("1")
+
+[node name="ManaValueBar" parent="." instance=ExtResource("3_ysutl")]
+offset_right = 0.0
+offset_bottom = 0.0
+ValueText = "MANA"
+TransientTexturePath = "res://sprites/gui/status/transient_progress.png"
+ChangedColor = Color(0.367188, 0.617188, 0.996094, 1)
+NormalColor = Color(1, 1, 1, 1)
+ProgressBarNodePath = NodePath("Progress")
+LabelNodePath = NodePath("ShakeControl/Label")
+TextureNodePath = NodePath("Outline")
+ShakeControlNodePaths = Array[NodePath]([NodePath("ShakeControl")])
+
+[node name="ShakeControl" parent="ManaValueBar" instance=ExtResource("4_bjh2c")]
+Amount = 5.0
+
+[node name="Label" type="Label" parent="ManaValueBar/ShakeControl"]
 layout_mode = 0
 offset_left = 160.0
 offset_top = 78.0
@@ -300,7 +325,29 @@ scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("9_lrd2i")
 text = "0 MANA"
 
-[node name="fadeAnimation" type="AnimationPlayer" parent="."]
+[node name="Progress" type="TextureProgressBar" parent="ManaValueBar"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 96.0
+offset_right = 61.0
+offset_bottom = 99.0
+scale = Vector2(4, 4)
+mouse_filter = 2
+max_value = 999.0
+value = 999.0
+allow_greater = true
+texture_progress = ExtResource("14")
+
+[node name="Outline" type="TextureRect" parent="ManaValueBar"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 80.0
+offset_right = 53.0
+offset_bottom = 89.0
+scale = Vector2(4, 4)
+texture = ExtResource("2")
+
+[node name="FadeAnimationPlayer" type="AnimationPlayer" parent="."]
 process_mode = 1
 libraries = {
 "": SubResource("AnimationLibrary_u6x0b")
@@ -323,15 +370,6 @@ scale = Vector2(3, 3)
 theme_override_constants/separation = 8
 alignment = 2
 
-[node name="AbilityContainer3" parent="AbilitiesContainer" instance=ExtResource("18")]
-layout_mode = 2
-
-[node name="AbilityContainer" parent="AbilitiesContainer" instance=ExtResource("18")]
-layout_mode = 2
-
-[node name="AbilityContainer2" parent="AbilitiesContainer" instance=ExtResource("18")]
-layout_mode = 2
-
 [node name="DialogBox" type="NinePatchRect" parent="."]
 visible = false
 layout_mode = 0
@@ -351,6 +389,7 @@ patch_margin_bottom = 5
 script = ExtResource("15")
 
 [node name="CharacterPortrait" type="TextureRect" parent="DialogBox"]
+visible = false
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 0
 offset_left = -24.0
@@ -399,14 +438,13 @@ text = "Name of the character"
 
 [node name="Voice" type="AudioStreamPlayer" parent="DialogBox"]
 stream = ExtResource("19")
-bus = &"Sounds"
 
 [node name="SkipAnimationPlayer" type="AnimationPlayer" parent="DialogBox"]
 libraries = {
 "": SubResource("AnimationLibrary_a538s")
 }
 
-[node name="shader" type="ColorRect" parent="."]
+[node name="Shader" type="ColorRect" parent="."]
 visible = false
 material = SubResource("6")
 layout_mode = 0
@@ -414,7 +452,7 @@ offset_right = 1024.0
 offset_bottom = 600.0
 mouse_filter = 2
 
-[node name="shader2" type="ColorRect" parent="."]
+[node name="Shader2" type="ColorRect" parent="."]
 visible = false
 material = SubResource("6")
 layout_mode = 0
@@ -562,7 +600,7 @@ offset_bottom = -56.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(2, 2)
-script = ExtResource("25")
+script = ExtResource("19_h7ltw")
 
 [node name="Panel" type="Panel" parent="PauseContainer/AbilitiesContainer"]
 clip_contents = true
@@ -580,7 +618,7 @@ offset_right = 208.0
 offset_bottom = 52.0
 pivot_offset = Vector2(40, 0)
 theme_override_constants/separation = -10
-script = ExtResource("29")
+script = ExtResource("20_lbtld")
 
 [node name="Label" type="Label" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
 layout_mode = 2
@@ -595,15 +633,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 0
 alignment = 2
 
-[node name="AbilityContainer3" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer/AbilitiesContainer" instance=ExtResource("18")]
-layout_mode = 2
-
-[node name="AbilityContainer" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer/AbilitiesContainer" instance=ExtResource("18")]
-layout_mode = 2
-
-[node name="AbilityContainer2" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer/AbilitiesContainer" instance=ExtResource("18")]
-layout_mode = 2
-
 [node name="AbilityItem" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
 z_index = 1
 layout_mode = 0
@@ -611,15 +640,6 @@ offset_left = 256.0
 offset_top = 52.0
 offset_right = 272.0
 offset_bottom = 68.0
-
-[node name="AbilityItem5" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
-z_index = 1
-layout_mode = 0
-offset_left = 304.0
-offset_top = 116.0
-offset_right = 320.0
-offset_bottom = 132.0
-abilityName = "bluefire"
 
 [node name="AbilityItem2" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
 z_index = 1
@@ -647,6 +667,24 @@ offset_top = 180.0
 offset_right = 320.0
 offset_bottom = 196.0
 abilityName = "blue_fireball"
+
+[node name="AbilityItem5" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
+z_index = 1
+layout_mode = 0
+offset_left = 301.094
+offset_top = 113.094
+offset_right = 317.094
+offset_bottom = 129.094
+abilityName = "bluefire"
+
+[node name="AbilityItem6" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
+z_index = 1
+layout_mode = 0
+offset_left = 160.0
+offset_top = 52.0
+offset_right = 176.0
+offset_bottom = 68.0
+abilityName = "firebullet"
 
 [node name="AbilityLearnContainer" type="VBoxContainer" parent="PauseContainer/AbilitiesContainer/Panel"]
 visible = false
@@ -700,7 +738,7 @@ offset_top = -70.0
 offset_bottom = 6.0
 scale = Vector2(2, 2)
 columns = 4
-script = ExtResource("10")
+script = ExtResource("23_ajd6p")
 
 [node name="AbilitiesLabel" type="Label" parent="PauseContainer"]
 visible = false
@@ -801,6 +839,8 @@ theme_override_fonts/font = ExtResource("12")
 text = "Abilities"
 
 [node name="FadeScreen" type="ColorRect" parent="."]
+visible = false
+modulate = Color(0, 0, 0, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -811,6 +851,7 @@ mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
 [node name="LeaveLabel" type="Label" parent="."]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
@@ -820,3 +861,18 @@ scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("15_bhhfw")
 text = "Leaving"
 script = ExtResource("27_i8qxk")
+metadata/_edit_lock_ = true
+
+[node name="ParrySound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("27_4kcld")
+
+[node name="ParryOverlay" type="ColorRect" parent="."]
+process_mode = 3
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.627451)

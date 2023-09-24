@@ -1,73 +1,54 @@
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using DictionaryExtension;
 
 namespace Galatime
 {
     public partial class Hand : Marker2D
     {
-        public Node _item = null;
+        public Node Item = null;
+        public Item ItemData;
 
-        public void takeItem(Godot.Collections.Dictionary item)
+        public void TakeItem(Item item)
         {
-            _removeItem();
-            if (item.ContainsKey("assets"))
+            RemoveItem();
+            if (item.ItemScene != null)
             {
-                var objAssets = (Godot.Collections.Dictionary)item["assets"];
-                if (objAssets.ContainsKey("object"))
-                {
-                    var objNodePath = (string)objAssets["object"];
-                    var objScene = (PackedScene)ResourceLoader.Load(objNodePath);
-                    var objNode = objScene.Instantiate();
-                    AddChild(objNode);
-                    _item = objNode;
-                }
-                else
-                {
-                    GD.Print("Unable to get the item from " + item);
-                }
-            }
-            else
-            {
-                GD.Print("Item doesn't have assets " + item);
+                this.ItemData = item;
+                var objScene = item.ItemScene;
+                var objNode = objScene.Instantiate();
+                AddChild(objNode); 
+                Item = objNode;
             }
         }
 
-        private void _removeItem()
+        private void RemoveItem()
         {
             if (GetChildCount() != 0)
             {
-                _item = null;
+                Item = null;
                 for (int i = 0; i < GetChildCount(); i++)
                 {
                     var child = GetChild(i);
                     RemoveChild(child);
                 }
             }
-            else
-            {
-                GD.Print("no");
-            }
         }
 
         public Godot.Collections.Array GetOverlappingBodies()
         {
-            if (_item is Area2D a)
+            if (Item is Area2D a)
             {
-                var result = (Godot.Collections.Array)_item.Call("get_overlapping_bodies");
+                var result = (Godot.Collections.Array)Item.Call("get_overlapping_bodies");
                 return result;
-              }
+            }
             else
             {
                 return new Godot.Collections.Array();
             }
         }
 
-        public void attack(float physicalAttack, float magicalAttack)
+        public void Attack(float physicalAttack, float magicalAttack)
         {
-            if (GetChildCount() != 0) _item.Call("attack", physicalAttack, magicalAttack);
+            if (GetChildCount() != 0) Item.Call("attack", physicalAttack, magicalAttack);
         }
     }
 }

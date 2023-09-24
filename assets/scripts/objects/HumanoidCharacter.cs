@@ -1,36 +1,36 @@
 using Galatime;
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Runtime.Intrinsics.X86;
 
 public partial class HumanoidCharacter : Entity
 {
-    protected bool _isDodge = false;
-    protected bool _canDodge = true;
-    public bool canMove = true;
-    public string IdleAnimation = "idle_down";
+    /// <summary> If the character is dodging right now. </summary>
+    protected bool IsDodge = false;
+    /// <summary> If the character is able to dodge right now. </summary>
+    protected bool CanDodge = true;
+    /// <summary> The current rotation of the character. </summary>
+    protected Vector2 VectorRotation;
+    /// <summary> If the character is able to move. </summary>
+    public bool CanMove = true;
 
-    protected Vector2 _vectorRotation;
+    /// <summary> The list of abilities of the character. </summary>
+    public List<AbilityData> Abilities = new();
 
-    public PackedScene[] _abilities = new PackedScene[3];
-    public Timer[] _abilitiesTimers = new Timer[3];
-    public int[] _abiltiesReloadTimes = new int[3];
+    protected Timer DodgeTimer;
+    protected Timer AbilityCountdownTimer;
+    protected Timer StaminaCountdownTimer;
+    protected Timer StaminaRegenTimer;
+    protected Timer ManaCountdownTimer;
+    protected Timer ManaRegenTimer;
 
-    protected Timer _dodgeTimer;
-    protected Timer _abilityCountdownTimer;
-    protected Timer _staminaCountdownTimer;
-    protected Timer _staminaRegenTimer;
-    protected Timer _manaCountdownTimer;
-    protected Timer _manaRegenTimer;
+    protected AnimationPlayer AnimationPlayer;
 
-    protected AnimationPlayer _animationPlayer;
+    protected Sprite2D Sprite;
+    protected GpuParticles2D TrailParticles;
 
-    protected Sprite2D _sprite;
-    protected GpuParticles2D _trailParticles;
-
-    public Hand weapon;
-
-    // [Signal] public delegate void on_stamina_changedEventHandler(float stamina);
-    // [Signal] public delegate void on_mana_changedEventHandler(float mana);
+    public Hand Weapon;
 
     private float mana;
     public float Mana
@@ -39,11 +39,10 @@ public partial class HumanoidCharacter : Entity
         set
         {
             mana = value;
-            mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.mana].Value);
-            _manaRegenTimer.Stop();
-            _manaCountdownTimer.Start();
-            // EmitSignal("on_mana_changed", mana);
-            _onManaChanged(mana);
+            mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.Mana].Value);
+            ManaRegenTimer.Stop();
+            ManaCountdownTimer.Start();
+            OnManaChanged(mana);
         }
     }
 
@@ -54,19 +53,18 @@ public partial class HumanoidCharacter : Entity
         set
         {
             stamina = value;
-            stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.stamina].Value);
-            _staminaRegenTimer.Stop();
-            _staminaCountdownTimer.Start();
-            // EmitSignal("on_stamina_changed", stamina);
-            _onStaminaChanged(stamina);
+            stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.Stamina].Value);
+            StaminaRegenTimer.Stop();
+            StaminaCountdownTimer.Start();
+            OnStaminaChanged(stamina);
         }
     }
 
-    protected virtual void _onManaChanged(float mana)
+    protected virtual void OnManaChanged(float mana)
     {
     }
 
-    protected virtual void _onStaminaChanged(float stamina)
+    protected virtual void OnStaminaChanged(float stamina)
     {
     }
 
@@ -74,141 +72,178 @@ public partial class HumanoidCharacter : Entity
     {
         base._Ready();
 
-        _dodgeTimer = new Timer();
-        _dodgeTimer.WaitTime = 2f;
-        _dodgeTimer.OneShot = true;
-        // _dodgeTimer.Connect("timeout", new Callable(this, "_onCountdownDodge"));
-        AddChild(_dodgeTimer);
+        // Initialize abilities
+        Abilities = new List<AbilityData>();
+        for (int i = 0; i < PlayerVariables.abilitySlots; i++) Abilities.Add(new());
 
-        _abilityCountdownTimer = new Timer();
-        _abilityCountdownTimer.WaitTime = 1f;
-        _abilityCountdownTimer.OneShot = true;
-        _abilityCountdownTimer.Name = "AbilityCountdown";
-        AddChild(_abilityCountdownTimer);
+        InitializeTimers();
+    }
 
-        _staminaCountdownTimer = new Timer();
-        _staminaCountdownTimer.WaitTime = 5f;
-        _staminaCountdownTimer.OneShot = true;
-        _staminaCountdownTimer.Name = "StaminaCountdown";
-        _staminaCountdownTimer.Connect("timeout", new Callable(this, "_onCountdownStaminaRegen"));
-        AddChild(_staminaCountdownTimer);
+    private void InitializeTimers()
+    {
+        DodgeTimer = new Timer
+        {
+            WaitTime = 2f,
+            OneShot = true
+        };
+        AddChild(DodgeTimer);
 
-        _staminaRegenTimer = new Timer();
-        _staminaRegenTimer.WaitTime = 1f;
-        _staminaRegenTimer.OneShot = false;
-        _staminaRegenTimer.Name = "StaminaRegenCountdown";
-        _staminaRegenTimer.Connect("timeout", new Callable(this, "_regenStamina"));
-        AddChild(_staminaRegenTimer);
+        AbilityCountdownTimer = new Timer
+        {
+            WaitTime = 1f,
+            OneShot = true,
+            Name = "AbilityCountdown"
+        };
+        AddChild(AbilityCountdownTimer);
 
-        _manaCountdownTimer = new Timer();
-        _manaCountdownTimer.WaitTime = 5f;
-        _manaCountdownTimer.OneShot = true;
-        _manaCountdownTimer.Name = "ManaCountdown";
-        _manaCountdownTimer.Connect("timeout", new Callable(this, "_onCountdownManaRegen"));
-        AddChild(_manaCountdownTimer);
+        StaminaCountdownTimer = new Timer
+        {
+            WaitTime = 5f,
+            OneShot = true,
+            Name = "StaminaCountdown"
+        };
+        StaminaCountdownTimer.Timeout += _onCountdownStaminaRegen;
+        AddChild(StaminaCountdownTimer);
 
-        _manaRegenTimer = new Timer();
-        _manaRegenTimer.WaitTime = 1f;
-        _manaRegenTimer.OneShot = false;
-        _manaRegenTimer.Name = "ManaRegenCountdown";
-        _manaRegenTimer.Connect("timeout", new Callable(this, "_regenMana"));
-        AddChild(_manaRegenTimer);
+        StaminaRegenTimer = new Timer
+        {
+            WaitTime = 1f,
+            OneShot = false,
+            Name = "StaminaRegenCountdown"
+        };
+        StaminaRegenTimer.Timeout += _regenStamina;
+        AddChild(StaminaRegenTimer);
+
+        ManaCountdownTimer = new Timer
+        {
+            WaitTime = 5f,
+            OneShot = true,
+            Name = "ManaCountdown"
+        };
+        ManaCountdownTimer.Timeout += _onCountdownManaRegen;
+        AddChild(ManaCountdownTimer);
+
+        ManaRegenTimer = new Timer
+        {
+            WaitTime = 1f,
+            OneShot = false,
+            Name = "ManaRegenCountdown"
+        };
+        ManaRegenTimer.Timeout += _regenMana;
+        AddChild(ManaRegenTimer);
     }
 
     protected void _onCountdownStaminaRegen()
     {
-        _staminaCountdownTimer.Stop();
-        _staminaRegenTimer.Start();
+        StaminaCountdownTimer.Stop();
+        StaminaRegenTimer.Start();
     }
 
     protected void _onCountdownManaRegen()
     {
-        _manaCountdownTimer.Stop();
-        _manaRegenTimer.Start();
+        ManaCountdownTimer.Stop();
+        ManaRegenTimer.Start();
     }
 
     protected void _regenStamina()
     {
         stamina += 10;
-        stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.stamina].Value);
+        stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.Stamina].Value);
         // EmitSignal("on_stamina_changed", stamina);
-        if (stamina >= Stats[EntityStatType.stamina].Value) _staminaRegenTimer.Stop();
-        _onStaminaChanged(stamina);
+        if (stamina >= Stats[EntityStatType.Stamina].Value) StaminaRegenTimer.Stop();
+        OnStaminaChanged(stamina);
     }
 
     protected void _regenMana()
     {
         mana += 10;
-        mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.mana].Value);
+        mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.Mana].Value);
         // EmitSignal("on_mana_changed", mana);
-        if (mana >= Stats[EntityStatType.mana].Value) _manaRegenTimer.Stop();
-        _onManaChanged(mana);
+        if (mana >= Stats[EntityStatType.Mana].Value) ManaRegenTimer.Stop();
+        OnManaChanged(mana);
     }
 
     protected void _setLayerToWeapon(bool toUp)
     {
-        if (weapon != null) if (toUp) weapon.ZIndex = 1; else weapon.ZIndex = 0;
+        if (Weapon != null) if (toUp) Weapon.ZIndex = 1; else Weapon.ZIndex = 0;
     }
 
-    public virtual GalatimeAbility addAbility(string scenePath, int i)
+    public virtual AbilityData addAbility(AbilityData ab, int i)
     {
-        PackedScene scene = GD.Load<PackedScene>(scenePath);
-        GalatimeAbility ability = scene.Instantiate<GalatimeAbility>();
-        _abilities[i] = scene;
-        var binds = new Godot.Collections.Array();
-        binds.Add(i);
-        if (_abilitiesTimers[i] != null) _abilitiesTimers[i].Stop();
-        _abiltiesReloadTimes[i] = 0;
-        _abilitiesTimers[i] = new Timer();
-        _abilitiesTimers[i].Timeout += () => _abilitiesCountdown(i);
-        AddChild(_abilitiesTimers[i]);
-        return ability;
+        Abilities[i] = ab;
+        Abilities[i].CooldownTimer = new Timer
+        {
+            Name = $"{ab.Name}TimerCountdown",
+            WaitTime = ab.Reload,
+            OneShot = true
+        };
+        Abilities[i].CooldownTimer.Timeout += () => _OnCooldownTimerTimeout(i);
+        AddChild(Abilities[i].CooldownTimer);
+        return Abilities[i];
     }
 
-    protected virtual void removeAbility(int i)
+    private void _OnCooldownTimerTimeout(int i)
     {
-        _abilities[i] = null;
-        if (_abilitiesTimers[i] != null) _abilitiesTimers[i].Stop();
-        _abiltiesReloadTimes[i] = 0;
+        var ability = Abilities[i];
+        if (ability.Charges < ability.MaxCharges) {
+            ability.Charges++;
+            _OnAbilityReload(i);
+            ability.CooldownTimer.Start();
+        }
     }
 
-    protected virtual void _abilitiesCountdown(int i)
+    protected virtual void _OnAbilityReload(int i)
     {
-        if (_abiltiesReloadTimes[i] <= 0) _abilitiesTimers[i].Stop();
-        _abiltiesReloadTimes[i]--;
-        GD.Print(_abiltiesReloadTimes[i] + " time");
+    }
+
+
+    public override void _ExitTree()
+    {
+        // Deleting isnstances of ability timer from the abilities list to avoid memory leaks
+        foreach (var ab in Abilities)
+        {
+            ab.CooldownTimer.QueueFree();
+            ab.CooldownTimer = null;
+        }
+    }
+
+    protected virtual void RemoveAbility(int i)
+    {
+        AbilityData ability = new();
+        Abilities[i] = ability;
+        ability.CooldownTimer.Stop();
     }
 
     protected virtual bool _useAbility(int i)
     {
         try
         {
-            if (_abiltiesReloadTimes[i] <= 0 && _abilityCountdownTimer.TimeLeft == 0)
+            var ability = Abilities[i];
+            if (!ability.IsEmpty && ability.IsReloaded)
             {
-                _abilityCountdownTimer.Start();
-                var ability = _abilities[i].Instantiate<GalatimeAbility>();
-                if (ability.costs.ContainsKey("stamina"))
-                {
-                    if (stamina - ability.costs["stamina"] < 0)
-                    {
-                        EmitSignal("sayNoToAbility", i); return false;
-                    }
-                    Stamina -= ability.costs["stamina"];
-                }
-                if (ability.costs.ContainsKey("mana"))
-                {
-                    if (mana - ability.costs["mana"] < 0)
-                    {
-                        EmitSignal("sayNoToAbility", i); return false;
-                    }
-                    Mana -= ability.costs["mana"];
-                    GD.Print($"mana cost {ability.costs["mana"]}");
-                }
-                GetParent().AddChild(ability);
-                ability.execute(this, Stats[EntityStatType.physicalAttack].Value, Stats[EntityStatType.magicalAttack].Value);
-                _abilitiesTimers[i].Stop();
-                _abilitiesTimers[i].Start();
-                _abiltiesReloadTimes[i] = (int)Math.Round(ability.reload);
+                // Start the cooldown
+                AbilityCountdownTimer.Start();
+
+                // Getting instance of ability and add data from json to ability
+                var abilityInstance = ability.Scene.Instantiate<GalatimeAbility>();
+                abilityInstance.Data = ability;
+                
+                // Check if the character has enough stamina and mana, if not, return false.
+                if (stamina - abilityInstance.Data.Costs.Stamina < 0) return false;
+                if (abilityInstance.Data.Costs.Stamina > 0) Stamina -= abilityInstance.Data.Costs.Stamina;
+                if (mana - abilityInstance.Data.Costs.Mana < 0) return false;
+                if (abilityInstance.Data.Costs.Mana > 0) Mana -= abilityInstance.Data.Costs.Mana;
+
+                // Add the ability and execute it.
+                GetParent().AddChild(abilityInstance);
+                abilityInstance.Execute(this);
+
+                // Start the cooldown
+                ability.CooldownTimer.Stop();
+                ability.CooldownTimer.Start();
+
+                ability.Charges--;
+                _OnAbilityReload(i);
             }
             else
             {
@@ -221,66 +256,65 @@ public partial class HumanoidCharacter : Entity
             GD.PrintErr("Error when used ability: " + ex.Message);
             return false;
         }
-        return true;
     }
 
     protected async void dodge()
     {
-        if (Stamina - 15 >= 0 && _dodgeTimer.TimeLeft <= 0 && canMove)
+        if (Stamina - 15 >= 0 && !IsDodge && CanMove)
         {
-            _isDodge = true;
-            float direction = weapon.Rotation;
-            setKnockback(1200, direction);
-            _trailParticles.Emitting = true;
+            IsDodge = true;
+            float direction = Weapon.Rotation;
+            SetKnockback(1200, direction);
+            TrailParticles.Emitting = true;
             Stamina -= 15;
-            _dodgeTimer.Start();
-            EmitSignal("reloadDodge");
             await ToSignal(GetTree().CreateTimer(0.3f), "timeout");
-            _isDodge = false;
-            _trailParticles.Emitting = false;
+            IsDodge = false;
+            TrailParticles.Emitting = false;
         }
     }
 
     protected void setDirectionByWeapon()
     {
-        var r = Mathf.Wrap(weapon.RotationDegrees, 0, 360);
-        var v = Vector2.Zero;
-        if (r <= 45) v = Vector2.Right;
-        if (r >= 45 && r <= 135) v = Vector2.Down;
-        if (r >= 135 && r <= 220) v = Vector2.Left;
-        if (r >= 220 && r <= 320) v = Vector2.Up;
-        if (r >= 320) v = Vector2.Right;
-        _vectorRotation = v;
+        var r = Mathf.Wrap(Weapon.RotationDegrees, 0, 360);
+        var v = r switch
+        {
+            <= 45 or >= 320 => Vector2.Right,
+            >= 45 and <= 135 => Vector2.Down,
+            >= 135 and <= 220 => Vector2.Left,
+            >= 220 and <= 320 => Vector2.Up,
+            _ => Vector2.Zero
+        };
+        VectorRotation = v;
     }
 
     protected void _SetAnimation(Vector2 animationVelocity, bool idle)
     {
-        if (idle) _animationPlayer.Stop();
-        _animationPlayer.SpeedScale = speed / 100;
+        if (idle) AnimationPlayer.Stop();
+        AnimationPlayer.SpeedScale = Speed / 100;
         if (animationVelocity.Y != 0)
         {
-            if (animationVelocity.Y <= -1 && _animationPlayer.CurrentAnimation != "walk_up")
+            if (animationVelocity.Y <= -1 && AnimationPlayer.CurrentAnimation != "walk_up")
             {
-                if (!idle) _animationPlayer.Play("walk_up"); else _animationPlayer.Play("idle_up");
+                if (!idle) AnimationPlayer.Play("walk_up"); else AnimationPlayer.Play("idle_up");
             }
-            if (animationVelocity.Y >= 1 && _animationPlayer.CurrentAnimation != "walk_down")
+            if (animationVelocity.Y >= 1 && AnimationPlayer.CurrentAnimation != "walk_down")
             {
-                if (!idle) _animationPlayer.Play("walk_down"); else _animationPlayer.Play("idle_down");
+                if (!idle) AnimationPlayer.Play("walk_down"); else AnimationPlayer.Play("idle_down");
                 _setLayerToWeapon(true);
             }
         }
         else
         {
-            if (animationVelocity.X >= 1 && _animationPlayer.CurrentAnimation != "walk_right")
+            if (animationVelocity.X >= 1 && AnimationPlayer.CurrentAnimation != "walk_right")
             {
-                if (!idle) _animationPlayer.Play("walk_right"); else _animationPlayer.Play("idle_right");
+                if (!idle) AnimationPlayer.Play("walk_right"); else AnimationPlayer.Play("idle_right");
             }
-            if (animationVelocity.X <= -1 && _animationPlayer.CurrentAnimation != "walk_left")
+            if (animationVelocity.X <= -1 && AnimationPlayer.CurrentAnimation != "walk_left")
             {
-                if (!idle) _animationPlayer.Play("walk_left"); else _animationPlayer.Play("idle_left");
+                if (!idle) AnimationPlayer.Play("walk_left"); else AnimationPlayer.Play("idle_left");
             }
         }
-        _setLayerToWeapon(_animationPlayer.CurrentAnimation == "idle_up" || _animationPlayer.CurrentAnimation == "walk_up" ? false : true);
-        _trailParticles.Texture = _sprite.Texture;
+        _setLayerToWeapon(AnimationPlayer.CurrentAnimation == "idle_up" || AnimationPlayer.CurrentAnimation == "walk_up" ? false : true);
+        TrailParticles.Texture = Sprite.Texture;
     }
 }

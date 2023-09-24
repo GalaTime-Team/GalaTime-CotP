@@ -1,7 +1,4 @@
 using Godot;
-using System;
-using Galatime;
-using System.Security.Cryptography;
 
 namespace Galatime
 {
@@ -17,14 +14,6 @@ namespace Galatime
         private CharacterBody2D _kinematicBody;
         private Area2D _damageArea;
 
-        public BlueFireball() : base(
-            GD.Load("res://sprites/gui/abilities/ignis/blue_fire_ball.png") as Texture2D,
-            10,
-            2f,
-            new System.Collections.Generic.Dictionary<string, float>() { { "mana", 10 }, { "stamina", 5 } }
-        )
-        { }
-
         public override void _Ready()
         {
             _animationPlayer = GetNode<AnimationPlayer>("CharacterBody3D/AnimationPlayer");
@@ -39,23 +28,23 @@ namespace Galatime
             {
                 GalatimeElement element = GalatimeElement.Ignis;
                 float damageRotation = _kinematicBody.GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.hit(25, magicalAttack, element, DamageType.magical, 500, damageRotation);
+                entity.TakeDamage(25, magicalAttack, element, DamageType.magical, 500, damageRotation);
                 destroy();
             }
         }
 
-        public override async void execute(HumanoidCharacter p, float physicalAttack, float magicalAttack)
+        public override async void Execute(HumanoidCharacter p)
         {
-            Rotation = p.weapon.Rotation;
-            _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
+            Rotation = p.Weapon.Rotation;
+            _kinematicBody.GlobalPosition = p.Weapon.GlobalPosition;
 
-            if (p is Player player) player.cameraShakeAmount += 20;
+            if (p is Player player) player.CameraShakeAmount += 20;
             _velocity.X += 1;
 
             _animationPlayer.Play("intro");
-            _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, physicalAttack, magicalAttack);
+            _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, p.Stats[EntityStatType.PhysicalAttack].Value, p.Stats[EntityStatType.MagicalAttack].Value);
 
-            await ToSignal(GetTree().CreateTimer(duration), "timeout");
+            await ToSignal(GetTree().CreateTimer(Data.Duration), "timeout");
             destroy();
         }
 

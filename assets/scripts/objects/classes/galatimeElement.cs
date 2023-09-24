@@ -1,13 +1,20 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 
 namespace Galatime
 {
-    public partial class GalatimeElementDamageResult {
-        public float damage = 0;
-        public float multiplier = 1;
-        public string type = "equal";
+    public enum DamageDifferenceType {
+        equal,
+        plus,
+        minus,
+        heal
+    }   
+
+    public partial class GalatimeElementDamageResult
+    {
+        public float Damage = 0;
+        public float Multiplier = 1;
+        public DamageDifferenceType Type = DamageDifferenceType.equal;
     }
 
     public partial class GalatimeElement : Godot.Node
@@ -25,41 +32,39 @@ namespace Galatime
         public float staminaMultiplier = 1.0f;
         public float agilityMultiplier = 1.0f;
 
-        public Dictionary<string, float> DamageMultipliers = new Dictionary<string, float>();
-        
+        public Dictionary<string, float> DamageMultipliers = new();
+
         /// <summary>
         /// Gets damage in float from the source of the damage, depending on its element
         /// </summary>
-        public GalatimeElementDamageResult getReceivedDamage(GalatimeElement e, float amount) {
-            GalatimeElementDamageResult result = new GalatimeElementDamageResult();
-            if (!DamageMultipliers.ContainsKey(e.name)) {
+        public GalatimeElementDamageResult GetReceivedDamage(GalatimeElement e, float amount)
+        {
+            GalatimeElementDamageResult result = new();
+            if (!DamageMultipliers.ContainsKey(e.name))
+            {
                 GD.Print("No element is found, the standard multiplier will be used (1x)");
-                result.damage = amount;
+                result.Damage = amount;
                 return result;
             }
             float multiplier = (float)DamageMultipliers[e.name];
             float damage = amount * multiplier;
-            // GD.Print("Received element: " + e.name + ", Element: " + name + ". Multiplier: " + multiplier);
-            result.damage = damage;
-            if (multiplier == 1)
+            result.Damage = damage;
+            result.Type = multiplier switch
             {
-                result.type = "equal";
-            }
-            else if (multiplier > 1)
-            {
-                result.type = "plus";
-            }
-            else
-            {
-                result.type = "minus";
-            }
+                1 => DamageDifferenceType.equal,
+                > 1 => DamageDifferenceType.plus,
+                _ => DamageDifferenceType.minus,
+            };
+
             return result;
         }
 
         public static GalatimeElement operator +(GalatimeElement a, GalatimeElement b)
         {
-            var c = new GalatimeElement();
-            c.name = a.name + " + " + b.name;
+            var c = new GalatimeElement
+            {
+                name = a.name + " + " + b.name
+            };
             foreach (var elem in a.DamageMultipliers.Keys)
             {
                 c.DamageMultipliers[elem] = a.DamageMultipliers[elem];
@@ -83,14 +88,16 @@ namespace Galatime
         {
             get
             {
-                GalatimeElement e = new GalatimeElement();
-                e.name = "Ignis";
-                e.description = "This element has fiery abilities. Don't get burned!";
+                GalatimeElement e = new()
 
-                e.attackMagic = 1.25f;
-                e.defenseMagic = 1.25f;
-                e.manaMultiplier = 0.8f;
-                e.staminaMultiplier = 0.8f;
+                {
+                    name = "Ignis",
+                    description = "This element has fiery abilities. Don't get burned!",
+                    attackMagic = 1.25f,
+                    defenseMagic = 1.25f,
+                    manaMultiplier = 0.8f,
+                    staminaMultiplier = 0.8f
+                };
 
                 e.DamageMultipliers["Aqua"] = 2f;
                 e.DamageMultipliers["Caeli"] = 2f;
@@ -104,13 +111,14 @@ namespace Galatime
         {
             get
             {
-                GalatimeElement e = new GalatimeElement();
-                e.name = "Chaos";
-                e.description = "The element that forces destruction. A very destructive thing";
-
-                e.attackMagic = 0.75f;
-                e.staminaMultiplier = 1.25f;
-                e.agilityMultiplier = 0.75f;
+                GalatimeElement e = new()
+                {
+                    name = "Chaos",
+                    description = "The element that forces destruction. A very destructive thing",
+                    attackMagic = 0.75f,
+                    staminaMultiplier = 1.25f,
+                    agilityMultiplier = 0.75f
+                };
 
                 e.DamageMultipliers["Caeli"] = 0.5f;
                 e.DamageMultipliers["Lapis"] = 0.5f;
@@ -120,15 +128,19 @@ namespace Galatime
             }
         }
 
-        public static GalatimeElement Aqua {
-            get {
-                GalatimeElement e = new GalatimeElement();
-                e.name = "Aqua";
-                e.description = "This element has the power of water. Do not drown!";
+        public static GalatimeElement Aqua
+        {
+            get
+            {
+                GalatimeElement e = new()
+                {
+                    name = "Aqua",
+                    description = "This element has the power of water. Do not drown!",
 
-                e.attackMagic = 0.75f;
-                e.staminaMultiplier = 1.25f;
-                e.agilityMultiplier = 0.75f;
+                    attackMagic = 0.75f,
+                    staminaMultiplier = 1.25f,
+                    agilityMultiplier = 0.75f
+                };
 
                 e.DamageMultipliers["Chaos"] = 2f;
                 e.DamageMultipliers["Ignis"] = 0.75f;
@@ -136,6 +148,18 @@ namespace Galatime
                 e.DamageMultipliers["Naturaela"] = 2f;
                 return e;
             }
+        }
+
+        public static List<GalatimeElement> Elements = new() {
+            Ignis,
+            Chaos,
+            Aqua
+        };
+
+        public static GalatimeElement GetByName(string name)
+        {
+            foreach (GalatimeElement e in Elements) if (e.name == name) return e;
+            return null;
         }
     }
 }

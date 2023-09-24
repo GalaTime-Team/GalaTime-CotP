@@ -1,13 +1,12 @@
-using Galatime;
 using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Galatime 
+namespace Galatime
 {
-    public enum LearnedStatus 
-    { 
+    public enum LearnedStatus
+    {
         ok,
         noEnoughCurrency,
         noRequiredPath
@@ -15,49 +14,43 @@ namespace Galatime
 
     public partial class PlayerVariables : Node
     {
-        public int slots = 16;
-        public int abilitySlots = 3;
-        public int currentItem = -1;
+        public static int slots = 16;
+        public static int abilitySlots = 5;
+        public static int currentItem = -1;
         public static int currentSave = 1;
 
         private bool _isLoaded = false;
         public bool isLoaded
         {
-            get { return _isLoaded; } private set { _isLoaded = value; }
+            get { return _isLoaded; }
+            private set { _isLoaded = value; }
         }
 
-        public Godot.Collections.Dictionary inventory = new Godot.Collections.Dictionary();
-        public Godot.Collections.Dictionary abilities = new Godot.Collections.Dictionary();
+        public List<Item> inventory = new();
+        public List<AbilityData> abilities = new();
         public Godot.Collections.Array<string> learnedAbilities = new Godot.Collections.Array<string>();
         public Timer playtimeTimer;
 
-        [Signal] public delegate void items_changedEventHandler();
-        [Signal] public delegate void abilities_changedEventHandler();
-        [Signal] public delegate void ability_learnedEventHandler();
+        public Action OnItemsChanged;
+        public Action OnAbilitiesChanged;
+        public Action OnAbilityLearned;
 
         public delegate void onXpChangedEventHandler(float amount);
         public static event onXpChangedEventHandler onXpChanged;
 
-        [Signal] public delegate void onPlayerIsReadyEventHandler(Player instance);
-
-        private Player _player;
-        public Player Player { get; set; }
+        public Action<Player> OnPlayerIsReady;
+        public Player Player;
 
         public override void _Ready()
         {
-            for (int i = 0; i < slots; i++)
-            {
-                inventory.Add(i, new Godot.Collections.Dictionary());
-            }
-            EmitSignal("items_changed", inventory);
+            // Initializing the inventory and abilities
+            OnItemsChanged?.Invoke();
 
-            for (int i = 0; i < abilitySlots; i++)
-            {
-                abilities.Add(i, new Godot.Collections.Dictionary());
-            }
-            EmitSignal("abilities_changed", abilities);
+            for (int i = 0; i < slots; i++) inventory.Add(new());
+            for (int i = 0; i < abilitySlots; i++) abilities.Add(new());
+            OnAbilitiesChanged?.Invoke();
 
-            onPlayerIsReady += loadSave;
+            OnPlayerIsReady += loadSave;
         }
 
         public static void invokeXpChangedEvent(float xp)
@@ -67,19 +60,12 @@ namespace Galatime
 
         public void loadSave(Player instance)
         {
-            // if (isLoaded == true) return;
-
             try
             {
                 abilities.Clear();
                 for (int i = 0; i < abilitySlots; i++)
                 {
-                    abilities.Add(i, new Godot.Collections.Dictionary());
-                }
-                inventory.Clear();
-                for (int i = 0; i < slots; i++)
-                {
-                    inventory.Add(i, new Godot.Collections.Dictionary());
+                    abilities.Add(new());
                 }
                 learnedAbilities.Clear();
 
@@ -90,10 +76,13 @@ namespace Galatime
                 if (saveData.ContainsKey("equiped_abilities"))
                 {
                     Godot.Collections.Dictionary abilitiesUndeserialized = (Godot.Collections.Dictionary)saveData["equiped_abilities"];
-                    var abilitiesUnconverted = convertKeysToInt(abilitiesUndeserialized);
+                    // Converting keys to int, to be able to use them as indexes and loops through them
+                    var abilitiesUnconverted = ConvertKeysToInt(abilitiesUndeserialized);
+                    // Lopping through the saved abilities
                     for (int i = 0; i < abilitiesUnconverted.Count; i++)
                     {
                         var ability = (Godot.Collections.Dictionary)abilitiesUnconverted[i];
+                        // Checking if the save contains the ability by current index, then adding it
                         if (ability.ContainsKey("id")) abilities[i] = GalatimeGlobals.getAbilityById((string)ability["id"]);
                     }
                 }
@@ -101,14 +90,24 @@ namespace Galatime
                 if (saveData.ContainsKey("inventory"))
                 {
                     Godot.Collections.Dictionary inventoryUndeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
-                    var inventoryUnconverted = convertKeysToInt(inventoryUndeserialized);
+                    // Converting keys to int, to be able to use them as indexes and loops through them
+                    var inventoryUnconverted = ConvertKeysToInt(inventoryUndeserialized);
                     for (int i = 0; i < inventoryUnconverted.Count; i++)
                     {
+                        // Checking if the save contains the item by current index
+                        if (!inventoryUnconverted.ContainsKey(i)) { 
+                            // If not, we add empty item (space between items)
+                            inventory[i] = new Item();
+                            continue;
+                        }
+                        // Getting the item
                         var item = (Godot.Collections.Dictionary)inventoryUnconverted[i];
                         if (item.ContainsKey("id"))
                         {
+                            // Adding the item to the inventory
                             inventory[i] = GalatimeGlobals.getItemById((string)item["id"]);
-                            if (item.ContainsKey("quantity")) ((Godot.Collections.Dictionary)inventory[i])["quantity"] = (Single)item["quantity"];
+                            // Adding the quantity as well
+                            inventory[i].Quantity = (int)item["quantity"];
                         }
                     }
                 }
@@ -127,30 +126,40 @@ namespace Galatime
 
                 // playtimeTimer.Start();
 
-                // GD.Print($"LOADED: {abilities}");
-                GD.Print($"LOADED");
-
-                GD.Print("GUI IS " + GetInstanceId());
-
-                EmitSignal("items_changed");
-                EmitSignal("abilities_changed");
-                EmitSignal("ability_learned");
-
-                // isLoaded = true;
+                // Invoke the events to intalize the player and global variables
+                OnItemsChanged?.Invoke();
+                OnAbilitiesChanged?.Invoke();
+                OnAbilitiesChanged?.Invoke();
             }
             catch (Exception e)
             {
-                GD.PrintRich("Error when loading save: " + e.Message + e.Source + e.StackTrace);
+                GD.PrintRich("Error when loading save: ");
+                GD.PrintRich("Message: " + e.Message);
+                GD.PrintRich("Source: " + e.Source);
+                GD.PrintRich("Stack Trace: " + e.StackTrace);
+
+                if (e.InnerException != null)
+                {
+                    GD.PrintRich("Inner Exception Message: " + e.InnerException.Message);
+                    GD.PrintRich("Inner Exception Source: " + e.InnerException.Source);
+                    GD.PrintRich("Inner Exception Stack Trace: " + e.InnerException.StackTrace);
+                }
             }
         }
 
+        // I am not sure if this is the best way to do this. But it works. So I will leave it.
         public void setPlayerInstance(Player instance)
         {
             Player = instance;
-            EmitSignal("onPlayerIsReady", instance);
+            OnPlayerIsReady?.Invoke(Player);
         }
 
-        public Godot.Collections.Dictionary convertKeysToInt(Godot.Collections.Dictionary dict)
+        /// <summary>
+        /// Converts dictionary keys to int. Used to be able to use keys of the dictionary as indexes.
+        /// </summary>
+        /// <param name="dict">The dictionary to convert</param>
+        /// <returns>The converted dictionary</returns>
+        public Godot.Collections.Dictionary ConvertKeysToInt(Godot.Collections.Dictionary dict)
         {
             Godot.Collections.Dictionary newDict = new Godot.Collections.Dictionary();
             foreach (var key in dict.Keys)
@@ -176,16 +185,15 @@ namespace Galatime
         /// </summary>
         /// <param name="id">Needed stats to upgrade</param>
         /// <returns>Is the upgrading successful?</returns>
-
         public StatContainer.Status upgradeStat(EntityStatType id)
         {
             if (Player.Xp < 100) return StatContainer.Status.noEnough;
             if (Player.Stats[id].Value >= 150) return StatContainer.Status.maximum;
 
             Player.Stats[id].Value += 5;
-            if (id == EntityStatType.health)
+            if (id == EntityStatType.Health)
             {
-                Player.heal(5);
+                Player.Heal(5);
             }
 
             Player.Xp -= 100;
@@ -213,11 +221,11 @@ namespace Galatime
         /// </summary>
         /// <param name="abilityName">ID of the ability</param>
         /// <returns></returns>
-        public LearnedStatus learnAbility(Godot.Collections.Dictionary abilityData, bool test = false)
+        public LearnedStatus learnAbility(AbilityData abilityData, bool test = false)
         {
-            if (abilityData.ContainsKey("required"))
+            if (abilityData.RequiredIDs.Length >= 0)
             {
-                var required = (Godot.Collections.Array<string>)abilityData["required"];
+                var required = abilityData.RequiredIDs;
                 foreach (var req in required)
                 {
                     if (!abilityIsLearned(req))
@@ -227,87 +235,54 @@ namespace Galatime
                 }
             }
 
-            if (abilityData.ContainsKey("cost"))
+            var cost = abilityData.CostXP;
+            if (Player.Xp - cost <= 0)
             {
-                var cost = (Single)abilityData["cost"];
-                if (Player.Xp - cost <= 0)
-                {
-                    return LearnedStatus.noEnoughCurrency;
-                }
+                return LearnedStatus.noEnoughCurrency;
             }
 
             if (!test)
             {
-                Player.Xp -= (int)abilityData["cost"];
-                learnedAbilities.Add((string)abilityData["id"]);
-                EmitSignal(SignalName.ability_learned);
+                Player.Xp -= abilityData.CostXP;
+                learnedAbilities.Add(abilityData.ID);
+                OnAbilityLearned?.Invoke();
             }
 
             return LearnedStatus.ok;
         }
 
-        public bool isAbilityReloaded(int id)
-        {
-            if (Player == null)
-            {
-                GD.PrintErr("Сouldn't find a player, return false"); return false;
-            }
+        // public bool isAbilityReloaded(int id)
+        // {
+        //     if (Player == null)
+        //     {
+        //         GD.PrintErr("Сouldn't find a player, return false"); return false;
+        //     }
 
-            if (Player._abiltiesReloadTimes[id] <= 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-
-        public int getFreeSlot()
-        {
-            for (var i = 0; i < inventory.Count; i++)
-            {
-                if (((Godot.Collections.Dictionary)inventory[i]).Count == 0)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        public bool isStackable(Godot.Collections.Dictionary item)
-        {
-            return item.ContainsKey("stackable") && (bool)item["stackable"];
-        }
-
-        public string getItemType(Godot.Collections.Dictionary item)
-        {
-            if (item.ContainsKey("type"))
-            {
-                return (string)item["type"];
-            }
-            else
-            {
-                return "default";
-            }
-        }
+        //     if (Player._abiltiesReloadTimes[id] <= 0)
+        //     {
+        //         return true;
+        //     }
+        //     else
+        //     {
+        //         return false;
+        //     }
+        // }
 
         /// <summary> Add item to free slot in inventory </summary>
-        public void addItem(Godot.Collections.Dictionary item, int quantity)
+        public void addItem(Item item, int quantity)
         {
             // Go through all items
             for (var i = 0; i < inventory.Count; i++)
             {
                 // Getting an existing Item
-                var existedItem = (Godot.Collections.Dictionary)inventory[i];
-                if (isStackable(item))
+                var existedItem = inventory[i];
+                if (item.Stackable && existedItem.Stackable && !existedItem.IsEmpty)
                 {
                     // Check if there is a similar stackable item
-                    if (existedItem.Count != 0 && (string)existedItem["name"] == (string)item["name"])
+                    if (existedItem.ID == item.ID)
                     {
                         // Add quantity if find a similar item
-                        setQuantity(i, quantity);
+                        AddQuantity(i, quantity);
                         return;
                     }
                 }
@@ -319,17 +294,21 @@ namespace Galatime
             for (int i = 0; i < inventory.Count; i++)
             {
                 // Getting an existing Item
-                var existedItem = (Godot.Collections.Dictionary)inventory[i];
-                // Checking of existence
-                if (existedItem.Count == 0)
+                var existedItem = inventory[i];
+
+                // Check if there is a free slot
+                if (existedItem.IsEmpty)
                 {
                     // Prevent an item from being added to a weapon slot
-                    if (getItemType(item) == "default" && i == 0) continue;
-                    setItem(item, i);
-                    if (isStackable(item))
+                    if (item.Type != SlotType.WEAPON && i == 0) continue;
+
+                    // Check if it's stackable.
+                    if (item.Stackable)
                     {
-                        setQuantity(i, quantity);
+                        item.Quantity += quantity;
                     }
+                    // Add item
+                    setItem(item.Clone(), i);
                     return;
                 }
             }
@@ -340,14 +319,14 @@ namespace Galatime
         /// </summary>
         /// <param name="ability">JSON ability data</param>
         /// <param name="slot">Up to three slots</param>
-        public void setAbility(Godot.Collections.Dictionary ability, int slot)
+        public void setAbility(AbilityData ability, int slot)
         {
-            if (abilities.Count >= 4)
+            if (abilities.Count > abilitySlots)
             {
-                GD.Print("Can't set ability up to " + abilities.Count); return;
+                GD.Print("Can't set ability up to " + abilities.Count);
             }
             abilities[slot] = ability;
-            EmitSignal("abilities_changed");
+            OnAbilitiesChanged?.Invoke();
         }
 
         /// <summary>
@@ -355,56 +334,50 @@ namespace Galatime
         /// </summary>
         /// <param name="slot">Item slot to delete</param>
         /// <returns>Previous ability</returns>
-        public Godot.Collections.Dictionary removeAbility(int slot)
+        public AbilityData removeAbility(int slot)
         {
             // Get pervious item to return
-            Godot.Collections.Dictionary previousItem = new Godot.Collections.Dictionary();
-            if (abilities.ContainsKey(slot)) previousItem = (Godot.Collections.Dictionary)abilities[slot];
+            var previousItem = new AbilityData();
+            if (!abilities[slot].IsEmpty) previousItem = abilities[slot];
             // Remove item
-            abilities[slot] = new Godot.Collections.Dictionary();
+            abilities[slot] = new();
             // Send item_changed signal to GUI
-            EmitSignal("abilities_changed");
+            OnAbilitiesChanged?.Invoke();
             return previousItem;
         }
 
         /// <summary> Set inventory item to slot </summary>
-        public Godot.Collections.Dictionary setItem(Godot.Collections.Dictionary item, int slot)
+        public Item setItem(Item item, int slot)
         {
             // Get pervious item to return
-            Godot.Collections.Dictionary previousItem = new Godot.Collections.Dictionary();
-            if (inventory.ContainsKey(slot)) previousItem = (Godot.Collections.Dictionary)inventory[slot];
-            // Remove item
-            inventory.Remove(slot);
+            var previousItem = inventory[slot];
             // Set item
             inventory[slot] = item;
             currentItem = slot;
             // Send item_changed signal to GUI
-            EmitSignal("items_changed");
+            OnItemsChanged?.Invoke();
             return previousItem;
         }
 
         /// <summary> Remove inventory item from slot </summary>
-        public Godot.Collections.Dictionary removeItem(int slot)
+        public Item removeItem(int slot)
         {
             // Get pervious item to return
-            Godot.Collections.Dictionary previousItem = new Godot.Collections.Dictionary();
-            if (inventory.ContainsKey(slot)) previousItem = (Godot.Collections.Dictionary)inventory[slot];
+            var previousItem = inventory[slot];
             // Remove item
-            inventory[slot] = new Godot.Collections.Dictionary();
+            inventory[slot] = new Item();
             // Send item_changed signal to GUI
-            EmitSignal("items_changed");
+            OnItemsChanged?.Invoke();
             return previousItem;
         }
 
-        public void setQuantity(int slot, int amount)
+        public void AddQuantity(int slot, int amount)
         {
-            Godot.Collections.Dictionary item = (Godot.Collections.Dictionary)inventory[slot];
-            if (item.ContainsKey("quantity")) item["quantity"] = amount + (int)item["quantity"];
-            else item.Add("quantity", amount);
+            var item = inventory[slot];
+            item.Quantity += amount;
 
-            GD.Print("ITEM QUANTITY: " + item["quantity"]);
-            inventory[slot] = item;
-            EmitSignal("items_changed");
+            GD.Print("ITEM QUANTITY: " + item.Quantity);
+            OnItemsChanged?.Invoke();
         }
     }
 

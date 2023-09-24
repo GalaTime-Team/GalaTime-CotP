@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Text;
 
 namespace Galatime
 {
@@ -14,20 +15,16 @@ namespace Galatime
             descriptionNode = GetNode<RichTextLabel>("MarginContainer/VBoxContainer/Description");
         }
 
-        public void _display(Slot nodeItem)
+        public void Display(Slot nodeItem)
         {
-            var Item = nodeItem.GetChild(0);
-            var data = (Godot.Collections.Dictionary)Item.Get("data");
-            if (data != null && data.Count != 0)
+            var Item = nodeItem.GetChild(0) as ItemContainer;
+            var data = Item.Data;
+            if (!data.IsEmpty)
             {
-                nameNode.Text = data.ContainsKey("name") ? (string)data["name"] : "Undefined item";
-                descriptionNode.Text = "";
-                descriptionNode.Text = data.ContainsKey("description") ? (string)data["description"] : "What is that?";
-                if (data.ContainsKey("stats"))
-                {
-                    var stats = (Godot.Collections.Dictionary)data["stats"];
-                    descriptionNode.AppendText($"\n \nDamage: [color=yellow]{(Single)stats["damage"]}[/color]\nSwing speed: [color=yellow]{(Single)stats["swing_speed"] / 1000}s[/color]");
-                }
+                nameNode.Text = data.Name;
+                descriptionNode.Text = data.Description;
+                // var stats = (Godot.Collections.Dictionary)data["stats"];
+                // descriptionNode.AppendText($"\n \nDamage: [color=yellow]{(Single)stats["damage"]}[/color]\nSwing speed: [color=yellow]{(Single)stats["swing_speed"] / 1000}s[/color]");
                 Visible = true;
             }
             else
@@ -46,42 +43,33 @@ namespace Galatime
             }
         }
 
-        public void _display(Godot.Collections.Dictionary abilityId)
+        public void Display(AbilityData abilityId)
         {
             var ability = abilityId;
-            if (ability != null && ability.Count != 0)
-            {
-                nameNode.Text = ability.ContainsKey("name") ? (string)ability["name"] : "Undefined item";
-                descriptionNode.Text = ability.ContainsKey("description") ? (string)ability["description"] : "What is that?";
-                descriptionNode.Text += ability.ContainsKey("element") ? "\nElement: " + (string)ability["element"] : "Inanus";
-                if (ability.ContainsKey("power")) descriptionNode.AppendText("\n \nPower: [color=yellow]" + (Single)ability["power"] + "[/color]");
-                if (ability.ContainsKey("reload")) descriptionNode.AppendText("\nReload: [color=yellow]" + (Single)ability["reload"] + "s[/color]");
-                if (ability.ContainsKey("costs"))
-                {
-                    var costs = (Godot.Collections.Dictionary)ability["costs"];
-
-                    if (costs.ContainsKey("mana")) descriptionNode.AppendText("\n \nMana cost: [color=#ff6347]" + (Single)costs["mana"] + "[/color]");
-                    if (costs.ContainsKey("stamina")) descriptionNode.AppendText("\nStamina cost: [color=#ff6347]" + (Single)costs["stamina"] + "[/color]");
-                }
-                Visible = true;
-            }
-            else
-            {
-                Visible = false;
-            }
-            // nameNode.Text = ability.abilityName;
+            nameNode.Text = ability.Name;
+            descriptionNode.Text = ability.Description;
+            descriptionNode.Text += $"\nElement: {abilityId.Element.name}";
+            // if (ability.ContainsKey("power")) descriptionNode.AppendText("\n \nPower: [color=yellow]" + (Single)ability["power"] + "[/color]");
+            var sb = new StringBuilder();
+            sb.Append(ability.Reload > 0 ? $"\nCooldown: [color=yellow]{ability.Reload}s[/color]" : "");
+            sb.Append(" \n");
+            sb.Append(ability.Charges > 1 ? $"\n[color=green]+ Has {ability.Charges - 1} more charges[/color] ({ability.Charges})" : "");
+            sb.Append(ability.Costs.Mana > 0 ? $"\n[color=orangered]- Consumes {ability.Costs.Mana} mana[/color]" : "");
+            sb.Append(ability.Costs.Stamina > 0 ? $"\n[color=orangered]- Consumes {ability.Costs.Stamina} stamina[/color]" : "");
+            descriptionNode.AppendText(sb.ToString());
             Visible = true;
+            // nameNode.Text = ability.abilityName;
         }
 
-        public void _display(EntityStat stat)
+        public void Display(EntityStat stat)
         {
-            nameNode.Text = stat.name;
-            descriptionNode.ParseBbcode($"{stat.description}" +
+            nameNode.Text = stat.Name;
+            descriptionNode.ParseBbcode($"{stat.Description}" +
                 $"\n \n" +
                 $"After the upgrade you will get [color=yellow]{stat.Value + 5}[/color]" +
                 $"\n" +
                 $"Required [rainbow]XP[/rainbow] for upgrade the stat: [color=yellow]100[/color]");
-            
+
             Visible = true;
         }
 
@@ -94,7 +82,6 @@ namespace Galatime
         {
             if (Input.IsActionJustPressed("ui_cancel"))
             {
-                GD.Print("hide");
                 _hide();
             }
         }

@@ -1,7 +1,7 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=6 format=3]
 
-[ext_resource path="res://assets/scripts/objects/fade.cs" type="Script" id=1]
-[ext_resource path="res://sprites/tilesets/fade.png" type="Texture2D" id=13]
+[ext_resource type="Script" path="res://assets/scripts/objects/Fade.cs" id="1"]
+[ext_resource type="Texture2D" uid="uid://d3xo0x2cwp3rm" path="res://sprites/tilesets/fade.png" id="13"]
 
 [sub_resource type="Animation" id=1]
 length = 0.001

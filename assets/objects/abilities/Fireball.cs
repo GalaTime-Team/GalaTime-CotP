@@ -1,89 +1,62 @@
+using Galatime.Damage;
 using Godot;
-using System;
-using Galatime;
-using System.Security.Cryptography;
 
-namespace Galatime {
+namespace Galatime
+{
     public partial class Fireball : GalatimeAbility
     {
-        private Vector2 _velocity;
+        private AnimationPlayer AnimationPlayer;
+        private Projectile Projectile;
+        private Timer DurationTimer;
 
-        public float speed = 500;
-        public bool canMove = true;
-
-        private AnimationPlayer _animationPlayer;
-        private Sprite2D _sprite;
-        private CharacterBody2D _kinematicBody;
-        private Area2D _damageArea;
-
-        public Fireball() : base(
-            GD.Load("res://sprites/gui/abilities/ignis/fire_ball.png") as Texture2D,
-            5,
-            2f,
-            new System.Collections.Generic.Dictionary<string, float>() { { "mana", 10 } }
-        )
-        { }
-
+        private float PhysicalAttack = 0;
+        private float MagicalAttack = 0; 
+    
         public override void _Ready()
         {
-            _animationPlayer = GetNode<AnimationPlayer>("CharacterBody3D/AnimationPlayer");
-            _sprite = GetNode<Sprite2D>("CharacterBody3D/Sprite2D");
-            _kinematicBody = GetNode<CharacterBody2D>("CharacterBody3D");
-            _damageArea = GetNode<Area2D>("CharacterBody3D/DamageArea");
+            AnimationPlayer = GetNode<AnimationPlayer>("Projectile/AnimationPlayer");
+            Projectile = GetNode<Projectile>("Projectile");
+            DurationTimer = GetNode<Timer>("DurationTimer");
 
-            _animationPlayer.AnimationFinished += (StringName name) => animationFinished(name);
+            AnimationPlayer.AnimationFinished += AnimationFinished;
+
+            DurationTimer.WaitTime = Data.Duration;
         }
 
-        public void animationFinished(StringName name)
+        public void AnimationFinished(StringName name)
         {
-            if (name == "intro")
-            {
-                _animationPlayer.Play("loop");
-            }
+            if (name == "intro") AnimationPlayer.Play("loop");
         }
 
-        public void _bodyEntered(Node2D body, float physicalAttack, float magicalAttack)
+        public override void Execute(HumanoidCharacter p)
         {
-            if (body is Entity entity)
-            {
-                GalatimeElement element = GalatimeElement.Ignis;
-                float damageRotation = _kinematicBody.GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.hit(20, magicalAttack, element, DamageType.magical, 500, damageRotation);
-                destroy();
-            }
-        }
-
-        public override async void execute(HumanoidCharacter p, float physicalAttack, float magicalAttack)
-        {
+            PhysicalAttack = p.Stats[EntityStatType.PhysicalAttack].Value;
+            MagicalAttack = p.Stats[EntityStatType.MagicalAttack].Value;
+            
             var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
-            Rotation = p.weapon.Rotation;
-            _kinematicBody.GlobalPosition = p.weapon.GlobalPosition;
+            Projectile.Rotation = p.Weapon.Rotation;
+            Projectile.GlobalPosition = p.Weapon.GlobalPosition;
+            Projectile.AttackStat = MagicalAttack;
+            Projectile.Power = 20;
+            Projectile.Accuracy = 0.01f;
+            Projectile.PiercingTimes = 0;
+            Projectile.Explosive = true;
 
-            _velocity.X += 1;
-            if (playerVariables.Player is Player player) player.cameraShakeAmount += 10;
+            Projectile.Explosion.Power = 8;
+            
+            Projectile.Duration = Data.Duration;
+            Projectile.Exploded += Destroy;
 
-            _animationPlayer.Play("intro");
-            _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, physicalAttack, magicalAttack);
+            if (playerVariables.Player is Player player) player.CameraShakeAmount += 10;
 
-            await ToSignal(GetTree().CreateTimer(duration), "timeout");
-            destroy();
+            AnimationPlayer.Play("intro");
+            DurationTimer.Start();
         }
 
-        public void destroy()
+        public void Destroy(Projectile projectile = null)
         {
-            canMove = false;
-            _animationPlayer.Play("outro");
-        }
-
-        public override void _PhysicsProcess(double delta)
-        {
-            if (canMove)
-            {
-                if (_kinematicBody.IsOnWall()) destroy();
-                _kinematicBody.Velocity = _velocity.Rotated(Rotation) * speed;
-                _kinematicBody.MoveAndSlide();
-            }
+            AnimationPlayer.Play("outro");
         }
     }
 }

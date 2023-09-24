@@ -1,106 +1,93 @@
 using Godot;
-using System;
 
 namespace Galatime
 {
     public partial class ItemPickup : CharacterBody2D
     {
+        #region Exports
+        /// <summary> Spawn velocity of the item pickup, which is used to move the item when spawned. </summary>
+        [Export] public Vector2 SpawnVelocity;
+        /// <summary> The item's id, which is used to get the item. </summary>
+        [Export] public string ItemId;
+        /// <summary> The item's quantity of the item pickup. </summary>
+        [Export] public int Quantity = 1;
+        #endregion
+
+        #region Variables
         public Vector2 velocity = Vector2.Zero;
+        public Item Item;
+        #endregion
 
-        [Export] public Vector2 spawnVelocity;
-        [Export] public string itemId;
-        [Export] public int quantity = 1;
+        #region Nodes
+        public AnimationPlayer AnimationPlayer;
+        public ItemContainer ItemContainer1;
+        public ItemContainer ItemContainer2;
+        public ItemContainer ItemContainer3;
+        public GpuParticles2D Particles;
+        public Area2D PickupArea;
+        #endregion
 
-        public Godot.Collections.Dictionary item;
-
-        public AnimationPlayer animationPlayer;
-        public Sprite2D sprite;
-        public Sprite2D sprite2;
-        public Sprite2D sprite3;
-        public GpuParticles2D particles;
-        public Area2D pickupArea;
-
-        private Player _playerNode;
-
-        public async override void _Ready()
+        public override void _Ready()
         {
-            animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
-            sprite = GetNode<Sprite2D>("Sprite2D");
-            sprite2 = GetNode<Sprite2D>("Sprite2");
-            sprite3 = GetNode<Sprite2D>("Sprite3");
-            particles = GetNode<GpuParticles2D>("Particles");
-            pickupArea = GetNode<Area2D>("PickupArea");
+            #region Get nodes
+            AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+            ItemContainer1 = GetNode<ItemContainer>("Item1");
+            ItemContainer2 = GetNode<ItemContainer>("Item2");
+            ItemContainer3 = GetNode<ItemContainer>("Item3");
+            Particles = GetNode<GpuParticles2D>("Particles");
+            PickupArea = GetNode<Area2D>("PickupArea");
+            #endregion
 
-            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            _playerNode = playerVariables.Player;
+            PickupArea.BodyEntered += (Node2D node) => _onEntered(node);
 
-            pickupArea.BodyEntered += (Node2D node) => _onEntered(node);
-
-            DisplayItem(itemId);
-            velocity = spawnVelocity;   
-            // animationPlayer.Play("idle");
-
-            // Random rnd = new Random();
-            // RotationDegrees = rnd.Next(0, 360);
+            DisplayItem(ItemId);
+            velocity = SpawnVelocity;
         }
 
         public void _onEntered(Node2D node)
         {
-            GD.Print(node);
             if (node is Player)
             {
-                GetNode<PlayerVariables>("/root/PlayerVariables").addItem(item, quantity);
+                GetNode<PlayerVariables>("/root/PlayerVariables").addItem(Item, Quantity);
                 QueueFree();
             }
         }
 
         public void DisplayItem(string id)
         {
-            item = GalatimeGlobals.getItemById(id);
-            Godot.Collections.Dictionary ItemAssets = (Godot.Collections.Dictionary)item["assets"];
-            string icon = (string)ItemAssets["icon"];
-            GD.Print("res://sprites/" + icon);
-            if (item != null)
+            Item = GalatimeGlobals.getItemById(id);
+            ItemContainer1.DisplayItem(Item);
+            if (Quantity >= 2 && Quantity < 5)
             {
-                var itemTexture = GD.Load<Texture2D>("res://sprites/" + icon);
-                sprite.Texture = itemTexture;
-                GD.Print("item quantity pickup" + quantity);
-                if (quantity >= 2)
-                {
-                    var spriteNewPosition = new Vector2();
-                    spriteNewPosition.Y = -6;
-                    sprite.Position = spriteNewPosition;
-                    var sprite2NewPosition = new Vector2();
-                    sprite2NewPosition.Y = 6;
-                    sprite2.Position = sprite2NewPosition;
-                    sprite2.Texture = itemTexture;
-                    sprite2.Visible = true;
-                }
-                if (quantity >= 5)
-                {
-                    var sprite2NewPosition = new Vector2();
-                    sprite2NewPosition.Y = 6;
-                    sprite2NewPosition.X = -6;
-                    sprite2.Position = sprite2NewPosition;
-                    var sprite3NewPosition = new Vector2();
-                    sprite3NewPosition.Y = 6;
-                    sprite3NewPosition.X = 6;
-                    sprite3.Position = sprite3NewPosition;
-                    sprite3.Texture = itemTexture;
-                    sprite3.Visible = true;
-                }
+                UpdateItemContainerPosition(ItemContainer1, -6);
+                UpdateItemContainerPosition(ItemContainer2, 6);
+                ItemContainer2.DisplayItem(Item);
+                ItemContainer2.Visible = true;
             }
-            else
+            if (Quantity >= 5)
             {
-                sprite.Texture = null;
+                UpdateItemContainerPosition(ItemContainer1, -6);
+                UpdateItemContainerPosition(ItemContainer2, 6, -6);
+                UpdateItemContainerPosition(ItemContainer3, 6, 6);
+                ItemContainer2.DisplayItem(Item);
+                ItemContainer2.Visible = true;
+                ItemContainer3.DisplayItem(Item);
+                ItemContainer3.Visible = true;
             }
+        }
+        
+        private void UpdateItemContainerPosition(ItemContainer container, int deltaY = 0, int deltaX = 0)
+        {
+            var newPosition = container.Position;
+            newPosition.Y += deltaY;
+            newPosition.X += deltaX;
+            container.Position = newPosition;
         }
 
         public override void _PhysicsProcess(double delta)
         {
             velocity = velocity.Lerp(Vector2.Zero, 0.02f);
-            particles.Emitting = velocity.Length() <= 10 ? false : true;
-            //RotationDegrees += velocity.Length() / 10;
+            Particles.Emitting = velocity.Length() > 10;
             Velocity = velocity;
             MoveAndSlide();
         }

@@ -1,6 +1,4 @@
-using Galatime;
 using Godot;
-using System;
 
 public partial class SpawnerTest : Marker2D
 {
@@ -17,6 +15,5 @@ public partial class SpawnerTest : Marker2D
         var slimeNode = slimeScene.Instantiate<Slime>();
         slimeNode.GlobalPosition = GlobalPosition;
         GetParent().AddChild(slimeNode);
-        GD.PrintRich("TEST SPAWNER: [color=green]Spawned![/color]");
     }
 }

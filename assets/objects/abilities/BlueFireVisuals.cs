@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-namespace Galatime 
+namespace Galatime
 {
     public partial class BlueFireVisuals : CharacterBody2D
     {

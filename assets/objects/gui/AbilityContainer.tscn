@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dmv8le1k6gs1a" path="res://sprites/gui/abilities/reload.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://c4fl8450ftk26" path="res://sprites/gui/abilities/empty.png" id="2"]
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="2_rb068"]
-[ext_resource type="Script" path="res://assets/objects/gui/AbilityContainer.cs" id="4"]
+[ext_resource type="Script" path="res://assets/scripts/AbilityContainer.cs" id="4"]
 [ext_resource type="AudioStream" uid="uid://c527l6tkxg5se" path="res://assets/audios/sounds/abilityno.mp3" id="5"]
 [ext_resource type="AudioStream" uid="uid://f6cl2y4ni7b5" path="res://assets/audios/sounds/shatter.wav" id="6"]
 
@@ -14,7 +14,7 @@ step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/path = NodePath("ReloadProgressBar:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -44,7 +44,7 @@ resource_name = "no"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/path = NodePath("ReloadProgressBar:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -93,7 +93,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("4")
 
-[node name="Label" type="Label" parent="."]
+[node name="ReloadLabel" type="Label" parent="."]
 layout_mode = 2
 offset_left = -16.0
 offset_top = -12.0
@@ -105,7 +105,7 @@ theme_override_fonts/font = ExtResource("2_rb068")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Sprite2D" type="TextureProgressBar" parent="."]
+[node name="ReloadProgressBar" type="TextureProgressBar" parent="."]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 offset_top = 16.0
@@ -128,4 +128,18 @@ libraries = {
 }
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-bus = &"Sounds"
+
+[node name="ChargesContainer" type="Control" parent="."]
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="ChargesLabel" type="Label" parent="ChargesContainer"]
+layout_mode = 2
+offset_top = 16.0
+offset_right = 16.0
+offset_bottom = 32.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("2_rb068")
+horizontal_alignment = 2
+vertical_alignment = 2
