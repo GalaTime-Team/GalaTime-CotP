@@ -18,6 +18,7 @@ mono_crash.*.json
 assets/diagrams/
 .vs/
 .vscode/
+.idea/
 Builds/
 GPSDK/
 Properties/launchSettings.json
