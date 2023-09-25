@@ -39,9 +39,10 @@ namespace Galatime
             Projectile.GlobalPosition = p.Weapon.GlobalPosition;
             Projectile.AttackStat = MagicalAttack;
             Projectile.Power = 20;
-            Projectile.Accuracy = 0.01f;
+            Projectile.Accuracy = 0.03f;
             Projectile.PiercingTimes = 0;
             Projectile.Explosive = true;
+            // Projectile.TargetController.TargetOverride = p;
 
             Projectile.Explosion.Power = 8;
             

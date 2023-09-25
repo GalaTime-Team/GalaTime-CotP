@@ -28,6 +28,9 @@ public partial class TargetController : Node2D {
 
     public Node2D CurrentTarget = null;
 
+    /// <summary> Overrides the target of the target. Mostly used for testing. </summary>
+    public Node2D TargetOverride = null;
+
     public string GetTeamNameByEnum(Teams team) {
         return TeamNames[team];
     }
@@ -38,6 +41,12 @@ public partial class TargetController : Node2D {
 
     public override void _Process(double delta) {
         Entity enemy = null;
+
+        if (TargetOverride != null) { 
+            enemy = TargetOverride as Entity;
+            CurrentTarget = enemy;
+            return;
+        }
 
         // Get all enemies in the scene of the target team.
         var enemies = GetTree().GetNodesInGroup(TargetTeamString);

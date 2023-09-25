@@ -148,7 +148,7 @@ namespace Galatime
             CameraShakeAmount = Mathf.Lerp(CameraShakeAmount, 0, 0.05f);
         }
 
-        public override void _HealthChangedEvent(float health)
+        public override void HealthChangedEvent(float health)
         {
             PlayerGui.OnHealthChanged(health);
         }

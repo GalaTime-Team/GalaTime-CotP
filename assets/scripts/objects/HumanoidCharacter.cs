@@ -147,6 +147,7 @@ public partial class HumanoidCharacter : Entity
 
     protected void _regenStamina()
     {
+        Heal(5);
         stamina += 10;
         stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.Stamina].Value);
         // EmitSignal("on_stamina_changed", stamina);

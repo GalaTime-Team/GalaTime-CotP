@@ -37,11 +37,6 @@ namespace Galatime
             var rotation = p.Weapon.Rotation;
             var position = p.Weapon.GlobalPosition;
 
-            var binds = new Godot.Collections.Array();
-            binds.Add(physicalAttack);
-            binds.Add(magicalAttack);
-            binds.Add(sprite);
-
             shotTimer.Timeout += () => _onTimeoutShot(physicalAttack, magicalAttack, sprite);
             AddChild(shotTimer);
             shotTimer.Start();

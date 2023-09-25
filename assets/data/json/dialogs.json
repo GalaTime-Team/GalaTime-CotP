@@ -19,14 +19,14 @@
 		{"text": "It all looks very unfinished right now", "character": "rafael", "emotion": "sweating"},
 		{"text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]", "character": "rafael", "emotion": "netrual"},
 		{"text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]", "character": "rafael", "emotion": "netrual"},
-		{"text": "Use keys [color=fuchsia]1-3[/color] or [color=fuchsia]Q, E, R[/color] to use [color=yellow]abilities[/color] and abbilities should be equiped", "character": "rafael", "emotion": "netrual"},
+		{"text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped", "character": "rafael", "emotion": "netrual"},
 		{"text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]", "character": "rafael", "emotion": "netrual"},
 		{"text": "Soon the slimes will appear and you have to [color=red]eliminate[/color] them!", "character": "rafael", "emotion": "netrual"},
 		{"text": "Enjoy the game!", "character": "rafael", "emotion": "ready"},	
 		{"actions": ["toggleMove"]}
 	],
 	"test_1": [ 
-		{"text": "Did I missed something?", "character": "rafael", "emotion": "angry"}, 
+		{"text": "Did I missed something?", "character": "rafael", "emotion": "angry"} 
 	],
 	"test_2": [
 		{"text": "It's a bookshelf", "character": "arthur", "emotion": "netrual", "actions": ["toggleMove"]}, 
@@ -43,5 +43,5 @@
 		{"text": "I can already see your first enemy!", "character": "rafael", "emotion": "surprised", "actions": ["setCameraOffset", "200", "0"]},
 		{"text": "I'm ready!", "character": "arthur", "emotion": "netrual", "actions": ["setCameraOffset", "0", "0"]},
 		{"actions": ["toggleMove"]}
-	],
+	]
 }

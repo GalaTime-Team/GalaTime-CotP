@@ -103,6 +103,11 @@ public partial class ValueBar : Control
         InitTransientProgressBar();
     }
 
+    public override void _ExitTree()
+    {
+        TransientTimer.Timeout -= StartTransientProgressBarEffect;
+    }
+
     private void InitTransientProgressBar()
     {
         // Load transient texture.

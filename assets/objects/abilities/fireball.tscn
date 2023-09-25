@@ -1,7 +1,8 @@
-[gd_scene load_steps=35 format=3 uid="uid://bybqhr0y3qgmy"]
+[gd_scene load_steps=38 format=3 uid="uid://bybqhr0y3qgmy"]
 
 [ext_resource type="Texture2D" uid="uid://cn4dyjlfja0qu" path="res://sprites/abilities/fireball/2.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://bayxi1ryv0i57" path="res://sprites/abilities/fireball/26.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://sprites/particles/fire/fire.png" id="2_dxy86"]
 [ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="2_t52am"]
 [ext_resource type="Texture2D" uid="uid://cji3ks3g1hi8r" path="res://sprites/abilities/fireball/0.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://bsa4fpwfxje4r" path="res://sprites/abilities/fireball/13.png" id="4"]
@@ -29,6 +30,24 @@
 [ext_resource type="Texture2D" uid="uid://jjowb0np2qbn" path="res://sprites/abilities/fireball/11.png" id="27"]
 [ext_resource type="Texture2D" uid="uid://c0iqum84tirlq" path="res://sprites/abilities/fireball/5.png" id="28"]
 [ext_resource type="Texture2D" uid="uid://6gkcrim0ckcl" path="res://sprites/abilities/fireball/10.png" id="29"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_crpnl"]
+particles_animation = true
+particles_anim_h_frames = 6
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kw371"]
+emission_shape = 1
+emission_sphere_radius = 32.0
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+scale_min = 4.0
+scale_max = 4.0
+anim_speed_min = 1.0
+anim_speed_max = 2.0
 
 [sub_resource type="Animation" id="Animation_j0hfu"]
 length = 0.001
@@ -167,6 +186,18 @@ tracks/3/keys = {
 "update": 1,
 "values": [true, false]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Projectile/Particles:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_qg0a2"]
 _data = {
@@ -184,10 +215,17 @@ one_shot = true
 
 [node name="Projectile" parent="." instance=ExtResource("2_t52am")]
 collision_layer = 8
+metadata/_edit_lock_ = true
+
+[node name="Particles" type="GPUParticles2D" parent="Projectile"]
+material = SubResource("CanvasItemMaterial_crpnl")
+position = Vector2(-16, 0)
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_kw371")
+texture = ExtResource("2_dxy86")
 
 [node name="Sprite" type="Sprite2D" parent="Projectile"]
-position = Vector2(0, 8)
-scale = Vector2(6, 6)
+scale = Vector2(4, 4)
 texture = ExtResource("24")
 flip_h = true
 

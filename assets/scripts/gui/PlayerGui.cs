@@ -65,11 +65,6 @@ namespace Galatime
             StaminaValueBar = GetNode<ValueBar>("StaminaValueBar");
             ManaValueBar = GetNode<ValueBar>("ManaValueBar");
 
-            // Text Stats
-            StaminaLabel = GetNode<Godot.Label>("StaminaLabel");
-            ManaLabel = GetNode<Godot.Label>("ManaLabel");
-            TextStats = GetNode<RichTextLabel>("PauseContainer/Stats");
-
             VersionText = GetNode<Godot.Label>("Version");
             DodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
 

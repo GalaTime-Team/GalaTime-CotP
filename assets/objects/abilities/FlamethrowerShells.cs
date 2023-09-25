@@ -11,14 +11,12 @@ namespace Galatime
         public bool canMove = true;
 
         private AnimationPlayer _animationPlayer;
-        private Sprite2D _sprite;
         private CharacterBody2D _kinematicBody;
         private Area2D _damageArea;
 
-        public override async void _Ready()
+        public override void _Ready()
         {
             _animationPlayer = GetNode<AnimationPlayer>("CharacterBody3D/AnimationPlayer");
-            _sprite = GetNode<Sprite2D>("CharacterBody3D/Sprite2D");
             _kinematicBody = GetNode<CharacterBody2D>("CharacterBody3D");
             _damageArea = GetNode<Area2D>("CharacterBody3D/DamageArea");
         }

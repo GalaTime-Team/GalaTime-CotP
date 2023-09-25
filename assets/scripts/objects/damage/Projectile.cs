@@ -39,8 +39,6 @@ public partial class Projectile : CharacterBody2D
     /// <summary> Target team to deal damage. Don't confuse with friendly fire, because this target to deal damage. Can be "allies" or "enemies". </summary>
     [Export] public Teams TargetTeam = Teams.enemies;
 
-    public CharacterBody2D FriendlyBody { get; set; }
-
     /// <summary> 
     /// The parameter that affects how well the projectile aims at the target, from 0 to 1.
     /// A higher value means more accurate aiming, a lower value means more random deviation.
@@ -95,7 +93,7 @@ public partial class Projectile : CharacterBody2D
     {
         TargetController.TargetTeam = TargetTeam;
         // If the target is not null, rotate the projectile towards it
-        if (TargetController.CurrentTarget != null)
+        if (TargetController.CurrentTarget != null && Moving)
         {
             // Get the target's angle from 0 to 360 and adding 360 to move the projectile towards the target
             var targetAngle = GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition) + Mathf.DegToRad(360);
@@ -109,7 +107,7 @@ public partial class Projectile : CharacterBody2D
 
     private void OnDamageAreaBodyEntered(Node node)
     {
-        if (node is Entity entity && entity.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam)) && Moving) {
+        if (node is Entity entity && !entity.DeathState && entity.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam)) && Moving) {
             var damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
             if (!Explosive) entity.TakeDamage(Power, AttackStat, Element, DamageType.magical, 500, damageRotation);
 
@@ -133,7 +131,7 @@ public partial class Projectile : CharacterBody2D
         if (Explosive) {
             // Explosion.TopLevel = true; 
             // Explosion.GlobalPosition = GlobalPosition;
-            CallDeferred("AddChildDefered", Explosion);
+            CallDeferred("AddChildDeferred", Explosion);
         }
         Moving = false;
         // DurationTimer.Stop();
@@ -141,7 +139,7 @@ public partial class Projectile : CharacterBody2D
         Exploded?.Invoke(this);
     }
 
-    public void AddChildDefered(Node2D node) {
+    public void AddChildDeferred(Node2D node) {
         AddChild(node);
     }
 }

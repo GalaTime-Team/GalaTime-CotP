@@ -45,7 +45,7 @@ namespace Galatime
                 health = value;
                 health = Math.Min(Stats[EntityStatType.Health].Value, health);
                 health = (float)Math.Round(health, 2);
-                _HealthChangedEvent(health);
+                HealthChangedEvent(health);
             }
         }
         #endregion
@@ -104,13 +104,13 @@ namespace Galatime
             if (type == DamageType.physical) damageN = damageMultiplier / Stats[EntityStatType.PhysicalDefense].Value;
             if (type == DamageType.magical) damageN = damageMultiplier / Stats[EntityStatType.MagicalDefense].Value;
 
-            // Calculating weaknesess
+            // Calculating weaknesses
             GalatimeElementDamageResult damageResult = new();
             if (Element == null) GD.PushWarning("Entity doesn't have a element, default multiplier (1x)");
             else
             {
                 damageResult = Element.GetReceivedDamage(element, damageN);
-                damageN = Mathf.Round(damageResult.Damage);
+                damageN = (float)Math.Round(damageResult.Damage, 1);
                 // if (type == DamageType.magical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.magicalDefence.value + " RECEIVER MAGICAL DEFENCE.");
                 // if (type == DamageType.physical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.physicalDefence.value + " RECEIVER PHYSICAL DEFENCE.");
             }
@@ -195,7 +195,7 @@ namespace Galatime
         }
 
         /// <summary> If entity changed his health </summary>
-        public virtual void _HealthChangedEvent(float health)
+        public virtual void HealthChangedEvent(float health)
         {
         }
 
