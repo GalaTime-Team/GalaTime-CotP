@@ -1,75 +1,65 @@
 using Galatime;
+using Galatime.Interfaces;
 using Godot;
 using System;
-public partial class GoldenHolderSword : Area2D
-{
-    private AnimationPlayer _animation;
-    private AudioStreamPlayer2D _audio;
-    private float countdown = 0.5f;
-    private bool canAttack = true;
-    private bool isAttacking = false;
-    private bool _swungBit = true;
 
-    private float _physicalAttack;
+public partial class GoldenHolderSword : Area2D, IWeapon
+{
+    private HumanoidCharacter CurrentHumanoidCharacter;
+    private AnimationPlayer AnimationPlayer;
+    private bool CanAttack = true;
+
+    public float Power { get; set; } = 1f;
+    public float Cooldown { get; set; } = 1f;
+
+    private float PhysicalAttack;
 
     public override void _Ready()
     {
-        _animation = GetNode<AnimationPlayer>("WeaponAnimationPlayer");
-        _audio = GetNode<AudioStreamPlayer2D>("SwingSoundPlayer");
-
-        // Connect event
-        // Connect("body_entered",new Callable(this,"_on_body_entered"));
+        AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
     }
 
-    public async void attack(float physicalAttack, float magicalAttack)
+    public void Attack(HumanoidCharacter p)
     {
-        _physicalAttack = physicalAttack;
-        if (canAttack)
+        CurrentHumanoidCharacter = p;
+
+        PhysicalAttack = p.Stats[EntityStatType.PhysicalAttack].Value;
+        if (CanAttack)
         {
-            var rand = new Random();
-            _audio.PitchScale = (float)(rand.NextDouble() * (1.1 - 0.9) + 0.9);
-            _audio.Play();
+            p.State = HumanoidStates.Attack;
+            p.CanMove = false;
 
-            // Play animation
-            _animation.Stop();
-            _animation.Play(_swungBit ? "swing" : "swing_inverted");
-            _swungBit = !_swungBit;
+            // Play animation.
+            AnimationPlayer.Stop();
+            AnimationPlayer.Play("swing");
 
-            // Delay for disable collision and countdown
-            SceneTree tree = GetTree();
-            tree.CreateTimer(countdown).Connect("timeout", new Callable(this, "_resetCountdown"));
+            // Delay before attacking again.
+            CanAttack = false;
 
-            // Reset collision
-            tree.CreateTimer(0.05f).Connect("timeout", new Callable(this, "_resetCollision"));
+            // Create a delay between attacks.
+            GetTree().CreateTimer(Cooldown).Timeout += () => {
+                p.State = HumanoidStates.Idle;
+                p.CanMove = true;
 
-            canAttack = false;
-
-            // Enable collision
-            await ToSignal(GetTree().CreateTimer(0.1f), "timeout");
-            isAttacking = true;
-            // SetCollisionMaskValue(2, true);
+                CanAttack = true;
+            };
         }
     }
 
-    public override void _PhysicsProcess(double delta)
-    {
+    public void DealDamage() {
         var bodies = GetOverlappingBodies();
-        if (isAttacking)
+        for (int i = 0; i < bodies.Count; i++)
         {
-            for (int i = 0; i < bodies.Count; i++)
+            if (bodies[i] is Projectile projectile && projectile.TargetTeam == Galatime.Helpers.Teams.allies && projectile.Moving) Parry(projectile);
+            if (bodies[i] is Entity entity)
             {
-                if (bodies[i] is Projectile projectile && projectile.TargetTeam == Galatime.Helpers.Teams.allies && projectile.Moving) Parry(projectile);
-                if (bodies[i] is Entity entity)
-                {
-                    GalatimeElement element = new();
-                    float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                    entity.TakeDamage(10, _physicalAttack, element, DamageType.physical, 500, damageRotation);
-                }
+                GalatimeElement element = new();
+                float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
+                entity.TakeDamage(10, PhysicalAttack, element, DamageType.physical, 500, damageRotation);
             }
-            isAttacking = false;
         }
     }
-
+    
     public void Parry(Projectile projectile) {
         projectile.Rotation = GlobalRotation;
         projectile.Accuracy = 0f;
@@ -79,16 +69,5 @@ public partial class GoldenHolderSword : Area2D
         projectile.Explosive = true;
     }
 
-    public void _resetCollision()
-    {
-        isAttacking = false;
-        //SetCollisionMaskValue(2, false);
-    }
-
-    public void _resetCountdown()
-    {
-        canAttack = true;
-        isAttacking = false;
-        //SetCollisionMaskValue(2, false);
-    }
+    public void StepForwardAnimation(float step) => CurrentHumanoidCharacter?.SetKnockback(step, CurrentHumanoidCharacter.Weapon.Rotation);
 }

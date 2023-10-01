@@ -124,13 +124,12 @@ public partial class TestCharacter : HumanoidCharacter
                 {
                     var rotation = Body.GlobalPosition.AngleToPoint(currentEnemy.GlobalPosition);
                     Weapon.Rotation = rotation;
-                    Weapon.Attack(Stats[EntityStatType.PhysicalAttack].Value, Stats[EntityStatType.MagicalAttack].Value);
+                    Weapon.Attack(this);
                 }
             }
-            velocity = vectorPath;
-            Body.Velocity = velocity.Normalized() * Speed;
+            Body.Velocity = vectorPath.Normalized() * Speed;
             MoveAndSlide();
-            _SetAnimation((Vector2.Right.Rotated(pathRotation) * 2).Round(), vectorPath.Length() == 0 ? true : false);
+            // _SetAnimation((Vector2.Right.Rotated(pathRotation) * 2).Round(), vectorPath.Length() == 0 ? true : false);
         }
         else
         {
@@ -172,9 +171,8 @@ public partial class TestCharacter : HumanoidCharacter
             if (moveDelay.TimeLeft == 0) moveDelay.Start();
         }
         vectorPath = moveDelay.TimeLeft > 0 ? vectorPath : Vector2.Zero;
-        velocity = vectorPath;
-        Body.Velocity = velocity.Normalized() * Speed;
+        Body.Velocity = vectorPath.Normalized() * Speed;
         MoveAndSlide();
-        _SetAnimation((Vector2.Right.Rotated(pathRotation) * 2).Round(), vectorPath.Length() == 0 ? true : false);
+        // _SetAnimation((Vector2.Right.Rotated(pathRotation) * 2).Round(), vectorPath.Length() == 0 ? true : false);
     }
 }

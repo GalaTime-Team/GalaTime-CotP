@@ -386,7 +386,6 @@ patch_margin_bottom = 5
 script = ExtResource("15")
 
 [node name="CharacterPortrait" type="TextureRect" parent="DialogBox"]
-visible = false
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 0
 offset_left = -24.0

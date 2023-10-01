@@ -8,7 +8,6 @@ namespace Galatime
     {
         #region Variables
         [Export] public float Speed = 200f;
-        public Vector2 velocity = Vector2.Zero;
         public EntityStats Stats = new();
         public List<dynamic> LootPool = new();
         public int DroppedXp;
@@ -148,7 +147,7 @@ namespace Galatime
                 Body.AddChild(damageSpritePlayerInstance);
 
                 // We apply red effect to animation track and set its path.
-                Animation damageAnimation = damageSpritePlayerInstance.GetAnimation("damage");
+                Godot.Animation damageAnimation = damageSpritePlayerInstance.GetAnimation("damage");
                 damageAnimation.TrackSetPath(0, "Sprite2D:modulate");
             }
 
@@ -176,15 +175,14 @@ namespace Galatime
         {
             _MoveProcess();
             KnockbackVelocity = KnockbackVelocity.Lerp(Vector2.Zero, 0.05f);
-            velocity += KnockbackVelocity;
-            Velocity = velocity;
+            Velocity += KnockbackVelocity;
             MoveAndSlide();
         }
 
         /// <summary> Physics process for entity's </summary>
         public virtual void _MoveProcess()
         {
-            velocity = Vector2.Zero;
+            Velocity = Vector2.Zero;
         }
 
         /// <summary> If entity dies event </summary>

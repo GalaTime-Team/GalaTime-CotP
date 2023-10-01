@@ -30,13 +30,7 @@ namespace Galatime
         // Nodes
         private Camera2D Camera;
         private PlayerVariables PlayerVariables;
-
-        // Signals
-        [Signal] public delegate void on_pauseEventHandler(bool visible);
-        [Signal] public delegate void healthChangedEventHandler(float health);
-        [Signal] public delegate void on_interactEventHandler();
-        [Signal] public delegate void on_dialog_endEventHandler();
-        [Signal] public delegate void reloadDodgeEventHandler();
+        private HumanoidDoll HumanoidDoll;
 
         public override void _Ready()
         {
@@ -53,6 +47,8 @@ namespace Galatime
 
             Sprite = GetNode<Sprite2D>("Sprite2D");
             TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
+
+            HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
 
             PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
             PlayerVariables.OnItemsChanged += _onItemsChanged;
@@ -121,11 +117,13 @@ namespace Galatime
             if (Input.IsActionPressed("game_move_left")) inputVelocity.X -= 1;
             inputVelocity = inputVelocity.Normalized() * Speed;
 
-            if (CanMove && !IsDodge) velocity = inputVelocity; else velocity = Vector2.Zero;
+            if (CanMove && !IsDodge) Velocity = inputVelocity; else Velocity = Vector2.Zero;
             setDirectionByWeapon();
 
             Weapon.LookAt(GetGlobalMousePosition());
-            _SetAnimation(VectorRotation, velocity.Length() == 0 ? true : false);
+            if (IsWalk) State = Velocity.Length() == 0 ? HumanoidStates.Idle : HumanoidStates.Walk;
+            HumanoidDoll.SetAnimation(VectorRotation, State);
+            // _SetAnimation(VectorRotation, velocity.Length() == 0);
             _setCameraPosition();
         }
 
@@ -136,7 +134,7 @@ namespace Galatime
 
         public override void _MoveProcess()
         {
-            if (!_isPause) _SetMove(); else velocity = Vector2.Zero;
+            if (!_isPause) _SetMove(); else Velocity = Vector2.Zero;
             var shakeOffset = new Vector2();
 
             Random rnd = new();
@@ -251,7 +249,9 @@ namespace Galatime
             }
             if (@event.IsActionPressed("game_attack"))
             {
-                Weapon.Attack(Stats[EntityStatType.PhysicalAttack].Value, Stats[EntityStatType.MagicalAttack].Value);
+                Weapon.Attack(this);
+                State = HumanoidStates.Attack;
+                HumanoidDoll.SetAnimation(VectorRotation, State);
             }
 
             if (@event.IsActionPressed("game_dodge"))

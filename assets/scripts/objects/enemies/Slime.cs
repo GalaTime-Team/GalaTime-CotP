@@ -103,7 +103,7 @@ public partial class Slime : Entity
 
     public override void _MoveProcess()
     {
-        if (!DeathState) move(); else velocity = Vector2.Zero;
+        if (!DeathState) move(); else Velocity = Vector2.Zero;
     }
 
     public override void _DeathEvent(float damageRotation = 0f)
@@ -179,7 +179,7 @@ public partial class Slime : Entity
                 float rotationDeg = Mathf.RadToDeg(rotation);
                 float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
                 if (rotationDegPositive <= 90) Sprite.FlipH = true; else Sprite.FlipH = false;
-                velocity = vectorPath;
+                Velocity = vectorPath;
             }
             catch (Exception err)
             {
@@ -187,7 +187,7 @@ public partial class Slime : Entity
         }
         else
         {
-            velocity = Vector2.Zero;
+            Velocity = Vector2.Zero;
         }
     }
 }

@@ -15,6 +15,9 @@ public partial class HumanoidCharacter : Entity
     /// <summary> If the character is able to move. </summary>
     public bool CanMove = true;
 
+    public HumanoidStates State = HumanoidStates.Idle;
+    public bool IsWalk => State == HumanoidStates.Idle || State == HumanoidStates.Walk;
+
     /// <summary> The list of abilities of the character. </summary>
     public List<AbilityData> Abilities = new();
 
@@ -288,34 +291,38 @@ public partial class HumanoidCharacter : Entity
         VectorRotation = v;
     }
 
-    protected void _SetAnimation(Vector2 animationVelocity, bool idle)
-    {
-        if (idle) AnimationPlayer.Stop();
-        AnimationPlayer.SpeedScale = Speed / 100;
-        if (animationVelocity.Y != 0)
-        {
-            if (animationVelocity.Y <= -1 && AnimationPlayer.CurrentAnimation != "walk_up")
-            {
-                if (!idle) AnimationPlayer.Play("walk_up"); else AnimationPlayer.Play("idle_up");
-            }
-            if (animationVelocity.Y >= 1 && AnimationPlayer.CurrentAnimation != "walk_down")
-            {
-                if (!idle) AnimationPlayer.Play("walk_down"); else AnimationPlayer.Play("idle_down");
-                _setLayerToWeapon(true);
-            }
-        }
-        else
-        {
-            if (animationVelocity.X >= 1 && AnimationPlayer.CurrentAnimation != "walk_right")
-            {
-                if (!idle) AnimationPlayer.Play("walk_right"); else AnimationPlayer.Play("idle_right");
-            }
-            if (animationVelocity.X <= -1 && AnimationPlayer.CurrentAnimation != "walk_left")
-            {
-                if (!idle) AnimationPlayer.Play("walk_left"); else AnimationPlayer.Play("idle_left");
-            }
-        }
-        _setLayerToWeapon(AnimationPlayer.CurrentAnimation == "idle_up" || AnimationPlayer.CurrentAnimation == "walk_up" ? false : true);
-        TrailParticles.Texture = Sprite.Texture;
-    }
+    public void StepForward(float rotation) {
+        SetKnockback(100, rotation);
+    } 
+
+    // protected void _SetAnimation(Vector2 animationVelocity, bool idle)
+    // {
+    //     if (idle) AnimationPlayer.Stop();
+    //     AnimationPlayer.SpeedScale = Speed / 100;
+    //     if (animationVelocity.Y != 0)
+    //     {
+    //         if (animationVelocity.Y <= -1 && AnimationPlayer.CurrentAnimation != "walk_up")
+    //         {
+    //             if (!idle) AnimationPlayer.Play("walk_up"); else AnimationPlayer.Play("idle_up");
+    //         }
+    //         if (animationVelocity.Y >= 1 && AnimationPlayer.CurrentAnimation != "walk_down")
+    //         {
+    //             if (!idle) AnimationPlayer.Play("walk_down"); else AnimationPlayer.Play("idle_down");
+    //             _setLayerToWeapon(true);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         if (animationVelocity.X >= 1 && AnimationPlayer.CurrentAnimation != "walk_right")
+    //         {
+    //             if (!idle) AnimationPlayer.Play("walk_right"); else AnimationPlayer.Play("idle_right");
+    //         }
+    //         if (animationVelocity.X <= -1 && AnimationPlayer.CurrentAnimation != "walk_left")
+    //         {
+    //             if (!idle) AnimationPlayer.Play("walk_left"); else AnimationPlayer.Play("idle_left");
+    //         }
+    //     }
+    //     _setLayerToWeapon(AnimationPlayer.CurrentAnimation == "idle_up" || AnimationPlayer.CurrentAnimation == "walk_up" ? false : true);
+    //     TrailParticles.Texture = Sprite.Texture;
+    // }
 }

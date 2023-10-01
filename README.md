@@ -1,1 +1,1 @@
-# galatime-project
+# GalaTime

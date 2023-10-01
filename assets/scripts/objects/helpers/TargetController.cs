@@ -52,14 +52,13 @@ public partial class TargetController : Node2D {
         var enemies = GetTree().GetNodesInGroup(TargetTeamString);
 
         // Get all enemies and convert to non-typed list.
-        List<object> NonTypedEnemies = new();
-        for (int i = 0; i < enemies.Count; i++) NonTypedEnemies.Add(enemies[i]);
+        List<Node> NonTypedEnemies = enemies.Cast<Node>().ToList();
 
         // Sort enemies by distance from closest to farthest.
         var sortedEnemies = NonTypedEnemies.OrderBy(x => x as Entity != null ? GlobalPosition.DistanceTo((x as Entity).GlobalPosition) : 0).ToList();
         
         // Remove all dead enemies.
-        sortedEnemies.RemoveAll(x => x as Entity != null && (x as Entity).DeathState);
+        sortedEnemies.RemoveAll(x => x as Entity is not null && (x as Entity).DeathState);
         
         // Find the closest enemy and set it as the current target.
         if (sortedEnemies.ToList().Count > 0) enemy = sortedEnemies[0] as Entity; else enemy = null; 

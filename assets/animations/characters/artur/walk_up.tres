@@ -1,17 +1,17 @@
 [gd_resource type="Animation" load_steps=9 format=3 uid="uid://c1sxvrqaexeyd"]
 
-[ext_resource type="Texture2D" uid="uid://mrheaios56uq" path="res://sprites/characters/artur/arthur_up_1.png" id="1"]
-[ext_resource type="Texture2D" uid="uid://bv3rchdeeptnk" path="res://sprites/characters/artur/arthur_up_2.png" id="3"]
-[ext_resource type="Texture2D" uid="uid://jokdycr0ivfa" path="res://sprites/characters/artur/arthur_up_3.png" id="3_m5uag"]
-[ext_resource type="Texture2D" uid="uid://ip8x6jdm3ne0" path="res://sprites/characters/artur/arthur_up_4.png" id="4_o2sxe"]
-[ext_resource type="Texture2D" uid="uid://dsmg7uq67jr3q" path="res://sprites/characters/artur/arthur_up_5.png" id="5_1gb24"]
-[ext_resource type="Texture2D" uid="uid://ul2jkbdob5nu" path="res://sprites/characters/artur/arthur_up_7.png" id="6_2wxuv"]
-[ext_resource type="Texture2D" uid="uid://colsl5ntujhfa" path="res://sprites/characters/artur/arthur_up_6.png" id="6_b6852"]
-[ext_resource type="Texture2D" uid="uid://0qwxj0q11rw3" path="res://sprites/characters/artur/arthur_up_8.png" id="8_3b634"]
+[ext_resource type="Texture2D" uid="uid://cxc07130bdslt" path="res://sprites/characters/arthur/walking/arthur_up1.png" id="1_40nqm"]
+[ext_resource type="Texture2D" uid="uid://xxl4cc0ddu2v" path="res://sprites/characters/arthur/walking/arthur_up2.png" id="2_8bvym"]
+[ext_resource type="Texture2D" uid="uid://ci7jkmr31lds4" path="res://sprites/characters/arthur/walking/arthur_up3.png" id="3_jw5bt"]
+[ext_resource type="Texture2D" uid="uid://bjrx3i10bitg5" path="res://sprites/characters/arthur/walking/arthur_up4.png" id="4_ixern"]
+[ext_resource type="Texture2D" uid="uid://4ihc30vbqphw" path="res://sprites/characters/arthur/walking/arthur_up5.png" id="5_c4avv"]
+[ext_resource type="Texture2D" uid="uid://ynn167jpr1c6" path="res://sprites/characters/arthur/walking/arthur_up6.png" id="6_y7tgt"]
+[ext_resource type="Texture2D" uid="uid://4yidblnd2rb0" path="res://sprites/characters/arthur/walking/arthur_up7.png" id="7_k4oc0"]
+[ext_resource type="Texture2D" uid="uid://vnix876nkcjq" path="res://sprites/characters/arthur/walking/arthur_up8.png" id="8_ds1sf"]
 
 [resource]
-resource_name = "walk_up"
-length = 2.3
+resource_name = "WalkUp"
+length = 1.6
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -20,8 +20,8 @@ tracks/0/path = NodePath("Sprite2D:texture")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2.1),
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [ExtResource("1"), ExtResource("3"), ExtResource("3_m5uag"), ExtResource("4_o2sxe"), ExtResource("5_1gb24"), ExtResource("6_b6852"), ExtResource("6_2wxuv"), ExtResource("8_3b634")]
+"values": [ExtResource("1_40nqm"), ExtResource("2_8bvym"), ExtResource("3_jw5bt"), ExtResource("4_ixern"), ExtResource("5_c4avv"), ExtResource("6_y7tgt"), ExtResource("7_k4oc0"), ExtResource("8_ds1sf")]
 }

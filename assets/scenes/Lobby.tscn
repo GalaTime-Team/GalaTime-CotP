@@ -116,7 +116,6 @@ texture = ExtResource("4_xfx06")
 
 [node name="Player" parent="." instance=ExtResource("2_plqd3")]
 position = Vector2(1216, -304)
-speed = 250.0
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 visible = false

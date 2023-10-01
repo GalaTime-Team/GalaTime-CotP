@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dc61rj5d7csf6"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/HumanoidDoll.cs" id="1_elh05"]
+
+[node name="HumanoidDoll" type="Node2D"]
+script = ExtResource("1_elh05")

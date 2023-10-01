@@ -1,10 +1,11 @@
+using Galatime.Interfaces;
 using Godot;
 
 namespace Galatime
 {
     public partial class Hand : Marker2D
     {
-        public Node Item = null;
+        public IWeapon Item = null;
         public Item ItemData;
 
         public void TakeItem(Item item)
@@ -14,8 +15,8 @@ namespace Galatime
             {
                 this.ItemData = item;
                 var objScene = item.ItemScene;
-                var objNode = objScene.Instantiate();
-                AddChild(objNode); 
+                var objNode = objScene.Instantiate<IWeapon>();
+                AddChild(objNode as Node); 
                 Item = objNode;
             }
         }
@@ -33,22 +34,22 @@ namespace Galatime
             }
         }
 
-        public Godot.Collections.Array GetOverlappingBodies()
+        public Godot.Collections.Array<Node2D> GetOverlappingBodies()
         {
             if (Item is Area2D a)
             {
-                var result = (Godot.Collections.Array)Item.Call("get_overlapping_bodies");
+                var result = a.GetOverlappingBodies();
                 return result;
             }
             else
             {
-                return new Godot.Collections.Array();
+                return new();
             }
         }
 
-        public void Attack(float physicalAttack, float magicalAttack)
+        public void Attack(HumanoidCharacter p)
         {
-            if (GetChildCount() != 0) Item.Call("attack", physicalAttack, magicalAttack);
+            if (GetChildCount() != 0) Item.Attack(p);
         }
     }
 }
