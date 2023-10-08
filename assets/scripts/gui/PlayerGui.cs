@@ -25,7 +25,7 @@ namespace Galatime
         public Timer DodgeTextTimer;
         public Godot.Label VersionText;
 
-        public NinePatchRect DialogBox;
+        public DialogBox DialogBox;
 
         public Panel PauseContainer;
 
@@ -68,7 +68,7 @@ namespace Galatime
             VersionText = GetNode<Godot.Label>("Version");
             DodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
 
-            DialogBox = GetNode<NinePatchRect>("DialogBox");
+            DialogBox = GetNode<DialogBox>("DialogBox");
             
             AbilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
             AbilitiesListContainer = GetNode<AbilitiesContainer>("PauseContainer/AbilitiesContainer");
@@ -221,11 +221,6 @@ namespace Galatime
         {
             var ability = AbilitiesContainer.GetChild(i) as AbilityContainer;
             return ability;
-        }
-
-        public void StartDialog(string id, Player p)
-        {
-            DialogBox.Call("startDialog", id, p);
         }
 
         public void DisplayItem()

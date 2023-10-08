@@ -5,76 +5,157 @@ using System.Collections.Generic;
 
 public partial class MainMenu : Control
 {
-    public float transitionTime = 2f;
-    private bool isMainMenu = true;
+    /// <summary> The time to transition to the each page. </summary>
+    public float TransitionTime = 2f;
+    /// <summary> If the current page is the main menu. </summary>
+    private bool IsMainMenu = true;
 
-    private Godot.Collections.Array<Node> mainMenuButtons;
-    private Godot.Collections.Array<Node> visualButtons;
+    /// <summary> The buttons of the main menu. </summary>
+    private Godot.Collections.Array<Node> MenuButtons;
+    /// <summary> The buttons, which are has visuals. </summary>
+    private Godot.Collections.Array<Node> VisualButtons;
 
-    private List<Action> visualEnteredDelegates = new List<Action>();
-    private List<Action> visualExitedDelegates = new List<Action>();
+    /// <summary> The current focus element. </summary>
+    private Control CurrentFocus;
+    /// <summary> The control that had focus before a popup was opened. </summary>
+    private Control BeforePopupFocus;
+    /// <summary> The current control representing the current page. </summary>
+    private Control CurrentPageControl;
+    /// <summary> The current direction of the swipe. </summary>
+    private SwipeDirection CurrentSwipeDirection;
 
-    private Dictionary<Label, Action> visualButtonEnteredDelegate = new Dictionary<Label, Action>();
-    private Dictionary<Label, Action> visualButtonExitedDelegate = new Dictionary<Label, Action>();
-
-    private Control _currentFocus;
-    private Control _beforePopupFocus;
-    private Control _currentPageControl;
-    private SwipeDirection _currentSwipeDirection;
-
-    private AudioStreamPlayer audioButtonHover;
-    private AudioStreamPlayer audioButtonAccept;
-    private AudioStreamPlayer audioMenu;
-    private AudioStreamPlayer audioMenuMuffled;
-    private AudioStreamPlayer audioMenuWhoosh;
+    #region Audio
+    private AudioStreamPlayer AudioButtonHover;
+    private AudioStreamPlayer AudioButtonAccept;
+    private AudioStreamPlayer AudioMenu;
+    private AudioStreamPlayer AudioMenuMuffled;
+    private AudioStreamPlayer AudioMenuWhoosh;
+    #endregion
 
     private AnimationPlayer AnimationPlayer;
 
-    private HSlider musicVolumeSlider;
-    private HSlider soundsVolumeSlider;
-    private Label discordRichPresenceButton;
-    private Label discordRichPresenceStatusLabel;
+    private Control StartMenuControl;
+    private Control MainMenuControl;
+    private Control SettingsMenuControl;
+    private Control CreditsMenuControl;
 
-    private Control startMenu;
-    private Control mainMenu;
-    private Control settingsMenu;
-    private Control creditsMenu;
+    private Label VersionLabel;
 
-    private Label versionLabel;
+    private Control AcceptContainer;
 
-    private Control acceptContainer;
+    private PackedScene SaveContainerScene;
 
-    private PackedScene saveContainerScene;
+    private Label AcceptName;
+    private Label AcceptYesButton;
+    private Label AcceptNoButton;
 
-    private Label acceptName;
-    private Label acceptYesButton;
-    private Label acceptNoButton;
-    private Label viewSavesButton;
+    private Label ViewSavesButton;
 
-    private Timer delayInteract;
+    private Timer DelayInteract;
 
     public delegate void OnAccept(bool result);
-    public static OnAccept on_accept;
+    public static OnAccept onAccept;
     public GuiInputEventHandler whenPressedYes = (InputEvent @event) =>
     {
-        if (@event is InputEventMouseButton inputMouse && inputMouse.ButtonIndex == MouseButton.Left && inputMouse.Pressed)
-        {
-            on_accept(true);
-        }
+        if (@event is InputEventMouseButton inputMouse && inputMouse.ButtonIndex == MouseButton.Left && inputMouse.Pressed) onAccept(true);
     };
     public GuiInputEventHandler whenPressedNo = (InputEvent @event) =>
     {
-        if (@event is InputEventMouseButton inputMouse && inputMouse.ButtonIndex == MouseButton.Left && inputMouse.Pressed)
-        {
-            on_accept(false);
-        }
+        if (@event is InputEventMouseButton inputMouse && inputMouse.ButtonIndex == MouseButton.Left && inputMouse.Pressed) onAccept(false);
     };
 
     public override void _Ready()
     {
         base._Ready();
 
-        if (GalatimeGlobals.CMDArgs.ContainsKey("save")) {
+        ParseCMDLineArgs();
+
+        AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+
+        DelayInteract = new Timer
+        {
+            OneShot = true,
+            WaitTime = TransitionTime
+        };
+        AddChild(DelayInteract);
+
+        AudioButtonHover = GetNode<AudioStreamPlayer>("AudioStreamPlayerButtonHover");
+        AudioButtonAccept = GetNode<AudioStreamPlayer>("AudioStreamPlayerButtonAccept");
+        AudioMenu = GetNode<AudioStreamPlayer>("AudioStreamPlayerMenu");
+        AudioMenuMuffled = GetNode<AudioStreamPlayer>("AudioStreamPlayerMenuMuffled");
+        AudioMenuWhoosh = GetNode<AudioStreamPlayer>("AudioStreamPlayerWhoosh");
+
+        StartMenuControl = GetNode<Control>("StartMenuContainer");
+        MainMenuControl = GetNode<Control>("MainMenuContainer");
+        SettingsMenuControl = GetNode<Control>("SettingsMenuContainer");
+        CreditsMenuControl = GetNode<Control>("CreditsContainer");
+        AcceptContainer = GetNode<Control>("AcceptContainer");
+
+        var tween = GetTree().CreateTween();
+        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
+        tween.TweenProperty(MainMenuControl, "modulate", new Color(1f, 1f, 1f), TransitionTime);
+
+        DelayInteract.Start();
+        InitializeSavesContainers();
+
+        VersionLabel = GetNode<Label>("VersionLabel");
+
+        AcceptYesButton = GetNode<Label>("AcceptContainer/VBoxContainer/HBoxContainer/Yes");
+        AcceptNoButton = GetNode<Label>("AcceptContainer/VBoxContainer/HBoxContainer/No");
+        AcceptYesButton.PivotOffset = new Vector2(10, 6);
+        AcceptNoButton.PivotOffset = new Vector2(7, 6);
+
+        AcceptName = GetNode<Label>("AcceptContainer/VBoxContainer/Name");
+
+        //createSaveButton.GuiInput += (InputEvent @event) => createSaveButtonInput(createSaveButton, @event);
+
+        UpdateVisualButtons();
+
+        MenuButtons = GetNode("MainMenuContainer/VBoxContainer").GetChildren();
+
+        for (int i = 0; i < MenuButtons.Count; i++)
+        {
+            var button = MenuButtons[i] as Label;
+            if (i == 0)
+            {
+                button.GrabFocus();
+            }
+            button.GuiInput += (InputEvent @event) => MainMenuButtonInput(button, @event);
+        }
+
+        GetViewport().GuiFocusChanged += guiFocusChanged;
+
+        GalatimeGlobals.CheckSaves();
+        UpdateSaves();
+
+        AnimationPlayer.Play("idle");
+
+        VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
+
+        GetTree().Root.Title = "GalaTime - Main Menu";
+    }
+
+    private void InitializeSavesContainers()
+    {
+        SaveContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/SaveContainer.tscn");
+        ViewSavesButton = GetNode<Label>("StartMenuContainer/ViewSavesFolder");
+        ViewSavesButton.GuiInput += (InputEvent @event) =>
+        {
+            if (@event is InputEventMouseButton @eventMouse)
+            {
+                if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
+                {
+                    OS.ShellOpen(ProjectSettings.GlobalizePath(GalatimeConstants.savesPath));
+                    VisualButtonInput(ViewSavesButton, @event);
+                }
+            }
+        };
+    }
+
+    public void ParseCMDLineArgs()
+    {
+        if (GalatimeGlobals.CMDArgs.ContainsKey("save"))
+        {
             // Print all values of the CMDArgs dictionary
             foreach (string key in GalatimeGlobals.CMDArgs.Keys)
             {
@@ -88,120 +169,16 @@ public partial class MainMenu : Control
 
             return;
         }
-
-        AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
-
-        delayInteract = new Timer();
-        delayInteract.OneShot = true;
-        delayInteract.WaitTime = transitionTime;
-        AddChild(delayInteract);
-
-        audioButtonHover = GetNode<AudioStreamPlayer>("AudioStreamPlayerButtonHover");
-        audioButtonAccept = GetNode<AudioStreamPlayer>("AudioStreamPlayerButtonAccept");
-        audioMenu = GetNode<AudioStreamPlayer>("AudioStreamPlayerMenu");
-        audioMenuMuffled = GetNode<AudioStreamPlayer>("AudioStreamPlayerMenuMuffled");
-        audioMenuWhoosh = GetNode<AudioStreamPlayer>("AudioStreamPlayerWhoosh");
-
-        //particles = GetNode<GpuParticles2D>("Particles");
-        //particles2 = GetNode<GpuParticles2D>("Particles2");
-
-        startMenu = GetNode<Control>("StartMenuContainer");
-        mainMenu = GetNode<Control>("MainMenuContainer");
-        settingsMenu = GetNode<Control>("SettingsMenuContainer");
-        creditsMenu = GetNode<Control>("CreditsContainer");
-        acceptContainer = GetNode<Control>("AcceptContainer");
-
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-        tween.TweenProperty(mainMenu, "modulate", new Color(1f, 1f, 1f), transitionTime);
-
-        delayInteract.Start();
-
-        saveContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/SaveContainer.tscn");
-
-        // Settings Ready
-
-        musicVolumeSlider = GetNode<HSlider>("SettingsMenuContainer/MusicVolumeSlider");
-        soundsVolumeSlider = GetNode<HSlider>("SettingsMenuContainer/SoundsVolumeSlider");
-        // discordRichPresenceButton = GetNode<Label>("SettingsMenuContainer/DiscordRichPresenceToggleButton");
-        // discordRichPresenceStatusLabel = GetNode<Label>("SettingsMenuContainer/DiscordRichPresenceStatusLabel");
-
-        // var settingsData = GalatimeGlobals.loadSettingsConfig();
-
-        musicVolumeSlider.ValueChanged += (double value) => changeVolume(value, new string[] { "Music", "Muffled" }, audioButtonHover);
-        soundsVolumeSlider.ValueChanged += (double value) => changeVolume(value, "Sounds", audioButtonHover);
-
-        // discordRichPresenceButton.GuiInput += discordRichPresenceButtonInput;
-
-        // musicVolumeSlider.Value = settingsData["music_volume"].ToFloat();
-        // soundsVolumeSlider.Value = settingsData["sounds_volume"].ToFloat();
-
-        // Saves Ready
-
-        //var createSaveButton = GetNode<Label>("StartMenuContainer/CreateSaveButton");
-        viewSavesButton = GetNode<Label>("StartMenuContainer/ViewSavesFolder");
-        viewSavesButton.GuiInput += (InputEvent @event) =>
-        {
-            if (@event is InputEventMouseButton @eventMouse)
-            {
-                if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && delayInteract.TimeLeft <= 0)
-                {
-                    OS.ShellOpen(ProjectSettings.GlobalizePath(GalatimeConstants.savesPath));
-                    visualButtonInput(viewSavesButton, @event);
-                }
-            }
-        };
-
-        versionLabel = GetNode<Label>("VersionLabel");
-
-        acceptYesButton = GetNode<Label>("AcceptContainer/VBoxContainer/HBoxContainer/Yes");
-        acceptNoButton = GetNode<Label>("AcceptContainer/VBoxContainer/HBoxContainer/No");
-        acceptYesButton.PivotOffset = new Vector2(10, 6);
-        acceptNoButton.PivotOffset = new Vector2(7, 6);
-
-        acceptName = GetNode<Label>("AcceptContainer/VBoxContainer/Name");
-
-        //createSaveButton.GuiInput += (InputEvent @event) => createSaveButtonInput(createSaveButton, @event);
-
-        updateVisualButtons();
-
-        mainMenuButtons = GetNode("MainMenuContainer/VBoxContainer").GetChildren();
-
-
-        for (int i = 0; i < mainMenuButtons.Count; i++)
-        {
-            var button = mainMenuButtons[i] as Label;
-            if (i == 0)
-            {
-                button.GrabFocus();
-            }
-            button.GuiInput += (InputEvent @event) => mainMenuButtonInput(button, @event);
-        }
-
-        GetViewport().GuiFocusChanged += guiFocusChanged;
-
-        GalatimeGlobals.checkSaves();
-        updateSaves();
-
-        AnimationPlayer.Play("idle");
-
-        //versionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
-        versionLabel.Text = $"\n\n\nPROPERTY OF GALATIME TEAM";
-
-        GetTree().Root.Title = "GalaTime - Main Menu";
     }
 
     public void guiFocusChanged(Control control)
     {
-        if (control != null)
-        {
-            _currentFocus = control;
-        }
+        if (control != null) CurrentFocus = control;
     }
 
     public bool acceptIsVisible()
     {
-        if (acceptContainer.Modulate.A == 0)
+        if (AcceptContainer.Modulate.A == 0)
         {
             return false;
         }
@@ -252,38 +229,39 @@ public partial class MainMenu : Control
     /// <param name="invertedColors">Whether to use inverted colors for the dialog.</param>
     public void appearAccept(string reason, OnAccept callback, bool invertedColors = false)
     {
-        _beforePopupFocus = _currentFocus;
-        acceptNoButton.GrabFocus();
+        if (invertedColors)
+        {
+            AcceptYesButton.SetMeta("ColorHoverOverride", new Color(1f, 0f, 0f));
+            AcceptNoButton.SetMeta("ColorHoverOverride", new Color(1, 1, 0));
+        }
+        else
+        {
+            AcceptYesButton.SetMeta("ColorHoverOverride", new Color(1, 1, 0));
+            AcceptNoButton.SetMeta("ColorHoverOverride", new Color(1f, 0f, 0f));
+        } 
+
+
+        BeforePopupFocus = CurrentFocus;
+        AcceptNoButton.GrabFocus();
 
         var tween = GetTree().CreateTween();
         tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
 
-        acceptName.Text = reason;
+        AcceptName.Text = reason;
 
-        tween.TweenProperty(acceptContainer, "modulate", new Color(1, 1, 1, 1), 0.3f);
+        tween.TweenProperty(AcceptContainer, "modulate", new Color(1, 1, 1, 1), 0.3f);
 
-        acceptContainer.MouseFilter = MouseFilterEnum.Stop;
-        acceptYesButton.MouseFilter = MouseFilterEnum.Stop;
-        acceptNoButton.MouseFilter = MouseFilterEnum.Stop;
+        AcceptContainer.MouseFilter = MouseFilterEnum.Stop;
+        AcceptYesButton.MouseFilter = MouseFilterEnum.Stop;
+        AcceptNoButton.MouseFilter = MouseFilterEnum.Stop;
 
-        acceptYesButton.GuiInput -= whenPressedYes;
-        acceptNoButton.GuiInput -= whenPressedNo;
+        AcceptYesButton.GuiInput -= whenPressedYes;
+        AcceptNoButton.GuiInput -= whenPressedNo;
 
-        acceptYesButton.GuiInput += whenPressedYes;
-        acceptNoButton.GuiInput += whenPressedNo;
+        AcceptYesButton.GuiInput += whenPressedYes;
+        AcceptNoButton.GuiInput += whenPressedNo;
 
-        if (invertedColors)
-        {
-            acceptYesButton.SetMeta("ColorHoverOverride", new Color(1f, 0f, 0f));
-            acceptNoButton.SetMeta("ColorHoverOverride", new Color(1, 1, 0));
-        }
-        else
-        {
-            acceptYesButton.SetMeta("ColorHoverOverride", new Color(1, 1, 0));
-            acceptNoButton.SetMeta("ColorHoverOverride", new Color(1f, 0f, 0f));
-        }
-
-        on_accept = callback;
+        onAccept = callback;
     }
 
     /// <summary>
@@ -291,23 +269,23 @@ public partial class MainMenu : Control
     /// </summary>
     public void disappearAccept()
     {
-        _beforePopupFocus.GrabFocus();
+        BeforePopupFocus.GrabFocus();
 
-        acceptYesButton.ReleaseFocus();
-        acceptNoButton.ReleaseFocus();
+        AcceptYesButton.ReleaseFocus();
+        AcceptNoButton.ReleaseFocus();
 
         var tween = GetTree().CreateTween();
         tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
 
-        tween.TweenProperty(acceptContainer, "modulate", new Color(1, 1, 1, 0), 0.3f);
+        tween.TweenProperty(AcceptContainer, "modulate", new Color(1, 1, 1, 0), 0.3f);
 
-        acceptContainer.MouseFilter = MouseFilterEnum.Ignore;
-        acceptYesButton.MouseFilter = MouseFilterEnum.Ignore;
-        acceptNoButton.MouseFilter = MouseFilterEnum.Ignore;
+        AcceptContainer.MouseFilter = MouseFilterEnum.Ignore;
+        AcceptYesButton.MouseFilter = MouseFilterEnum.Ignore;
+        AcceptNoButton.MouseFilter = MouseFilterEnum.Ignore;
 
-        on_accept = null;
+        onAccept = null;
 
-        resetButtons(false);
+        ResetButtons(false);
     }
 
     //public void createSaveButtonInput(Label button, InputEvent @event)
@@ -338,7 +316,7 @@ public partial class MainMenu : Control
     //    }
     //}
 
-    public void updateSaves()
+    public void UpdateSaves()
     {
         var saves = GalatimeGlobals.getSaves();
         GD.PrintRich("[color=purple]MAIN MENU[/color]: [color=cyan]UPDATE SAVES[/color]");
@@ -347,14 +325,14 @@ public partial class MainMenu : Control
         for (int i = 0; i < savesContainers.Count; i++)
         {
             var item = savesContainers[i];
-            visualButtons.Remove(item);
+            VisualButtons.Remove(item);
             item.QueueFree();
         }
         Label perviousDeleteButton = null;
         Label perviousPlayButton = null;
         for (int i = 0; i < saves.Count; i++)
         {
-            var instance = saveContainerScene.Instantiate<SaveContainer>();
+            var instance = SaveContainerScene.Instantiate<SaveContainer>();
             GetNode("StartMenuContainer/SavesContainer").AddChild(instance);
 
             Label deleteButton = instance.getDeleteButtonInstance();
@@ -372,12 +350,12 @@ public partial class MainMenu : Control
 
                 if (i == saves.Count - 1)
                 {
-                    playButton.FocusNeighborBottom = viewSavesButton.GetPath();
-                    deleteButton.FocusNeighborBottom = viewSavesButton.GetPath();
+                    playButton.FocusNeighborBottom = ViewSavesButton.GetPath();
+                    deleteButton.FocusNeighborBottom = ViewSavesButton.GetPath();
 
-                    viewSavesButton.FocusNeighborTop = playButton.GetPath();
-                    viewSavesButton.FocusNeighborRight = deleteButton.GetPath();
-                    viewSavesButton.FocusNeighborLeft = playButton.GetPath();
+                    ViewSavesButton.FocusNeighborTop = playButton.GetPath();
+                    ViewSavesButton.FocusNeighborRight = deleteButton.GetPath();
+                    ViewSavesButton.FocusNeighborLeft = playButton.GetPath();
                 }
             }
 
@@ -385,47 +363,47 @@ public partial class MainMenu : Control
             perviousDeleteButton = deleteButton;
 
             var save = saves[i];
-            deleteButton.GuiInput += (InputEvent @event) => deleteSaveButtonInput((int)save["id"], deleteButton, @event);
-            playButton.GuiInput += (InputEvent @event) => playButtonInput(@event, playButton, instance.id);
+            deleteButton.GuiInput += (InputEvent @event) => DeleteSaveButtonInput((int)save["id"], deleteButton, @event);
+            playButton.GuiInput += (InputEvent @event) => PlayButtonInput(@event, playButton, instance.id);
 
-            visualButtons.Add(deleteButton);
+            VisualButtons.Add(deleteButton);
             instance.loadData(saves[i]);
         }
 
-        updateVisualButtons();
+        UpdateVisualButtons();
         // clearVisualButtonsSaves();
     }
 
-    public void playButtonInput(InputEvent @event, Label playButtonInstance, int id)
+    public void PlayButtonInput(InputEvent @event, Label playButtonInstance, int id)
     {
         if (@event is InputEventMouseButton @eventMouse)
         {
-            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && delayInteract.TimeLeft <= 0)
+            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
             {
-                visualButtonInput(playButtonInstance, @eventMouse);
+                VisualButtonInput(playButtonInstance, @eventMouse);
                 AnimationPlayer.Play("start");
-                audioButtonAccept.Play();
+                AudioButtonAccept.Play();
 
                 GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
                 PlayerVariables.currentSave = id;
 
-                delayInteract.Start();
+                DelayInteract.Start();
             }
         }
     }
 
-    public void _onStartAnimationEnded()
+    public void OnStartAnimationEnded()
     {
         var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
         globals.LoadScene("res://assets/scenes/Lobby.tscn");
     }
 
-    public void deleteSaveButtonInput(int saveId, Label button, InputEvent @event)
+    public void DeleteSaveButtonInput(int saveId, Label button, InputEvent @event)
     {
-        visualButtonInput(button, @event);
+        VisualButtonInput(button, @event);
         if (@event is InputEventMouseButton @eventMouse)
         {
-            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && delayInteract.TimeLeft <= 0)
+            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
             {
                 appearAccept("Do you really want to delete the save?", (bool result) =>
                 {
@@ -433,7 +411,7 @@ public partial class MainMenu : Control
                     {
                         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Deleting save {saveId}[/color]");
                         GalatimeGlobals.createBlankSave(saveId);
-                        updateSaves();
+                        UpdateSaves();
                         disappearAccept();
                     }
                     else
@@ -446,97 +424,89 @@ public partial class MainMenu : Control
         }
     }
 
-    public void clearVisualButtonsSaves()
+    public void ClearVisualButtonsSaves()
     {
-        for (int i = 0; i < visualButtons.Count; i++)
+        for (int i = 0; i < VisualButtons.Count; i++)
         {
-            var item = visualButtons[i];
+            var item = VisualButtons[i];
             if (item.IsInGroup("delete"))
             {
-                visualButtons.Remove(item);
+                VisualButtons.Remove(item);
             }
         }
     }
 
-    public void updateVisualButtons()
+    public void UpdateVisualButtons()
     {
-        visualButtons = GetTree().GetNodesInGroup("visual");
+        VisualButtons = GetTree().GetNodesInGroup("visual");
 
-        for (int i = 0; i < visualButtons.Count; i++)
+        for (int i = 0; i < VisualButtons.Count; i++)
         {
-            if (visualButtons[i] is Node t)
+            if (VisualButtons[i] is Node t)
             {
                 var ii = t as Label;
 
-                ii.MouseEntered += () => visualButtonHover(ii);
-                ii.MouseExited += () => visualButtonExited(ii);
-                ii.FocusEntered += () => visualButtonHover(ii);
-                ii.FocusExited += () => visualButtonExited(ii);
+                ii.MouseEntered += () => VisualButtonHover(ii);
+                ii.MouseExited += () => VisualButtonExited(ii);
+                ii.FocusEntered += () => VisualButtonHover(ii);
+                ii.FocusExited += () => VisualButtonExited(ii);
             }
         }
     }
 
-    public void mainMenuButtonInput(Label button, InputEvent @event)
+    public void MainMenuButtonInput(Label button, InputEvent @event)
     {
         if (@event is InputEventMouseButton @eventMouse)
         {
-            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && delayInteract.TimeLeft <= 0)
+            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
             {
                 var page = (string)button.GetMeta("page");
 
-                visualButtonInput(button, @event);
-                audioButtonAccept.Play();
+                VisualButtonInput(button, @event);
+                AudioButtonAccept.Play();
 
-                switchPage(page);
+                SwitchPage(page);
 
-                delayInteract.Start();
+                DelayInteract.Start();
             }
         }
     }
 
-    /// <summary>
-    /// Switches to the specified page.
-    /// </summary>
-    /// <param name="page">
-    /// The name of the page to switch to.
-    /// </param>
-    public void switchPage(string page)
+    /// <summary> Switches to the specified page. </summary>
+    /// <param name="page"> The name of the page to switch to. </param>
+    public void SwitchPage(string page)
     {
-        isMainMenu = false;
+        IsMainMenu = false;
 
         var tween = GetTree().CreateTween();
         tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
 
-        if (delayInteract.TimeLeft > 0) return;
+        if (DelayInteract.TimeLeft > 0) return;
 
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Switch to {page} menu[/color]");
-        audioMenuWhoosh.Play();
+        AudioMenuWhoosh.Play();
         switch (page)
         {
             case "start":
-                _swipePage(SwipeDirection.UP, mainMenu, startMenu);
+                SwipePage(SwipeDirection.UP, MainMenuControl, StartMenuControl);
 
                 tween.TweenCallback(Callable.From(() =>
                 {
-                    viewSavesButton.GrabFocus();
-                })).SetDelay(transitionTime);
+                    ViewSavesButton.GrabFocus();
+                })).SetDelay(TransitionTime);
                 break;
             case "settings":
                 var linearTween = GetTree().CreateTween();
                 linearTween.SetParallel(true);
 
-                _swipePage(SwipeDirection.LEFT, mainMenu, settingsMenu);
+                SwipePage(SwipeDirection.LEFT, MainMenuControl, SettingsMenuControl);
 
-                linearTween.TweenProperty(audioMenuMuffled, "volume_db", 0, transitionTime / 2);
-                linearTween.TweenProperty(audioMenu, "volume_db", -80, transitionTime);
+                linearTween.TweenProperty(AudioMenuMuffled, "volume_db", 0, TransitionTime / 2);
+                linearTween.TweenProperty(AudioMenu, "volume_db", -80, TransitionTime);
 
-                tween.TweenCallback(Callable.From(() =>
-                {
-                    musicVolumeSlider.GrabFocus();
-                })).SetDelay(transitionTime);
                 break;
             case "credits":
-                _swipePage(SwipeDirection.DOWN, mainMenu, creditsMenu);
+                SwipePage(SwipeDirection.DOWN, MainMenuControl, CreditsMenuControl);
                 break;
             default:
                 break;
@@ -551,19 +521,19 @@ public partial class MainMenu : Control
                 //tween.TweenProperty(particles2, "position", mainMenuNewPosition, transitionTime);
         }
     }
-
     private enum SwipeDirection { UP, RIGHT, DOWN, LEFT }
 
-    private SwipeDirection _getOpositeSwipeDirection(SwipeDirection direction)
+    /// <summary> Gets the opposite swipe direction. </summary>
+    private SwipeDirection GetOppositeSwipeDirection(SwipeDirection direction)
     {
-        switch (direction)
+        return direction switch
         {
-            case SwipeDirection.UP: return SwipeDirection.DOWN;
-            case SwipeDirection.RIGHT: return SwipeDirection.LEFT;
-            case SwipeDirection.DOWN: return SwipeDirection.UP;
-            case SwipeDirection.LEFT: return SwipeDirection.RIGHT;
-        }
-        return SwipeDirection.UP;
+            SwipeDirection.UP => SwipeDirection.DOWN,
+            SwipeDirection.RIGHT => SwipeDirection.LEFT,
+            SwipeDirection.DOWN => SwipeDirection.UP,
+            SwipeDirection.LEFT => SwipeDirection.RIGHT,
+            _ => SwipeDirection.UP,
+        };
     }
 
     /// <summary>
@@ -572,7 +542,7 @@ public partial class MainMenu : Control
     /// <param name="direction">The direction to swipe the page.</param>
     /// <param name="previousControl">The control that is currently being displayed.</param>
     /// <param name="nextControl">The control that will be displayed after the swipe.</param>
-    private void _swipePage(SwipeDirection direction, Control previousControl, Control nextControl)
+    private void SwipePage(SwipeDirection direction, Control previousControl, Control nextControl)
     {
         var tween = GetTree().CreateTween();
         tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
@@ -582,34 +552,34 @@ public partial class MainMenu : Control
         switch (direction)
         {
             case SwipeDirection.UP:
-                previousPosition.Y += mainMenu.Size.Y;
+                previousPosition.Y += MainMenuControl.Size.Y;
                 break;
             case SwipeDirection.RIGHT:
-                previousPosition.X -= mainMenu.Size.X;
+                previousPosition.X -= MainMenuControl.Size.X;
                 break;
             case SwipeDirection.DOWN:
-                previousPosition.Y -= mainMenu.Size.Y;
+                previousPosition.Y -= MainMenuControl.Size.Y;
                 break;
             case SwipeDirection.LEFT:
-                previousPosition.X += mainMenu.Size.X;
+                previousPosition.X += MainMenuControl.Size.X;
                 break;
             default:
                 break;
         }
 
-        tween.TweenProperty(previousControl, "position", previousPosition, transitionTime);
+        tween.TweenProperty(previousControl, "position", previousPosition, TransitionTime);
         previousPosition.X += 1152;
 
-        tween.TweenProperty(nextControl, "position", Vector2.Zero, transitionTime);
+        tween.TweenProperty(nextControl, "position", Vector2.Zero, TransitionTime);
 
-        _currentPageControl = nextControl;
-        _currentSwipeDirection = direction;
+        CurrentPageControl = nextControl;
+        CurrentSwipeDirection = direction;
     }
 
-    public void visualButtonHover(Label button)
+    public void VisualButtonHover(Label button)
     {
         if (button is null) return;
-        if (delayInteract.TimeLeft <= 0)
+        if (DelayInteract.TimeLeft <= 0)
         {
             var tween = GetTree().CreateTween();
             tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
@@ -637,14 +607,14 @@ public partial class MainMenu : Control
                 var newColor = (Color)button.GetMeta("ColorHoverOverride");
                 button.Set("theme_override_colors/font_color", newColor);
             }
-            audioButtonHover.Play();
+            AudioButtonHover.Play();
         }
     }
 
-    public void visualButtonExited(Label button)
+    public void VisualButtonExited(Label button)
     {
         if (button is null) return;
-        if (delayInteract.TimeLeft <= 0)
+        if (DelayInteract.TimeLeft <= 0)
         {
             var tween = GetTree().CreateTween();
             tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
@@ -670,27 +640,17 @@ public partial class MainMenu : Control
     /// <remarks>
     /// This function plays an animation when the button is pressed.
     /// </remarks>
-    public void visualButtonInput(Label button, InputEvent @event)
+    public void VisualButtonInput(Label button, InputEvent @event)
     {
         if (@event is InputEventMouseButton @eventMouse)
         {
-            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && delayInteract.TimeLeft <= 0)
+            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
             {
                 var tween = GetTree().CreateTween();
                 tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
 
                 button.Set("theme_override_colors/font_color", new Color(0.5f, 0.5f, 0.5f));
                 tween.TweenProperty(button, "theme_override_colors/font_color", new Color(1, 1, 1), 0.6f);
-
-                //if (!button.HasMeta("ScaleHoverExitedOverride"))
-                //{
-                //    tween.TweenProperty(button, "scale", Vector2.One, 0.6f);
-                //}
-                //else
-                //{
-                //    var newScale = (Vector2)button.GetMeta("ScaleHoverExitedOverride");
-                //    tween.TweenProperty(button, "scale", newScale, 0.6f);
-                //}
             }
         }
     }
@@ -702,21 +662,21 @@ public partial class MainMenu : Control
     /// <remarks>
     /// This function resets the visual buttons to their default state, including their font color, scale, and mouse cursor shape.
     /// </remarks>
-    public void resetButtons(bool changeMouse = true)
+    public void ResetButtons(bool changeMouse = true)
     {
-        updateVisualButtons();
+        UpdateVisualButtons();
         var tween = GetTree().CreateTween();
         tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-        for (int i = 0; i < visualButtons.Count; i++)
+        for (int i = 0; i < VisualButtons.Count; i++)
         {
-            if (visualButtons[i] is Node t)
+            if (VisualButtons[i] is Node t)
             {
                 var ii = t as Label;
-                if (visualButtons[i] is Node)
+                if (VisualButtons[i] is Node)
                 {
                     if (changeMouse) ii.MouseDefaultCursorShape = CursorShape.Arrow;
                     ii.Set("theme_override_colors/font_color", new Color(1f, 1f, 1f));
-                    if (changeMouse) tween.TweenCallback(Callable.From(() => ii.MouseDefaultCursorShape = CursorShape.PointingHand)).SetDelay(transitionTime);
+                    if (changeMouse) tween.TweenCallback(Callable.From(() => ii.MouseDefaultCursorShape = CursorShape.PointingHand)).SetDelay(TransitionTime);
                     if (!ii.HasMeta("ScaleHoverExitedOverride"))
                     {
                         tween.TweenProperty(ii, "scale", Vector2.One, 0.6f);
@@ -731,42 +691,31 @@ public partial class MainMenu : Control
         }
     }
 
-    public async void toMainMenu()
+    public void ToMainMenu()
     {
-        GD.PrintRich($"[color=purple]MAIN MENU[/color]: Condition checking: [color=cyan]isMainMenu? - {isMainMenu}, acceptIsVisible? - {acceptIsVisible()}[/color]");
-
-        if (delayInteract.TimeLeft > 0) return;
-
+        GD.PrintRich($"[color=purple]MAIN MENU[/color]: Condition checking: [color=cyan]isMainMenu? - {IsMainMenu}, acceptIsVisible? - {acceptIsVisible()}[/color]");
+        if (DelayInteract.TimeLeft > 0) return;
         if (acceptIsVisible()) return;
-
-        if (isMainMenu && !acceptIsVisible())
+        if (IsMainMenu && !acceptIsVisible())
         {
             appearAccept("Are you sure do you want to quit a game?", (bool result) =>
                 {
-                    if (result)
-                    {
-                        GetTree().Quit();
-                    }
-                    else
-                    {
-                        disappearAccept();
-                    }
+                    if (result) GetTree().Quit();
+                    else disappearAccept();
                 }, true);
-            isMainMenu = true;
+            IsMainMenu = true;
             return;
         }
-        if (isMainMenu && acceptIsVisible())
+        if (IsMainMenu && acceptIsVisible())
         {
             disappearAccept();
             return;
         };
 
-        GalatimeGlobals.updateSettingsConfig(this, musicVolumeSlider.Value, soundsVolumeSlider.Value, false);
+        DelayInteract.Start();
+        ResetButtons();
 
-        delayInteract.Start();
-        resetButtons();
-
-        audioMenuWhoosh.Play();
+        AudioMenuWhoosh.Play();
 
         var tween = GetTree().CreateTween();
         tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
@@ -774,38 +723,32 @@ public partial class MainMenu : Control
         var linearTween = GetTree().CreateTween();
         linearTween.SetParallel(true);
 
-        _swipePage(_getOpositeSwipeDirection(_currentSwipeDirection), _currentPageControl, mainMenu);
+        SwipePage(GetOppositeSwipeDirection(CurrentSwipeDirection), CurrentPageControl, MainMenuControl);
 
-        linearTween.TweenProperty(audioMenuMuffled, "volume_db", -80, transitionTime);
-        linearTween.TweenProperty(audioMenu, "volume_db", 0, transitionTime / 2);
+        linearTween.TweenProperty(AudioMenuMuffled, "volume_db", -80, TransitionTime);
+        linearTween.TweenProperty(AudioMenu, "volume_db", 0, TransitionTime / 2);
 
-        for (int i = 0; i < mainMenuButtons.Count; i++)
+        for (int i = 0; i < MenuButtons.Count; i++)
         {
-            var button = mainMenuButtons[i] as Label;
-            if (i == 0)
-            {
-                button.GrabFocus();
-            }
+            var button = MenuButtons[i] as Label;
+            if (i == 0) button.GrabFocus();
         }
 
-        isMainMenu = true;
+        IsMainMenu = true;
     }
 
     public override void _Input(InputEvent @event)
     {
         if (@event is InputEventKey inputKey)
         {
-            if (inputKey.IsPressed() && inputKey.Keycode == Godot.Key.Escape && delayInteract.TimeLeft <= 0)
-            {
-                toMainMenu();
-            }
+            if (inputKey.IsPressed() && inputKey.Keycode == Godot.Key.Escape && DelayInteract.TimeLeft <= 0) ToMainMenu();
             if (inputKey.IsPressed() && inputKey.IsAction("ui_accept"))
             {
                 var mouseEvent = new InputEventMouseButton();
                 mouseEvent.ButtonIndex = MouseButton.Left;
                 mouseEvent.Pressed = true;
 
-                if (_currentFocus != null) _currentFocus.EmitSignal("gui_input", mouseEvent);
+                if (CurrentFocus != null) CurrentFocus.EmitSignal("gui_input", mouseEvent);
             }
         }
     }

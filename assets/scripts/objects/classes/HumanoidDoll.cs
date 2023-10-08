@@ -31,6 +31,12 @@ public partial class HumanoidDoll : Node2D
 
     #region Variables
 
+    private double CurrentAnimationTime = 0;
+    private HumanoidStates CurrentState = HumanoidStates.Idle;
+
+    public HumanoidDollAnimations CurrentAnimation;
+
+    /// <summary> List of animations for the humanoid doll in each state. </summary>
     public static Dictionary<HumanoidStates, FourAxesAnimationsSet> Animations = new() {
         {
             HumanoidStates.Idle, new FourAxesAnimationsSet(
@@ -69,7 +75,13 @@ public partial class HumanoidDoll : Node2D
     public void SetAnimation(Vector2 animationVelocity, HumanoidStates state = HumanoidStates.Idle)
     {
         // Stop the animation if idle
-        if (state == HumanoidStates.Idle) AnimationPlayerReference.Stop();
+        // if (state == HumanoidStates.Idle) AnimationPlayerReference.Stop();
+
+        // Setting current animation time to sync the 4 axes animation.
+        if (state != CurrentState) { 
+            CurrentState = state;
+            CurrentAnimationTime = 0;
+        }
 
         AnimationDirection direction = GetDirectionByVelocity(animationVelocity);
 
@@ -82,8 +94,7 @@ public partial class HumanoidDoll : Node2D
             _ => throw new ArgumentException(),
         });
 
-        // _setLayerToWeapon(AnimationPlayer.CurrentAnimation == "idle_up" || AnimationPlayer.CurrentAnimation == "walk_up" ? false : true);
-        // TrailParticles.Texture = Sprite.Texture;
+
     }
 
     /// <summary>
@@ -104,6 +115,11 @@ public partial class HumanoidDoll : Node2D
         };
     }
 
+    public override void _Process(double delta)
+    {
+        CurrentAnimationTime += delta;
+    }
+
     /// <summary>
     /// A helper function to play the animation based on the name and the idle flag.
     /// </summary>
@@ -111,8 +127,13 @@ public partial class HumanoidDoll : Node2D
     /// <param name="idleFlag">If the animation is idle or not</param>
     private void PlayAnimation(HumanoidDollAnimations animationName)
     {
-        // Use a bitwise operation to check if the animation is idle or not, and play the appropriate animation
+        // We convert the animation enum to string because why not and play the animation.
         var animation = animationName.ToString();
         AnimationPlayerReference.Play(animation);
+
+        // Play animation based on previous animation time. Checking if the animation is not current one to prevent seek to not be repeated.
+        if (CurrentAnimation != animationName) AnimationPlayerReference.Seek(CurrentAnimationTime);
+
+        CurrentAnimation = animationName;
     }
 }

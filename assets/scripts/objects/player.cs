@@ -64,14 +64,14 @@ namespace Galatime
             Element = GalatimeElement.Ignis + GalatimeElement.Chaos;
 
             Stats = new EntityStats(
-                physicalAttack: 75,
-                magicalAttack: 80,
-                physicalDefence: 65,
-                magicalDefence: 75,
-                health: 70,
-                mana: 65,
-                stamina: 65,
-                agility: 60
+                physicalAttack: 100,
+                magicalAttack: 100,
+                physicalDefence: 100,
+                magicalDefence: 100,
+                health: 100,
+                mana: 100,
+                stamina: 100,
+                agility: 100
             );
 
             // Start
@@ -87,19 +87,20 @@ namespace Galatime
 
             PlayerGui.ChangeStats(Stats, Xp);
 
-            Stats.OnStatsChanged += _onStatsChanged;
+            Stats.OnStatsChanged += OnStatsChanged;
+            OnStatsChanged(Stats);
 
             PlayerVariables.setPlayerInstance(this);
         }
 
         public override void _ExitTree()
         {
-            Stats.OnStatsChanged -= _onStatsChanged;
+            Stats.OnStatsChanged -= OnStatsChanged;
             PlayerVariables.OnItemsChanged -= _onItemsChanged;
             PlayerVariables.OnAbilitiesChanged -= OnAbilitiesChanged;
         }
 
-        private void _onStatsChanged(EntityStats stats)
+        private void OnStatsChanged(EntityStats stats)
         {
             Health = Stats[EntityStatType.Health].Value;
             Mana = Stats[EntityStatType.Mana].Value;
@@ -108,7 +109,7 @@ namespace Galatime
             PlayerGui.OnStatsChanged(stats);
         }
 
-        private void _SetMove()
+        private void SetMove()
         {
             Vector2 inputVelocity = Vector2.Zero;
             if (Input.IsActionPressed("game_move_up")) inputVelocity.Y -= 1;
@@ -123,18 +124,20 @@ namespace Galatime
             Weapon.LookAt(GetGlobalMousePosition());
             if (IsWalk) State = Velocity.Length() == 0 ? HumanoidStates.Idle : HumanoidStates.Walk;
             HumanoidDoll.SetAnimation(VectorRotation, State);
-            // _SetAnimation(VectorRotation, velocity.Length() == 0);
-            _setCameraPosition();
+            SetCameraPosition();
+
+            SetLayerToWeapon(AnimationPlayer.CurrentAnimation != "idle_up" && AnimationPlayer.CurrentAnimation != "walk_up");
+            TrailParticles.Texture = Sprite.Texture;
         }
 
-        private void _setCameraPosition()
+        private void SetCameraPosition()
         {
             Camera.GlobalPosition = Camera.GlobalPosition.Lerp((Weapon.GlobalPosition + (GetGlobalMousePosition() - Weapon.GlobalPosition) / 5) + CameraOffset, 0.05f);
         }
 
         public override void _MoveProcess()
         {
-            if (!_isPause) _SetMove(); else Velocity = Vector2.Zero;
+            if (!_isPause) SetMove(); else Velocity = Vector2.Zero;
             var shakeOffset = new Vector2();
 
             Random rnd = new();
@@ -221,13 +224,8 @@ namespace Galatime
         private void _onItemsChanged()
         {
             var obj = PlayerVariables.inventory[0];
-            if (Weapon.Item != null && obj.IsEmpty && obj != Weapon.ItemData) return;
+            if (obj == Weapon.ItemData) return;
             Weapon.TakeItem(obj);
-        }
-
-        public void startDialog(string id)
-        {
-            PlayerGui.StartDialog(id, this);
         }
 
         public override void _UnhandledInput(InputEvent @event)
@@ -263,14 +261,6 @@ namespace Galatime
 
             // Checking for input for abilities.
             for (int i = 0; i < PlayerVariables.abilities.Count; i++) if (@event.IsActionPressed($"game_ability_{i+1}")) _useAbility(i);
-
-            if (@event.IsActionPressed("ui_accept"))
-            {
-                if (CanInteract)
-                {
-                    EmitSignal("on_interact");
-                }
-            }
         }
     }
 }

@@ -16,6 +16,7 @@ config/features=PackedStringArray("4.1", "C#")
 boot_splash/image="res://bootsplash.png"
 boot_splash/use_filter=false
 config/icon="res://icon.png"
+config/windows_native_icon="res://icon.ico"
 
 [autoload]
 
@@ -35,11 +36,10 @@ project/assembly_name="galatime-project"
 [editor]
 
 movie_writer/movie_file="D:/Projects/galatime-project-test/preview.avi"
-run/main_run_args="--save=2"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/AS2P/plugin.cfg")
 
 [global]
 

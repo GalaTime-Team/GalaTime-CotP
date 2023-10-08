@@ -1,4 +1,4 @@
-[gd_scene load_steps=68 format=3 uid="uid://dxkmenalovoja"]
+[gd_scene load_steps=76 format=3 uid="uid://dxkmenalovoja"]
 
 [ext_resource type="Animation" uid="uid://co6srb7oraj3q" path="res://assets/animations/characters/artur/walk_left.tres" id="2"]
 [ext_resource type="PackedScene" uid="uid://s184ap1aunq3" path="res://assets/objects/PlayerGui.tscn" id="2_e81u3"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bdw5q1q65c8rx" path="res://sprites/characters/arthur/attacking/right_combo10.png" id="5_3u6lt"]
 [ext_resource type="Texture2D" uid="uid://b3fx1k71fxeax" path="res://sprites/characters/arthur/attacking/up_combo11.png" id="5_b02dd"]
 [ext_resource type="Texture2D" uid="uid://bfb8hwpib4vdo" path="res://sprites/characters/arthur/attacking/down_combo11.png" id="5_se3ms"]
+[ext_resource type="Texture2D" uid="uid://bkbhbif8jr0qc" path="res://sprites/characters/arthur/attacking/down_combo13.png" id="5_svue1"]
 [ext_resource type="Animation" uid="uid://cujxvxahqev2b" path="res://assets/animations/characters/artur/idle_left.tres" id="6"]
 [ext_resource type="Texture2D" uid="uid://w51ndcix5o1x" path="res://sprites/characters/arthur/walking/arthur_down1.png" id="6_cgo0e"]
 [ext_resource type="Animation" uid="uid://bgsskthjuyooq" path="res://assets/animations/characters/artur/idle_up.tres" id="8"]
@@ -20,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://bjokfsc7q3ven" path="res://sprites/characters/arthur/attacking/down_combo2.png" id="16_w4y3h"]
 [ext_resource type="Texture2D" uid="uid://cxx3mtncmpw7u" path="res://sprites/characters/arthur/attacking/down_combo3.png" id="17_dpi6e"]
 [ext_resource type="Texture2D" uid="uid://b3ax3270ex7lm" path="res://sprites/characters/arthur/attacking/down_combo4.png" id="18_1idhl"]
+[ext_resource type="Texture2D" uid="uid://b1i6qqcilvs0y" path="res://sprites/characters/arthur/attacking/down_combo12.png" id="18_6rjks"]
 [ext_resource type="Texture2D" uid="uid://bia8s60bjp6q8" path="res://sprites/characters/arthur/attacking/down_combo5.png" id="19_wphe5"]
 [ext_resource type="Texture2D" uid="uid://2v3obj551gsj" path="res://sprites/characters/arthur/attacking/down_combo6.png" id="20_hugln"]
 [ext_resource type="Texture2D" uid="uid://byvii0yavbd4u" path="res://sprites/characters/arthur/attacking/down_combo7.png" id="21_jlbmb"]
@@ -30,7 +32,9 @@
 [ext_resource type="Texture2D" uid="uid://cr7caqhpfb87o" path="res://sprites/characters/arthur/attacking/left_combo2.png" id="27_hwb0v"]
 [ext_resource type="Texture2D" uid="uid://c72kit00vdcvk" path="res://sprites/characters/arthur/attacking/left_combo3.png" id="28_bbfae"]
 [ext_resource type="Texture2D" uid="uid://bk3u0rm1yw053" path="res://sprites/characters/arthur/attacking/left_combo4.png" id="29_2b2tp"]
+[ext_resource type="Texture2D" uid="uid://bd16t7scdqtpt" path="res://sprites/characters/arthur/attacking/left_combo12.png" id="30_psl3a"]
 [ext_resource type="Texture2D" uid="uid://donics1dituwp" path="res://sprites/characters/arthur/attacking/left_combo5.png" id="30_to2go"]
+[ext_resource type="Texture2D" uid="uid://0xe2il5q7qcw" path="res://sprites/characters/arthur/attacking/left_combo13.png" id="31_g5gse"]
 [ext_resource type="Texture2D" uid="uid://edewxtwnqso7" path="res://sprites/characters/arthur/attacking/left_combo6.png" id="31_krcdr"]
 [ext_resource type="Texture2D" uid="uid://c5lc4jiboeg5n" path="res://sprites/characters/arthur/attacking/left_combo7.png" id="32_gleva"]
 [ext_resource type="Texture2D" uid="uid://itmc3il5lo8h" path="res://sprites/characters/arthur/attacking/left_combo8.png" id="33_6k4lm"]
@@ -42,8 +46,10 @@
 [ext_resource type="Texture2D" uid="uid://d3qq7qnw28toi" path="res://sprites/characters/arthur/attacking/right_combo3.png" id="39_akapw"]
 [ext_resource type="Texture2D" uid="uid://c0e0chcb8yfir" path="res://sprites/characters/arthur/attacking/right_combo4.png" id="40_2uj4k"]
 [ext_resource type="Texture2D" uid="uid://b6ekfa63frk45" path="res://sprites/characters/arthur/attacking/right_combo5.png" id="41_vwsw7"]
+[ext_resource type="Texture2D" uid="uid://cprhggnnurqgj" path="res://sprites/characters/arthur/attacking/right_combo12.png" id="42_djlqe"]
 [ext_resource type="Texture2D" uid="uid://7el4rlcxt7t5" path="res://sprites/characters/arthur/attacking/right_combo6.png" id="42_r14wg"]
 [ext_resource type="Texture2D" uid="uid://24elknnr53h5" path="res://sprites/characters/arthur/attacking/right_combo7.png" id="43_fg8we"]
+[ext_resource type="Texture2D" uid="uid://cb1cajxddvkof" path="res://sprites/characters/arthur/attacking/right_combo13.png" id="43_ldgd8"]
 [ext_resource type="Texture2D" uid="uid://clwuoy7lvg4wa" path="res://sprites/characters/arthur/attacking/right_combo8.png" id="44_ao4f2"]
 [ext_resource type="Texture2D" uid="uid://dj4l5up7hp3g1" path="res://sprites/characters/arthur/attacking/right_combo9.png" id="45_3fhlp"]
 [ext_resource type="Texture2D" uid="uid://d03rb83xvk432" path="res://sprites/characters/arthur/attacking/up_combo1.png" id="47_dmpor"]
@@ -54,7 +60,9 @@
 [ext_resource type="Texture2D" uid="uid://d0bdk3eduwb8m" path="res://sprites/characters/arthur/attacking/up_combo6.png" id="52_638el"]
 [ext_resource type="Texture2D" uid="uid://pp2dhkrx2lv0" path="res://sprites/characters/arthur/attacking/up_combo7.png" id="53_vf7l1"]
 [ext_resource type="Texture2D" uid="uid://dl00kotmlabea" path="res://sprites/characters/arthur/attacking/up_combo8.png" id="54_1w0fd"]
+[ext_resource type="Texture2D" uid="uid://l6dka6vae2ra" path="res://sprites/characters/arthur/attacking/up_combo12.png" id="55_4ij1t"]
 [ext_resource type="Texture2D" uid="uid://83qle2ebjnjd" path="res://sprites/characters/arthur/attacking/up_combo9.png" id="55_wp4ow"]
+[ext_resource type="Texture2D" uid="uid://da7dsnw24gvux" path="res://sprites/characters/arthur/attacking/up_combo13.png" id="56_n4k1e"]
 [ext_resource type="Texture2D" uid="uid://dw5doqh3c28yd" path="res://sprites/characters/arthur/attacking/up_combo10.png" id="56_snla6"]
 
 [sub_resource type="Gradient" id="18"]
@@ -68,6 +76,70 @@ gravity = Vector3(0, 0, 0)
 scale_min = 3.0
 scale_max = 4.0
 color_ramp = SubResource("19")
+
+[sub_resource type="Animation" id="Animation_edjqb"]
+resource_name = "AttackDown"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("15_q7q18"), ExtResource("16_w4y3h"), ExtResource("17_dpi6e"), ExtResource("18_1idhl"), ExtResource("19_wphe5"), ExtResource("20_hugln"), ExtResource("21_jlbmb"), ExtResource("22_bu0g8"), ExtResource("23_ymm6n"), ExtResource("24_iah4k"), ExtResource("5_se3ms"), ExtResource("18_6rjks"), ExtResource("5_svue1")]
+}
+
+[sub_resource type="Animation" id="Animation_ooin2"]
+resource_name = "AttackLeft"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("26_xnbau"), ExtResource("27_hwb0v"), ExtResource("28_bbfae"), ExtResource("29_2b2tp"), ExtResource("30_to2go"), ExtResource("31_krcdr"), ExtResource("32_gleva"), ExtResource("33_6k4lm"), ExtResource("34_48m1r"), ExtResource("35_kriib"), ExtResource("36_olgkh"), ExtResource("30_psl3a"), ExtResource("31_g5gse")]
+}
+
+[sub_resource type="Animation" id="Animation_leklu"]
+resource_name = "AttackRight"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("37_fxx7f"), ExtResource("38_q566a"), ExtResource("39_akapw"), ExtResource("40_2uj4k"), ExtResource("41_vwsw7"), ExtResource("42_r14wg"), ExtResource("43_fg8we"), ExtResource("44_ao4f2"), ExtResource("44_ao4f2"), ExtResource("45_3fhlp"), ExtResource("5_3u6lt"), ExtResource("42_djlqe"), ExtResource("43_ldgd8")]
+}
+
+[sub_resource type="Animation" id="Animation_gnkkp"]
+resource_name = "AttackUp"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("47_dmpor"), ExtResource("48_ptwvd"), ExtResource("49_sxt6f"), ExtResource("50_dx1ap"), ExtResource("51_b4us7"), ExtResource("52_638el"), ExtResource("53_vf7l1"), ExtResource("54_1w0fd"), ExtResource("55_wp4ow"), ExtResource("56_snla6"), ExtResource("5_b02dd"), ExtResource("55_4ij1t"), ExtResource("56_n4k1e")]
+}
 
 [sub_resource type="Animation" id="2"]
 resource_name = "IdleDown"
@@ -86,66 +158,6 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="3"]
 length = 0.001
-
-[sub_resource type="Animation" id="Animation_edjqb"]
-resource_name = "AttackDown"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("15_q7q18"), ExtResource("16_w4y3h"), ExtResource("17_dpi6e"), ExtResource("18_1idhl"), ExtResource("19_wphe5"), ExtResource("20_hugln"), ExtResource("21_jlbmb"), ExtResource("22_bu0g8"), ExtResource("23_ymm6n"), ExtResource("24_iah4k"), ExtResource("5_se3ms")]
-}
-
-[sub_resource type="Animation" id="Animation_ooin2"]
-resource_name = "AttackLeft"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("26_xnbau"), ExtResource("27_hwb0v"), ExtResource("28_bbfae"), ExtResource("29_2b2tp"), ExtResource("30_to2go"), ExtResource("31_krcdr"), ExtResource("32_gleva"), ExtResource("33_6k4lm"), ExtResource("34_48m1r"), ExtResource("35_kriib"), ExtResource("36_olgkh")]
-}
-
-[sub_resource type="Animation" id="Animation_leklu"]
-resource_name = "AttackRight"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("37_fxx7f"), ExtResource("38_q566a"), ExtResource("39_akapw"), ExtResource("40_2uj4k"), ExtResource("41_vwsw7"), ExtResource("42_r14wg"), ExtResource("43_fg8we"), ExtResource("44_ao4f2"), ExtResource("44_ao4f2"), ExtResource("45_3fhlp"), ExtResource("5_3u6lt")]
-}
-
-[sub_resource type="Animation" id="Animation_gnkkp"]
-resource_name = "AttackUp"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("47_dmpor"), ExtResource("48_ptwvd"), ExtResource("49_sxt6f"), ExtResource("50_dx1ap"), ExtResource("51_b4us7"), ExtResource("52_638el"), ExtResource("53_vf7l1"), ExtResource("54_1w0fd"), ExtResource("55_wp4ow"), ExtResource("56_snla6"), ExtResource("5_b02dd")]
-}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jfmqd"]
 _data = {
@@ -194,7 +206,7 @@ z_index = 4096
 z_index = 1
 y_sort_enabled = true
 scale = Vector2(4, 4)
-texture = ExtResource("5_b02dd")
+texture = ExtResource("15_q7q18")
 
 [node name="Hand" type="Marker2D" parent="."]
 position = Vector2(0, 30)

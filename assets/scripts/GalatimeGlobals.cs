@@ -1,19 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Galatime;
 using Godot;
 using YamlDotNet;
+using Newtonsoft.Json;
+using Galatime.Dialogue;
 
 public sealed partial class GalatimeGlobals : Node
 {
     public static List<Item> itemList = new();
     public static List<AbilityData> ablitiesList = new();
-    public static Godot.Collections.Array tipsList = new Godot.Collections.Array();
+    public static List<DialogData> dialogsList = new();
+    public static List<Character> charactersList = new();
+    public static Godot.Collections.Array tipsList = new();
+
     public static string pathListItems = "res://assets/data/json/items.json";
     public static string pathListAbilities = "res://assets/data/json/abilities.json";
     public static string pathListTips = "res://assets/data/json/tips.json";
+    public static string pathListDialogs = "res://assets/data/json/dialogs.json";
+    public static string pathListCharacters = "res://assets/data/json/talking_characters.json";
 
     public static PackedScene loadingScene;
     public static PackedScene saveProcessScene;
@@ -24,9 +31,7 @@ public sealed partial class GalatimeGlobals : Node
 
     public PlayerVariables playerVariables;
 
-    /// <summary>
-    /// Slot type for inventory
-    /// </summary>
+    /// <summary> Slot type for inventory </summary>
     public enum slotType
     {
         slotDefault,
@@ -68,6 +73,13 @@ public sealed partial class GalatimeGlobals : Node
         itemList = _getItemsFromJson();
         ablitiesList = _getAbilitiesFromJson();
         tipsList = _getTipsFromJson();
+        dialogsList = GetDataFromJson<DialogsData>(pathListDialogs).Dialogs;
+        charactersList = GetDataFromJson<CharactersData>(pathListCharacters).Characters;
+
+        foreach (var dialog in dialogsList)
+        {
+            foreach (var line in dialog.Lines) GD.Print($"Text: {line.Text}, Speaker: {line.CharacterID}, Emotion: {line.EmotionID}");
+        }
     }
 
     public void LoadScene(string nextScene = "res://assets/scenes/MainMenu.tscn")
@@ -85,7 +97,7 @@ public sealed partial class GalatimeGlobals : Node
     /// <summary>
     /// Checks for the presence of saves and also creates them if they are absent
     /// </summary>
-    public static void checkSaves()
+    public static void CheckSaves()
     {
         if (!DirAccess.DirExistsAbsolute(GalatimeConstants.savesPath))
         {
@@ -277,13 +289,13 @@ public sealed partial class GalatimeGlobals : Node
             ((Godot.Collections.Dictionary)abilities[i]).Add("id", ability.ID);
         }
         saveData.Add("equiped_abilities", abilities);
-        var stats = new Godot.Collections.Dictionary();
-        for (int i = 0; i < playerVariables.Player.Stats.Count; i++)
-        {
-            var stat = playerVariables.Player.Stats[i];
-            stats.Add(stat.ID, stat.Value);
-        }
-        saveData.Add("stats", stats);
+        // var stats = new Godot.Collections.Dictionary();
+        // for (int i = 0; i < playerVariables.Player.Stats.Count; i++)
+        // {
+        //     var stat = playerVariables.Player.Stats[i];
+        //     stats.Add(stat.ID, stat.Value);
+        // }
+        // saveData.Add("stats", stats);
         saveData.Add("xp", playerVariables.Player.Xp);
         return saveData;
     }
@@ -383,6 +395,22 @@ public sealed partial class GalatimeGlobals : Node
             GD.Print($"GLOBALS: Invalid type passed to ParseJson, not supported type: {typeof(T)}");
             return default;
         }
+    }
+
+    /// <summary> Loads and parses a json file into an object of type T. </summary>
+    /// <typeparam name="T"> The type of object to parse. </typeparam>
+    /// <param name="path"> The path to the json file. </param>
+    /// <returns> An object of type T with its properties set based on the data in the json file. </returns>
+    public static T GetDataFromJson<T>(string path)
+    {
+        if (FileAccess.FileExists(path))
+        {
+            var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
+            var text = file.GetAsText();
+            return JsonConvert.DeserializeObject<T>(text);
+        }
+
+        return default;
     }
 
     private static List<Item> _getItemsFromJson()
@@ -485,6 +513,9 @@ public sealed partial class GalatimeGlobals : Node
             return new();
         }
     }
+
+    public static DialogData GetDialogById(string id) => dialogsList.FirstOrDefault(x => x.ID == id);
+    public static Character GetCharacterById(string id) => charactersList.FirstOrDefault(x => x.ID == id);
 
     public static AbilityData getAbilityById(string id)
     {

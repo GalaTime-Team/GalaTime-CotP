@@ -1,0 +1,120 @@
+[gd_scene load_steps=11 format=3 uid="uid://c5r33n1tcj86s"]
+
+[ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://sprites/gui/dialog-background.png" id="1_f20lw"]
+[ext_resource type="Script" path="res://assets/scripts/objects/DialogBox.cs" id="2_3j6jw"]
+[ext_resource type="Texture2D" uid="uid://di2bm2xc4vued" path="res://sprites/gui/dialog/characters/arthur/surprised/suprised.tres" id="3_xqdov"]
+[ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="4_3u1ey"]
+[ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="5_7edh5"]
+[ext_resource type="AudioStream" uid="uid://h1mkg7qkc6ls" path="res://assets/audios/sounds/talkbeeps/lol.wav" id="6_a204m"]
+
+[sub_resource type="Theme" id="12"]
+
+[sub_resource type="Animation" id="10"]
+resource_name = "loop"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Skip:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="11"]
+resource_name = "start"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Skip:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_a538s"]
+_data = {
+"loop": SubResource("10"),
+"start": SubResource("11")
+}
+
+[node name="DialogBox" type="NinePatchRect"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -288.0
+offset_top = -168.0
+offset_bottom = -80.0
+scale = Vector2(2, 2)
+texture = ExtResource("1_f20lw")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+script = ExtResource("2_3j6jw")
+
+[node name="CharacterPortrait" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 0
+offset_left = -24.0
+offset_top = -18.0
+offset_right = 232.0
+offset_bottom = 238.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_xqdov")
+expand_mode = 1
+
+[node name="Skip" type="Label" parent="."]
+layout_mode = 0
+offset_left = 260.0
+offset_top = 68.0
+offset_right = 280.0
+offset_bottom = 84.0
+theme_override_fonts/font = ExtResource("4_3u1ey")
+text = "Skip"
+
+[node name="DialogText" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -60.0
+offset_top = 22.0
+offset_right = 136.0
+offset_bottom = 84.0
+grow_horizontal = 2
+size_flags_horizontal = 5
+theme = SubResource("12")
+theme_override_fonts/normal_font = ExtResource("4_3u1ey")
+bbcode_enabled = true
+text = "You need to find a special potion. But if you will go to the forest it's very dangerous. But hope always with you"
+scroll_active = false
+visible_characters_behavior = 1
+
+[node name="CharacterName" type="Label" parent="."]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 10.0
+offset_right = 227.0
+offset_bottom = 27.0
+theme_override_fonts/font = ExtResource("5_7edh5")
+text = "Name of the character"
+
+[node name="Voice" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_a204m")
+
+[node name="SkipAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_a538s")
+}

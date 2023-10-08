@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Godot;
 
 namespace Galatime
@@ -93,6 +92,8 @@ namespace Galatime
         /// </summary> 
         public bool IsFullyReloaded => CooldownTimer.TimeLeft <= 0 && Charges >= MaxCharges;
 
+        public GalatimeAbility Instance;
+
         private string _scenePath = "";
         /// <summary>
         /// The ability's scene path, which will be instantiated when the ability is used. When assigned, the scene will be loaded in <see cref="Scene"/>.
@@ -104,8 +105,9 @@ namespace Galatime
                 if (_scenePath != "") {
                     GD.Print($"Loading scene from ability: {_scenePath}");
                     Scene = GD.Load<PackedScene>(_scenePath);
+                    Instance = Scene.Instantiate<GalatimeAbility>();
                 }
-            }
+            }   
         }
 
         /// <summary>

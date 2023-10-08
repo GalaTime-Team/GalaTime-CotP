@@ -3,6 +3,7 @@ using Galatime;
 
 namespace Galatime.Animation;
 
+/// <summary> Represents 4 axes animations to play. </summary> 
 public class FourAxesAnimationsSet
 {
     public HumanoidDollAnimations Right;

@@ -14,7 +14,7 @@ script = ExtResource("1_sv68w")
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/separation = 0
+theme_override_constants/separation = -4
 metadata/_edit_lock_ = true
 
 [node name="Name" type="Label" parent="VBoxContainer"]
@@ -24,7 +24,6 @@ theme_override_fonts/font = ExtResource("1_ioeut")
 text = "SAVE 1"
 
 [node name="Description" type="Label" parent="VBoxContainer"]
-visible = false
 custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
 size_flags_horizontal = 0

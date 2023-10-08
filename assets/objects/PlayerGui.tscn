@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://s184ap1aunq3"]
+[gd_scene load_steps=35 format=3 uid="uid://s184ap1aunq3"]
 
 [ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
@@ -8,18 +8,16 @@
 [ext_resource type="PackedScene" uid="uid://bn3iju7bii6tj" path="res://assets/objects/gui/helpers/ShakeControl.tscn" id="4_bjh2c"]
 [ext_resource type="Texture2D" uid="uid://eenddgdqm3fn" path="res://sprites/gui/status/hp_progress.png" id="5"]
 [ext_resource type="Script" path="res://assets/scripts/gui/PlayerGui.cs" id="6"]
-[ext_resource type="Texture2D" uid="uid://di2bm2xc4vued" path="res://sprites/gui/dialog/characters/arthur/surprised/suprised.tres" id="7"]
 [ext_resource type="PackedScene" uid="uid://copiga1ncueyb" path="res://assets/objects/InventoryTooltip.tscn" id="8"]
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="9_lrd2i"]
 [ext_resource type="Texture2D" uid="uid://ddp232l64r5h8" path="res://sprites/test/arthur-icon.png" id="11"]
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="12"]
+[ext_resource type="PackedScene" uid="uid://c5r33n1tcj86s" path="res://assets/objects/gui/DialogBox.tscn" id="12_3rd2x"]
 [ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://sprites/gui/dialog-background.png" id="13"]
 [ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://sprites/gui/status/mana_progress.png" id="14"]
-[ext_resource type="Script" path="res://assets/scripts/objects/DialogBox.cs" id="15"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="15_bhhfw"]
 [ext_resource type="PackedScene" uid="uid://m2won44lnrfe" path="res://assets/objects/DragPreview.tscn" id="16"]
 [ext_resource type="Texture2D" uid="uid://dxw5mvqypf6i3" path="res://sprites/test/member-icon.png" id="17"]
-[ext_resource type="AudioStream" uid="uid://h1mkg7qkc6ls" path="res://assets/audios/sounds/talkbeeps/lol.wav" id="19"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesContainer.cs" id="19_h7ltw"]
 [ext_resource type="PackedScene" uid="uid://4ivx2u2xw1y6" path="res://assets/objects/gui/AbilityContainerItem.tscn" id="20"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesChoiseContainer.cs" id="20_lbtld"]
@@ -68,45 +66,6 @@ _data = {
 "RESET": SubResource("1"),
 "in": SubResource("2"),
 "out": SubResource("3")
-}
-
-[sub_resource type="Theme" id="12"]
-
-[sub_resource type="Animation" id="10"]
-resource_name = "loop"
-length = 0.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Skip:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="Animation" id="11"]
-resource_name = "start"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Skip:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 0)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_a538s"]
-_data = {
-"loop": SubResource("10"),
-"start": SubResource("11")
 }
 
 [sub_resource type="Shader" id="5"]
@@ -367,78 +326,17 @@ scale = Vector2(3, 3)
 theme_override_constants/separation = 8
 alignment = 2
 
-[node name="DialogBox" type="NinePatchRect" parent="."]
-visible = false
+[node name="DialogBox" parent="." instance=ExtResource("12_3rd2x")]
 layout_mode = 0
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -288.0
-offset_top = -168.0
-offset_bottom = -80.0
-scale = Vector2(2, 2)
-texture = ExtResource("13")
-patch_margin_left = 5
-patch_margin_top = 5
-patch_margin_right = 5
-patch_margin_bottom = 5
-script = ExtResource("15")
-
-[node name="CharacterPortrait" type="TextureRect" parent="DialogBox"]
-custom_minimum_size = Vector2(256, 256)
-layout_mode = 0
-offset_left = -24.0
-offset_top = -18.0
-offset_right = 232.0
-offset_bottom = 238.0
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("7")
-expand_mode = 1
-
-[node name="Skip" type="Label" parent="DialogBox"]
-layout_mode = 0
-offset_left = 260.0
-offset_top = 68.0
-offset_right = 280.0
-offset_bottom = 84.0
-theme_override_fonts/font = ExtResource("12")
-text = "Skip"
-
-[node name="DialogText" type="RichTextLabel" parent="DialogBox"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -60.0
-offset_top = 22.0
-offset_right = 136.0
-offset_bottom = 84.0
-grow_horizontal = 2
-size_flags_horizontal = 5
-theme = SubResource("12")
-theme_override_fonts/normal_font = ExtResource("12")
-bbcode_enabled = true
-text = "You need to find a special potion. But if you will go to the forest it's very dangerous. But hope always with you"
-scroll_active = false
-visible_characters_behavior = 1
-
-[node name="CharacterName" type="Label" parent="DialogBox"]
-layout_mode = 0
-offset_left = 84.0
-offset_top = 10.0
-offset_right = 227.0
-offset_bottom = 27.0
-theme_override_fonts/font = ExtResource("15_bhhfw")
-text = "Name of the character"
-
-[node name="Voice" type="AudioStreamPlayer" parent="DialogBox"]
-stream = ExtResource("19")
-
-[node name="SkipAnimationPlayer" type="AnimationPlayer" parent="DialogBox"]
-libraries = {
-"": SubResource("AnimationLibrary_a538s")
-}
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 288.0
+offset_bottom = 88.0
 
 [node name="Shader" type="ColorRect" parent="."]
 visible = false
@@ -459,7 +357,6 @@ offset_bottom = 606.0
 mouse_filter = 2
 
 [node name="Version" type="Label" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0

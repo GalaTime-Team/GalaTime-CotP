@@ -1,47 +1,52 @@
 {
-    "test_0": [ 
-        {"text": "...", "character": "gabriel", "emotion": "netrual", "actions": ["toggleMove"]},
-        {"text": "Please say something", "character": "rafael", "emotion": "angry"}, 
-        {"text": "...", "character": "gabriel", "emotion": "netrual"},
-        {"text": "[shake rate=25 level=5]Okay. You don't want to say something, yeah?[/shake]", "character": "rafael", "emotion": "serious"},
-        {"text": "...", "character": "gabriel", "emotion": "thumbup"},
-        {"text": "YEAH, YOU SAID YOU CAN!?", "character": "rafael", "emotion": "surprised"},
-        {"text": "...", "character": "gabriel", "emotion": "netrual"},
-		{"text": "Gabriel?", "character": "rafael", "emotion": "netrual"}, 
-		{"text": "...", "character": "gabriel", "emotion": "netrual"}, 
-        {"text": "You scare me...", "character": "rafael", "emotion": "sweating"}, 
-        {"text": "...", "character": "gabriel", "emotion": "netrual"},
-		{"text": "Anyway, we need to go", "character": "rafael", "emotion": "ready"},
-		{"actions": ["toggleMove"]}
-	],
-	"hello": [
-		{"text": "Hello my dear [color=yellow]player[/color]!", "character": "rafael", "emotion": "surprised", "actions": ["toggleMove"]},
-		{"text": "It all looks very unfinished right now", "character": "rafael", "emotion": "sweating"},
-		{"text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]", "character": "rafael", "emotion": "netrual"},
-		{"text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]", "character": "rafael", "emotion": "netrual"},
-		{"text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped", "character": "rafael", "emotion": "netrual"},
-		{"text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]", "character": "rafael", "emotion": "netrual"},
-		{"text": "Soon the slimes will appear and you have to [color=red]eliminate[/color] them!", "character": "rafael", "emotion": "netrual"},
-		{"text": "Enjoy the game!", "character": "rafael", "emotion": "ready"},	
-		{"actions": ["toggleMove"]}
-	],
-	"test_1": [ 
-		{"text": "Did I missed something?", "character": "rafael", "emotion": "angry"} 
-	],
-	"test_2": [
-		{"text": "It's a bookshelf", "character": "arthur", "emotion": "netrual", "actions": ["toggleMove"]}, 
-		{"text": "Apparently someone likes to read", "character": "arthur", "emotion": "explaining"}, 
-		{"text": "I'm not a fan of reading", "character": "arthur", "emotion": "unsure"},
-		{"actions": ["toggleMove"]}
-	],
-	"tutorial_0": [ 
-        {"text": "Okay, let me teach you some basic combat skills", "character": "rafael", "emotion": "ready", "actions": ["toggleMove"]}, 
-		{"text": "To use the sword, use the [color=yellow]left mouse button[/color] to attack", "character": "rafael", "emotion": "netrual"}, 
-        {"text": "You also have the ability to use three [color=yellow]abilities[/color]", "character": "rafael", "emotion": "netrual"}, 
-        {"text": "At this point you have only learned two", "character": "rafael", "emotion": "netrual"},
-		{"text": "Use the [color=yellow]E, F, R[/color] or [color=yellow]1-3[/color] keys to use abilities", "character": "rafael", "emotion": "netrual"},
-		{"text": "I can already see your first enemy!", "character": "rafael", "emotion": "surprised", "actions": ["setCameraOffset", "200", "0"]},
-		{"text": "I'm ready!", "character": "arthur", "emotion": "netrual", "actions": ["setCameraOffset", "0", "0"]},
-		{"actions": ["toggleMove"]}
+	"dialogs": [
+		{
+			"id": "tutorial_0",
+			"lines": [
+				{
+					"text": "Hello my dear [color=yellow]player[/color]!",
+					"character": "rafael",
+					"emotion": "surprised",
+					"actions": [
+						"toggleMove"
+					]
+				},
+				{
+					"text": "It all looks very unfinished right now",
+					"character": "rafael",
+					"emotion": "sweating"
+				},
+				{
+					"text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]",
+					"character": "rafael",
+					"emotion": "neutral"
+				},
+				{
+					"text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]",
+					"character": "rafael",
+					"emotion": "neutral"
+				},
+				{
+					"text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped",
+					"character": "rafael",
+					"emotion": "neutral"
+				},
+				{
+					"text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]",
+					"character": "rafael",
+					"emotion": "neutral"
+				},
+				{
+					"text": "Soon the slimes will appear and you have to [color=red]eliminate[/color] them!",
+					"character": "rafael",
+					"emotion": "neutral"
+				},
+				{
+					"text": "Enjoy the game!",
+					"character": "rafael",
+					"emotion": "ready"
+				}
+			]
+		}
 	]
 }

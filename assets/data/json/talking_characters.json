@@ -1,0 +1,40 @@
+{
+  "characters": [
+    {
+      "id": "gabriel",
+      "name": "Gabriel",
+      "emotions": [
+        { "id": "thumbup", "path": "res://sprites/gui/dialog/characters/gabriel/thumbup/thumbup.tres" },
+        { "id": "neutral", "path": "res://sprites/gui/dialog/characters/gabriel/neutral.png" }
+      ]
+    },
+    {
+      "id": "rafael",
+      "name": "Rafael",
+      "emotions": [
+        { "id": "angry", "path": "res://sprites/gui/dialog/characters/rafael/angry/angry.tres" },
+        { "id": "neutral", "path": "res://sprites/gui/dialog/characters/rafael/neutral.png" },
+        { "id": "serious", "path": "res://sprites/gui/dialog/characters/rafael/serious.png" },
+        { "id": "surprised", "path": "res://sprites/gui/dialog/characters/rafael/surprised.png" },
+        { "id": "sweating", "path": "res://sprites/gui/dialog/characters/rafael/sweating/sweating.tres" },
+        { "id": "ready", "path": "res://sprites/gui/dialog/characters/rafael/ready/ready.tres" }
+      ]
+    },
+    {
+      "id": "arthur",
+      "name": "Arthur",
+      "emotions": [
+        { "id": "neutral", "path": "res://sprites/gui/dialog/characters/arthur/neutral/neutral.tres" },
+        { "id": "unsure", "path": "res://sprites/gui/dialog/characters/arthur/unsure/unsure.tres" },
+        { "id": "surprised", "path": "res://sprites/gui/dialog/characters/arthur/surprised/suprised.tres" },
+        { "id": "sweating", "path": "res://sprites/gui/dialog/characters/arthur/sweating/sweating.tres" },
+        { "id": "angry", "path": "res://sprites/gui/dialog/characters/arthur/angry/angry.tres" },
+        { "id": "justwokeup", "path": "res://sprites/gui/dialog/characters/arthur/justwokeup/justwokeup.tres" },
+        { "id": "flustered", "path": "res://sprites/gui/dialog/characters/arthur/flustered/flustered.tres" },
+        { "id": "explaining", "path": "res://sprites/gui/dialog/characters/arthur/explaining/explaining.tres" },
+        { "id": "anoyed", "path": "res://sprites/gui/dialog/characters/arthur/anoyed/anoyed.tres" }
+      ],
+      "sound": "res://sounds/characters/arthur.wav"
+    }
+  ]
+}

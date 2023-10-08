@@ -2,7 +2,6 @@ using Galatime;
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Intrinsics.X86;
 
 public partial class HumanoidCharacter : Entity
 {
@@ -167,7 +166,7 @@ public partial class HumanoidCharacter : Entity
         OnManaChanged(mana);
     }
 
-    protected void _setLayerToWeapon(bool toUp)
+    protected void SetLayerToWeapon(bool toUp)
     {
         if (Weapon != null) if (toUp) Weapon.ZIndex = 1; else Weapon.ZIndex = 0;
     }
@@ -189,7 +188,8 @@ public partial class HumanoidCharacter : Entity
     private void _OnCooldownTimerTimeout(int i)
     {
         var ability = Abilities[i];
-        if (ability.Charges < ability.MaxCharges) {
+        if (ability.Charges < ability.MaxCharges)
+        {
             ability.Charges++;
             _OnAbilityReload(i);
             ability.CooldownTimer.Start();
@@ -220,46 +220,39 @@ public partial class HumanoidCharacter : Entity
 
     protected virtual bool _useAbility(int i)
     {
-        try
+        var ability = Abilities[i];
+        if (!ability.IsEmpty && ability.IsReloaded)
         {
-            var ability = Abilities[i];
-            if (!ability.IsEmpty && ability.IsReloaded)
-            {
-                // Start the cooldown
-                AbilityCountdownTimer.Start();
+            // Start the cooldown
+            AbilityCountdownTimer.Start();
 
-                // Getting instance of ability and add data from json to ability
-                var abilityInstance = ability.Scene.Instantiate<GalatimeAbility>();
-                abilityInstance.Data = ability;
-                
-                // Check if the character has enough stamina and mana, if not, return false.
-                if (stamina - abilityInstance.Data.Costs.Stamina < 0) return false;
-                if (abilityInstance.Data.Costs.Stamina > 0) Stamina -= abilityInstance.Data.Costs.Stamina;
-                if (mana - abilityInstance.Data.Costs.Mana < 0) return false;
-                if (abilityInstance.Data.Costs.Mana > 0) Mana -= abilityInstance.Data.Costs.Mana;
+            // Getting instance of ability and add data from json to ability
+            var abilityScene = ResourceLoader.Load<PackedScene>(ability.ScenePath);
+            var abilityInstance = abilityScene.Instantiate<GalatimeAbility>();
+            abilityInstance.Data = ability;
 
-                // Add the ability and execute it.
-                GetParent().AddChild(abilityInstance);
-                abilityInstance.Execute(this);
+            // Check if the character has enough stamina and mana, if not, return false.
+            if (stamina - abilityInstance.Data.Costs.Stamina < 0) return false;
+            if (abilityInstance.Data.Costs.Stamina > 0) Stamina -= abilityInstance.Data.Costs.Stamina;
+            if (mana - abilityInstance.Data.Costs.Mana < 0) return false;
+            if (abilityInstance.Data.Costs.Mana > 0) Mana -= abilityInstance.Data.Costs.Mana;
 
-                // Start the cooldown
-                ability.CooldownTimer.Stop();
-                ability.CooldownTimer.Start();
+            // Add the ability and execute it.
+            GetParent().AddChild(abilityInstance);
+            abilityInstance.Execute(this);
 
-                ability.Charges--;
-                _OnAbilityReload(i);
-            }
-            else
-            {
-                return false;
-            }
-            return true;
+            // Start the cooldown
+            ability.CooldownTimer.Stop();
+            ability.CooldownTimer.Start();
+
+            ability.Charges--;
+            _OnAbilityReload(i);
         }
-        catch (Exception ex)
+        else
         {
-            GD.PrintErr("Error when used ability: " + ex.Message);
             return false;
         }
+        return true;
     }
 
     protected async void dodge()
@@ -291,9 +284,10 @@ public partial class HumanoidCharacter : Entity
         VectorRotation = v;
     }
 
-    public void StepForward(float rotation) {
+    public void StepForward(float rotation)
+    {
         SetKnockback(100, rotation);
-    } 
+    }
 
     // protected void _SetAnimation(Vector2 animationVelocity, bool idle)
     // {

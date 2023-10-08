@@ -10,7 +10,7 @@ public partial class GoldenHolderSword : Area2D, IWeapon
     private bool CanAttack = true;
 
     public float Power { get; set; } = 1f;
-    public float Cooldown { get; set; } = 1f;
+    public float Cooldown { get; set; } = 1.2f;
 
     private float PhysicalAttack;
 

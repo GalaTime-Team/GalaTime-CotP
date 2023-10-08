@@ -1,244 +1,182 @@
+using System.Linq;
 using Galatime;
+using Galatime.Dialogue;
 using Godot;
 
 public partial class DialogBox : NinePatchRect
 {
-    private string _dialogsPath = "res://assets/data/json/dialogs.json";
-    private string _charactersPath = "res://assets/data/json/talking-characters.json";
-    private RichTextLabel _textNode;
-    private Label _characterName;
-    private TextureRect _characterPortrait;
-    private AnimationPlayer _skipAnimationPlayer;
-    private Timer _delay;
-    private Player _player;
-    private int currentPhrase = 0;
-    private Godot.Collections.Array _dialog;
-    public bool canSkip = false;
+    private RichTextLabel TextLabel;
+    private Label CharacterNameLabel;
+    private TextureRect CharacterPortraitTexture;
+    private AnimationPlayer SkipAnimationPlayer;
+    private Timer Delay;
 
-    private AudioStreamPlayer _dialogAudio;
+    private GalatimeGlobals Globals;
+    private Player Player;
+
+    private int currentPhrase = -1;
+    /// <summary> Represents the current phrase index. </summary>
+    private int CurrentPhrase
+    {
+        get => currentPhrase;
+        set
+        {
+            if (CanSkip) currentPhrase = value; else return;
+
+            if (value < 0) return;
+
+            // Check if the lines are ended, if so end the dialog.
+            if (CurrentDialog is not null && currentPhrase >= CurrentDialog.Lines.Count)
+            {
+                EndDialog();
+                return;
+            }
+
+            // Move to the next phrase.
+            NextPhrase(value);
+        }
+    }
+
+    /// <summary> Represents the current dialog. </summary>
+    private DialogData CurrentDialog;
+    /// <summary> Indicates whether skipping dialog line is allowed. </summary>
+    public bool CanSkip = false;
+
+    private AudioStreamPlayer DialogAudio;
     public override void _Ready()
     {
-        _textNode = GetNode<RichTextLabel>("DialogText");
-        _characterPortrait = GetNode<TextureRect>("CharacterPortrait");
-        _dialogAudio = GetNode<AudioStreamPlayer>("Voice");
-        _skipAnimationPlayer = GetNode<AnimationPlayer>("SkipAnimationPlayer");
-        _characterName = GetNode<Label>("CharacterName");
+        TextLabel = GetNode<RichTextLabel>("DialogText");
+        CharacterPortraitTexture = GetNode<TextureRect>("CharacterPortrait");
+        DialogAudio = GetNode<AudioStreamPlayer>("Voice");
+        SkipAnimationPlayer = GetNode<AnimationPlayer>("SkipAnimationPlayer");
+        CharacterNameLabel = GetNode<Label>("CharacterName");
 
-        _delay = new Timer();
-        _delay.WaitTime = 0.04f;
-        _delay.OneShot = false;
-        _delay.Timeout += () => _letterAppend();
-        AddChild(_delay);
+        Globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
+
+        Delay = new Timer
+        {
+            WaitTime = 0.04f,
+            OneShot = false
+        };
+        Delay.Timeout += AppendLetter;
+
+        AddChild(Delay);
     }
 
-    public Godot.Collections.Array _getDialogFromJSON(string id)
+    public override void _ExitTree()
     {
-        if (Godot.FileAccess.FileExists(_dialogsPath))
-        {
-            var file = Godot.FileAccess.Open(_dialogsPath, Godot.FileAccess.ModeFlags.Read);
-            var json = new Json();
-            json.Parse(file.GetAsText());
-            Godot.Collections.Array dialog = new Godot.Collections.Array();
-            try
-            {
-                var dialogData = ((Godot.Collections.Dictionary)json.Data);
-                dialog = (Godot.Collections.Array)dialogData[id];
-            }
-            catch (System.Exception e)
-            {
-                GD.PrintErr("DIALOG: Invalid dialog " + id + ". " + e.Message);
-            }
-            return dialog;
-        }
-        else
-        {
-            GD.PrintErr("DIALOG: Invalid path");
-            return new Godot.Collections.Array();
-        }
+        Delay.Timeout -= AppendLetter;
     }
 
-    public Godot.Collections.Dictionary _getCharacterFromJSON(string name)
+    public void StartDialog(string id)
     {
-        if (Godot.FileAccess.FileExists(_dialogsPath))
+        var dialog = GalatimeGlobals.GetDialogById(id);
+        if (dialog is not null)
         {
-            var file = Godot.FileAccess.Open(_charactersPath, Godot.FileAccess.ModeFlags.Read);
-            var json = new Json();
-            json.Parse(file.GetAsText());
-            Godot.Collections.Dictionary character = new Godot.Collections.Dictionary();
-            try
-            {
-                var charactersData = ((Godot.Collections.Dictionary)json.Data);
-                character = (Godot.Collections.Dictionary)charactersData[name];
-            }
-            catch (System.Exception e)
-            {
-                GD.PrintErr("DIALOG: Invalid character " + name + ". " + e.Message);
-            }
-            return character;
-        }
-        else
-        {
-            GD.PrintErr("DIALOG: Invalid path");
-            return new Godot.Collections.Dictionary();
-        }
-    }
+            CurrentDialog = dialog;
 
-    public void startDialog(string id, Player p)
-    {
-        _player = p;
-
-        _resetValues();
-        _dialog = _getDialogFromJSON(id);
-
-        if (_dialog != new Godot.Collections.Array())
-        {
-            _textNode.Text = "";
+            TextLabel.Text = "";
             Visible = true;
-            canSkip = true;
+            CanSkip = true;
 
-            nextPhrase(currentPhrase);
+            CurrentPhrase += 1;
         }
         else
         {
             GD.PrintErr("DIALOG: dialog " + id + " is not exist");
-            endDialog();
+            EndDialog();
         }
     }
 
-    public void endDialog()
+    public void EndDialog()
     {
         Visible = false;
-        canSkip = false;
-        _resetValues();
+        CanSkip = false;
+        ResetValues();
     }
 
-    public string stripBBCode(string str)
+    // <summary> It removes all BBCode tags from the input string and returns the modified string. </summary>
+    public string StripBBCode(string str)
     {
         var regex = new RegEx();
         regex.Compile("\\[.+?\\]");
         return regex.Sub(str, "", true);
     }
 
-    public void _letterAppend()
+// <summary> A method that appends a letter to the TextLabel. </summary>
+public void AppendLetter()
+{
+    if (TextLabel.VisibleCharacters >= StripBBCode(TextLabel.Text).Length)
     {
-        // GD.Print("CurrentLetter: " + _textNode.VisibleCharacters + ". Current phrase: " + currentPhrase);
-        try
-        {
-            if (_textNode.VisibleCharacters >= stripBBCode(_textNode.Text).Length) { _delay.Stop(); _skipAnimationPlayer.Play("loop"); canSkip = true; return; } else { _textNode.VisibleCharacters += 1; }
-            _dialogAudio.Play();
-        }
-        catch (System.Exception)
-        {
-
-        }
+        StopAndPlaySkipAnimation();
+        return;
     }
 
-    public void startTyping() { _delay.Start(); }
+    TextLabel.VisibleCharacters++;
+    PlayDialogAudio();
+}
 
-    public void nextPhrase(int phraseId)
+    private void StopAndPlaySkipAnimation()
     {
-        _skipAnimationPlayer.Play("start");
-        canSkip = false;
-        var phrase = (Godot.Collections.Dictionary)_dialog[phraseId];
-
-        if (phrase.ContainsKey("actions"))
-        {
-            var actionsData = (Godot.Collections.Array)phrase["actions"];
-            var action = (string)actionsData[0];
-            actionsData.RemoveAt(0);
-            var args = actionsData;
-            if (args.Count != 0)
-            {
-                GD.Print(action, args, "more arg");
-                Callv(action, args);
-            }
-            else
-            {
-                GD.Print(action, args, "one arg");
-                Call(action);
-            }
-        }
-        else
-        {
-            GD.Print("dont actions");
-        }
-
-        if (phrase.ContainsKey("character") && phrase.ContainsKey("text"))
-        {
-            Godot.Collections.Dictionary character = _getCharacterFromJSON((string)phrase["character"]);
-
-            _textNode.VisibleCharacters = 0;
-            _textNode.Text = (string)phrase["text"];
-            var emotion = (string)phrase["emotion"];
-            Texture2D texture = GD.Load<Texture2D>((string)character[emotion]);
-            _characterName.Text = (string)character["name"];
-            if (texture is AnimatedTexture)
-            {
-                AnimatedTexture animatedTexture = (AnimatedTexture)texture;
-                animatedTexture.CurrentFrame = 0;
-                _characterPortrait.Texture = animatedTexture;
-            }
-            else
-            {
-                _characterPortrait.Texture = texture;
-            }
-            startTyping();
-        }
-        else
-        {
-            _player.EmitSignal("on_dialog_end");
-            endDialog(); return;
-        }
-
-        GD.Print(phrase);
+        Delay.Stop();
+        SkipAnimationPlayer.Play("loop");
+        CanSkip = true;
     }
 
-    public void setCameraOffset(string x, string y)
+    private void PlayDialogAudio() => DialogAudio.Play();
+    public void StartTyping() => Delay.Start();
+
+    public void NextPhrase(int phraseId)
     {
-        _player.CameraOffset.X = int.Parse(x);
-        _player.CameraOffset.Y = int.Parse(y);
+        SkipAnimationPlayer.Play("start");
+        CanSkip = false;
+
+        var phrase = CurrentDialog.Lines[phraseId];
+        if (phrase.Text.Length == 0) { 
+            CurrentPhrase++;
+            return;
+        }
+
+        var character = GalatimeGlobals.GetCharacterById(phrase.CharacterID);
+
+        TextLabel.VisibleCharacters = 0;
+        TextLabel.Text = phrase.Text;
+
+        var emotion = character.EmotionPaths.FirstOrDefault(x => x.Id == phrase.EmotionID);
+
+        Texture2D texture = GD.Load<Texture2D>(emotion.Path);
+        CharacterNameLabel.Text = character.Name;
+        if (texture is AnimatedTexture animatedTexture)
+        {
+            animatedTexture.CurrentFrame = 0;
+            CharacterPortraitTexture.Texture = animatedTexture;
+        }
+        else CharacterPortraitTexture.Texture = texture;
+
+        StartTyping();
+    }
+    
+    public void SetCameraOffset(string x, string y)
+    {
+        Player.CameraOffset.X = int.Parse(x);
+        Player.CameraOffset.Y = int.Parse(y);
     }
 
-    public void toggleMove()
+    public void ToggleMove() => Player.CanMove = !Player.CanMove;
+
+    private void ResetValues()
     {
-        _player.CanMove = !_player.CanMove;
-    }
+        Delay.Stop();
 
-    private void _resetValues()
-    {
-        _player.Set("can_move", true);
-        _delay.Stop();
+        TextLabel.Text = "";
+        TextLabel.VisibleCharacters = -1;
 
-        _textNode.Text = "";
-        _textNode.VisibleCharacters = -1;
-
-        currentPhrase = 0;
-        canSkip = false;
-        _dialog = new Godot.Collections.Array();
+        CurrentPhrase = 0;
+        CanSkip = false;
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event.IsActionPressed("ui_accept"))
-        {
-            nextInput();
-        }
-    }
-
-    public void nextInput()
-    {
-        if (canSkip)
-        {
-            if (currentPhrase + 1 >= _dialog.Count)
-            {
-                _player.EmitSignal("on_dialog_end");
-                endDialog(); return;
-            }
-            else
-            {
-                currentPhrase += 1;
-                nextPhrase(currentPhrase);
-            }
-        }
+        if (@event.IsActionPressed("ui_accept")) CurrentPhrase++;
     }
 }

@@ -94,7 +94,7 @@
 			"scene": "res://assets/objects/abilities/FireBullet.tscn",
 			"icon": "res://sprites/gui/abilities/ignis/fire_bullet.png",
 			"cost": 200,
-			"charges": 2
+			"charges": 3
 		}
 	]
 }

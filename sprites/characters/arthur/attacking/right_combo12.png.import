@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgt1nspygf6ag"
-path="res://.godot/imported/netrual.png-559728e5edd1cfe310780fe2afe7df63.ctex"
+uid="uid://cprhggnnurqgj"
+path="res://.godot/imported/right_combo12.png-06e27b666a66e208db935fd1392af8a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/gui/dialog/characters/rafael/netrual.png"
-dest_files=["res://.godot/imported/netrual.png-559728e5edd1cfe310780fe2afe7df63.ctex"]
+source_file="res://sprites/characters/arthur/attacking/right_combo12.png"
+dest_files=["res://.godot/imported/right_combo12.png-06e27b666a66e208db935fd1392af8a8.ctex"]
 
 [params]
 

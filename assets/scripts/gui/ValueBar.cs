@@ -31,6 +31,9 @@ public partial class ValueBar : Control
 
     /// <summary> Used to delay change of the current delayed progress bar. </summary>
     public Timer TransientTimer;
+
+    public Tween TweenTransientProgressBar;
+    public Tween TweenColor;
     #endregion
 
     #region Variables
@@ -57,7 +60,7 @@ public partial class ValueBar : Control
         }
         else // When value is bigger.
         {
-            TweenColor();
+            StartTransientColor();
             TransientProgressBar.Value = this.value;
             CurrentTransientProgressBar = ProgressBar;
         }
@@ -106,6 +109,13 @@ public partial class ValueBar : Control
     public override void _ExitTree()
     {
         TransientTimer.Timeout -= StartTransientProgressBarEffect;
+
+        // Clear shake controls to avoid memory leaks.
+        ShakeControls.Clear();
+
+        // Abort all tweeners for as well.
+        TweenTransientProgressBar?.Kill();
+        TweenColor?.Kill();
     }
 
     private void InitTransientProgressBar()
@@ -136,17 +146,17 @@ public partial class ValueBar : Control
         TransientValue = Value;
 
         // Create tween to smoothly change progress bar value.
-        var tween = GetTree().CreateTween().SetTrans(Tween.TransitionType.Sine);
+        TweenTransientProgressBar = GetTree().CreateTween().SetTrans(Tween.TransitionType.Sine);
 
         // Set initial value to change from.
         var initialValue = CurrentTransientProgressBar.Value;
 
         // Tween to the new value for 2 seconds.
-        tween.TweenMethod(Callable.From<float>((x) => CurrentTransientProgressBar.Value = x), initialValue, Value, TransientDuration);
+        TweenTransientProgressBar.TweenMethod(Callable.From<float>((x) => CurrentTransientProgressBar.Value = x), initialValue, Value, TransientDuration);
     }
     
-    public void TweenColor() {
-        var tween = GetTree().CreateTween();
-        tween.TweenMethod(Callable.From<Color>((x) => Label.Modulate = x), ChangedColor, NormalColor, TransientDuration);
+    public void StartTransientColor() {
+        TweenColor = GetTree().CreateTween();
+        TweenColor.TweenMethod(Callable.From<Color>((x) => Label.Modulate = x), ChangedColor, NormalColor, TransientDuration);
     }
 }

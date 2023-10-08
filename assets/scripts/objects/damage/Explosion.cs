@@ -17,6 +17,8 @@ public partial class Explosion : Area2D
     #region Nodes
     // <summary> The explosion visual. </summary>
     public GpuParticles2D Particles;
+    public GpuParticles2D HoleParticles;
+    public GpuParticles2D SmokeParticles;
     // <summary> The explosion audio. </summary>
     public AudioStreamPlayer2D AudioStreamPlayer;
     public CollisionShape2D Collision;
@@ -42,6 +44,8 @@ public partial class Explosion : Area2D
     public override void _Ready() {
         #region Get nodes
         Particles = GetNode<GpuParticles2D>("Particles");
+        HoleParticles = GetNode<GpuParticles2D>("HoleParticles");
+        SmokeParticles = GetNode<GpuParticles2D>("SmokeParticles");
         AudioStreamPlayer = GetNode<AudioStreamPlayer2D>("AudioStreamPlayer");
         Collision = GetNode<CollisionShape2D>("Collision");
         #endregion
@@ -66,29 +70,57 @@ public partial class Explosion : Area2D
 
     public async void Explode() {
         // Disable the explosion in this time (Depends on the power).
-        var disableOn = Power * .1f;
+        var disableOn = Power * .05f;
         var particleSize = Power * 1.33f;
+        var particleSizeDifference = (int)(particleSize * 0.2f);
 
-        var processMaterial = Particles.ProcessMaterial as ParticleProcessMaterial;
-        processMaterial.ScaleMax = particleSize;
-        processMaterial.ScaleMin = particleSize;
+        var rnd = new Random().Next(-particleSizeDifference, particleSizeDifference); 
+        particleSize += rnd;
 
-        var collisionShape = Collision.Shape as CircleShape2D;
+        SetProcessMaterialSize(Particles, particleSize);
+        SetProcessMaterialSize(HoleParticles, particleSize);
+        SetProcessMaterialEmissionShapeRadius(SmokeParticles, particleSize * 2);
+
+        SmokeParticles.Amount = Power * 2;
+
+        var collisionShape = Collision.Shape.Duplicate() as CircleShape2D;
         collisionShape.Radius = Power * 2.22f;
         Collision.Shape = collisionShape;
 
-        Particles.ProcessMaterial = processMaterial;
         Particles.Texture = ExplosionTextures[Type];
         AudioStreamPlayer.Stream = ExplosionAudios[Type];
         
         // Apply to the particles as well.
-        Particles.Lifetime = Power * .11f;
+        Particles.Lifetime = Power * .06f;
+        HoleParticles.Lifetime = Particles.Lifetime * 3;
 
         // Enable particles.
         Particles.Emitting = true;
+        HoleParticles.Emitting = true;
         AudioStreamPlayer.Play();
 
-        await ToSignal(GetTree().CreateTimer(disableOn), "timeout");
-        Monitoring = false;
+        GetTree().CreateTimer(disableOn).Timeout += () => {
+            SmokeParticles.Emitting = true;
+            Monitoring = false;
+            GetTree().CreateTimer(disableOn * 2.33).Timeout += () => SmokeParticles.Emitting = false;
+        };
+    }
+
+    /// <summary> Sets the process material size of the particles. This method duplicates the process material. </summary>
+    /// <param name="particles">The particles node to set the size.</param>
+    /// <param name="particleSize">The size of the particles.</param>
+    private void SetProcessMaterialSize(GpuParticles2D particles, float particleSize)
+    {
+        var material = particles.ProcessMaterial.Duplicate() as ParticleProcessMaterial;
+        material.ScaleMax = particleSize;
+        material.ScaleMin = particleSize;
+        particles.ProcessMaterial = material;
+    }
+
+    private void SetProcessMaterialEmissionShapeRadius(GpuParticles2D particles, float radius)
+    {
+        var material = particles.ProcessMaterial.Duplicate() as ParticleProcessMaterial;
+        material.EmissionSphereRadius = radius;
+        particles.ProcessMaterial = material;
     }
 }

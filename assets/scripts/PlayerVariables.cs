@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using ExtensionMethods;
+
 namespace Galatime
 {
     public enum LearnedStatus
@@ -112,16 +114,16 @@ namespace Galatime
                     }
                 }
 
-                if (saveData.ContainsKey("stats"))
-                {
-                    Godot.Collections.Dictionary stats = (Godot.Collections.Dictionary)saveData["stats"];
-                    foreach (string key in stats.Keys.Select(v => (string)v))
-                    {
-                        Player.Stats[key].Value = (int)stats[key];
-                    }
-                }
+                // if (saveData.ContainsKey("stats"))
+                // {
+                //     Godot.Collections.Dictionary stats = (Godot.Collections.Dictionary)saveData["stats"];
+                //     foreach (string key in stats.Keys.Select(v => (string)v))
+                //     {
+                //         Player.Stats[key].Value = (int)stats[key];
+                //     }
+                // }
 
-                Player.Xp = (int)saveData["xp"];
+                Player.Xp = (int)saveData.GetOrNull("xp");
                 learnedAbilities = (Godot.Collections.Array<string>)saveData["learned_abilities"];
 
                 // playtimeTimer.Start();
