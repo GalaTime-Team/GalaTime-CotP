@@ -2,12 +2,11 @@
 
 [ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://sprites/gui/dialog-background.png" id="1_f20lw"]
 [ext_resource type="Script" path="res://assets/scripts/objects/DialogBox.cs" id="2_3j6jw"]
+[ext_resource type="PackedScene" uid="uid://n5k4by4v4dnf" path="res://assets/objects/gui/helpers/TypingLabel.tscn" id="3_wvheh"]
 [ext_resource type="Texture2D" uid="uid://di2bm2xc4vued" path="res://sprites/gui/dialog/characters/arthur/surprised/suprised.tres" id="3_xqdov"]
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="4_3u1ey"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="5_7edh5"]
 [ext_resource type="AudioStream" uid="uid://h1mkg7qkc6ls" path="res://assets/audios/sounds/talkbeeps/lol.wav" id="6_a204m"]
-
-[sub_resource type="Theme" id="12"]
 
 [sub_resource type="Animation" id="10"]
 resource_name = "loop"
@@ -47,7 +46,6 @@ _data = {
 }
 
 [node name="DialogBox" type="NinePatchRect"]
-visible = false
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -56,6 +54,8 @@ anchor_bottom = 1.0
 offset_left = -288.0
 offset_top = -168.0
 offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 0
 scale = Vector2(2, 2)
 texture = ExtResource("1_f20lw")
 patch_margin_left = 5
@@ -63,6 +63,21 @@ patch_margin_top = 5
 patch_margin_right = 5
 patch_margin_bottom = 5
 script = ExtResource("2_3j6jw")
+
+[node name="TypingLabel" parent="." instance=ExtResource("3_wvheh")]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 24.0
+offset_right = 280.0
+offset_bottom = 80.0
+theme_override_fonts/normal_font = ExtResource("4_3u1ey")
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+visible_characters = 96
+visible_ratio = 0.780488
+TypingSpeed = 0.07
+
+[node name="DebugTypeTimer" type="Timer" parent="TypingLabel"]
+wait_time = 0.07
 
 [node name="CharacterPortrait" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(256, 256)
@@ -83,24 +98,6 @@ offset_right = 280.0
 offset_bottom = 84.0
 theme_override_fonts/font = ExtResource("4_3u1ey")
 text = "Skip"
-
-[node name="DialogText" type="RichTextLabel" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -60.0
-offset_top = 22.0
-offset_right = 136.0
-offset_bottom = 84.0
-grow_horizontal = 2
-size_flags_horizontal = 5
-theme = SubResource("12")
-theme_override_fonts/normal_font = ExtResource("4_3u1ey")
-bbcode_enabled = true
-text = "You need to find a special potion. But if you will go to the forest it's very dangerous. But hope always with you"
-scroll_active = false
-visible_characters_behavior = 1
 
 [node name="CharacterName" type="Label" parent="."]
 layout_mode = 0

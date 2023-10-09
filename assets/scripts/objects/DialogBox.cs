@@ -1,15 +1,15 @@
 using System.Linq;
 using Galatime;
 using Galatime.Dialogue;
+using Galatime.UI.Helpers;
 using Godot;
 
 public partial class DialogBox : NinePatchRect
 {
-    private RichTextLabel TextLabel;
+    private TypingLabel TypingLabel;
     private Label CharacterNameLabel;
     private TextureRect CharacterPortraitTexture;
     private AnimationPlayer SkipAnimationPlayer;
-    private Timer Delay;
 
     private GalatimeGlobals Globals;
     private Player Player;
@@ -45,7 +45,7 @@ public partial class DialogBox : NinePatchRect
     private AudioStreamPlayer DialogAudio;
     public override void _Ready()
     {
-        TextLabel = GetNode<RichTextLabel>("DialogText");
+        TypingLabel = GetNode<TypingLabel>("TypingLabel");
         CharacterPortraitTexture = GetNode<TextureRect>("CharacterPortrait");
         DialogAudio = GetNode<AudioStreamPlayer>("Voice");
         SkipAnimationPlayer = GetNode<AnimationPlayer>("SkipAnimationPlayer");
@@ -53,19 +53,8 @@ public partial class DialogBox : NinePatchRect
 
         Globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
 
-        Delay = new Timer
-        {
-            WaitTime = 0.04f,
-            OneShot = false
-        };
-        Delay.Timeout += AppendLetter;
-
-        AddChild(Delay);
-    }
-
-    public override void _ExitTree()
-    {
-        Delay.Timeout -= AppendLetter;
+        TypingLabel.OnType += AppendLetter;
+        TypingLabel.OnTypingFinished += StopAndPlaySkipAnimation;
     }
 
     public void StartDialog(string id)
@@ -75,7 +64,7 @@ public partial class DialogBox : NinePatchRect
         {
             CurrentDialog = dialog;
 
-            TextLabel.Text = "";
+            TypingLabel.Text = "";
             Visible = true;
             CanSkip = true;
 
@@ -95,36 +84,17 @@ public partial class DialogBox : NinePatchRect
         ResetValues();
     }
 
-    // <summary> It removes all BBCode tags from the input string and returns the modified string. </summary>
-    public string StripBBCode(string str)
-    {
-        var regex = new RegEx();
-        regex.Compile("\\[.+?\\]");
-        return regex.Sub(str, "", true);
-    }
-
-// <summary> A method that appends a letter to the TextLabel. </summary>
-public void AppendLetter()
-{
-    if (TextLabel.VisibleCharacters >= StripBBCode(TextLabel.Text).Length)
-    {
-        StopAndPlaySkipAnimation();
-        return;
-    }
-
-    TextLabel.VisibleCharacters++;
-    PlayDialogAudio();
-}
+    // <summary> A method that appends a letter to the TextLabel. </summary>
+    private void AppendLetter() => PlayDialogAudio();
 
     private void StopAndPlaySkipAnimation()
     {
-        Delay.Stop();
         SkipAnimationPlayer.Play("loop");
         CanSkip = true;
     }
 
     private void PlayDialogAudio() => DialogAudio.Play();
-    public void StartTyping() => Delay.Start();
+    public void StartTyping() => TypingLabel.StartTyping();
 
     public void NextPhrase(int phraseId)
     {
@@ -132,15 +102,16 @@ public void AppendLetter()
         CanSkip = false;
 
         var phrase = CurrentDialog.Lines[phraseId];
-        if (phrase.Text.Length == 0) { 
+        if (phrase.Text.Length == 0)
+        {
             CurrentPhrase++;
             return;
         }
 
         var character = GalatimeGlobals.GetCharacterById(phrase.CharacterID);
 
-        TextLabel.VisibleCharacters = 0;
-        TextLabel.Text = phrase.Text;
+        TypingLabel.VisibleCharacters = 0;
+        TypingLabel.Text = phrase.Text;
 
         var emotion = character.EmotionPaths.FirstOrDefault(x => x.Id == phrase.EmotionID);
 
@@ -155,7 +126,7 @@ public void AppendLetter()
 
         StartTyping();
     }
-    
+
     public void SetCameraOffset(string x, string y)
     {
         Player.CameraOffset.X = int.Parse(x);
@@ -166,10 +137,8 @@ public void AppendLetter()
 
     private void ResetValues()
     {
-        Delay.Stop();
-
-        TextLabel.Text = "";
-        TextLabel.VisibleCharacters = -1;
+        TypingLabel.Text = "";
+        TypingLabel.VisibleCharacters = -1;
 
         CurrentPhrase = 0;
         CanSkip = false;
