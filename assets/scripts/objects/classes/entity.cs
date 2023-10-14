@@ -8,9 +8,8 @@ namespace Galatime
     {
         #region Variables
         [Export] public float Speed = 200f;
-        public EntityStats Stats = new();
-        public List<dynamic> LootPool = new();
-        public int DroppedXp;
+        [Export] public EntityStats Stats;
+        [Export] public int DroppedXp;
         private Vector2 KnockbackVelocity = Vector2.Zero;
         #endregion
 
@@ -199,35 +198,35 @@ namespace Galatime
 
         /// <summary> Drop loot from entity. </summary>
         /// <param name="damageRotation">The rotation to drop loot.</param>
-        public virtual void DropLoot(float damageRotation)
-        {
-            var rnd = new Random();
+        // public virtual void DropLoot(float damageRotation)
+        // {
+        //     var rnd = new Random();
 
-            // Inserting loot pool to drop.
-            for (int i = 0; i < LootPool.Count; i++)
-            {
-                // Calculating chance to drop.
-                if (rnd.Next(1, 101) <= LootPool[i].chance)
-                {
-                    // Instantiating item pickup to drop.
-                    var itemPickup = ItemPickupScene.Instantiate<ItemPickup>();
+        //     // Inserting loot pool to drop.
+        //     for (int i = 0; i < LootPool.Count; i++)
+        //     {
+        //         // Calculating chance to drop.
+        //         if (rnd.Next(1, 101) <= LootPool[i].chance)
+        //         {
+        //             // Instantiating item pickup to drop.
+        //             var itemPickup = ItemPickupScene.Instantiate<ItemPickup>();
 
-                    // Setting item pickup random values (Quantity and spawn velocity).
-                    var quantity = rnd.Next(LootPool[i].min, LootPool[i].max);
-                    var spawnVector = new Vector2 { X = 200 + rnd.Next(0, 100) };
-                    spawnVector = spawnVector.Rotated(damageRotation);
+        //             // Setting item pickup random values (Quantity and spawn velocity).
+        //             var quantity = rnd.Next(LootPool[i].min, LootPool[i].max);
+        //             var spawnVector = new Vector2 { X = 200 + rnd.Next(0, 100) };
+        //             spawnVector = spawnVector.Rotated(damageRotation);
 
-                    // Setting item pickup values.
-                    itemPickup.SpawnVelocity = spawnVector;
-                    itemPickup.ItemId = LootPool[i].id;
-                    itemPickup.Quantity = quantity;
-                    itemPickup.GlobalPosition = Body.GlobalPosition;
+        //             // Setting item pickup values.
+        //             itemPickup.SpawnVelocity = spawnVector;
+        //             itemPickup.ItemId = LootPool[i].id;
+        //             itemPickup.Quantity = quantity;
+        //             itemPickup.GlobalPosition = Body.GlobalPosition;
 
-                    // Adding item pickup to the scene.
-                    GetParent().AddChild(itemPickup);
-                }
-            }
-        }
+        //             // Adding item pickup to the scene.
+        //             GetParent().AddChild(itemPickup);
+        //         }
+        //     }
+        // }
 
 
         /// <summary> Drop xp from entity based on <see cref="DroppedXp"/>, so <see cref="DroppedXp"/> will determine how much xp will be dropped. </summary> 

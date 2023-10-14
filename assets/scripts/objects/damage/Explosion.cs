@@ -52,7 +52,7 @@ public partial class Explosion : Area2D
 
         ExplosionAudios[ExplosionType.Normal] = ResourceLoader.Load<AudioStream>("res://assets/audios/sounds/damage/explosion_medium.wav");
         ExplosionAudios[ExplosionType.Red] = ResourceLoader.Load<AudioStream>("res://assets/audios/sounds/damage/explosion_hard.wav");
-        ExplosionTextures[ExplosionType.Normal] = ResourceLoader.Load<Texture2D>("res://sprites/damage/explosion.png");
+        ExplosionTextures[ExplosionType.Normal] = ResourceLoader.Load<Texture2D>("res://sprites/damage/explosion_old.png");
         ExplosionTextures[ExplosionType.Red] = ResourceLoader.Load<Texture2D>("res://sprites/damage/explosion_red.png");
 
         BodyEntered += OnBodyEntered;

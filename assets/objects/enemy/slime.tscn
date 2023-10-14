@@ -1,6 +1,7 @@
-[gd_scene load_steps=29 format=3 uid="uid://dfsfnjxcwp6ye"]
+[gd_scene load_steps=31 format=3 uid="uid://dfsfnjxcwp6ye"]
 
 [ext_resource type="Script" path="res://assets/scripts/objects/enemies/Slime.cs" id="1_ufwr7"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/EntityStats.cs" id="2_7chbk"]
 [ext_resource type="Texture2D" uid="uid://cyglxm8058sgm" path="res://sprites/particles/Slime_particles.png" id="2_h3u7x"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="2_wehpt"]
 [ext_resource type="Texture2D" uid="uid://cjp2ay7e3883i" path="res://sprites/slime.png" id="3_6c3gk"]
@@ -18,6 +19,17 @@
 [ext_resource type="AudioStream" uid="uid://cwvhihaspb4q1" path="res://assets/audios/sounds/enemies/slime/slimedamage3.wav" id="15_clftc"]
 [ext_resource type="AudioStream" uid="uid://y6j74r1d84qd" path="res://assets/audios/sounds/enemies/slime/slimedamage4.wav" id="16_7wsu3"]
 [ext_resource type="AudioStream" uid="uid://w3a65w7r06gq" path="res://assets/audios/sounds/enemies/slime/slimedeath.wav" id="17_frwy4"]
+
+[sub_resource type="Resource" id="Resource_glb4b"]
+script = ExtResource("2_7chbk")
+"Physical Attack" = 50.0
+"Magical Attack" = 50.0
+"Physical Defence" = 50.0
+"Magical Defence" = 50.0
+Health = 50.0
+Mana = 50.0
+Stamina = 50.0
+Agility = 50.0
 
 [sub_resource type="CircleShape2D" id="9"]
 radius = 20.0
@@ -164,6 +176,7 @@ stream_3/weight = 1.0
 collision_layer = 4
 collision_mask = 7
 script = ExtResource("1_ufwr7")
+Stats = SubResource("Resource_glb4b")
 
 [node name="TargetController" parent="." instance=ExtResource("2_wehpt")]
 

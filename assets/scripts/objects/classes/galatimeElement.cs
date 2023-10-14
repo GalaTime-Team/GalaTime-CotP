@@ -1,14 +1,16 @@
 using Godot;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Galatime
 {
-    public enum DamageDifferenceType {
+    public enum DamageDifferenceType
+    {
         equal,
         plus,
         minus,
         heal
-    }   
+    }
 
     public partial class GalatimeElementDamageResult
     {
@@ -17,20 +19,20 @@ namespace Galatime
         public DamageDifferenceType Type = DamageDifferenceType.equal;
     }
 
-    public partial class GalatimeElement : Godot.Node
+    [Tool]
+    public partial class GalatimeElement : Resource
     {
-        public int id = 0;
-        public string name = "Default";
-        public string description = "No description";
+        public string Name = "Default";
+        public string Description = "No description";
 
-        public float attackPhysics = 1.0f;
-        public float attackMagic = 1.0f;
-        public float defensePhysics = 1.0f;
-        public float defenseMagic = 1.0f;
-        public float hpMultiplier = 1.0f;
-        public float manaMultiplier = 1.0f;
-        public float staminaMultiplier = 1.0f;
-        public float agilityMultiplier = 1.0f;
+        public float AttackPhysics = 1.0f;
+        public float AttackMagic = 1.0f;
+        public float DefensePhysics = 1.0f;
+        public float DefenseMagic = 1.0f;
+        public float HpMultiplier = 1.0f;
+        public float ManaMultiplier = 1.0f;
+        public float StaminaMultiplier = 1.0f;
+        public float AgilityMultiplier = 1.0f;
 
         public Dictionary<string, float> DamageMultipliers = new();
 
@@ -40,13 +42,13 @@ namespace Galatime
         public GalatimeElementDamageResult GetReceivedDamage(GalatimeElement e, float amount)
         {
             GalatimeElementDamageResult result = new();
-            if (!DamageMultipliers.ContainsKey(e.name))
+            if (!DamageMultipliers.ContainsKey(e.Name))
             {
                 GD.Print("No element is found, the standard multiplier will be used (1x)");
                 result.Damage = amount;
                 return result;
             }
-            float multiplier = (float)DamageMultipliers[e.name];
+            float multiplier = (float)DamageMultipliers[e.Name];
             float damage = amount * multiplier;
             result.Damage = damage;
             result.Type = multiplier switch
@@ -63,7 +65,7 @@ namespace Galatime
         {
             var c = new GalatimeElement
             {
-                name = a.name + " + " + b.name
+                Name = a.Name + " + " + b.Name
             };
             foreach (var elem in a.DamageMultipliers.Keys)
             {
@@ -80,7 +82,7 @@ namespace Galatime
             }
             return c;
         }
-
+        
         /// <summary>
         /// Fire element
         /// </summary>
@@ -91,12 +93,12 @@ namespace Galatime
                 GalatimeElement e = new()
 
                 {
-                    name = "Ignis",
-                    description = "This element has fiery abilities. Don't get burned!",
-                    attackMagic = 1.25f,
-                    defenseMagic = 1.25f,
-                    manaMultiplier = 0.8f,
-                    staminaMultiplier = 0.8f
+                    Name = "Ignis",
+                    Description = "This element has fiery abilities. Don't get burned!",
+                    AttackMagic = 1.25f,
+                    DefenseMagic = 1.25f,
+                    ManaMultiplier = 0.8f,
+                    StaminaMultiplier = 0.8f
                 };
 
                 e.DamageMultipliers["Aqua"] = 2f;
@@ -113,11 +115,11 @@ namespace Galatime
             {
                 GalatimeElement e = new()
                 {
-                    name = "Chaos",
-                    description = "The element that forces destruction. A very destructive thing",
-                    attackMagic = 0.75f,
-                    staminaMultiplier = 1.25f,
-                    agilityMultiplier = 0.75f
+                    Name = "Chaos",
+                    Description = "The element that forces destruction. A very destructive thing",
+                    AttackMagic = 0.75f,
+                    StaminaMultiplier = 1.25f,
+                    AgilityMultiplier = 0.75f
                 };
 
                 e.DamageMultipliers["Caeli"] = 0.5f;
@@ -134,12 +136,12 @@ namespace Galatime
             {
                 GalatimeElement e = new()
                 {
-                    name = "Aqua",
-                    description = "This element has the power of water. Do not drown!",
+                    Name = "Aqua",
+                    Description = "This element has the power of water. Do not drown!",
 
-                    attackMagic = 0.75f,
-                    staminaMultiplier = 1.25f,
-                    agilityMultiplier = 0.75f
+                    AttackMagic = 0.75f,
+                    StaminaMultiplier = 1.25f,
+                    AgilityMultiplier = 0.75f
                 };
 
                 e.DamageMultipliers["Chaos"] = 2f;
@@ -158,7 +160,7 @@ namespace Galatime
 
         public static GalatimeElement GetByName(string name)
         {
-            foreach (GalatimeElement e in Elements) if (e.name == name) return e;
+            foreach (GalatimeElement e in Elements) if (e.Name == name) return e;
             return null;
         }
     }

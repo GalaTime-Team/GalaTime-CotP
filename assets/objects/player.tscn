@@ -1,7 +1,8 @@
-[gd_scene load_steps=76 format=3 uid="uid://dxkmenalovoja"]
+[gd_scene load_steps=77 format=3 uid="uid://dxkmenalovoja"]
 
 [ext_resource type="Animation" uid="uid://co6srb7oraj3q" path="res://assets/animations/characters/artur/walk_left.tres" id="2"]
 [ext_resource type="PackedScene" uid="uid://s184ap1aunq3" path="res://assets/objects/PlayerGui.tscn" id="2_e81u3"]
+[ext_resource type="Resource" uid="uid://bw77nd4owm2sn" path="res://assets/resources/entity/Stats.tres" id="2_nyj8t"]
 [ext_resource type="PackedScene" uid="uid://dc61rj5d7csf6" path="res://assets/objects/HumanoidDoll.tscn" id="2_xptlr"]
 [ext_resource type="Animation" uid="uid://g82xlv1qh4dx" path="res://assets/animations/characters/artur/walk_down.tres" id="3"]
 [ext_resource type="Animation" uid="uid://chwhjkjfct2xe" path="res://assets/animations/characters/artur/walk_right.tres" id="4"]
@@ -184,6 +185,7 @@ z_index = -1
 y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("10")
+Stats = ExtResource("2_nyj8t")
 
 [node name="HumanoidDoll" parent="." instance=ExtResource("2_xptlr")]
 AnimationPlayerPath = NodePath("../Animation")

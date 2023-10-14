@@ -20,16 +20,8 @@ public partial class ShootingBuddy : Entity
         Sprite = GetNode<Sprite2D>("Sprite2D");
         #endregion
 
-        Body = this;
         Element = GalatimeElement.Aqua;
-        Stats = new EntityStats(
-            physicalAttack: 21,
-            magicalAttack: 25,
-            physicalDefence: 10,
-            magicalDefence: 34,
-            health: 5
-        );
-        Health = Stats[EntityStatType.Health].Value;
+        Body = this;
 
         ShootingTimer.Timeout += OnShootingTimerTimeout;
         ShootingTimer.Start();

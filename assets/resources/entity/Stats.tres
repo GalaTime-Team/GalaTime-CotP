@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EntityStats" load_steps=2 format=3 uid="uid://bw77nd4owm2sn"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/EntityStats.cs" id="1_kuok5"]
+
+[resource]
+script = ExtResource("1_kuok5")
+"Physical Attack" = 999.0
+"Magical Attack" = 999.0
+"Physical Defence" = 999.0
+"Magical Defence" = 999.0
+Health = 999.0
+Mana = 999.0
+Stamina = 999.0
+Agility = 999.0

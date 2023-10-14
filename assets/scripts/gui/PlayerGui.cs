@@ -7,23 +7,17 @@ namespace Galatime
     public partial class PlayerGui : Control
     {
         #region Nodes
-        public AnimationPlayer FadeAnimation;
         public ColorRect FadeScreen;
 
         // Stats
         public ValueBar HealthValueBar;
         public ValueBar StaminaValueBar;
         public ValueBar ManaValueBar;
-        public TextureProgressBar HealthDrainProgressBar;
 
         // Text Stats
-        public Godot.Label StaminaLabel;
-        public Godot.Label ManaLabel;
-        public Godot.Label DodgeCountdownText;
-        public RichTextLabel TextStats;
-
+        public Label DodgeCountdownText;
         public Timer DodgeTextTimer;
-        public Godot.Label VersionText;
+        public Label VersionText;
 
         public DialogBox DialogBox;
 
@@ -42,9 +36,17 @@ namespace Galatime
         #endregion
 
         #region Variables
-        public float LocalHp = 0f;
         public float RemainingDodge;
         public List<AbilityContainer> AbilityContainers = new();
+        private bool isPause = false;
+        public bool IsPause {
+            get => isPause;
+            set {
+                isPause = value;
+                OnPause?.Invoke(isPause );
+                PauseContainer.Visible = isPause;
+            }
+        }
 
         public PlayerVariables PlayerVariables;
         #endregion
@@ -57,7 +59,6 @@ namespace Galatime
         public override void _Ready()
         {
             #region Get nodes
-            FadeAnimation = GetNode<AnimationPlayer>("FadeAnimationPlayer");  
             FadeScreen = GetNode<ColorRect>("FadeScreen");  
 
             // Stats
@@ -81,9 +82,7 @@ namespace Galatime
             #endregion
             
             PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            
             AbilitiesListContainer._onAbilityLearned();
-
             PlayerVariables.OnItemsChanged += DisplayItem;
 
             // Setting up dodge timer
@@ -109,7 +108,6 @@ namespace Galatime
 
         public override void _ExitTree() {
             PlayerVariables.OnItemsChanged -= DisplayItem;
-
         }
 
         public void OnStatsChanged(EntityStats stats)
@@ -119,13 +117,10 @@ namespace Galatime
             ManaValueBar.MaxValue = stats[EntityStatType.Mana].Value;
         }
 
-
-        /// <summary>
-        /// Makes the fade animation, which fades the screen in and out.
-        /// </summary>
-        /// <param name="type">The type of fade</param>
-        /// <param name="duration">The duration of the fade</param>
-        /// <param name="callback">The callback to call when the fade is finished</param>
+        /// <summary> Makes the fade animation, which fades the screen in and out. </summary>
+        /// <param name="type"> The type of fade. True for fade in, false for fade out. </param>
+        /// <param name="duration"> The duration of the fade. </param>
+        /// <param name="callback"> The callback to call when the fade is finished. </param>
         public void OnFade(bool type, float duration = 0.5f, Action callback = null)
         {
             // Make sure the fade screen is visible. I wait it to be hidden in the editor, not in a game.
@@ -134,9 +129,10 @@ namespace Galatime
             // Start fade by setting the alpha to 0 with ease
             var tween = GetTree().CreateTween();
             tween.TweenProperty(FadeScreen, "modulate:a", type ? 1 : 0, duration);
-            tween.Finished += () => callback?.Invoke();
+            if (callback != null) tween.Finished += callback;
         }
 
+        /// <summary> Plays a parry effect by pausing the game, showing an overlay, and playing a sound. </summary>
         public async void ParryEffect() {
             GetTree().Paused = true;
             ParryOverlay.Visible = true;
@@ -146,21 +142,13 @@ namespace Galatime
             GetTree().Paused = false;
         }
 
-        public void OnHealthChanged(float health)
-        {   
-            HealthValueBar.Value = health;
-        }
-
-        public void OnStaminaChanged(float stamina)
-        {
-            StaminaValueBar.Value = stamina;
-        }
-
-        public void OnManaChanged(float mana)
-        {
-            ManaValueBar.Value = mana;
-        }
-
+        public void OnHealthChanged(float health) => HealthValueBar.Value = health;
+        public void OnStaminaChanged(float stamina) => StaminaValueBar.Value = stamina;
+        public void OnManaChanged(float mana) => ManaValueBar.Value = mana;
+        
+        /// <summary> Updates the entity's stats and UI based on XP. </summary>
+        /// <param name="entityStats"> A list of stats that define the entity's attributes. </param>
+        /// <param name="XP"> The amount of experience points that the entity has. </param>
         public void ChangeStats(EntityStats entityStats, float XP)
         {
             if (StatsContainer.GetChildCount() <= 0)
@@ -190,15 +178,8 @@ namespace Galatime
             instance.playAnimation(result);
         }
 
-        public void AddAbility(AbilityData ab, int i)
-        {
-            AbilitiesContainer.GetChild<AbilityContainer>(i).Load(ab);
-        }
-
-        public void RemoveAbility(int i)
-        {
-            AbilitiesContainer.GetChild<AbilityContainer>(i).Unload();
-        }
+        public void AddAbility(AbilityData ab, int i) => AbilitiesContainer.GetChild<AbilityContainer>(i).Load(ab);
+        public void RemoveAbility(int i) => AbilitiesContainer.GetChild<AbilityContainer>(i).Unload();
 
         public void ReloadDodge()
         {
@@ -223,15 +204,7 @@ namespace Galatime
             return ability;
         }
 
-        public void DisplayItem()
-        {
-            OnItemsChanged?.Invoke();
-        }
-
-        public void pause(bool visible)
-        {
-            OnPause?.Invoke(visible);
-            PauseContainer.Visible = visible;
-        }
+        public void DisplayItem() => OnItemsChanged?.Invoke();
+        public void TogglePause() => IsPause = !IsPause;
     }
 }

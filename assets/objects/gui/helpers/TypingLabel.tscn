@@ -3,8 +3,16 @@
 [ext_resource type="Script" path="res://assets/scripts/gui/helpers/TypingLabel.cs" id="1_2enlv"]
 
 [node name="TypingLabel" type="RichTextLabel"]
-offset_right = 320.0
-offset_bottom = 64.0
+offset_right = 384.0
+offset_bottom = 128.0
 bbcode_enabled = true
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+visible_characters = 69
+visible_ratio = 0.560976
 script = ExtResource("1_2enlv")
+
+[node name="DebugTypeTimer" type="Timer" parent="."]
+wait_time = 0.1
+
+[node name="@Timer@19107" type="Timer" parent="."]
+wait_time = 0.1

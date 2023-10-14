@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
+using Godot;
 
 namespace Galatime
 {
@@ -25,41 +28,55 @@ namespace Galatime
         Agility
     }
 
-    /// 
-    public class EntityStats : IEnumerable<EntityStat>
-    {
-        private readonly Dictionary<EntityStatType, EntityStat> Stats;
-        public delegate void EntityStatChangedDelegate(EntityStats stats);
-        public event EntityStatChangedDelegate OnStatsChanged;
-
-        public EntityStats(float physicalAttack = 51, float magicalAttack = 22,
-            float physicalDefence = 51, float magicalDefence = 34,
-            float health = 19, float mana = 15,
-            float stamina = 12, float agility = 46)
+    [Tool, GlobalClass, Icon("res://sprites/editoricons/stats.svg")]
+    public partial class EntityStats : Resource, IEnumerable<EntityStat>
+    {   
+        private Dictionary<EntityStatType, EntityStat> Stats = new()
         {
-            Stats = new Dictionary<EntityStatType, EntityStat>
-            {
-                { EntityStatType.PhysicalAttack, new EntityStat(EntityStatType.PhysicalAttack, physicalAttack, "physicalAttack", "Physical Attack", "Gives more power to a physical attack. Most often needed for swords", "res://sprites/gui/stats/physical-attack.png") },
-                { EntityStatType.MagicalAttack, new EntityStat(EntityStatType.MagicalAttack, magicalAttack, "magicalAttack", "Magical Attack", "Gives more power to magical attack. Most often needed for abilities", "res://sprites/gui/stats/magicall-attack.png") },
-                { EntityStatType.PhysicalDefense, new EntityStat(EntityStatType.PhysicalDefense, physicalDefence, "physicalDefence", "Physical Defence", "Gives protection against physical attacks", "res://sprites/gui/stats/physical-defence-icon.png") },
-                { EntityStatType.MagicalDefense, new EntityStat(EntityStatType.MagicalDefense, magicalDefence, "magicalDefence", "Magical Defence", "Gives protection against magical attacks", "res://sprites/gui/stats/magical-defence-icon.png") },
-                { EntityStatType.Health, new EntityStat(EntityStatType.Health, health, "health", "Health", "Gives maximum amount of health", "res://sprites/gui/stats/health-icon.png") },
-                { EntityStatType.Mana, new EntityStat(EntityStatType.Mana, mana, "mana", "Mana", "Gives maximum amount of mana", "res://sprites/gui/stats/mana-icon.png") },
-                { EntityStatType.Stamina, new EntityStat(EntityStatType.Stamina, stamina, "stamina", "Stamina", "Gives maximum amount of stamina", "res://sprites/gui/stats/stamina-icon.png") },
-                { EntityStatType.Agility, new EntityStat(EntityStatType.Agility, agility, "agility", "Agility", "Gives less time to reload and increases speed. DON'T EVEN THINK ABOUT UPGRADING IT! IT WON'T DO YOU ANY GOOD FOR NOW", "res://sprites/gui/stats/agility-icon.png") }
-            };
+            { EntityStatType.PhysicalAttack, new EntityStat(EntityStatType.PhysicalAttack, "physicalAttack", "Physical Attack", "Gives more power to a physical attack. Most often needed for swords", "res://sprites/gui/stats/physical-attack.png") },
+            { EntityStatType.MagicalAttack, new EntityStat(EntityStatType.MagicalAttack, "magicalAttack", "Magical Attack", "Gives more power to magical attack. Most often needed for abilities", "res://sprites/gui/stats/magicall-attack.png") },
+            { EntityStatType.PhysicalDefense, new EntityStat(EntityStatType.PhysicalDefense, "physicalDefence", "Physical Defence", "Gives protection against physical attacks", "res://sprites/gui/stats/physical-defence-icon.png") },
+            { EntityStatType.MagicalDefense, new EntityStat(EntityStatType.MagicalDefense, "magicalDefence", "Magical Defence", "Gives protection against magical attacks", "res://sprites/gui/stats/magical-defence-icon.png") },
+            { EntityStatType.Health, new EntityStat(EntityStatType.Health, "health", "Health", "Gives maximum amount of health", "res://sprites/gui/stats/health-icon.png") },
+            { EntityStatType.Mana, new EntityStat(EntityStatType.Mana, "mana", "Mana", "Gives maximum amount of mana", "res://sprites/gui/stats/mana-icon.png") },
+            { EntityStatType.Stamina, new EntityStat(EntityStatType.Stamina, "stamina", "Stamina", "Gives maximum amount of stamina", "res://sprites/gui/stats/stamina-icon.png") },
+            { EntityStatType.Agility, new EntityStat(EntityStatType.Agility, "agility", "Agility", "Gives less time to reload and increases speed. DON'T EVEN THINK ABOUT UPGRADING IT! IT WON'T DO YOU ANY GOOD FOR NOW", "res://sprites/gui/stats/agility-icon.png") }
+        };
+        public Action<EntityStats> OnStatsChanged;
+
+        public EntityStats() : base () {
             foreach (var item in this) item.StatChanged += _onStatChanged;
         }
 
-        /// <summary>
-        /// Forces the invocation of the StatsChanged event.
-        /// </summary>
-        /// <remarks>
-        /// This method can be used to manually trigger the <see cref="OnStatsChanged"/> event, which is normally emitted when an <see cref="EntityStats"/> has changed.
-        /// </remarks>
-        public void ForceInvokeStatsChangedEvent()
+        public override Variant _Get(StringName property)
         {
-            OnStatsChanged?.Invoke(this);
+            foreach (var item in this) {
+                if (item.Name == property) return item.Value;
+            }
+            return default;
+        }
+
+        public override bool _Set(StringName property, Variant value)
+        {
+            foreach (var item in this) {
+                if (item.Name == property.ToString()) item.Value = value.AsInt16();
+            }
+            return true;
+        }
+
+        public override Godot.Collections.Array<Godot.Collections.Dictionary> _GetPropertyList()
+        {
+            var properties = new Godot.Collections.Array<Godot.Collections.Dictionary>();
+            foreach (var item in this) {
+                var property = new Godot.Collections.Dictionary() {
+                    { "name", item.Name },
+                    { "type", (int)Variant.Type.Int },
+                    { "hint", (int)PropertyHint.Range },
+                    { "hint_string", "0,999" }
+                };
+                properties.Add(property);
+            }
+            return properties;
         }
 
         private void _onStatChanged(EntityStat stat)
@@ -127,11 +144,10 @@ namespace Galatime
 
     public class EntityStat
     {
-        public delegate void EntityStatChangedDelegate(EntityStat stat);
-        public event EntityStatChangedDelegate StatChanged;
+        public Action<EntityStat> StatChanged;
 
-        public EntityStat(EntityStatType type, float value, string id, string name, string description = "", string iconPath = "res://sprites/gui/stats/health-icon.png") =>
-            (Type, Value, Name, Description, IconPath, ID) = (type, value, name, description, iconPath, id);
+        public EntityStat(EntityStatType type, string id, string name, string description = "", string iconPath = "res://sprites/gui/stats/health-icon.png") =>
+            (Type, Name, Description, IconPath, ID) = (type, name, description, iconPath, id);
 
         public string Name;
         public string ID;

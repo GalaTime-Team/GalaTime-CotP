@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Galatime;
 using Galatime.Dialogue;
@@ -6,6 +7,9 @@ using Godot;
 
 public partial class DialogBox : NinePatchRect
 {
+    public const string DEFAULT_VOICE_PATH = "res://assets/audios/sounds/talkbeeps/lol.wav";
+    public AudioStream DefaultVoice;
+
     private TypingLabel TypingLabel;
     private Label CharacterNameLabel;
     private TextureRect CharacterPortraitTexture;
@@ -45,6 +49,8 @@ public partial class DialogBox : NinePatchRect
     private AudioStreamPlayer DialogAudio;
     public override void _Ready()
     {
+        DefaultVoice = GD.Load<AudioStream>(DEFAULT_VOICE_PATH);
+
         TypingLabel = GetNode<TypingLabel>("TypingLabel");
         CharacterPortraitTexture = GetNode<TextureRect>("CharacterPortrait");
         DialogAudio = GetNode<AudioStreamPlayer>("Voice");
@@ -85,7 +91,11 @@ public partial class DialogBox : NinePatchRect
     }
 
     // <summary> A method that appends a letter to the TextLabel. </summary>
-    private void AppendLetter() => PlayDialogAudio();
+    private void AppendLetter() {
+        var rnd = new Random();
+        DialogAudio.PitchScale = (float)rnd.NextDouble() / 10 + 0.99f;
+        DialogAudio.Play();
+    } 
 
     private void StopAndPlaySkipAnimation()
     {
@@ -93,7 +103,6 @@ public partial class DialogBox : NinePatchRect
         CanSkip = true;
     }
 
-    private void PlayDialogAudio() => DialogAudio.Play();
     public void StartTyping() => TypingLabel.StartTyping();
 
     public void NextPhrase(int phraseId)
@@ -114,7 +123,10 @@ public partial class DialogBox : NinePatchRect
         TypingLabel.Text = phrase.Text;
 
         var emotion = character.EmotionPaths.FirstOrDefault(x => x.Id == phrase.EmotionID);
+        var voice = character.VoicePath != "" ? GD.Load<AudioStream>(character.VoicePath) : DefaultVoice;
 
+        DialogAudio.Stream = voice;
+        
         Texture2D texture = GD.Load<Texture2D>(emotion.Path);
         CharacterNameLabel.Text = character.Name;
         if (texture is AnimatedTexture animatedTexture)

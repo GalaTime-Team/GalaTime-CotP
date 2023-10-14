@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://s184ap1aunq3"]
+[gd_scene load_steps=23 format=3 uid="uid://s184ap1aunq3"]
 
 [ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
@@ -8,23 +8,12 @@
 [ext_resource type="PackedScene" uid="uid://bn3iju7bii6tj" path="res://assets/objects/gui/helpers/ShakeControl.tscn" id="4_bjh2c"]
 [ext_resource type="Texture2D" uid="uid://eenddgdqm3fn" path="res://sprites/gui/status/hp_progress.png" id="5"]
 [ext_resource type="Script" path="res://assets/scripts/gui/PlayerGui.cs" id="6"]
-[ext_resource type="PackedScene" uid="uid://copiga1ncueyb" path="res://assets/objects/InventoryTooltip.tscn" id="8"]
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="9_lrd2i"]
-[ext_resource type="Texture2D" uid="uid://ddp232l64r5h8" path="res://sprites/test/arthur-icon.png" id="11"]
-[ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="12"]
 [ext_resource type="PackedScene" uid="uid://c5r33n1tcj86s" path="res://assets/objects/gui/DialogBox.tscn" id="12_3rd2x"]
-[ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://sprites/gui/dialog-background.png" id="13"]
+[ext_resource type="PackedScene" uid="uid://c1u2weprncgn6" path="res://assets/objects/gui/PauseContainer.tscn" id="13_co182"]
 [ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://sprites/gui/status/mana_progress.png" id="14"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="15_bhhfw"]
-[ext_resource type="PackedScene" uid="uid://m2won44lnrfe" path="res://assets/objects/DragPreview.tscn" id="16"]
-[ext_resource type="Texture2D" uid="uid://dxw5mvqypf6i3" path="res://sprites/test/member-icon.png" id="17"]
-[ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesContainer.cs" id="19_h7ltw"]
-[ext_resource type="PackedScene" uid="uid://4ivx2u2xw1y6" path="res://assets/objects/gui/AbilityContainerItem.tscn" id="20"]
-[ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesChoiseContainer.cs" id="20_lbtld"]
-[ext_resource type="Script" path="res://assets/scripts/gui/AbilityLearnContainer.cs" id="22_r42dr"]
-[ext_resource type="Script" path="res://assets/scripts/gui/SlotContainer.cs" id="23_ajd6p"]
 [ext_resource type="Texture2D" uid="uid://dbliidd2bq780" path="res://sprites/characters/test/dodge_icon.png" id="24"]
-[ext_resource type="Script" path="res://assets/scripts/gui/PausePagesButtonsContainer.cs" id="27"]
 [ext_resource type="AudioStream" uid="uid://dfwi2r7vfy2p5" path="res://assets/audios/sounds/parry.wav" id="27_4kcld"]
 [ext_resource type="Script" path="res://assets/scripts/gui/LeaveLabel.cs" id="27_i8qxk"]
 
@@ -125,9 +114,6 @@ shader = SubResource("5")
 shader_parameter/scale = 20.0
 shader_parameter/shift = 0.05
 shader_parameter/seed = 0.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oxmcq"]
-bg_color = Color(0, 0, 0, 1)
 
 [node name="PlayerGui" type="Control"]
 layout_mode = 3
@@ -334,7 +320,7 @@ visible = false
 material = SubResource("6")
 layout_mode = 0
 offset_right = 1024.0
-offset_bottom = 600.0
+offset_bottom = 560.0
 mouse_filter = 2
 
 [node name="Shader2" type="ColorRect" parent="."]
@@ -366,361 +352,11 @@ theme_override_fonts/font = ExtResource("9_lrd2i")
 horizontal_alignment = 2
 clip_text = true
 
-[node name="PauseContainer" type="Panel" parent="."]
-visible = false
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="StatsContainer" type="Control" parent="PauseContainer"]
-visible = false
-anchors_preset = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-
-[node name="Label" type="Label" parent="PauseContainer/StatsContainer"]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -68.0
-offset_top = -178.0
-offset_right = -2.0
-offset_bottom = -171.0
-scale = Vector2(2, 2)
-theme_override_fonts/font = ExtResource("12")
-text = "Arthur stats"
-
-[node name="Background" type="NinePatchRect" parent="PauseContainer/StatsContainer"]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -476.0
-offset_top = -148.0
-offset_right = -1.0
-offset_bottom = 22.0
-scale = Vector2(2, 2)
-texture = ExtResource("13")
-patch_margin_left = 5
-patch_margin_top = 5
-patch_margin_right = 5
-patch_margin_bottom = 5
-
-[node name="Stats" type="GridContainer" parent="PauseContainer/StatsContainer"]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -454.0
-offset_top = -129.0
-offset_bottom = 15.0
-scale = Vector2(2, 2)
-columns = 3
-
-[node name="Members" type="VBoxContainer" parent="PauseContainer/StatsContainer"]
-visible = false
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -227.0
-offset_top = -146.0
-offset_right = -195.0
-offset_bottom = 10.6555
-
-[node name="Arthur" type="NinePatchRect" parent="PauseContainer/StatsContainer/Members"]
-custom_minimum_size = Vector2(0, 32)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("13")
-patch_margin_left = 5
-patch_margin_top = 5
-patch_margin_right = 5
-patch_margin_bottom = 5
-
-[node name="Icon" type="TextureRect" parent="PauseContainer/StatsContainer/Members/Arthur"]
-custom_minimum_size = Vector2(0, 32)
-layout_mode = 0
-offset_right = 32.0
-offset_bottom = 32.0
-texture = ExtResource("11")
-
-[node name="Member" type="NinePatchRect" parent="PauseContainer/StatsContainer/Members"]
-custom_minimum_size = Vector2(0, 32)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("13")
-patch_margin_left = 5
-patch_margin_top = 5
-patch_margin_right = 5
-patch_margin_bottom = 5
-
-[node name="Icon" type="TextureRect" parent="PauseContainer/StatsContainer/Members/Member"]
-custom_minimum_size = Vector2(0, 32)
-layout_mode = 0
-offset_right = 32.0
-offset_bottom = 32.0
-texture = ExtResource("17")
-
-[node name="AbilitiesContainer" type="ScrollContainer" parent="PauseContainer"]
+[node name="PauseContainer" parent="." instance=ExtResource("13_co182")]
 visible = false
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -512.0
-offset_top = -300.0
-offset_bottom = -56.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(2, 2)
-script = ExtResource("19_h7ltw")
-
-[node name="Panel" type="Panel" parent="PauseContainer/AbilitiesContainer"]
-clip_contents = true
-custom_minimum_size = Vector2(512, 244)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_oxmcq")
-
-[node name="AbilitiesChoiseContainer" type="VBoxContainer" parent="PauseContainer/AbilitiesContainer/Panel"]
-visible = false
-z_index = 1
-layout_mode = 0
-offset_left = 112.0
-offset_top = 20.0
-offset_right = 208.0
-offset_bottom = 52.0
-pivot_offset = Vector2(40, 0)
-theme_override_constants/separation = -10
-script = ExtResource("20_lbtld")
-
-[node name="Label" type="Label" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-theme_override_fonts/font = ExtResource("12")
-text = "Which to replace?"
-
-[node name="AbilitiesContainer" type="HBoxContainer" parent="PauseContainer/AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-alignment = 2
-
-[node name="AbilityItem" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
-z_index = 1
-layout_mode = 0
-offset_left = 256.0
-offset_top = 52.0
-offset_right = 272.0
-offset_bottom = 68.0
-
-[node name="AbilityItem2" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
-z_index = 1
-layout_mode = 0
-offset_left = 208.0
-offset_top = 116.0
-offset_right = 224.0
-offset_bottom = 132.0
-abilityName = "flamethrower"
-
-[node name="AbilityItem3" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
-z_index = 1
-layout_mode = 0
-offset_left = 208.0
-offset_top = 180.0
-offset_right = 224.0
-offset_bottom = 196.0
-abilityName = "firewave"
-
-[node name="AbilityItem4" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
-z_index = 1
-layout_mode = 0
-offset_left = 304.0
-offset_top = 180.0
-offset_right = 320.0
-offset_bottom = 196.0
-abilityName = "blue_fireball"
-
-[node name="AbilityItem5" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
-z_index = 1
-layout_mode = 0
-offset_left = 301.094
-offset_top = 113.094
-offset_right = 317.094
-offset_bottom = 129.094
-abilityName = "bluefire"
-
-[node name="AbilityItem6" parent="PauseContainer/AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("20")]
-z_index = 1
-layout_mode = 0
-offset_left = 160.0
-offset_top = 52.0
-offset_right = 176.0
-offset_bottom = 68.0
-abilityName = "firebullet"
-
-[node name="AbilityLearnContainer" type="VBoxContainer" parent="PauseContainer/AbilitiesContainer/Panel"]
-visible = false
-layout_mode = 0
-offset_left = 112.0
-offset_top = 20.0
-offset_right = 416.0
-offset_bottom = 52.0
-theme_override_constants/separation = 0
-script = ExtResource("22_r42dr")
-
-[node name="Label" type="Label" parent="PauseContainer/AbilitiesContainer/Panel/AbilityLearnContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("12")
-text = "Learn ability \"Fireball\"?"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="LearnButtonContainer" type="HBoxContainer" parent="PauseContainer/AbilitiesContainer/Panel/AbilityLearnContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="LearnButton" type="Label" parent="PauseContainer/AbilitiesContainer/Panel/AbilityLearnContainer/LearnButtonContainer"]
-layout_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0.196078, 0.803922, 0.196078, 1)
-theme_override_fonts/font = ExtResource("12")
-text = "LEARN"
-
-[node name="Label" type="RichTextLabel" parent="PauseContainer/AbilitiesContainer/Panel/AbilityLearnContainer/LearnButtonContainer"]
-layout_mode = 2
-theme_override_fonts/normal_font = ExtResource("9_lrd2i")
-bbcode_enabled = true
-text = "100 [rainbow]XP[/rainbow]"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-
-[node name="inventory" type="GridContainer" parent="PauseContainer"]
-visible = false
-clip_contents = true
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -76.0
-offset_top = -70.0
-offset_bottom = 6.0
-scale = Vector2(2, 2)
-columns = 4
-script = ExtResource("23_ajd6p")
-
-[node name="AbilitiesLabel" type="Label" parent="PauseContainer"]
-visible = false
-layout_mode = 0
-offset_left = 612.0
-offset_top = 145.0
-offset_right = 653.0
-offset_bottom = 152.0
-text = "Abilities"
-
-[node name="Backpack" type="Label" parent="PauseContainer"]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 777.0
-offset_top = -29.0
-offset_right = 821.0
-offset_bottom = -22.0
-text = "Backpack"
-
-[node name="Stats" type="RichTextLabel" parent="PauseContainer"]
-visible = false
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 232.0
-offset_top = -271.0
-offset_right = 392.0
-offset_bottom = -161.0
-bbcode_enabled = true
-text = "Hp: 70
-Stamina: 65
-Mana: 65
-XP: 0
-
-Physic Attack: 75
-Magic Attack: 80
-Agility: 60
-
-Physic Defence: 65
-Magic Defence: 75"
-scroll_active = false
-
-[node name="DragPreview" parent="PauseContainer" instance=ExtResource("16")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-grow_horizontal = 1
-grow_vertical = 1
-scale = Vector2(2, 2)
-
-[node name="Tooltip" parent="PauseContainer" instance=ExtResource("8")]
-visible = false
-z_index = 2
-layout_mode = 0
-scale = Vector2(2, 2)
-mouse_filter = 2
-
-[node name="PausePagesButtonsContainer" type="HBoxContainer" parent="PauseContainer"]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -221.0
-offset_top = -68.0
-offset_right = -1.0
-offset_bottom = -28.0
-scale = Vector2(2, 2)
-theme_override_constants/separation = 14
-script = ExtResource("27")
-
-[node name="0" type="Label" parent="PauseContainer/PausePagesButtonsContainer"]
-layout_mode = 2
-mouse_filter = 1
-mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("12")
-text = "Inventory"
-
-[node name="2" type="Label" parent="PauseContainer/PausePagesButtonsContainer"]
-layout_mode = 2
-mouse_filter = 1
-mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("12")
-text = "Upgrading & Stats"
-
-[node name="3" type="Label" parent="PauseContainer/PausePagesButtonsContainer"]
-layout_mode = 2
-mouse_filter = 1
-mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("12")
-text = "Abilities"
 
 [node name="FadeScreen" type="ColorRect" parent="."]
 visible = false

@@ -71,13 +71,9 @@ offset_top = 24.0
 offset_right = 280.0
 offset_bottom = 80.0
 theme_override_fonts/normal_font = ExtResource("4_3u1ey")
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-visible_characters = 96
-visible_ratio = 0.780488
+visible_characters = 95
+visible_ratio = 0.772358
 TypingSpeed = 0.07
-
-[node name="DebugTypeTimer" type="Timer" parent="TypingLabel"]
-wait_time = 0.07
 
 [node name="CharacterPortrait" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(256, 256)

@@ -10,5 +10,9 @@ namespace ExtensionMethods
             Variant variant = new();
             return variant.As<Variant>();
         }
+        public static Variant GetOrDefaultValue(this Dictionary dictionary, string key, Variant defaultValue) {
+            if (dictionary.ContainsKey(key)) return dictionary[key];
+            return defaultValue;
+        }
     }
 }

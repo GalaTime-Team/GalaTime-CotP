@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://0otuht1x7w5x"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="1_o21io"]
+
+[resource]
+script = ExtResource("1_o21io")
+Name = "Ignis"
+Description = "No description"
+ID = "Default"

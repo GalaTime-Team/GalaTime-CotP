@@ -18,7 +18,8 @@
         { "id": "surprised", "path": "res://sprites/gui/dialog/characters/rafael/surprised.png" },
         { "id": "sweating", "path": "res://sprites/gui/dialog/characters/rafael/sweating/sweating.tres" },
         { "id": "ready", "path": "res://sprites/gui/dialog/characters/rafael/ready/ready.tres" }
-      ]
+      ],
+      "voice": "res://assets/audios/sounds/talkbeeps/malebeep0.wav"
     },
     {
       "id": "arthur",

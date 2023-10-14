@@ -1,7 +1,6 @@
-[gd_scene load_steps=22 format=3 uid="uid://cnquvp1gnwkb5"]
+[gd_scene load_steps=21 format=3 uid="uid://cnquvp1gnwkb5"]
 
 [ext_resource type="Script" path="res://assets/scripts/objects/damage/Explosion.cs" id="1_pe16a"]
-[ext_resource type="Texture2D" uid="uid://csqjmhpieu1f6" path="res://sprites/damage/explosion.png" id="2_46i1i"]
 [ext_resource type="Texture2D" uid="uid://b5p7eomis5jie" path="res://sprites/damage/explosion-hole.png" id="2_a8fxu"]
 [ext_resource type="AudioStream" uid="uid://cic38iixu0ckp" path="res://assets/audios/sounds/damage/explosion_medium.wav" id="3_166tm"]
 [ext_resource type="Texture2D" uid="uid://bdfcb5nxet2oy" path="res://sprites/particles/smoke.png" id="5_dghw5"]
@@ -34,6 +33,8 @@ curve = SubResource("Curve_celvj")
 gravity = Vector3(0, 0, 0)
 scale_curve = SubResource("CurveTexture_tj4vf")
 color_ramp = SubResource("GradientTexture1D_72gnp")
+anim_speed_min = 1.0
+anim_speed_max = 1.0
 
 [sub_resource type="Animation" id="Animation_rg1ob"]
 resource_name = "Explosion"
@@ -136,7 +137,6 @@ one_shot = true
 emitting = false
 amount = 1
 process_material = SubResource("ParticleProcessMaterial_7tdji")
-texture = ExtResource("2_46i1i")
 one_shot = true
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]

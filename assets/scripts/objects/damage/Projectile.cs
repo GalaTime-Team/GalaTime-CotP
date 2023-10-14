@@ -67,6 +67,7 @@ public partial class Projectile : CharacterBody2D
     public Timer TimeoutTimer;
     /// <summary> The timer for duration how long the projectile can be. </summary>
     // public Timer DurationTimer;
+    public CollisionShape2D Collision;
     #endregion
 
     public override void _Ready()
@@ -78,6 +79,7 @@ public partial class Projectile : CharacterBody2D
         TargetController = GetNode<TargetController>("TargetController");
         DamageArea = GetNode<Area2D>("DamageArea");
         TimeoutTimer = GetNode<Timer>("TimeoutTimer");
+        Collision = GetNode<CollisionShape2D>("Collision");
         // DurationTimer = GetNode<Timer>("DurationTimer");
         #endregion
 
@@ -137,6 +139,9 @@ public partial class Projectile : CharacterBody2D
         // DurationTimer.Stop();
         TimeoutTimer.Start();
         Exploded?.Invoke(this);
+
+        // For some reason, we need to wait for the explosion to finish. This prevent the projectile from colliding with the other objects.
+        GetTree().CreateTimer(0.5f).Timeout += () => Collision.Disabled = true;
     }
 
     public void AddChildDeferred(Node2D node) {

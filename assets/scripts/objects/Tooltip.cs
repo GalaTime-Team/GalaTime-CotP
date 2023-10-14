@@ -48,7 +48,7 @@ namespace Galatime
             var ability = abilityId;
             nameNode.Text = ability.Name;
             descriptionNode.Text = ability.Description;
-            descriptionNode.Text += $"\nElement: {abilityId.Element.name}";
+            descriptionNode.Text += $"\nElement: {abilityId.Element.Name}";
             // if (ability.ContainsKey("power")) descriptionNode.AppendText("\n \nPower: [color=yellow]" + (Single)ability["power"] + "[/color]");
             var sb = new StringBuilder();
             sb.Append(ability.Reload > 0 ? $"\nCooldown: [color=yellow]{ability.Reload}s[/color]" : "");

@@ -62,6 +62,10 @@ public class Character
     [JsonProperty("emotions")]
     /// <summary> The list of emotions sprites paths associated with the character. Key is the emotion ID and value is the path. </summary>
     public List<EmotionData> EmotionPaths = new();
+
+    [JsonProperty("voice")]
+    /// <summary> The sound voice effect associated with the character. </summary>
+    public string VoicePath = "";
 }
 
 /// <summary> Represents the list of characters taken from the talking_characters.json. </summary>

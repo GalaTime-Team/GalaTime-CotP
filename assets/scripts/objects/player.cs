@@ -63,17 +63,6 @@ namespace Galatime
 
             Element = GalatimeElement.Ignis + GalatimeElement.Chaos;
 
-            Stats = new EntityStats(
-                physicalAttack: 100,
-                magicalAttack: 100,
-                physicalDefence: 100,
-                magicalDefence: 100,
-                health: 100,
-                mana: 100,
-                stamina: 100,
-                agility: 100
-            );
-
             // Start
             CanMove = true;
 
@@ -230,21 +219,7 @@ namespace Galatime
 
         public override void _UnhandledInput(InputEvent @event)
         {
-            if (@event.IsActionPressed("ui_cancel"))
-            {
-                if (_isPause)
-                {
-                    _isPause = false;
-                    PlayerGui.pause(_isPause);
-                    return;
-                }
-                if (!_isPause)
-                {
-                    _isPause = true;
-                    PlayerGui.pause(_isPause);
-                    return;
-                }
-            }
+            if (@event.IsActionPressed("ui_cancel")) PlayerGui.TogglePause();
             if (@event.IsActionPressed("game_attack"))
             {
                 Weapon.Attack(this);

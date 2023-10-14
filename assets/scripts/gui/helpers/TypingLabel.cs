@@ -66,7 +66,6 @@ public partial class TypingLabel : RichTextLabel
         };
         TypeTimer.Timeout += AppendLetter;
         AddChild(TypeTimer);
-        if (Engine.IsEditorHint()) TypeTimer.Owner = GetTree().EditedSceneRoot;
 
         StartTyping();
     }

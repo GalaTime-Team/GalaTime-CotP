@@ -40,17 +40,6 @@ public partial class TestCharacter : HumanoidCharacter
         Speed = 300f;
         AnimationPlayer.SpeedScale = Speed / 100;
 
-        Stats = new EntityStats(
-            physicalAttack: 75,
-            magicalAttack: 80,
-            physicalDefence: 65,
-            magicalDefence: 75,
-            health: 70,
-            mana: 99999,
-            stamina: 99999,
-            agility: 60
-        );
-
         Stamina += 99999;
         Mana += 99999;
 

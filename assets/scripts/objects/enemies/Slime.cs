@@ -27,7 +27,6 @@ public partial class Slime : Entity
     /// <summary> Flag indicating if character can move. </summary>
     private bool CanMoveTest = true;
     /// <summary> Character speed. </summary>
-    public new float speed = 200;
     /// <summary> Current stage of the character, means how many times can be splited into parts. X means it will be splitted X time into 2 parts. </summary>
     public int Stage = 2;
     #endregion
@@ -44,15 +43,6 @@ public partial class Slime : Entity
 
         var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
         Player = playerVariables.Player;
-        Stats = new EntityStats(
-                physicalAttack: 21,
-                magicalAttack: 25,
-                physicalDefence: 10,
-                magicalDefence: 34,
-                health: 5
-            );
-
-        DroppedXp = 10;
 
         Sprite = GetNode<Sprite2D>("Sprite2D");
         Navigation = GetNode<NavigationAgent2D>("NavigationAgent3D");
@@ -74,27 +64,6 @@ public partial class Slime : Entity
         AddChild(AttackCountdownTimer);
 
         AnimationPlayer.Play("intro");
-
-        Stats[EntityStatType.Health].Value += 10 * Stage;
-        Health = Stats[EntityStatType.Health].Value;
-
-        speed -= 50 * Stage;
-
-        if (Stage == 1)
-        {
-            var smallSlimeTexture = GD.Load<Texture2D>("res://sprites/small_slime.png");
-            Sprite.Texture = smallSlimeTexture;
-        }
-
-        dynamic barrelItem = new
-        {
-            id = "barrel",
-            max = 7,
-            min = 1,
-            chance = 75
-        };
-
-        LootPool.Add(barrelItem);
 
         // await ToSignal(GetTree().CreateTimer(1f), SceneTreeTimer.SignalName.Timeout);
 
@@ -173,7 +142,7 @@ public partial class Slime : Entity
             {
                 Vector2 vectorPath = Vector2.Zero;
                 Navigation.TargetPosition = enemy.GlobalPosition;
-                vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition()) * speed;
+                vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition()) * Speed;
                 float rotation = Body.GlobalPosition.AngleToPoint(enemy.GlobalPosition);
                 Weapon.Rotation = rotation;
                 float rotationDeg = Mathf.RadToDeg(rotation);
