@@ -83,11 +83,11 @@ public partial class FireBullet : GalatimeAbility
                 entity.TakeDamage(40, Caster.Stats[EntityStatType.MagicalAttack].Value, Data.Element, DamageType.magical);
             if (body is Projectile projectile && projectile.Moving)
             {
-                PlayerVariables.Player.PlayerGui.ParryEffect();
+                PlayerVariables.Player.PlayerGui.ParryEffect(projectile.GlobalPosition);
                 var explosion = projectile.Explosion;
                 explosion.Type = ExplosionType.Red;
                 explosion.Power += 6;
-                projectile.Destroy();
+                projectile.Destroy();   
                 return;
             }
         }

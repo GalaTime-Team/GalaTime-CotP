@@ -223,11 +223,13 @@ position = Vector2(-16, 0)
 amount = 16
 process_material = SubResource("ParticleProcessMaterial_kw371")
 texture = ExtResource("2_dxy86")
+metadata/_edit_lock_ = true
 
 [node name="Sprite" type="Sprite2D" parent="Projectile"]
 scale = Vector2(4, 4)
 texture = ExtResource("24")
 flip_h = true
+metadata/_edit_lock_ = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Projectile"]
 root_node = NodePath("../..")
@@ -236,3 +238,4 @@ libraries = {
 }
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="Projectile"]
+metadata/_edit_lock_ = true

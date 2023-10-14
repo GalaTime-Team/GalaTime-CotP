@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/EntityStats.cs" id="2_0yxw1"]
 [ext_resource type="Texture2D" uid="uid://c6ua2n3er8upx" path="res://sprites/abilities/fireball/7.png" id="2_canot"]
 
-[sub_resource type="Resource" id="Resource_541op"]
+[sub_resource type="Resource" id="Resource_ofrgq"]
 script = ExtResource("2_0yxw1")
 "Physical Attack" = 50.0
 "Magical Attack" = 50.0
@@ -23,7 +23,7 @@ radius = 32.0
 [node name="ShootingBuddy" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_jct1l")
-Stats = SubResource("Resource_541op")
+Stats = SubResource("Resource_ofrgq")
 
 [node name="ShootingTimer" type="Timer" parent="."]
 wait_time = 3.0

@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://b113erps8t24n"]
+
+[ext_resource type="Texture2D" uid="uid://dccof3hjgkefe" path="res://sprites/gui/parry_flash.png" id="1_aho74"]
+
+[sub_resource type="Curve" id="Curve_kdbcv"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_1lhs6"]
+curve = SubResource("Curve_kdbcv")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_j1qya"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+angular_velocity_min = -180.0
+angular_velocity_max = 180.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+scale_min = 4.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_1lhs6")
+
+[node name="ParryFlash" type="GPUParticles2D"]
+process_mode = 3
+z_index = 10
+amount = 1
+process_material = SubResource("ParticleProcessMaterial_j1qya")
+texture = ExtResource("1_aho74")
+lifetime = 0.5

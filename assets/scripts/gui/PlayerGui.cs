@@ -35,6 +35,11 @@ namespace Galatime
         public ColorRect ParryOverlay;
         #endregion
 
+        #region Scenes
+        public string ParryFlashScenePath = "res://assets/objects/gui/ParryFlash.tscn";
+        public PackedScene ParryFlashScene;
+        #endregion
+
         #region Variables
         public float RemainingDodge;
         public List<AbilityContainer> AbilityContainers = new();
@@ -90,6 +95,8 @@ namespace Galatime
             DodgeTextTimer.Timeout += ProcessDodgeReloading;
             AddChild(DodgeTextTimer);
 
+            ParryFlashScene = ResourceLoader.Load<PackedScene>(ParryFlashScenePath);
+
             // Setting up text of the version
             VersionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
 
@@ -133,12 +140,22 @@ namespace Galatime
         }
 
         /// <summary> Plays a parry effect by pausing the game, showing an overlay, and playing a sound. </summary>
-        public async void ParryEffect() {
+        /// <param name="position"> The position of the parry effect in global coordinates. </param>
+        public async void ParryEffect(Vector2 position) {
+            var parryFlashInstance = ParryFlashScene.Instantiate<GpuParticles2D>();
+            GetTree().Root.AddChild(parryFlashInstance);
+            parryFlashInstance.GlobalPosition = position;
+            parryFlashInstance.Emitting = true;
+
             GetTree().Paused = true;
-            ParryOverlay.Visible = true;
             ParrySound.Play();  
+
+            ParryOverlay.Visible = true;
+
             await ToSignal(GetTree().CreateTimer(.36f), "timeout");
             ParryOverlay.Visible = false;
+            parryFlashInstance.Emitting = false;
+            parryFlashInstance.QueueFree();
             GetTree().Paused = false;
         }
 
