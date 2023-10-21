@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://d302xqj1ec8jo" path="res://sprites/gui/inventory/slot-weapon.png" id="1"]
 [ext_resource type="Script" path="res://assets/scripts/objects/Slot.cs" id="2"]
-[ext_resource type="PackedScene" uid="uid://c2yuew1ydupwh" path="res://assets/objects/Item.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://c2yuew1ydupwh" path="res://assets/objects/ItemContainer.tscn" id="3"]
 
 [node name="Slot" type="TextureRect"]
 offset_right = 16.0

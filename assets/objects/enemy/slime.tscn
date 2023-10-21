@@ -20,13 +20,13 @@
 [ext_resource type="AudioStream" uid="uid://y6j74r1d84qd" path="res://assets/audios/sounds/enemies/slime/slimedamage4.wav" id="16_7wsu3"]
 [ext_resource type="AudioStream" uid="uid://w3a65w7r06gq" path="res://assets/audios/sounds/enemies/slime/slimedeath.wav" id="17_frwy4"]
 
-[sub_resource type="Resource" id="Resource_sjooe"]
+[sub_resource type="Resource" id="Resource_3y8od"]
 script = ExtResource("2_7chbk")
 "Physical Attack" = 50.0
 "Magical Attack" = 50.0
 "Physical Defence" = 50.0
 "Magical Defence" = 50.0
-Health = 50.0
+Health = 999.0
 Mana = 50.0
 Stamina = 50.0
 Agility = 50.0
@@ -176,7 +176,7 @@ stream_3/weight = 1.0
 collision_layer = 4
 collision_mask = 7
 script = ExtResource("1_ufwr7")
-Stats = SubResource("Resource_sjooe")
+Stats = SubResource("Resource_3y8od")
 
 [node name="TargetController" parent="." instance=ExtResource("2_wehpt")]
 

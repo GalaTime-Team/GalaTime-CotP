@@ -85,7 +85,7 @@ namespace Galatime
                     {
                         var ability = (Godot.Collections.Dictionary)abilitiesUnconverted[i];
                         // Checking if the save contains the ability by current index, then adding it
-                        if (ability.ContainsKey("id")) abilities[i] = GalatimeGlobals.getAbilityById((string)ability["id"]);
+                        if (ability.ContainsKey("id")) abilities[i] = GalatimeGlobals.GetAbilityById((string)ability["id"]);
                     }
                 }
 
@@ -206,31 +206,21 @@ namespace Galatime
         /// </summary>
         /// <param name="abilityName">ID of the ability</param>
         /// <returns></returns>
-        public bool abilityIsLearned(string abilityName)
-        {
-            foreach (var name in learnedAbilities)
-            {
-                if (name == abilityName)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        public bool AbilityIsLearned(string abilityName) => learnedAbilities.FirstOrDefault(name => name == abilityName) != null;
 
         /// <summary>
         /// Learns an ability that can then be accessed by the player
         /// </summary>
         /// <param name="abilityName">ID of the ability</param>
         /// <returns></returns>
-        public LearnedStatus learnAbility(AbilityData abilityData, bool test = false)
+        public LearnedStatus LearnAbility(AbilityData abilityData, bool test = false)
         {
             if (abilityData.RequiredIDs.Length >= 0)
             {
                 var required = abilityData.RequiredIDs;
                 foreach (var req in required)
                 {
-                    if (!abilityIsLearned(req))
+                    if (!AbilityIsLearned(req))
                     {
                         return LearnedStatus.noRequiredPath;
                     }

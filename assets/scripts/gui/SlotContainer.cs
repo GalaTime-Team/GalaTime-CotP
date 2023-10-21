@@ -91,7 +91,7 @@ public partial class SlotContainer : GridContainer
     {
         var inventoryItem = playerVariables.inventory[slot];
         var draggedItem = dragPreview.DraggedItem;
-        tooltip._hide();
+        tooltip.Hide();
         GD.Print($"CURRENT PRESSED INDEX: {slot}. Dragged item is empty: {draggedItem.IsEmpty}, Inventory item is empty: {inventoryItem.IsEmpty} (Quantity: {inventoryItem.Quantity}, ID: {inventoryItem.ID})");
         if (draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {

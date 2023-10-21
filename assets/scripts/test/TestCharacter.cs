@@ -59,9 +59,9 @@ public partial class TestCharacter : HumanoidCharacter
         AddChild(enemySwitchDelay);
         enemySwitchDelay.Start();
 
-        addAbility(GalatimeGlobals.getAbilityById("flamethrower"), 0);
-        addAbility(GalatimeGlobals.getAbilityById("fireball"), 1);
-        addAbility(GalatimeGlobals.getAbilityById("firewave"), 2);
+        addAbility(GalatimeGlobals.GetAbilityById("flamethrower"), 0);
+        addAbility(GalatimeGlobals.GetAbilityById("fireball"), 1);
+        addAbility(GalatimeGlobals.GetAbilityById("firewave"), 2);
     }
     public override void _MoveProcess()
     {

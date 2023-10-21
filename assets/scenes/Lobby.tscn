@@ -135,6 +135,5 @@ metadata/_edit_lock_ = true
 
 [node name="ItemPickup" parent="." instance=ExtResource("7_ortjy")]
 position = Vector2(752, -192)
-ItemId = "barrel"
 
 [editable path="Roomwrap"]

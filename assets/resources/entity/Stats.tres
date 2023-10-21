@@ -4,11 +4,3 @@
 
 [resource]
 script = ExtResource("1_kuok5")
-"Physical Attack" = 999.0
-"Magical Attack" = 999.0
-"Physical Defence" = 999.0
-"Magical Defence" = 999.0
-Health = 999.0
-Mana = 999.0
-Stamina = 999.0
-Agility = 999.0

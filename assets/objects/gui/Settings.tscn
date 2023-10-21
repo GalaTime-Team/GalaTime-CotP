@@ -1,32 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://dqivtp6qvx0xk"]
+[gd_scene load_steps=2 format=3 uid="uid://dqivtp6qvx0xk"]
 
-[ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="1_ie65j"]
-[ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="2_vio6s"]
+[ext_resource type="Script" path="res://assets/scripts/gui/SettingsContainer.cs" id="1_ks0k2"]
 
-[node name="Settings" type="Control"]
+[node name="SettingsContainer" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_ks0k2")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="SettingsListContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 40.0
-offset_right = 126.0
-offset_bottom = 180.0
-scale = Vector2(4, 4)
+offset_left = 39.0
+offset_top = 44.0
+offset_right = 440.0
+offset_bottom = 1044.0
 theme_override_constants/separation = 0
-
-[node name="SettingsLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_ie65j")
-text = "Settings"
-horizontal_alignment = 1
-
-[node name="SettingsLabel2" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_vio6s")
-text = "Settings"

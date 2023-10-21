@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://4ivx2u2xw1y6" path="res://assets/objects/gui/AbilityContainerItem.tscn" id="7_o3ee3"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilityLearnContainer.cs" id="8_8nc7r"]
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="9_v3q7s"]
-[ext_resource type="Script" path="res://assets/scripts/gui/SlotContainer.cs" id="10_f6c0u"]
+[ext_resource type="Script" path="res://assets/scripts/gui/Inventory.cs" id="10_6jmpr"]
 [ext_resource type="PackedScene" uid="uid://m2won44lnrfe" path="res://assets/objects/DragPreview.tscn" id="11_qfayu"]
 [ext_resource type="PackedScene" uid="uid://copiga1ncueyb" path="res://assets/objects/InventoryTooltip.tscn" id="12_j3tvq"]
 [ext_resource type="Script" path="res://assets/scripts/gui/PausePagesButtonsContainer.cs" id="13_7l0o5"]
@@ -121,7 +121,6 @@ offset_bottom = 32.0
 texture = ExtResource("4_utkxg")
 
 [node name="AbilitiesContainer" type="ScrollContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -174,6 +173,7 @@ offset_left = 256.0
 offset_top = 52.0
 offset_right = 272.0
 offset_bottom = 68.0
+AbilityName = "fireball"
 
 [node name="AbilityItem2" parent="AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("7_o3ee3")]
 z_index = 1
@@ -182,7 +182,7 @@ offset_left = 208.0
 offset_top = 116.0
 offset_right = 224.0
 offset_bottom = 132.0
-abilityName = "flamethrower"
+AbilityName = "flamethrower"
 
 [node name="AbilityItem3" parent="AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("7_o3ee3")]
 z_index = 1
@@ -191,7 +191,7 @@ offset_left = 208.0
 offset_top = 180.0
 offset_right = 224.0
 offset_bottom = 196.0
-abilityName = "firewave"
+AbilityName = "firewave"
 
 [node name="AbilityItem4" parent="AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("7_o3ee3")]
 z_index = 1
@@ -200,7 +200,7 @@ offset_left = 304.0
 offset_top = 180.0
 offset_right = 320.0
 offset_bottom = 196.0
-abilityName = "blue_fireball"
+AbilityName = "blue_fireball"
 
 [node name="AbilityItem5" parent="AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("7_o3ee3")]
 z_index = 1
@@ -209,7 +209,7 @@ offset_left = 301.094
 offset_top = 113.094
 offset_right = 317.094
 offset_bottom = 129.094
-abilityName = "bluefire"
+AbilityName = "bluefire"
 
 [node name="AbilityItem6" parent="AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("7_o3ee3")]
 z_index = 1
@@ -218,7 +218,7 @@ offset_left = 160.0
 offset_top = 52.0
 offset_right = 176.0
 offset_bottom = 68.0
-abilityName = "firebullet"
+AbilityName = "firebullet"
 
 [node name="AbilityLearnContainer" type="VBoxContainer" parent="AbilitiesContainer/Panel"]
 visible = false
@@ -259,7 +259,7 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="inventory" type="GridContainer" parent="."]
+[node name="Inventory" type="GridContainer" parent="."]
 visible = false
 clip_contents = true
 layout_mode = 0
@@ -272,7 +272,7 @@ offset_top = -70.0
 offset_bottom = 6.0
 scale = Vector2(2, 2)
 columns = 4
-script = ExtResource("10_f6c0u")
+script = ExtResource("10_6jmpr")
 
 [node name="DragPreview" parent="." instance=ExtResource("11_qfayu")]
 anchors_preset = 0

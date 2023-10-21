@@ -68,6 +68,8 @@ public partial class Slime : Entity
         // await ToSignal(GetTree().CreateTimer(1f), SceneTreeTimer.SignalName.Timeout);
 
         // Collision.Disabled = false;
+
+        GD.Print($"Slime ready: Health: {Health}");
     }
 
     public override void _MoveProcess()

@@ -47,7 +47,7 @@ namespace Galatime
                         break;
                     case ContainerState.maximum:
                         animationPlayer.Stop();
-                        tooltip._hide();
+                        tooltip.Hide();
 
                         upgradeButton.Text = "MAXIMUM";
                         upgradeButton.MouseDefaultCursorShape = CursorShape.Arrow;
@@ -128,7 +128,7 @@ namespace Galatime
         {
             if (State != ContainerState.normal) return;
             upgradeButton.AddThemeColorOverride("font_color", upgradeButtonDefaultColor);
-            tooltip._hide();
+            tooltip.Hide();
         }
 
         private void _onUpgradeButtonGuiInput(InputEvent @event)

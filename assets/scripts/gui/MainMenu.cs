@@ -152,6 +152,13 @@ public partial class MainMenu : Control
         };
     }
 
+    public override void _EnterTree()
+    {
+        base._EnterTree();
+        var levelManager = GetNode<LevelManager>("/root/LevelManager");
+        levelManager.EndAudioCombat();
+    }
+
     public void ParseCMDLineArgs()
     {
         if (GalatimeGlobals.CMDArgs.ContainsKey("save"))
@@ -185,39 +192,6 @@ public partial class MainMenu : Control
         else
         {
             return true;
-        }
-    }
-
-    //public void discordRichPresenceButtonInput(InputEvent @event)
-    //{
-    //    if (@event is InputEventMouseButton @eventMouse)
-    //    {
-    //        if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed())
-    //        {
-    //            GalatimeGlobals.DiscordActivityDisabled = !GalatimeGlobals.DiscordActivityDisabled;
-    //            discordRichPresenceStatusLabel.Text = GalatimeGlobals.DiscordActivityDisabled ? "Disabled" : "Enabled";
-    //        }
-    //    }
-    //}
-
-    public void changeVolume(double value, string[] busses, AudioStreamPlayer testSoundPlayer = null)
-    {
-        foreach (var bus in busses)
-        {
-            AudioServer.SetBusVolumeDb(AudioServer.GetBusIndex(bus), (float)Mathf.LinearToDb(value));
-        }
-        if (testSoundPlayer != null)
-        {
-            testSoundPlayer.Play();
-        }
-    }
-
-    public void changeVolume(double value, string bus, AudioStreamPlayer testSoundPlayer = null)
-    {
-        AudioServer.SetBusVolumeDb(AudioServer.GetBusIndex(bus), (float)Mathf.LinearToDb(value));
-        if (testSoundPlayer != null)
-        {
-            testSoundPlayer.Play();
         }
     }
 
@@ -510,15 +484,6 @@ public partial class MainMenu : Control
                 break;
             default:
                 break;
-                // mainMenuNewPosition.Y += mainMenu.Size.Y;
-                // tween.TweenProperty(mainMenu, "position", mainMenuNewPosition, transitionTime);
-                // mainMenuNewPosition.X += 896;
-
-                // var startMenuNewPosition = Vector2.Zero;
-                // tween.TweenProperty(startMenu, "position", startMenuNewPosition, transitionTime);
-
-                //tween.TweenProperty(particles, "position", mainMenuNewPosition, transitionTime);
-                //tween.TweenProperty(particles2, "position", mainMenuNewPosition, transitionTime);
         }
     }
     private enum SwipeDirection { UP, RIGHT, DOWN, LEFT }
@@ -733,6 +698,9 @@ public partial class MainMenu : Control
             var button = MenuButtons[i] as Label;
             if (i == 0) button.GrabFocus();
         }
+
+        // Save settings to file when back to main menu.
+        GetNode<SettingsGlobals>("/root/SettingsGlobals").SaveSettings();
 
         IsMainMenu = true;
     }

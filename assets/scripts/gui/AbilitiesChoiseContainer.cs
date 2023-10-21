@@ -79,7 +79,7 @@ namespace Galatime
                                 if (ability.IsFullyReloaded && choiceAbility.IsFullyReloaded)
                                 {
                                     var previous = playerVariables.abilities[id];
-                                    _playerVariables.setAbility(GalatimeGlobals.getAbilityById(ChoiceId), id);
+                                    _playerVariables.setAbility(GalatimeGlobals.GetAbilityById(ChoiceId), id);
                                     _playerVariables.setAbility(previous, i);
                                     abilityContainer.Click();
                                     return;
@@ -94,7 +94,7 @@ namespace Galatime
                     }
                     if (playerVariables.abilities[id].IsReloaded)
                     {
-                        _playerVariables.setAbility(GalatimeGlobals.getAbilityById(ChoiceId), id);
+                        _playerVariables.setAbility(GalatimeGlobals.GetAbilityById(ChoiceId), id);
                         abilityContainer.Click();
                     }
                     else

@@ -64,6 +64,8 @@ public partial class LevelManager : Node
         AudioPlayerCombatCalm = new() { VolumeDb = -80 };
         AddChild(AudioPlayerCombat);
         AddChild(AudioPlayerCombatCalm);
+        AudioPlayerCombat.Bus = "Music";
+        AudioPlayerCombatCalm.Bus = "Music";
     }
 
     /// <summary> Plays the audio for the combat. </summary>

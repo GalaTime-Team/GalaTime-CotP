@@ -73,7 +73,7 @@ namespace Galatime
             Visible = true;
         }
 
-        public void _hide()
+        public void Hide()
         {
             Visible = false;
         }
@@ -82,7 +82,7 @@ namespace Galatime
         {
             if (Input.IsActionJustPressed("ui_cancel"))
             {
-                _hide();
+                Hide();
             }
         }
 

@@ -15,7 +15,7 @@ public partial class PausePagesButtonsContainer : HBoxContainer
             node.GuiInput += (InputEvent @event) => _onButtonsGuiInput(@event, id);
         }
 
-        pagesNodes.Add(GetNode("../inventory"));
+        pagesNodes.Add(GetNode("../Inventory"));
         pagesNodes.Add(GetNode("../StatsContainer"));
         pagesNodes.Add(GetNode("../AbilitiesContainer"));
     }

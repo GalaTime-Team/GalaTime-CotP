@@ -1,11 +1,11 @@
-[gd_scene load_steps=26 format=3 uid="uid://dno0k3g6k4twv"]
+[gd_scene load_steps=23 format=3 uid="uid://dno0k3g6k4twv"]
 
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="1_5fg5f"]
 [ext_resource type="Script" path="res://assets/scripts/gui/MainMenu.cs" id="1_ibgb5"]
 [ext_resource type="Texture2D" uid="uid://cn4e5ux0ytoqy" path="res://sprites/gui/galatime_logo.png" id="1_xvngr"]
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="2_nxd72"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="3_7prpa"]
-[ext_resource type="Texture2D" uid="uid://bu7myollak2fv" path="res://sprites/gui/slider-grabber.png" id="3_bghf8"]
+[ext_resource type="PackedScene" uid="uid://dqivtp6qvx0xk" path="res://assets/objects/gui/Settings.tscn" id="3_g46ag"]
 [ext_resource type="AudioStream" uid="uid://2g3yxwf538f8" path="res://assets/audios/soundtracks/galatime.mp3" id="4_pmnwf"]
 [ext_resource type="AudioStream" uid="uid://jrsuouvekni1" path="res://assets/audios/sounds/button_sfx_accept.mp3" id="6_8xiqm"]
 [ext_resource type="AudioStream" uid="uid://bmeffvddx6dpx" path="res://assets/audios/sounds/button_sfx.mp3" id="6_p1ru6"]
@@ -172,18 +172,6 @@ _data = {
 "start": SubResource("Animation_xdh61")
 }
 
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_vivf0"]
-color = Color(0.556863, 0.556863, 0.556863, 1)
-grow_begin = -4.0
-grow_end = -4.0
-thickness = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_50l4a"]
-bg_color = Color(0.8, 0.8, 0.8, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yv60f"]
-bg_color = Color(0.811765, 0.811765, 0, 1)
-
 [sub_resource type="Gradient" id="Gradient_lokjq"]
 offsets = PackedFloat32Array(0, 0.179487, 1)
 colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1)
@@ -252,6 +240,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="Settings" parent="SettingsMenuContainer" instance=ExtResource("3_g46ag")]
+layout_mode = 1
+
 [node name="Label2" type="Label" parent="SettingsMenuContainer"]
 layout_mode = 1
 anchors_preset = 5
@@ -268,6 +259,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label" type="Label" parent="SettingsMenuContainer"]
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -281,123 +273,6 @@ theme_override_fonts/font = ExtResource("3_7prpa")
 text = "Settings"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="SoundsVolumeLabel" type="Label" parent="SettingsMenuContainer"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -240.0
-offset_top = 208.0
-offset_right = 1.0
-offset_bottom = 225.0
-grow_horizontal = 2
-scale = Vector2(2, 2)
-theme_override_fonts/font = ExtResource("3_7prpa")
-text = "Sounds volume"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="MusicVolumeLabel" type="Label" parent="SettingsMenuContainer"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -240.0
-offset_top = 96.0
-offset_right = 1.0
-offset_bottom = 113.0
-grow_horizontal = 2
-scale = Vector2(2, 2)
-theme_override_fonts/font = ExtResource("3_7prpa")
-text = "Music volume"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="SoundsVolumeSlider" type="HSlider" parent="SettingsMenuContainer"]
-layout_mode = 0
-offset_left = 336.0
-offset_top = 256.0
-offset_right = 576.0
-offset_bottom = 264.0
-scale = Vector2(2, 2)
-focus_neighbor_left = NodePath("../MusicVolumeSlider")
-focus_neighbor_top = NodePath("../MusicVolumeSlider")
-focus_neighbor_right = NodePath("../MusicVolumeSlider")
-focus_neighbor_bottom = NodePath("../MusicVolumeSlider")
-focus_next = NodePath("../MusicVolumeSlider")
-focus_previous = NodePath("../MusicVolumeSlider")
-theme_override_icons/grabber = ExtResource("3_bghf8")
-theme_override_icons/grabber_highlight = ExtResource("3_bghf8")
-theme_override_icons/grabber_disabled = ExtResource("3_bghf8")
-theme_override_styles/slider = SubResource("StyleBoxLine_vivf0")
-theme_override_styles/grabber_area = SubResource("StyleBoxFlat_50l4a")
-theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_yv60f")
-max_value = 1.0
-step = 0.05
-value = 1.0
-
-[node name="MusicVolumeSlider" type="HSlider" parent="SettingsMenuContainer"]
-layout_mode = 0
-offset_left = 336.0
-offset_top = 144.0
-offset_right = 576.0
-offset_bottom = 152.0
-scale = Vector2(2, 2)
-focus_neighbor_left = NodePath("../SoundsVolumeSlider")
-focus_neighbor_top = NodePath("../SoundsVolumeSlider")
-focus_neighbor_right = NodePath("../SoundsVolumeSlider")
-focus_neighbor_bottom = NodePath("../SoundsVolumeSlider")
-focus_next = NodePath("../SoundsVolumeSlider")
-focus_previous = NodePath("../SoundsVolumeSlider")
-theme_override_icons/grabber = ExtResource("3_bghf8")
-theme_override_icons/grabber_highlight = ExtResource("3_bghf8")
-theme_override_icons/grabber_disabled = ExtResource("3_bghf8")
-theme_override_styles/slider = SubResource("StyleBoxLine_vivf0")
-theme_override_styles/grabber_area = SubResource("StyleBoxFlat_50l4a")
-theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_yv60f")
-max_value = 1.0
-step = 0.05
-value = 1.0
-
-[node name="DiscordRichPresenceToggleButton" type="Label" parent="SettingsMenuContainer"]
-visible = false
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -471.0
-offset_top = 328.0
-offset_right = -289.0
-offset_bottom = 345.0
-grow_horizontal = 2
-scale = Vector2(2, 2)
-pivot_offset = Vector2(57, 8)
-theme_override_fonts/font = ExtResource("3_7prpa")
-text = "Toggle Discord Rich Presence"
-horizontal_alignment = 1
-vertical_alignment = 1
-metadata/ScaleHoverExitedOverride = Vector2(2, 2)
-metadata/ScaleHoverOverride = Vector2(2.25, 2.25)
-
-[node name="DiscordRichPresenceStatusLabel" type="Label" parent="SettingsMenuContainer"]
-visible = false
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -80.0
-offset_top = 320.0
-offset_right = 71.0
-offset_bottom = 341.0
-grow_horizontal = 2
-scale = Vector2(2, 2)
-pivot_offset = Vector2(57, 8)
-theme_override_fonts/font = ExtResource("2_nxd72")
-text = "Enabled"
-vertical_alignment = 1
-metadata/ScaleHoverExitedOverride = Vector2(2, 2)
-metadata/ScaleHoverOverride = Vector2(2.25, 2.25)
 
 [node name="StartMenuContainer" type="Control" parent="."]
 layout_mode = 1

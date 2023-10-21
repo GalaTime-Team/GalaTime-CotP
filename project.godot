@@ -24,6 +24,7 @@ GalatimeGlobals="*res://assets/scripts/GalatimeGlobals.cs"
 PlayerVariables="*res://assets/scripts/PlayerVariables.cs"
 LevelManager="*res://assets/scripts/LevelManager.cs"
 EnemiesList="*res://assets/scripts/objects/enemies/controllers/EnemiesList.cs"
+SettingsGlobals="*res://assets/scripts/SettingsGlobals.cs"
 
 [display]
 

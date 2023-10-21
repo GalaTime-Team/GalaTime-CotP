@@ -15,7 +15,7 @@ namespace Galatime
             animatedSprite.Play("default");
         }
 
-        public void _playFailedAnimation()
+        public void PlayFailedAnimation()
         {
             animationPlayer.Play("default");
             animatedSprite.Play("failed");

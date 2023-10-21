@@ -94,17 +94,17 @@ namespace Galatime
 
         public GalatimeAbility Instance;
 
-        private string _scenePath = "";
+        private string scenePath = "";
         /// <summary>
         /// The ability's scene path, which will be instantiated when the ability is used. When assigned, the scene will be loaded in <see cref="Scene"/>.
         /// </summary>
         public string ScenePath {
-            get => _scenePath;
+            get => scenePath;
             set {
-                _scenePath = value;
-                if (_scenePath != "") {
-                    GD.Print($"Loading scene from ability: {_scenePath}");
-                    Scene = GD.Load<PackedScene>(_scenePath);
+                scenePath = value;
+                if (scenePath != "") {
+                    GD.Print($"Loading scene from ability: {scenePath}");
+                    Scene = GD.Load<PackedScene>(scenePath);
                     Instance = Scene.Instantiate<GalatimeAbility>();
                 }
             }   

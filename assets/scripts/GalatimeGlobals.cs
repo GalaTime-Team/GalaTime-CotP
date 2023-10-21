@@ -11,7 +11,7 @@ using Galatime.Dialogue;
 public sealed partial class GalatimeGlobals : Node
 {
     public static List<Item> itemList = new();
-    public static List<AbilityData> ablitiesList = new();
+    public static List<AbilityData> abilitiesList = new();
     public static List<DialogData> dialogsList = new();
     public static List<Character> charactersList = new();
     public static Godot.Collections.Array tipsList = new();
@@ -71,7 +71,7 @@ public sealed partial class GalatimeGlobals : Node
         saveProcessScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/SavingProcess.tscn");
 
         itemList = _getItemsFromJson();
-        ablitiesList = _getAbilitiesFromJson();
+        abilitiesList = _getAbilitiesFromJson();
         tipsList = _getTipsFromJson();
         dialogsList = GetDataFromJson<DialogsData>(pathListDialogs).Dialogs;
         charactersList = GetDataFromJson<CharactersData>(pathListCharacters).Characters;
@@ -141,7 +141,7 @@ public sealed partial class GalatimeGlobals : Node
         var file = Godot.FileAccess.Open(SETTINGS_FILE_PATH, Godot.FileAccess.ModeFlags.Write);
         if (Godot.FileAccess.GetOpenError() != Error.Ok)
         {
-            saveProcessSceneInstance._playFailedAnimation();
+            saveProcessSceneInstance.PlayFailedAnimation();
             GD.Print("Error when saving a config: " + Godot.FileAccess.GetOpenError().ToString());
         }
         else
@@ -243,7 +243,7 @@ public sealed partial class GalatimeGlobals : Node
 
         if (Godot.FileAccess.GetOpenError() != Error.Ok)
         {
-            if (currentScene != null) saveProcessSceneInstance._playFailedAnimation();
+            if (currentScene != null) saveProcessSceneInstance.PlayFailedAnimation();
             GD.Print("Error when saving a config: " + Godot.FileAccess.GetOpenError().ToString());
         }
         else
@@ -331,6 +331,22 @@ public sealed partial class GalatimeGlobals : Node
             GD.PrintErr("GLOBALS: Invalid path for tips");
             return new Godot.Collections.Array();
         }
+    }
+
+    /// <summary> Loads from path and parses a json file into a dictionary of data. </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static Godot.Collections.Dictionary LoadAndGetParsedJson(string path)
+    {
+        var json = new Json();
+        json.Parse(LoadAndGetJsonText(path));
+        return (Godot.Collections.Dictionary)json.Data;
+    }
+
+    public static string LoadAndGetJsonText(string path)
+    {
+        var file = Godot.FileAccess.Open(path, Godot.FileAccess.ModeFlags.Read);
+        return file.GetAsText();
     }
 
     /// <summary>
@@ -517,19 +533,13 @@ public sealed partial class GalatimeGlobals : Node
     public static DialogData GetDialogById(string id) => dialogsList.FirstOrDefault(x => x.ID == id);
     public static Character GetCharacterById(string id) => charactersList.FirstOrDefault(x => x.ID == id);
 
-    public static AbilityData getAbilityById(string id)
+    public static AbilityData GetAbilityById(string id)
     {
-        if (ablitiesList.Count >= 0)
+        if (abilitiesList.Count >= 0)
         {
-            foreach (var item in ablitiesList)
-            {
-                if (item.ID == id)
-                {
-                    return item.Clone();
-                }
-            }
-            GD.PrintErr("GLOBALS: Ability ID is invalid");
-            return new();
+            var ability = abilitiesList.FirstOrDefault(x => x.ID == id);
+            if (ability is null) GD.PrintErr($"GLOBALS: Ability ID is invalid. Ability ID is {(ability is null ? "null" : ability.Name)}");
+            return ability is null ? new() : ability.Clone();
         }
         else
         {
