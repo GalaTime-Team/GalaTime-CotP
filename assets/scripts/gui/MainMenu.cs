@@ -70,6 +70,7 @@ public partial class MainMenu : Control
 
         ParseCMDLineArgs();
 
+        #region Get nodes
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
         DelayInteract = new Timer
@@ -90,10 +91,9 @@ public partial class MainMenu : Control
         SettingsMenuControl = GetNode<Control>("SettingsMenuContainer");
         CreditsMenuControl = GetNode<Control>("CreditsContainer");
         AcceptContainer = GetNode<Control>("AcceptContainer");
+        #endregion
 
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-        tween.TweenProperty(MainMenuControl, "modulate", new Color(1f, 1f, 1f), TransitionTime);
+        NewMethod();
 
         DelayInteract.Start();
         InitializeSavesContainers();
@@ -106,8 +106,6 @@ public partial class MainMenu : Control
         AcceptNoButton.PivotOffset = new Vector2(7, 6);
 
         AcceptName = GetNode<Label>("AcceptContainer/VBoxContainer/Name");
-
-        //createSaveButton.GuiInput += (InputEvent @event) => createSaveButtonInput(createSaveButton, @event);
 
         UpdateVisualButtons();
 
@@ -133,6 +131,13 @@ public partial class MainMenu : Control
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
 
         GetTree().Root.Title = "GalaTime - Main Menu";
+    }
+
+    private void NewMethod()
+    {
+        var tween = GetTree().CreateTween();
+        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
+        tween.TweenProperty(MainMenuControl, "modulate", new Color(1f, 1f, 1f), TransitionTime);
     }
 
     private void InitializeSavesContainers()

@@ -31,12 +31,20 @@ public partial class Slime : Entity
     public int Stage = 2;
     #endregion
 
-    public override async void _Ready()
+    public Slime() : base(new(
+        PhysicalAttack: 20,
+        PhysicalDefense: 20,
+        MagicalDefense: 20,
+        Health: 20
+    )) {}
+
+    public override void _Ready()
     {
         base._Ready();
 
         Element = GalatimeElement.Aqua;
         Body = this;
+
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
         SlimeScene = ResourceLoader.Load<PackedScene>("res://assets/objects/enemy/Slime.tscn");

@@ -182,26 +182,6 @@ namespace Galatime
         }
 
         /// <summary>
-        /// Upgrades a certain stat of an ally or player
-        /// The cost is determined by the amount of upgrade, will return <c>false</c> if not enough currency or reached the maximum for the upgrade.
-        /// </summary>
-        /// <param name="id">Needed stats to upgrade</param>
-        /// <returns>Is the upgrading successful?</returns>
-        public StatContainer.Status upgradeStat(EntityStatType id)
-        {
-            if (Player.Xp < 100) return StatContainer.Status.noEnough;
-            if (Player.Stats[id].Value >= 150) return StatContainer.Status.maximum;
-
-            Player.Stats[id].Value += 5;
-            if (id == EntityStatType.Health)
-            {
-                Player.Heal(5);
-            }
-
-            Player.Xp -= 100;
-            return StatContainer.Status.ok;
-        }
-        /// <summary>
         /// Checks if ability is learned
         /// </summary>
         /// <param name="abilityName">ID of the ability</param>

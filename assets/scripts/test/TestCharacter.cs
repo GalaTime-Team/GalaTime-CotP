@@ -63,6 +63,18 @@ public partial class TestCharacter : HumanoidCharacter
         addAbility(GalatimeGlobals.GetAbilityById("fireball"), 1);
         addAbility(GalatimeGlobals.GetAbilityById("firewave"), 2);
     }
+
+    public TestCharacter() : base(new(
+            PhysicalAttack: 100,
+            MagicalAttack: 100,
+            PhysicalDefense: 100,
+            MagicalDefense: 100,
+            Health: 100,
+            Mana: 100,
+            Stamina: 100,
+            Agility: 100
+        )) {}
+
     public override void _MoveProcess()
     {
         base._MoveProcess();

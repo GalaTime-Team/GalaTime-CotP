@@ -8,7 +8,7 @@ namespace Galatime
     {
         #region Variables
         [Export] public float Speed = 200f;
-        [Export] public EntityStats Stats;
+        public EntityStats Stats = new();
         [Export] public int DroppedXp;
         private Vector2 KnockbackVelocity = Vector2.Zero;
         #endregion
@@ -52,10 +52,16 @@ namespace Galatime
         public Action OnDeath;
         #endregion
 
+        public Entity(EntityStats stats) {
+            Stats = stats;
+        }
+
         public override void _Ready()
         {
             base._Ready();
             LoadScenes();
+
+            Health = Stats[EntityStatType.Health].Value;
 
             // Creates damage delay to prevent to many damage in a short time.
             DamageDelay = new Timer

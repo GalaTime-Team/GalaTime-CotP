@@ -48,4 +48,12 @@ public partial class SettingsGlobals : Node {
             file.Close();
         }
     }
+
+    /// <summary> Converts a bit value (0-1) to a dB value. </summary>
+    static double BitToDb(double value) => value * 80 - 80;
+
+    public void UpdateSettings() {
+        AudioServer.SetBusVolumeDb(0, (float)BitToDb(Settings.MasterVolume));
+        AudioServer.SetBusVolumeDb(1, (float)BitToDb(Settings.MusicVolume));
+    }
 }

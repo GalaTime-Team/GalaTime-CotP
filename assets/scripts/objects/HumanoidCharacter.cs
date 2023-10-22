@@ -81,6 +81,8 @@ public partial class HumanoidCharacter : Entity
         InitializeTimers();
     }
 
+    public HumanoidCharacter(EntityStats stats) : base(stats) { }
+
     private void InitializeTimers()
     {
         DodgeTimer = new Timer

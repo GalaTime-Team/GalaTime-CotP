@@ -61,18 +61,6 @@ namespace Galatime
             // nameNode.Text = ability.abilityName;
         }
 
-        public void Display(EntityStat stat)
-        {
-            nameNode.Text = stat.Name;
-            descriptionNode.ParseBbcode($"{stat.Description}" +
-                $"\n \n" +
-                $"After the upgrade you will get [color=yellow]{stat.Value + 5}[/color]" +
-                $"\n" +
-                $"Required [rainbow]XP[/rainbow] for upgrade the stat: [color=yellow]100[/color]");
-
-            Visible = true;
-        }
-
         public void Hide()
         {
             Visible = false;

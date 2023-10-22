@@ -18,7 +18,6 @@ namespace Galatime
             set
             {
                 xp = value;
-                PlayerGui.ChangeStats(Stats, xp);
                 PlayerVariables.invokeXpChangedEvent(xp);
             }
         }
@@ -74,13 +73,24 @@ namespace Galatime
 
             Body.GlobalPosition = GlobalPosition;
 
-            PlayerGui.ChangeStats(Stats, Xp);
-
             Stats.OnStatsChanged += OnStatsChanged;
             OnStatsChanged(Stats);
 
             PlayerVariables.setPlayerInstance(this);
         }
+
+        public Player() : base(new(
+            PhysicalAttack: 100,
+            MagicalAttack: 100,
+            PhysicalDefense: 100,
+            MagicalDefense: 100,
+            Health: 100,
+            Mana: 100,
+            Stamina: 100,
+            Agility: 100
+        )) {}
+
+
 
         public override void _ExitTree()
         {
@@ -140,7 +150,7 @@ namespace Galatime
 
         public override void HealthChangedEvent(float health)
         {
-            PlayerGui.OnHealthChanged(health);
+            PlayerGui?.OnHealthChanged(health);
         }
 
         protected override void OnManaChanged(float mana)

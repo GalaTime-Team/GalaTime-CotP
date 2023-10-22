@@ -21,11 +21,25 @@ public partial class ShootingBuddy : Entity
         #endregion
 
         Element = GalatimeElement.Aqua;
+        Stats = new(
+            PhysicalAttack: 20,
+            MagicalAttack: 20,
+            PhysicalDefense: 20,
+            MagicalDefense: 20,
+            Health: 20
+        );
         Body = this;
 
         ShootingTimer.Timeout += OnShootingTimerTimeout;
         ShootingTimer.Start();
     }
+
+    public ShootingBuddy() : base(new(
+        PhysicalAttack: 20,
+        PhysicalDefense: 20,
+        MagicalDefense: 20,
+        Health: 20
+    )) {}
 
     private void OnShootingTimerTimeout() {
         var projectile = Projectile.Duplicate() as Projectile;

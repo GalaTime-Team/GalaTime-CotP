@@ -27,9 +27,6 @@ namespace Galatime
         public HBoxContainer AbilitiesContainer;
         public AbilitiesContainer AbilitiesListContainer;
 
-        // Stats
-        public GridContainer StatsContainer;
-
         // Audio
         public AudioStreamPlayer ParrySound;
         public ColorRect ParryOverlay;
@@ -80,7 +77,6 @@ namespace Galatime
             AbilitiesListContainer = GetNode<AbilitiesContainer>("PauseContainer/AbilitiesContainer");
 
             PauseContainer = GetNode<Panel>("PauseContainer");
-            StatsContainer = GetNode<GridContainer>("PauseContainer/StatsContainer/Stats");
 
             ParrySound = GetNode<AudioStreamPlayer>("ParrySound");
             ParryOverlay = GetNode<ColorRect>("ParryOverlay");
@@ -162,38 +158,6 @@ namespace Galatime
         public void OnHealthChanged(float health) => HealthValueBar.Value = health;
         public void OnStaminaChanged(float stamina) => StaminaValueBar.Value = stamina;
         public void OnManaChanged(float mana) => ManaValueBar.Value = mana;
-        
-        /// <summary> Updates the entity's stats and UI based on XP. </summary>
-        /// <param name="entityStats"> A list of stats that define the entity's attributes. </param>
-        /// <param name="XP"> The amount of experience points that the entity has. </param>
-        public void ChangeStats(EntityStats entityStats, float XP)
-        {
-            if (StatsContainer.GetChildCount() <= 0)
-            {
-                var statContainerScene = GD.Load<PackedScene>("res://assets/objects/gui/StatContainer.tscn");
-                for (int i = 0; i < 8; i++)
-                {
-                    var instance = statContainerScene.Instantiate<StatContainer>();
-                    StatsContainer.AddChild(instance);
-                    instance.OnUpgrade += (int id) => OnUpgradeStat(id, instance);
-                }
-            }
-
-            var statContainers = StatsContainer.GetChildren();
-            for (int i = 0; i < entityStats.Count; i++)
-            {
-                var statContainer = statContainers[i] as StatContainer;
-                var stat = entityStats[i];
-                statContainer.loadData(stat, (int)XP);
-            }
-        }
-
-        private void OnUpgradeStat(int id, StatContainer instance)
-        {
-            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            var result = playerVariables.upgradeStat((EntityStatType)id);
-            instance.playAnimation(result);
-        }
 
         public void AddAbility(AbilityData ab, int i) => AbilitiesContainer.GetChild<AbilityContainer>(i).Load(ab);
         public void RemoveAbility(int i) => AbilitiesContainer.GetChild<AbilityContainer>(i).Unload();

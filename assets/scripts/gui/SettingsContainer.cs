@@ -6,26 +6,26 @@ using System.Collections.Generic;
 
 public partial class SettingsContainer : Control
 {
-    VBoxContainer SettingsListContainer;
+    public VBoxContainer SettingsListContainer;
+    private SettingsGlobals SettingsGlobals;
 
     public override void _Ready()
     {
         SettingsListContainer = GetNode<VBoxContainer>("SettingsListContainer");
+        SettingsGlobals = GetNode<SettingsGlobals>("/root/SettingsGlobals");
 
         Build();
     }
 
+    /// <summary> Builds the UI for the settings by iterating over the fields of the Settings class and creating corresponding UI nodes. </summary>
     public void Build()
     {
         var settings = GetNode<SettingsGlobals>("/root/SettingsGlobals").LoadSettings();
 
-        // Call Change to update the values.
-        Change(settings);
+        // Call the UpdateSettings method to update the settings.
+        SettingsGlobals.UpdateSettings();
 
-        // Get the type of the Settings class.
         Type settingsType = typeof(Settings);
-
-        // Iterate over the fields of the Settings class.
         foreach (FieldInfo field in settingsType.GetFields())
         {
             // Get the name, type, and value of the field.
@@ -34,7 +34,7 @@ public partial class SettingsContainer : Control
             object value = field.GetValue(settings);
 
             var convertedName = "";
-            var settingNameAttribute = (SettingNameAttribute)Attribute.GetCustomAttribute(field, typeof(SettingNameAttribute));
+            var settingNameAttribute = (SettingPropertiesAttribute)Attribute.GetCustomAttribute(field, typeof(SettingPropertiesAttribute));
             convertedName = settingNameAttribute != null ? settingNameAttribute.Name : name;
 
             // Create a label node to display the name of the field.
@@ -75,15 +75,6 @@ public partial class SettingsContainer : Control
     // This function is called when any UI value is changed
     private void ValueChanged<T>(T value, FieldInfo field) { 
         field.SetValue(SettingsGlobals.Settings, value);
-        Change(SettingsGlobals.Settings);
-    }
-    
-    /// <summary> Converts a bit value (0-1) to a dB value. </summary>
-    static double BitToDb(double value) => value * 80 - 80;
-
-    public void Change(Settings settings) {
-
-        AudioServer.SetBusVolumeDb(0, (float)BitToDb(settings.MasterVolume));
-        AudioServer.SetBusVolumeDb(1, (float)BitToDb(settings.MusicVolume));
+        SettingsGlobals.UpdateSettings();
     }
 }
