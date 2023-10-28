@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Collections.Generic;
 using Godot;
+using System;
 
 namespace Galatime
 {
@@ -9,7 +11,12 @@ namespace Galatime
         private Panel AbilitiesPanel;
         private AbilitiesChoiseContainer AbilityChoiseContainer;
         private AbilityLearnContainer AbilityLearnContainer;
+
+        private AbilityContainerItem CurrentAbilityItemContainer;
+
         private Godot.Collections.Array<AbilityContainerItem> AbilityContainerItems = new();
+
+        private const float MoveDuration = 0.3f;
 
         private PlayerVariables PlayerVariables;
 
@@ -29,6 +36,23 @@ namespace Galatime
             var tempChildren = GetNode("Panel").GetChildren();
             foreach (var child in tempChildren) if (child is AbilityContainerItem tc) AbilityContainerItems.Add(tc);
             InstantiateAbilities();
+
+            PlayerVariables.OnAbilityLearned += OnLearnedAbilitiesUpdated;
+            AbilityLearnContainer.OnLearned += OnAbilityLearned;
+        }
+
+        public override void _ExitTree() {
+            PlayerVariables.OnAbilityLearned -= OnLearnedAbilitiesUpdated;
+            AbilityLearnContainer.OnLearned -= OnAbilityLearned;
+        }
+
+        private void OnAbilityLearned() => CurrentAbilityItemContainer?.SetLearned(true, true);
+
+        private void OnLearnedAbilitiesUpdated() {
+            foreach (var i in AbilityContainerItems) {
+                var learned = PlayerVariables.AbilityIsLearned(i.AbilityData.ID);
+                i.SetLearned(learned);
+            }
         }
 
         private void InstantiateAbilities()
@@ -63,17 +87,7 @@ namespace Galatime
             }
         }
 
-        public void _onAbilityLearned()
-        {
-            foreach (var i in AbilityContainerItems)
-            {
-                if (PlayerVariables.AbilityIsLearned(i.Name))
-                {
-                    // i.setLearned();
-                }
-            }
-        }
-
+        /// <summary> Returns a Line2D node with style. </summary>
         public Line2D GetLinkLine()
         {
             var line = new Line2D
@@ -96,28 +110,57 @@ namespace Galatime
             {
                 if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
                 {
-                    AbilityLearnContainer.visible = false;
-                    AbilityChoiseContainer.Visible = false;
+                    item.AnimationPlayer.Advance(999);
+                    
                     if (!PlayerVariables.AbilityIsLearned(item.AbilityName))
                     {
-                        var position = item.GlobalPosition;
-                        position.X -= 288;
-                        position.Y -= 70;
+                        CurrentAbilityItemContainer = item;
+                        
                         AbilityLearnContainer.abilityData = item.AbilityData;
+                        MoveChoise(AbilityLearnContainer, item, !AbilityLearnContainer.visible);
+                        AbilityChoiseContainer.Visible = false;
+                        FadeColor(AbilityChoiseContainer, true);
                         AbilityLearnContainer.visible = true;
-                        AbilityLearnContainer.GlobalPosition = position;
                     }
                     else
                     {
-                        var position = item.GlobalPosition;
-                        position.X -= 80;
-                        position.Y -= 70;
-                        AbilityChoiseContainer.Visible = true;
-                        AbilityChoiseContainer.GlobalPosition = position;
+                        CurrentAbilityItemContainer = null;
+
                         AbilityChoiseContainer.ChoiceId = item.AbilityName;
+                        MoveChoise(AbilityChoiseContainer, item, !AbilityChoiseContainer.Visible);
+                        AbilityLearnContainer.visible = false;
+                        FadeColor(AbilityLearnContainer, true);
+                        AbilityChoiseContainer.Visible = true;
                     }
                 }
             }
+        }
+
+        void MoveChoise(Control container, Control item, bool instant)
+        {
+            var tween = GetTree().CreateTween().SetTrans(Tween.TransitionType.Sine);
+            var initialPosition = container.GlobalPosition;
+
+            // Getting position of item.
+            var position = item.GlobalPosition;
+
+            // Adjusting position relative to container. This means this will be placed in middle of container and so on.
+            position.X -= container.Size.X - item.Size.X;
+            position.Y -= container.Size.Y * 2f + 8f;
+
+            // This needed for non-sequential appearance.
+            if (!instant) tween.TweenMethod(Callable.From<Vector2>(x => container.GlobalPosition = x), initialPosition, position, MoveDuration).SetDelay(0.05);
+            else {
+                container.GlobalPosition = position;
+                FadeColor(container, false);
+            }
+        }
+
+        private void FadeColor(Control container, bool bit) {
+            var tween = GetTree().CreateTween();
+            var tc = new Color(1, 1, 1, 0);
+            var oc = new Color(1, 1, 1, 1);
+            tween.TweenMethod(Callable.From<Color>(x => container.Modulate = x), bit ? oc : tc, bit ? tc : oc, MoveDuration);
         }
     }
 }

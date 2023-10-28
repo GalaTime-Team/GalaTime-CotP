@@ -22,6 +22,8 @@ public partial class LeaveLabel : Label
                 var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
                 activated = true;
                 globals.LoadScene();
+                var levelManager = GetNode<LevelManager>("/root/LevelManager");
+                levelManager.EndAudioCombat();
             }
         }
         else

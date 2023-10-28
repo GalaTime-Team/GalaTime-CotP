@@ -5,28 +5,33 @@ using System.Linq;
 
 namespace Galatime.Helpers;
 
-public enum Teams { allies, enemies };
+public enum Teams { Allies, Enemies };
 
 /// <summary> Controls the target controller to select a target. </summary>
 public partial class TargetController : Node2D {
     /// <summary> Dictionary of teams and their strings (names). </summary>
     public static Dictionary<Teams, string> TeamNames = new() {
-        { Teams.allies, "ally" },
-        { Teams.enemies, "enemy" }
+        { Teams.Allies, "ally" },
+        { Teams.Enemies, "enemy" }
     };
 
     public static Dictionary<Teams, int> CollisionTeamLayers = new() {
-        { Teams.allies, 2 },
-        { Teams.enemies, 3 }
+        { Teams.Allies, 2 },
+        { Teams.Enemies, 3 }
     };
 
     /// <summary> The target team to deal damage. Don't confuse with friendly fire, because this target to deal damage. Can be "allies" or "enemies". </summary>
-    public Teams TargetTeam = Teams.enemies; 
+    public Teams TargetTeam = Teams.Enemies; 
 
     /// <summary> <see cref="TargetTeam"/>, but as a string to get team members. </summary>
     public string TargetTeamString => GetTeamNameByEnum(TargetTeam);
 
     public Node2D CurrentTarget = null;
+
+    /// <summary> Returns the current target rotation based on global position. </summary>
+    /// <param name="globalPosition"> The current position of the dependent. </param>
+    /// <returns> Rotation in radians. </returns>
+    public float CurrentTargetRotationTo(Vector2 globalPosition) => CurrentTarget.GlobalPosition.AngleTo(globalPosition);
 
     /// <summary> Overrides the target of the target. Mostly used for testing. </summary>
     public Node2D TargetOverride = null;

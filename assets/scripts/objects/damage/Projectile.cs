@@ -37,7 +37,7 @@ public partial class Projectile : CharacterBody2D
     public GalatimeElement Element = new();
 
     /// <summary> Target team to deal damage. Don't confuse with friendly fire, because this target to deal damage. Can be "allies" or "enemies". </summary>
-    [Export] public Teams TargetTeam = Teams.enemies;
+    [Export] public Teams TargetTeam = Teams.Enemies;
 
     /// <summary> 
     /// The parameter that affects how well the projectile aims at the target, from 0 to 1.
@@ -89,6 +89,7 @@ public partial class Projectile : CharacterBody2D
         DamageArea.BodyEntered += OnDamageAreaBodyEntered;
 
         // if (Duration > 0) DurationTimer.Start();
+        Rotation = TargetAngle;
     }
 
     public override void _PhysicsProcess(double delta)
@@ -97,16 +98,15 @@ public partial class Projectile : CharacterBody2D
         // If the target is not null, rotate the projectile towards it
         if (TargetController.CurrentTarget != null && Moving)
         {
-            // Get the target's angle from 0 to 360 and adding 360 to move the projectile towards the target
-            var targetAngle = GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition) + Mathf.DegToRad(360);
-            // Applying accuracy to the angle with Lerp and rotate 
-            Rotation = Mathf.LerpAngle(Rotation, targetAngle, Accuracy);
+            // Applying accuracy to the angle with Lerp and rotate
+            Rotation = Mathf.LerpAngle(Rotation, TargetAngle, Accuracy);
         }
         // Moving the projectile by rotation
         Velocity = Moving ? Vector2.Right.Rotated(Rotation) * Speed : Vector2.Zero;
         MoveAndSlide();
     }
 
+    public float TargetAngle => GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition) + Mathf.DegToRad(360);
     private void OnDamageAreaBodyEntered(Node node)
     {
         if (node is Entity entity && !entity.DeathState && entity.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam)) && Moving) {

@@ -6,31 +6,30 @@ namespace Galatime
     public partial class AbilityLearnContainer : VBoxContainer
     {
         private Label learnButton;
-        private Label nameLabel;
-        private RichTextLabel learnButtonLabel;
+        private Label NameLabel;
+        private RichTextLabel LearnButtonLabel;
 
-        private Color learnButtonDefaultColor = new Color(0.196078f, 0.803922f, 0.196078f);
-        private Color learnButtonDisabledColor = new Color(0.09411764889956f, 0.39215686917305f, 0.09411764889956f);
+        /// <summary> Default color for the button. This color is used when the button is in its enabled state. </summary>
+        private Color DefaultColorButton = new(0.196078f, 0.803922f, 0.196078f);
+        /// <summary> Disabled color for the button. This color is used when the button is disabled and cannot be interacted with. </summary>
+        private Color DisabledColorButton = new(0.09411764889956f, 0.39215686917305f, 0.09411764889956f);
 
-        private bool learnButtonDisabled = false;
+        /// <summary> Called when the learning is successful when the button is clicked. </summary>
+        public Action OnLearned;
 
-        private PlayerVariables _playerVariables;
+        private bool LearnButtonDisabled = false;
+
+        private PlayerVariables PlayerVariables;
 
         public AbilityData abilityData = new();
         private bool _visible;
         public bool visible
         {
-            get
-            {
-                return _visible;
-            }
+            get => _visible;
             set
             {
                 _visible = value;
-                if (value)
-                {
-                    updateData(-1);
-                }
+                if (value) UpdateData(-1);
                 Visible = value;
             }
         }
@@ -38,49 +37,49 @@ namespace Galatime
         public override void _Ready()
         {
             learnButton = GetNode<Label>("LearnButtonContainer/LearnButton");
-            learnButtonLabel = GetNode<RichTextLabel>("LearnButtonContainer/Label");
-            nameLabel = GetNode<Label>("Label");
+            LearnButtonLabel = GetNode<RichTextLabel>("LearnButtonContainer/Label");
+            NameLabel = GetNode<Label>("Label");
 
-            _playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
-            learnButton.MouseEntered += () => _onUpgradeButtonMouseEntered();
-            learnButton.MouseExited += () => _onUpgradeButtonMouseExited();
-            learnButton.GuiInput += (InputEvent @event) => _onLearnButtonGuiInput(@event);
+            learnButton.MouseEntered += () => OnUpgradeButtonMouseEntered();
+            learnButton.MouseExited += () => OnUpgradeButtonMouseExited();
+            learnButton.GuiInput += (InputEvent @event) => OnLearnButtonGuiInput(@event);
 
-            PlayerVariables.onXpChanged += updateData;
+            PlayerVariables.OnXpChanged += UpdateData;
         }
 
         public override void _ExitTree()
         {
-            PlayerVariables.onXpChanged -= updateData;
+            PlayerVariables.OnXpChanged -= UpdateData;
         }
 
-        public string CostXPString => $"{abilityData.CostXP}/{_playerVariables.Player.Xp} [color=32cd32]XP[/color]";
+        public string CostXPString => $"{abilityData.CostXP}/{PlayerVariables.Player.Xp} [color=32cd32]XP[/color]";
 
         /// <summary>
         /// Updates the data about the stat.
         /// </summary>
         /// <param name="xp">The value to update the stat with. If set to -1, data is taken from an external source.</param>
-        public void updateData(float xp = -1)
+        public void UpdateData(float xp = -1)
         {
             try
             {
-                nameLabel.Text = $"Learn ability \"{abilityData.Name}\"?";
-                if (_playerVariables.LearnAbility(abilityData, true) == LearnedStatus.noRequiredPath)
+                NameLabel.Text = $"Learn ability \"{abilityData.Name}\"?";
+                if (PlayerVariables.LearnAbility(abilityData, true) == LearnedStatus.noRequiredPath)
                 {
-                    learnButtonLabel.Text = $"{CostXPString} You need to open the previous path";
-                    _setButtonDisabled(true);
+                    LearnButtonLabel.Text = $"{CostXPString} You need to open the previous path";
+                    SetButtonDisabled(true);
                     return;
                 }
-                else if (_playerVariables.LearnAbility(abilityData, true) == LearnedStatus.noEnoughCurrency)
+                else if (PlayerVariables.LearnAbility(abilityData, true) == LearnedStatus.noEnoughCurrency)
                 {
-                    _setButtonDisabled(true);
-                    learnButtonLabel.Text = $"{CostXPString} You don't have enough XP";
+                    SetButtonDisabled(true);
+                    LearnButtonLabel.Text = $"{CostXPString} You don't have enough XP";
                 }
                 else
                 {
-                    _setButtonDisabled(false);
-                    learnButtonLabel.Text = CostXPString;
+                    SetButtonDisabled(false);
+                    LearnButtonLabel.Text = CostXPString;
                 }
             }
             catch (Exception e)
@@ -89,38 +88,38 @@ namespace Galatime
             }
         }
 
-        private void _onUpgradeButtonMouseEntered()
+        private void OnUpgradeButtonMouseEntered()
         {
-            if (!learnButtonDisabled)
+            if (!LearnButtonDisabled)
             {
                 learnButton.AddThemeColorOverride("font_color", new Color(1f, 1f, 1f));
             }
         }
 
-        private void _onUpgradeButtonMouseExited()
+        private void OnUpgradeButtonMouseExited()
         {
-            if (!learnButtonDisabled)
+            if (!LearnButtonDisabled)
             {
-                learnButton.AddThemeColorOverride("font_color", learnButtonDefaultColor);
+                learnButton.AddThemeColorOverride("font_color", DefaultColorButton);
             }
         }
 
-        private void _setButtonDisabled(bool value)
+        private void SetButtonDisabled(bool value)
         {
             if (value)
             {
-                learnButton.AddThemeColorOverride("font_color", learnButtonDisabledColor);
+                learnButton.AddThemeColorOverride("font_color", DisabledColorButton);
                 learnButton.MouseDefaultCursorShape = CursorShape.Arrow;
             }
             else
             {
-                learnButton.AddThemeColorOverride("font_color", learnButtonDefaultColor);
+                learnButton.AddThemeColorOverride("font_color", DefaultColorButton);
                 learnButton.MouseDefaultCursorShape = CursorShape.PointingHand;
             }
-            learnButtonDisabled = value;
+            LearnButtonDisabled = value;
         }
 
-        private void _onLearnButtonGuiInput(InputEvent @event)
+        private void OnLearnButtonGuiInput(InputEvent @event)
         {
             if (@event is InputEventMouseButton @mouseEvent)
             {
@@ -128,11 +127,12 @@ namespace Galatime
                 {
                     if (!abilityData.IsEmpty)
                     {
-                        var result = _playerVariables.LearnAbility(abilityData);
+                        var result = PlayerVariables.LearnAbility(abilityData);
                         if (result == LearnedStatus.ok)
                         {
-                            learnButton.AddThemeColorOverride("font_color", learnButtonDefaultColor);
+                            learnButton.AddThemeColorOverride("font_color", DefaultColorButton);
                             Visible = false;
+                            OnLearned?.Invoke();
                         }
                         else
                         {

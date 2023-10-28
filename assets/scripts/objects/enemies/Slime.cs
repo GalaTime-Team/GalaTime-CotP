@@ -10,12 +10,11 @@ public partial class Slime : Entity
     #region Nodes
     private NavigationAgent2D Navigation = null;
     private Sprite2D Sprite;
+
     /// <summary> Area for the character's weapon. </summary>
     private Area2D Weapon;
     private AnimationPlayer AnimationPlayer;
-    private CollisionShape2D Collision;
-    /// <summary> Reference to the player object. </summary>
-    private Player Player;
+
     /// <summary> Timer for countdown to attack. </summary>
     private Timer AttackCountdownTimer;
     private TargetController TargetController;
@@ -24,11 +23,7 @@ public partial class Slime : Entity
     #region Variables
     /// <summary> Packed scene for slime enemies. </summary>
     private PackedScene SlimeScene;
-    /// <summary> Flag indicating if character can move. </summary>
-    private bool CanMoveTest = true;
     /// <summary> Character speed. </summary>
-    /// <summary> Current stage of the character, means how many times can be splited into parts. X means it will be splitted X time into 2 parts. </summary>
-    public int Stage = 2;
     #endregion
 
     public Slime() : base(new(
@@ -36,13 +31,11 @@ public partial class Slime : Entity
         PhysicalDefense: 20,
         MagicalDefense: 20,
         Health: 20
-    )) {}
+    ), GalatimeElement.Aqua) {}
 
     public override void _Ready()
     {
         base._Ready();
-
-        Element = GalatimeElement.Aqua;
         Body = this;
 
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
@@ -50,123 +43,82 @@ public partial class Slime : Entity
         SlimeScene = ResourceLoader.Load<PackedScene>("res://assets/objects/enemy/Slime.tscn");
 
         var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-        Player = playerVariables.Player;
 
         Sprite = GetNode<Sprite2D>("Sprite2D");
         Navigation = GetNode<NavigationAgent2D>("NavigationAgent3D");
-        Collision = GetNode<CollisionShape2D>("CollisionShape2D");
         TargetController = GetNode<TargetController>("TargetController");
-        TargetController.TargetTeam = Teams.allies;
+        TargetController.TargetTeam = Teams.Allies;
 
         Weapon = GetNode<Area2D>("Weapon");
 
-        Weapon.Connect("body_entered", new Callable(this, "_attack"));
-        Weapon.Connect("body_exited", new Callable(this, "_onAreaExit"));
+        Weapon.BodyEntered += Attack;
+        Weapon.BodyExited += OnAreaExit;
 
         AttackCountdownTimer = new Timer
         {
             WaitTime = 1f,
             OneShot = true
         };
-        AttackCountdownTimer.Timeout += justHit;
+        AttackCountdownTimer.Timeout += JustHit;
         AddChild(AttackCountdownTimer);
 
         AnimationPlayer.Play("intro");
+    }
 
-        // await ToSignal(GetTree().CreateTimer(1f), SceneTreeTimer.SignalName.Timeout);
-
-        // Collision.Disabled = false;
-
-        GD.Print($"Slime ready: Health: {Health}");
+    public override void _ExitTree()
+    {
+        Weapon.BodyEntered -= Attack;
+        Weapon.BodyExited -= OnAreaExit;
     }
 
     public override void _MoveProcess()
     {
-        if (!DeathState) move(); else Velocity = Vector2.Zero;
+        if (!DeathState) Move(); else Velocity = Vector2.Zero;
     }
 
     public override void _DeathEvent(float damageRotation = 0f)
     {
         base._DeathEvent();
-
-        CanMoveTest = false;
+        DropXp();
         AnimationPlayer.Play("outro");
-
-        // if (Stage >= 2)
-        // {
-        //     for (int i = 0; i < 2; i++)
-        //     {
-        //         var slimeInstance = SlimeScene.Instantiate<Slime>();
-        //         slimeInstance.Stage = Stage - 1;
-        //         var position = GlobalPosition;
-        //         position.Y -= i == 0 ? 40 : -40;
-        //         slimeInstance.GlobalPosition = position;
-        //         GetParent().AddChild(slimeInstance);
-        //         slimeInstance.setKnockback(500, i == 0 ? damageRotation - Mathf.DegToRad(45) : damageRotation + Mathf.DegToRad(45));
-        //     }
-        // }
-        // else
-        // {
-        //     _dropXp();
-        //     _dropLoot(damageRotation);
-        // }
     }
 
-    public void _attack(CharacterBody2D body)
+    public void Attack(Node2D body)
     {
-        if (!DeathState)
-        {
-            if (body is Entity entity)
-            {
-                AttackCountdownTimer.Start();
-                GalatimeElement element = GalatimeElement.Aqua;
-                float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.TakeDamage(20 + 10 * Stage, Stats[EntityStatType.MagicalAttack].Value, element, DamageType.physical, 500, damageRotation);
-            }
-        }
+        if (!DeathState && body is Entity entity) DealDamage(entity);
     }
 
-    public void justHit()
+    public void JustHit()
     {
         var bodies = Weapon.GetOverlappingBodies()[0] as CharacterBody2D;
-        if (bodies is Entity entity)
-        {
-            AttackCountdownTimer.Start();
-            GalatimeElement element = GalatimeElement.Aqua;
-            float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-            entity.TakeDamage(20 + 10 * Stage, Stats[EntityStatType.MagicalAttack].Value, element, DamageType.physical, 500, damageRotation);
-        }
+        if (bodies is Entity entity) DealDamage(entity);
     }
 
-    public void _onAreaExit(CharacterBody2D body)
+    private void DealDamage(Entity entity)
     {
-        AttackCountdownTimer.Stop();
+        AttackCountdownTimer.Start();
+        GalatimeElement element = GalatimeElement.Aqua;
+        float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
+        entity.TakeDamage(30, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.physical, 500, damageRotation);
     }
 
-    public void move()
+    public void OnAreaExit(Node2D body) => AttackCountdownTimer.Stop();
+
+    public void Move()
     {
         var enemy = TargetController.CurrentTarget;
         if (enemy != null)
         {
-            try
-            {
-                Vector2 vectorPath = Vector2.Zero;
-                Navigation.TargetPosition = enemy.GlobalPosition;
-                vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition()) * Speed;
-                float rotation = Body.GlobalPosition.AngleToPoint(enemy.GlobalPosition);
-                Weapon.Rotation = rotation;
-                float rotationDeg = Mathf.RadToDeg(rotation);
-                float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
-                if (rotationDegPositive <= 90) Sprite.FlipH = true; else Sprite.FlipH = false;
-                Velocity = vectorPath;
-            }
-            catch (Exception err)
-            {
-            }
+            Vector2 vectorPath = Vector2.Zero;
+            Navigation.TargetPosition = enemy.GlobalPosition;
+            vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition()) * Speed;
+            float rotation = Body.GlobalPosition.AngleToPoint(enemy.GlobalPosition);
+            Weapon.Rotation = rotation;
+            float rotationDeg = Mathf.RadToDeg(rotation);
+            float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
+            if (rotationDegPositive <= 90) Sprite.FlipH = true; else Sprite.FlipH = false;
+            Velocity = vectorPath;
         }
-        else
-        {
-            Velocity = Vector2.Zero;
-        }
+        else Velocity = Vector2.Zero;
     }
 }

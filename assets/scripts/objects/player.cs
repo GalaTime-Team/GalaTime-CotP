@@ -18,7 +18,7 @@ namespace Galatime
             set
             {
                 xp = value;
-                PlayerVariables.invokeXpChangedEvent(xp);
+                PlayerVariables.OnXpChanged?.Invoke(xp);
             }
         }
 
@@ -88,7 +88,7 @@ namespace Galatime
             Mana: 100,
             Stamina: 100,
             Agility: 100
-        )) {}
+        ), GalatimeElement.Ignis + GalatimeElement.Chaos) {}
 
 
 

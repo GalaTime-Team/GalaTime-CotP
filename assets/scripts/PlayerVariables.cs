@@ -37,8 +37,7 @@ namespace Galatime
         public Action OnAbilitiesChanged;
         public Action OnAbilityLearned;
 
-        public delegate void onXpChangedEventHandler(float amount);
-        public static event onXpChangedEventHandler onXpChanged;
+        public static Action<float> OnXpChanged;
 
         public Action<Player> OnPlayerIsReady;
         public Player Player;
@@ -53,11 +52,6 @@ namespace Galatime
             OnAbilitiesChanged?.Invoke();
 
             OnPlayerIsReady += loadSave;
-        }
-
-        public static void invokeXpChangedEvent(float xp)
-        {
-            onXpChanged(xp);
         }
 
         public void loadSave(Player instance)
@@ -131,7 +125,7 @@ namespace Galatime
                 // Invoke the events to intalize the player and global variables
                 OnItemsChanged?.Invoke();
                 OnAbilitiesChanged?.Invoke();
-                OnAbilitiesChanged?.Invoke();
+                OnAbilityLearned?.Invoke();
             }
             catch (Exception e)
             {
@@ -198,13 +192,7 @@ namespace Galatime
             if (abilityData.RequiredIDs.Length >= 0)
             {
                 var required = abilityData.RequiredIDs;
-                foreach (var req in required)
-                {
-                    if (!AbilityIsLearned(req))
-                    {
-                        return LearnedStatus.noRequiredPath;
-                    }
-                }
+                foreach (var req in required) if (!AbilityIsLearned(req)) return LearnedStatus.noRequiredPath;
             }
 
             var cost = abilityData.CostXP;

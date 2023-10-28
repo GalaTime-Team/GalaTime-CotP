@@ -52,8 +52,9 @@ namespace Galatime
         public Action OnDeath;
         #endregion
 
-        public Entity(EntityStats stats) {
+        public Entity(EntityStats stats, GalatimeElement element = null){
             Stats = stats;
+            Element = element ?? new();
         }
 
         public override void _Ready()

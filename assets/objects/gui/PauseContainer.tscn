@@ -24,6 +24,7 @@ anchor_bottom = 1.0
 mouse_filter = 2
 
 [node name="StatsContainer" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 anchor_left = 0.5
 anchor_top = 0.5
@@ -140,31 +141,6 @@ custom_minimum_size = Vector2(512, 244)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_oxmcq")
 
-[node name="AbilitiesChoiseContainer" type="VBoxContainer" parent="AbilitiesContainer/Panel"]
-visible = false
-z_index = 1
-layout_mode = 0
-offset_left = 112.0
-offset_top = 20.0
-offset_right = 208.0
-offset_bottom = 52.0
-pivot_offset = Vector2(40, 0)
-theme_override_constants/separation = -10
-script = ExtResource("6_iy3ie")
-
-[node name="Label" type="Label" parent="AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-theme_override_fonts/font = ExtResource("1_ynmsx")
-text = "Which to replace?"
-
-[node name="AbilitiesContainer" type="HBoxContainer" parent="AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-alignment = 2
-
 [node name="AbilityItem" parent="AbilitiesContainer/Panel" groups=["abilityItem"] instance=ExtResource("7_o3ee3")]
 z_index = 1
 layout_mode = 0
@@ -222,9 +198,9 @@ AbilityName = "firebullet"
 [node name="AbilityLearnContainer" type="VBoxContainer" parent="AbilitiesContainer/Panel"]
 visible = false
 layout_mode = 0
-offset_left = 112.0
+offset_left = 100.0
 offset_top = 20.0
-offset_right = 416.0
+offset_right = 236.0
 offset_bottom = 52.0
 theme_override_constants/separation = 0
 script = ExtResource("8_8nc7r")
@@ -258,6 +234,30 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
+[node name="AbilitiesChoiseContainer" type="VBoxContainer" parent="AbilitiesContainer/Panel"]
+visible = false
+z_index = 1
+layout_mode = 0
+offset_left = 168.0
+offset_top = 84.0
+offset_right = 264.0
+offset_bottom = 116.0
+theme_override_constants/separation = -10
+script = ExtResource("6_iy3ie")
+
+[node name="Label" type="Label" parent="AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("1_ynmsx")
+text = "Which to replace?"
+
+[node name="AbilitiesContainer" type="HBoxContainer" parent="AbilitiesContainer/Panel/AbilitiesChoiseContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+alignment = 2
+
 [node name="Inventory" type="GridContainer" parent="."]
 visible = false
 clip_contents = true
@@ -282,13 +282,6 @@ offset_bottom = 0.0
 grow_horizontal = 1
 grow_vertical = 1
 scale = Vector2(2, 2)
-
-[node name="Tooltip" parent="." instance=ExtResource("12_j3tvq")]
-visible = false
-z_index = 2
-layout_mode = 0
-scale = Vector2(2, 2)
-mouse_filter = 2
 
 [node name="PausePagesButtonsContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
@@ -324,3 +317,11 @@ mouse_filter = 1
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("1_ynmsx")
 text = "Abilities"
+
+[node name="Tooltip" parent="." instance=ExtResource("12_j3tvq")]
+visible = false
+z_index = 2
+layout_mode = 0
+offset_bottom = 45.0
+scale = Vector2(2, 2)
+mouse_filter = 2

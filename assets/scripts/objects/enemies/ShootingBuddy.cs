@@ -20,14 +20,6 @@ public partial class ShootingBuddy : Entity
         Sprite = GetNode<Sprite2D>("Sprite2D");
         #endregion
 
-        Element = GalatimeElement.Aqua;
-        Stats = new(
-            PhysicalAttack: 20,
-            MagicalAttack: 20,
-            PhysicalDefense: 20,
-            MagicalDefense: 20,
-            Health: 20
-        );
         Body = this;
 
         ShootingTimer.Timeout += OnShootingTimerTimeout;
@@ -39,11 +31,11 @@ public partial class ShootingBuddy : Entity
         PhysicalDefense: 20,
         MagicalDefense: 20,
         Health: 20
-    )) {}
+    ), GalatimeElement.Aqua) {}
 
     private void OnShootingTimerTimeout() {
         var projectile = Projectile.Duplicate() as Projectile;
-        projectile.TargetTeam = Galatime.Helpers.Teams.allies;
+        projectile.TargetTeam = Galatime.Helpers.Teams.Allies;
         projectile.AttackStat = Stats[EntityStatType.MagicalAttack].Value;
         projectile.Power = 20;
         projectile.Visible = true;

@@ -157,13 +157,6 @@ public partial class MainMenu : Control
         };
     }
 
-    public override void _EnterTree()
-    {
-        base._EnterTree();
-        var levelManager = GetNode<LevelManager>("/root/LevelManager");
-        levelManager.EndAudioCombat();
-    }
-
     public void ParseCMDLineArgs()
     {
         if (GalatimeGlobals.CMDArgs.ContainsKey("save"))
@@ -266,35 +259,7 @@ public partial class MainMenu : Control
 
         ResetButtons(false);
     }
-
-    //public void createSaveButtonInput(Label button, InputEvent @event)
-    //{
-    //    visualButtonInput(button, @event);
-    //    if (@event is InputEventMouseButton @eventMouse)
-    //    {
-    //        if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed())
-    //        {
-    //            appearAccept("Do you really want to create a save?\n\nNote: only the 1-st Chapter is available now", (bool result) =>
-    //            {
-    //                if (result)
-    //                {
-    //                    GD.Print("SAVE");
-    //                    var saves = GalatimeGlobals.getSaves();
-    //                    GalatimeGlobals.save(saves.Count + 1);
-    //                    updateSaves();
-    //                    disappearAccept();
-    //                    OS.ShellOpen(ProjectSettings.GlobalizePath(GalatimeConstants.savesPath));
-    //                }
-    //                else
-    //                {
-    //                    disappearAccept();
-    //                }
-    //            }
-    //            );
-    //        }
-    //    }
-    //}
-
+    
     public void UpdateSaves()
     {
         var saves = GalatimeGlobals.getSaves();

@@ -81,7 +81,7 @@ public partial class HumanoidCharacter : Entity
         InitializeTimers();
     }
 
-    public HumanoidCharacter(EntityStats stats) : base(stats) { }
+    public HumanoidCharacter(EntityStats stats, GalatimeElement element = null) : base(stats, element) { }
 
     private void InitializeTimers()
     {

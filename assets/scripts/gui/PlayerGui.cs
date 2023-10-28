@@ -75,7 +75,6 @@ namespace Galatime
             
             AbilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
             AbilitiesListContainer = GetNode<AbilitiesContainer>("PauseContainer/AbilitiesContainer");
-
             PauseContainer = GetNode<Panel>("PauseContainer");
 
             ParrySound = GetNode<AudioStreamPlayer>("ParrySound");
@@ -83,7 +82,6 @@ namespace Galatime
             #endregion
             
             PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            AbilitiesListContainer._onAbilityLearned();
             PlayerVariables.OnItemsChanged += DisplayItem;
 
             // Setting up dodge timer

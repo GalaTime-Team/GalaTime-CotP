@@ -50,7 +50,7 @@ public partial class GoldenHolderSword : Area2D, IWeapon
         var bodies = GetOverlappingBodies();
         for (int i = 0; i < bodies.Count; i++)
         {
-            if (bodies[i] is Projectile projectile && projectile.TargetTeam == Galatime.Helpers.Teams.allies && projectile.Moving) Parry(projectile);
+            if (bodies[i] is Projectile projectile && projectile.TargetTeam == Galatime.Helpers.Teams.Allies && projectile.Moving) Parry(projectile);
             if (bodies[i] is Entity entity)
             {
                 GalatimeElement element = new();
@@ -65,7 +65,7 @@ public partial class GoldenHolderSword : Area2D, IWeapon
         projectile.Accuracy = 0f;
         projectile.Speed *= 3f;
         projectile.Power = (int)(projectile.Power * 2f);
-        projectile.TargetTeam = Galatime.Helpers.Teams.enemies;
+        projectile.TargetTeam = Galatime.Helpers.Teams.Enemies;
         projectile.Explosive = true;
     }
 

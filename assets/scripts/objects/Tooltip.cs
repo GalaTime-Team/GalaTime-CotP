@@ -52,7 +52,7 @@ namespace Galatime
             // if (ability.ContainsKey("power")) descriptionNode.AppendText("\n \nPower: [color=yellow]" + (Single)ability["power"] + "[/color]");
             var sb = new StringBuilder();
             sb.Append(ability.Reload > 0 ? $"\nCooldown: [color=yellow]{ability.Reload}s[/color]" : "");
-            sb.Append(" \n");
+            sb.Append(" \n \n");
             sb.Append(ability.Charges > 1 ? $"\n[color=green]+ Has {ability.Charges - 1} more charges[/color] ({ability.Charges})" : "");
             sb.Append(ability.Costs.Mana > 0 ? $"\n[color=orangered]- Consumes {ability.Costs.Mana} mana[/color]" : "");
             sb.Append(ability.Costs.Stamina > 0 ? $"\n[color=orangered]- Consumes {ability.Costs.Stamina} stamina[/color]" : "");
