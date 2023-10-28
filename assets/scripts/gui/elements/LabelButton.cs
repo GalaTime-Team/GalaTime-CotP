@@ -3,11 +3,12 @@ using System;
 
 public partial class LabelButton : Label
 {
-    [Export] public Vector2 DefaultScale = new(4, 4);
-    [Export] public Vector2 HoverScale = new(4.5f, 4.5f);
+    [Export] public Vector2 DefaultScale = new(2, 2);
+    [Export] public Vector2 HoverScale = new(2.2f, 2.2f);
     [Export] public Color DefaultColor = new(1, 1, 1);
     [Export] public Color HoverColor = new(1, 1, 0);
     [Export] public Color PressedColor = new(0.49f, 0.49f, 0.49f);
+    [Export] public float Speed = 0.2f;
 
     public override void _GuiInput(InputEvent @event)
     {
@@ -42,7 +43,8 @@ public partial class LabelButton : Label
     void ApplyHoverEffects(Color color, Vector2 scale)
     {
         var tween = GetTween();
-        tween.TweenProperty(this, "scale", scale, 0.3f);
+        TweenColor(tween, DefaultColor, color, Speed);
+        tween.TweenProperty(this, "scale", scale, Speed);
     }
 
     private void TweenColor(Tween tween, Color From, Color To, float Duration) => 
@@ -53,7 +55,6 @@ public partial class LabelButton : Label
         AddThemeColorOverride("font_color", PressedColor);
         Size = HoverScale;
         var tween = GetTween();
-        TweenColor(tween, PressedColor, DefaultColor, 0.4f);
-        tween.TweenProperty(this, "scale", DefaultScale, 0.4f);
+        tween.TweenProperty(this, "scale", DefaultScale, Speed);
     }
 }
