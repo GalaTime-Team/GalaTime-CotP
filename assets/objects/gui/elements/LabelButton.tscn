@@ -1,15 +1,24 @@
-[gd_scene load_steps=3 format=3 uid="uid://dra0o6uwyaspw"]
+[gd_scene load_steps=5 format=3 uid="uid://dra0o6uwyaspw"]
 
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="1_ix5nb"]
 [ext_resource type="Script" path="res://assets/scripts/gui/elements/LabelButton.cs" id="2_aa5td"]
+[ext_resource type="AudioStream" uid="uid://jrsuouvekni1" path="res://assets/audios/sounds/button_sfx_accept.mp3" id="3_4dbuy"]
+[ext_resource type="AudioStream" uid="uid://bmeffvddx6dpx" path="res://assets/audios/sounds/button_sfx.mp3" id="4_rvgnq"]
 
 [node name="LabelButton" type="Label"]
 offset_right = 42.0
 offset_bottom = 17.0
 scale = Vector2(2, 2)
-focus_mode = 1
+focus_mode = 2
 mouse_filter = 1
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("1_ix5nb")
 text = "BUTTON"
 script = ExtResource("2_aa5td")
+AudioStreamPressed = ExtResource("3_4dbuy")
+
+[node name="AudioPressed" type="AudioStreamPlayer" parent="."]
+volume_db = 10.0
+
+[node name="AudioHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_rvgnq")

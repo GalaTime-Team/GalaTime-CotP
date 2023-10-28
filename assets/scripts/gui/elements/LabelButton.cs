@@ -3,12 +3,36 @@ using System;
 
 public partial class LabelButton : Label
 {
+    #region Exports
     [Export] public Vector2 DefaultScale = new(2, 2);
     [Export] public Vector2 HoverScale = new(2.2f, 2.2f);
     [Export] public Color DefaultColor = new(1, 1, 1);
     [Export] public Color HoverColor = new(1, 1, 0);
     [Export] public Color PressedColor = new(0.49f, 0.49f, 0.49f);
     [Export] public float Speed = 0.2f;
+    #endregion
+
+    #region Audio
+    [Export] AudioStream AudioStreamHover;
+    [Export] AudioStream AudioStreamPressed;
+    public AudioStreamPlayer AudioHover;
+    public AudioStreamPlayer AudioPressed;
+    #endregion
+
+    public override void _Ready()
+    {
+        InitializeAudios();
+    }
+
+    private void InitializeAudios()
+    {
+        AudioHover = GetNode<AudioStreamPlayer>("AudioHover");
+        AudioPressed = GetNode<AudioStreamPlayer>("AudioPressed");
+
+        if (AudioStreamHover != null) AudioHover.Stream = AudioStreamHover;
+        if (AudioStreamPressed != null) AudioPressed.Stream = AudioStreamPressed;
+    }
+
 
     public override void _GuiInput(InputEvent @event)
     {
@@ -33,10 +57,14 @@ public partial class LabelButton : Label
         }
     }
 
-    // Method to get a Tween instance
+    // Method to get a Tween instance with preset settings
     Tween GetTween() => GetTree().CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel(true);
 
-    void Hover() => ApplyHoverEffects(HoverColor, HoverScale);
+    void Hover() { 
+        AudioHover.Play();
+        ApplyHoverEffects(HoverColor, HoverScale);
+    }
+
     void ExitHover() => ApplyHoverEffects(DefaultColor, DefaultScale);
 
     // Method to apply hover effects with specified color and scale
@@ -52,9 +80,12 @@ public partial class LabelButton : Label
 
     public void OnPressed()
     {
+        AudioPressed.Play();
         AddThemeColorOverride("font_color", PressedColor);
         Size = HoverScale;
+
         var tween = GetTween();
+        TweenColor(tween, PressedColor, DefaultColor, Speed);
         tween.TweenProperty(this, "scale", DefaultScale, Speed);
     }
 }
