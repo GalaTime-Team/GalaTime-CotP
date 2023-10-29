@@ -109,17 +109,7 @@ public partial class MainMenu : Control
 
         UpdateVisualButtons();
 
-        MenuButtons = GetNode("MainMenuContainer/VBoxContainer").GetChildren();
-
-        for (int i = 0; i < MenuButtons.Count; i++)
-        {
-            var button = MenuButtons[i] as Label;
-            if (i == 0)
-            {
-                button.GrabFocus();
-            }
-            button.GuiInput += (InputEvent @event) => MainMenuButtonInput(button, @event);
-        }
+        InitializeMainMenuButtons();
 
         GetViewport().GuiFocusChanged += guiFocusChanged;
 
@@ -131,6 +121,18 @@ public partial class MainMenu : Control
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
 
         GetTree().Root.Title = "GalaTime - Main Menu";
+    }
+
+    private void InitializeMainMenuButtons()
+    {
+        MenuButtons = GetNode("MainMenuContainer/VBoxContainer").GetChildren();
+        for (int i = 0; i < MenuButtons.Count; i++)
+        {
+            if (MenuButtons[i] is not LabelButton b) continue;
+            if (i == 0) b.GrabFocus();
+            var page = (string)b.GetMeta("page");
+            b.Pressed += () => MainMenuButtonsPressed(page);
+        }
     }
 
     private void NewMethod()
@@ -398,34 +400,21 @@ public partial class MainMenu : Control
         }
     }
 
-    public void MainMenuButtonInput(Label button, InputEvent @event)
+    /// <summary> Handles event of main menu buttons being pressed </summary>
+    public void MainMenuButtonsPressed(string page)
     {
-        if (@event is InputEventMouseButton @eventMouse)
-        {
-            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
-            {
-                var page = (string)button.GetMeta("page");
-
-                VisualButtonInput(button, @event);
-                AudioButtonAccept.Play();
-
-                SwitchPage(page);
-
-                DelayInteract.Start();
-            }
-        }
+        SwitchPage(page);
     }
+
+    public Tween GetTween() => GetTree().CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel(true);
 
     /// <summary> Switches to the specified page. </summary>
     /// <param name="page"> The name of the page to switch to. </param>
     public void SwitchPage(string page)
     {
+        DelayInteract.Start();
+
         IsMainMenu = false;
-
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-
-        if (DelayInteract.TimeLeft > 0) return;
 
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Switch to {page} menu[/color]");
         AudioMenuWhoosh.Play();
@@ -433,11 +422,7 @@ public partial class MainMenu : Control
         {
             case "start":
                 SwipePage(SwipeDirection.UP, MainMenuControl, StartMenuControl);
-
-                tween.TweenCallback(Callable.From(() =>
-                {
-                    ViewSavesButton.GrabFocus();
-                })).SetDelay(TransitionTime);
+                GetTree().CreateTimer(TransitionTime).Timeout += () => ViewSavesButton.GrabFocus();
                 break;
             case "settings":
                 var linearTween = GetTree().CreateTween();
@@ -479,9 +464,6 @@ public partial class MainMenu : Control
     /// <param name="nextControl">The control that will be displayed after the swipe.</param>
     private void SwipePage(SwipeDirection direction, Control previousControl, Control nextControl)
     {
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-
         var previousPosition = previousControl.Position;
 
         switch (direction)
@@ -498,14 +480,12 @@ public partial class MainMenu : Control
             case SwipeDirection.LEFT:
                 previousPosition.X += MainMenuControl.Size.X;
                 break;
-            default:
-                break;
         }
 
-        tween.TweenProperty(previousControl, "position", previousPosition, TransitionTime);
+        GetTween().TweenProperty(previousControl, "position", previousPosition, TransitionTime);
         previousPosition.X += 1152;
 
-        tween.TweenProperty(nextControl, "position", Vector2.Zero, TransitionTime);
+        GetTween().TweenProperty(nextControl, "position", Vector2.Zero, TransitionTime);
 
         CurrentPageControl = nextControl;
         CurrentSwipeDirection = direction;

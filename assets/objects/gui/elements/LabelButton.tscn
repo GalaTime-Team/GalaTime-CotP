@@ -1,21 +1,50 @@
-[gd_scene load_steps=5 format=3 uid="uid://dra0o6uwyaspw"]
+[gd_scene load_steps=9 format=3 uid="uid://dra0o6uwyaspw"]
 
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="1_ix5nb"]
 [ext_resource type="Script" path="res://assets/scripts/gui/elements/LabelButton.cs" id="2_aa5td"]
-[ext_resource type="AudioStream" uid="uid://jrsuouvekni1" path="res://assets/audios/sounds/button_sfx_accept.mp3" id="3_4dbuy"]
 [ext_resource type="AudioStream" uid="uid://bmeffvddx6dpx" path="res://assets/audios/sounds/button_sfx.mp3" id="4_rvgnq"]
 
-[node name="LabelButton" type="Label"]
-offset_right = 42.0
-offset_bottom = 17.0
-scale = Vector2(2, 2)
-focus_mode = 2
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eb8oy"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fmnp1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t7ihh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w64e7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ycqrr"]
+
+[node name="LabelButton" type="Button"]
+clip_contents = true
+offset_right = 54.0
+offset_bottom = 23.0
 mouse_filter = 1
 mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_eb8oy")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_fmnp1")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_t7ihh")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_w64e7")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ycqrr")
+text = "
+"
+script = ExtResource("2_aa5td")
+HoverScale = Vector2(1.4, 1.4)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="CenterContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
 theme_override_fonts/font = ExtResource("1_ix5nb")
 text = "BUTTON"
-script = ExtResource("2_aa5td")
-AudioStreamPressed = ExtResource("3_4dbuy")
+metadata/_edit_lock_ = true
 
 [node name="AudioPressed" type="AudioStreamPlayer" parent="."]
 volume_db = 10.0

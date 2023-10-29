@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class LabelButton : Label
+public partial class LabelButton : Button
 {
     #region Exports
     [Export] public Vector2 HoverScale = new(2.2f, 2.2f);
@@ -15,6 +15,10 @@ public partial class LabelButton : Label
     private Color DefaultColor;
     #endregion
 
+    #region Nodes
+    public Label Label;
+    #endregion  
+
     #region Audio
     [Export] public AudioStream AudioStreamHover;
     [Export] public AudioStream AudioStreamPressed;
@@ -22,13 +26,10 @@ public partial class LabelButton : Label
     public AudioStreamPlayer AudioPressed;
     #endregion
 
-    #region Events
-    /// <summary> Emitted when the button is pressed. </summary>
-    [Signal] public delegate void PressedEventHandler();
-    #endregion
-
     public override void _Ready()
     {
+        Label = GetNode<Label>("CenterContainer/Label");
+
         InitializeDefaults();
         InitializeAudios();
 
@@ -36,7 +37,7 @@ public partial class LabelButton : Label
     }
 
     private void InitializeDefaults() {
-        DefaultScale = Scale;
+        DefaultScale = Label.Scale;
         DefaultColor = GetThemeColor("font_color");
     }
 
@@ -47,12 +48,6 @@ public partial class LabelButton : Label
 
         if (AudioStreamHover != null) AudioHover.Stream = AudioStreamHover;
         if (AudioStreamPressed != null) AudioPressed.Stream = AudioStreamPressed;
-    }
-
-
-    public override void _GuiInput(InputEvent @event)
-    {
-        if (@event is InputEventMouseButton mbe && mbe.ButtonIndex == MouseButton.Left && mbe.Pressed) OnPressed();
     }
 
     public override void _Notification(int what)
@@ -68,7 +63,7 @@ public partial class LabelButton : Label
                 ExitHover();
                 break;
             case NotificationResized:
-                PivotOffset = Size / 2;
+                Label.PivotOffset = Label.Size / 2;
                 break;
         }
     }
@@ -76,7 +71,7 @@ public partial class LabelButton : Label
     // Method to get a Tween instance with preset settings
     Tween GetTween() => GetTree().CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel(true);
 
-    void Hover() 
+    void Hover()
     {
         AudioHover.Play();
         ApplyHoverEffects(HoverColor, HoverScale);
@@ -89,20 +84,22 @@ public partial class LabelButton : Label
     {
         var tween = GetTween();
         TweenColor(tween, DefaultColor, color, Speed);
-        tween.TweenProperty(this, "scale", scale, Speed);
+        tween.TweenProperty(Label, "scale", scale, Speed);
     }
 
-    private void TweenColor(Tween tween, Color From, Color To, float Duration) => 
-        tween.TweenMethod(Callable.From((Color x) => AddThemeColorOverride("font_color", x)), From, To, Duration);
+    private void TweenColor(Tween tween, Color From, Color To, float Duration) =>
+        tween.TweenMethod(Callable.From((Color x) => Label.AddThemeColorOverride("font_color", x)), From, To, Duration);
 
     public void OnPressed()
     {
         AudioPressed.Play();
-        AddThemeColorOverride("font_color", PressedColor);
-        Size = HoverScale;
+        Label.AddThemeColorOverride("font_color", PressedColor);
+        Label.Size = HoverScale;
 
         var tween = GetTween();
-        TweenColor(tween, PressedColor, DefaultColor, Speed);
-        tween.TweenProperty(this, "scale", DefaultScale, Speed);
+
+        float duration = Speed * 2;
+        TweenColor(tween, PressedColor, DefaultColor, duration);
+        tween.TweenProperty(Label, "scale", DefaultScale, duration);
     }
 }

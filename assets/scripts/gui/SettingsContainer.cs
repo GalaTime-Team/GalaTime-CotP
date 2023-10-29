@@ -73,7 +73,8 @@ public partial class SettingsContainer : Control
     }
 
     // This function is called when any UI value is changed
-    private void ValueChanged<T>(T value, FieldInfo field) { 
+    private void ValueChanged<T>(T value, FieldInfo field)
+    {
         field.SetValue(SettingsGlobals.Settings, value);
         SettingsGlobals.UpdateSettings();
     }

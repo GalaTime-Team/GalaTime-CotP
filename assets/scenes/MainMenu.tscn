@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dno0k3g6k4twv"]
+[gd_scene load_steps=24 format=3 uid="uid://dno0k3g6k4twv"]
 
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="1_5fg5f"]
 [ext_resource type="Script" path="res://assets/scripts/gui/MainMenu.cs" id="1_ibgb5"]
@@ -9,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://2g3yxwf538f8" path="res://assets/audios/soundtracks/galatime.mp3" id="4_pmnwf"]
 [ext_resource type="AudioStream" uid="uid://jrsuouvekni1" path="res://assets/audios/sounds/button_sfx_accept.mp3" id="6_8xiqm"]
 [ext_resource type="AudioStream" uid="uid://bmeffvddx6dpx" path="res://assets/audios/sounds/button_sfx.mp3" id="6_p1ru6"]
+[ext_resource type="PackedScene" uid="uid://dra0o6uwyaspw" path="res://assets/objects/gui/elements/LabelButton.tscn" id="7_4ne4t"]
 [ext_resource type="Texture2D" uid="uid://0rvog4vfe84n" path="res://sprites/godot.png" id="10_lqfxl"]
 [ext_resource type="AudioStream" uid="uid://carmj5xt250vd" path="res://assets/audios/sounds/whoosh-menu.wav" id="12_hmhgi"]
 
@@ -401,9 +402,8 @@ grow_vertical = 2
 scale = Vector2(2, 2)
 texture = ExtResource("1_xvngr")
 
-[node name="VBoxContainer" type="Control" parent="MainMenuContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenuContainer"]
 layout_mode = 2
-anchors_preset = 0
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 48.0
@@ -412,64 +412,56 @@ offset_right = 204.0
 offset_bottom = 28.0
 grow_vertical = 2
 scale = Vector2(2, 2)
-mouse_filter = 1
 
-[node name="StartButton" type="Label" parent="MainMenuContainer/VBoxContainer" groups=["visual"]]
+[node name="StartButton" parent="MainMenuContainer/VBoxContainer" instance=ExtResource("7_4ne4t")]
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
-offset_right = 156.0
-offset_bottom = 16.0
-pivot_offset = Vector2(0, 8)
-focus_neighbor_left = NodePath("../SettingsButton")
-focus_neighbor_top = NodePath("../CreditsButton")
-focus_neighbor_right = NodePath("../CreditsButton")
-focus_neighbor_bottom = NodePath("../SettingsButton")
-focus_next = NodePath("../CreditsButton")
-focus_previous = NodePath("../SettingsButton")
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 2
+size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
-text = "Start"
+text = ""
+PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
+Speed = 0.1
 metadata/page = "start"
 
-[node name="SettingsButton" type="Label" parent="MainMenuContainer/VBoxContainer" groups=["visual"]]
-layout_mode = 2
-offset_top = 20.0
-offset_right = 156.0
-offset_bottom = 36.0
-pivot_offset = Vector2(0, 8)
-focus_neighbor_left = NodePath("../CreditsButton")
-focus_neighbor_top = NodePath("../StartButton")
-focus_neighbor_right = NodePath("../StartButton")
-focus_neighbor_bottom = NodePath("../CreditsButton")
-focus_next = NodePath("../StartButton")
-focus_previous = NodePath("../CreditsButton")
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 2
+[node name="Label" parent="MainMenuContainer/VBoxContainer/StartButton/CenterContainer" index="0"]
 theme_override_fonts/font = ExtResource("2_nxd72")
-text = "Settings
-"
+text = "Start"
+
+[node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/StartButton" index="1"]
+stream = ExtResource("6_8xiqm")
+
+[node name="CreditsButton" parent="MainMenuContainer/VBoxContainer" instance=ExtResource("7_4ne4t")]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_nxd72")
+text = ""
+PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
+Speed = 0.1
 metadata/page = "settings"
 
-[node name="CreditsButton" type="Label" parent="MainMenuContainer/VBoxContainer" groups=["visual"]]
+[node name="Label" parent="MainMenuContainer/VBoxContainer/CreditsButton/CenterContainer" index="0"]
+theme_override_fonts/font = ExtResource("2_nxd72")
+text = "Settings"
+
+[node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/CreditsButton" index="1"]
+stream = ExtResource("6_8xiqm")
+
+[node name="SettingsButton" parent="MainMenuContainer/VBoxContainer" instance=ExtResource("7_4ne4t")]
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
-offset_top = 40.0
-offset_right = 156.0
-offset_bottom = 56.0
-pivot_offset = Vector2(0, 8)
-focus_neighbor_left = NodePath("../StartButton")
-focus_neighbor_top = NodePath("../SettingsButton")
-focus_neighbor_right = NodePath("../SettingsButton")
-focus_neighbor_bottom = NodePath("../StartButton")
-focus_next = NodePath("../SettingsButton")
-focus_previous = NodePath("../StartButton")
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_nxd72")
+PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
+Speed = 0.1
+metadata/page = "credits"
+
+[node name="Label" parent="MainMenuContainer/VBoxContainer/SettingsButton/CenterContainer" index="0"]
 theme_override_fonts/font = ExtResource("2_nxd72")
 text = "Credits"
-metadata/page = "credits"
+
+[node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/SettingsButton" index="1"]
+stream = ExtResource("6_8xiqm")
 
 [node name="AcceptContainer" type="Control" parent="."]
 modulate = Color(1, 1, 1, 0)
@@ -731,3 +723,7 @@ stream = ExtResource("6_p1ru6")
 
 [node name="AudioStreamPlayerWhoosh" type="AudioStreamPlayer" parent="."]
 autoplay = true
+
+[editable path="MainMenuContainer/VBoxContainer/StartButton"]
+[editable path="MainMenuContainer/VBoxContainer/CreditsButton"]
+[editable path="MainMenuContainer/VBoxContainer/SettingsButton"]
