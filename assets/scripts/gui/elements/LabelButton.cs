@@ -4,24 +4,40 @@ using System;
 public partial class LabelButton : Label
 {
     #region Exports
-    [Export] public Vector2 DefaultScale = new(2, 2);
     [Export] public Vector2 HoverScale = new(2.2f, 2.2f);
-    [Export] public Color DefaultColor = new(1, 1, 1);
     [Export] public Color HoverColor = new(1, 1, 0);
     [Export] public Color PressedColor = new(0.49f, 0.49f, 0.49f);
     [Export] public float Speed = 0.2f;
     #endregion
 
+    #region Variables
+    private Vector2 DefaultScale;
+    private Color DefaultColor;
+    #endregion
+
     #region Audio
-    [Export] AudioStream AudioStreamHover;
-    [Export] AudioStream AudioStreamPressed;
+    [Export] public AudioStream AudioStreamHover;
+    [Export] public AudioStream AudioStreamPressed;
     public AudioStreamPlayer AudioHover;
     public AudioStreamPlayer AudioPressed;
     #endregion
 
+    #region Events
+    /// <summary> Emitted when the button is pressed. </summary>
+    [Signal] public delegate void PressedEventHandler();
+    #endregion
+
     public override void _Ready()
     {
+        InitializeDefaults();
         InitializeAudios();
+
+        Pressed += OnPressed;
+    }
+
+    private void InitializeDefaults() {
+        DefaultScale = Scale;
+        DefaultColor = GetThemeColor("font_color");
     }
 
     private void InitializeAudios()
@@ -60,7 +76,8 @@ public partial class LabelButton : Label
     // Method to get a Tween instance with preset settings
     Tween GetTween() => GetTree().CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel(true);
 
-    void Hover() { 
+    void Hover() 
+    {
         AudioHover.Play();
         ApplyHoverEffects(HoverColor, HoverScale);
     }
