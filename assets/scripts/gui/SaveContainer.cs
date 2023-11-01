@@ -1,3 +1,4 @@
+using Galatime.UI;
 using Godot;
 using System;
 
@@ -5,43 +6,36 @@ namespace Galatime
 {
     public partial class SaveContainer : HBoxContainer
     {
-        public Label nameLabel;
-        public Label descriptionLabel;
-        public Label deleteButton;
-        public Label playButton;
+        public Label NameLabel;
+        public Label DescriptionLabel;
+        public LabelButton DeleteButton;
+        public LabelButton PlayButton;
 
         public int id = 1;
 
         public override void _Ready()
         {
-            nameLabel = GetNode<Label>("VBoxContainer/Name");
-            descriptionLabel = GetNode<Label>("VBoxContainer/Description");
-            deleteButton = GetNode<Label>("DeleteButton");
-            playButton = GetNode<Label>("PlayButton");
+            NameLabel = GetNode<Label>("VBoxContainer/Name");
+            DescriptionLabel = GetNode<Label>("VBoxContainer/Description");
+            DeleteButton = GetNode<LabelButton>("DeleteButton");
+            PlayButton = GetNode<LabelButton>("PlayButton");
 
-            deleteButton.PivotOffset = new Vector2(21, 5);
-            playButton.PivotOffset = new Vector2(14, 5);
+            DeleteButton.PivotOffset = new Vector2(21, 5);
+            PlayButton.PivotOffset = new Vector2(14, 5);
         }
 
-        public Label getDeleteButtonInstance()
-        {
-            return deleteButton;
-        }
+        public LabelButton getDeleteButtonInstance() => DeleteButton;
+        public LabelButton getPlayButtonInstance() => PlayButton;
 
-        public Label getPlayButtonInstance()
-        {
-            return playButton;
-        }
-
-        public void loadData(Godot.Collections.Dictionary data)
+        public void LoadData(Godot.Collections.Dictionary data)
         {
             if (data != null && data.Count >= 0)
             {
                 GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=cyan]Load data[/color]");
                 var id = data.ContainsKey("id") ? (int)data["id"] : 0;
-                nameLabel.Text = "Save " + (id == 0 ? "?" : id);
+                NameLabel.Text = "Save " + (id == 0 ? "?" : id);
                 this.id = id;
-                descriptionLabel.Text =
+                DescriptionLabel.Text =
                     $"Chapter " + (data.ContainsKey("chapter") ? (int)data["chapter"] : "?")
                     + " - Day " + (data.ContainsKey("day") ? (int)data["day"] : "?")
                     + " - " + (data.ContainsKey("playtime") ? Math.Round((float)data["playtime"] / 3600, 1) + " h" : "?");

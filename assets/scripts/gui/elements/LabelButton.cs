@@ -1,5 +1,6 @@
 using Godot;
-using System;
+
+namespace Galatime.UI;
 
 public partial class LabelButton : Button
 {
@@ -7,6 +8,7 @@ public partial class LabelButton : Button
     [Export] public Vector2 HoverScale = new(2.2f, 2.2f);
     [Export] public Color HoverColor = new(1, 1, 0);
     [Export] public Color PressedColor = new(0.49f, 0.49f, 0.49f);
+    [Export] public Color DisabledColor = new(0.4f, 0.4f, 0.4f);
     [Export] public float Speed = 0.2f;
     #endregion
 
@@ -36,7 +38,13 @@ public partial class LabelButton : Button
         Pressed += OnPressed;
     }
 
-    private void InitializeDefaults() {
+    public override void _Draw()
+    {
+        if (Label is not null && Disabled) Label.AddThemeColorOverride("font_color", DisabledColor);
+    }
+
+    private void InitializeDefaults()
+    {
         DefaultScale = Label.Scale;
         DefaultColor = GetThemeColor("font_color");
     }
@@ -62,7 +70,7 @@ public partial class LabelButton : Button
             case NotificationFocusExit:
                 ExitHover();
                 break;
-            case NotificationResized:
+            case NotificationResized when Label is not null:
                 Label.PivotOffset = Label.Size / 2;
                 break;
         }

@@ -1,7 +1,6 @@
 using Galatime;
+using Galatime.UI;
 using Godot;
-using System;
-using System.Collections.Generic;
 
 public partial class MainMenu : Control
 {
@@ -93,7 +92,7 @@ public partial class MainMenu : Control
         AcceptContainer = GetNode<Control>("AcceptContainer");
         #endregion
 
-        NewMethod();
+        StartOpacityTransition();
 
         DelayInteract.Start();
         InitializeSavesContainers();
@@ -108,7 +107,6 @@ public partial class MainMenu : Control
         AcceptName = GetNode<Label>("AcceptContainer/VBoxContainer/Name");
 
         UpdateVisualButtons();
-
         InitializeMainMenuButtons();
 
         GetViewport().GuiFocusChanged += guiFocusChanged;
@@ -135,13 +133,7 @@ public partial class MainMenu : Control
         }
     }
 
-    private void NewMethod()
-    {
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-        tween.TweenProperty(MainMenuControl, "modulate", new Color(1f, 1f, 1f), TransitionTime);
-    }
-
+    private void StartOpacityTransition() => GetTween().TweenProperty(MainMenuControl, "modulate", new Color(1f, 1f, 1f), TransitionTime);
     private void InitializeSavesContainers()
     {
         SaveContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/SaveContainer.tscn");
@@ -163,12 +155,6 @@ public partial class MainMenu : Control
     {
         if (GalatimeGlobals.CMDArgs.ContainsKey("save"))
         {
-            // Print all values of the CMDArgs dictionary
-            foreach (string key in GalatimeGlobals.CMDArgs.Keys)
-            {
-                GD.Print(key + ": " + GalatimeGlobals.CMDArgs[key]);
-            }
-
             PlayerVariables.currentSave = int.Parse(GalatimeGlobals.CMDArgs["save"]);
 
             var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
@@ -183,17 +169,7 @@ public partial class MainMenu : Control
         if (control != null) CurrentFocus = control;
     }
 
-    public bool acceptIsVisible()
-    {
-        if (AcceptContainer.Modulate.A == 0)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+    public bool AcceptIsVisible() => AcceptContainer.Modulate.A != 0;
 
     /// <summary>
     /// Displays an accept dialog with the specified reason.
@@ -201,6 +177,8 @@ public partial class MainMenu : Control
     /// <param name="reason">The reason for the dialog.</param>
     /// <param name="callback">The callback function to call when the dialog is accepted or dismissed.</param>
     /// <param name="invertedColors">Whether to use inverted colors for the dialog.</param>
+
+    // TODO: Make accept dialog with another soultion of the Godot API.
     public void appearAccept(string reason, OnAccept callback, bool invertedColors = false)
     {
         if (invertedColors)
@@ -212,7 +190,7 @@ public partial class MainMenu : Control
         {
             AcceptYesButton.SetMeta("ColorHoverOverride", new Color(1, 1, 0));
             AcceptNoButton.SetMeta("ColorHoverOverride", new Color(1f, 0f, 0f));
-        } 
+        }
 
 
         BeforePopupFocus = CurrentFocus;
@@ -261,7 +239,7 @@ public partial class MainMenu : Control
 
         ResetButtons(false);
     }
-    
+
     public void UpdateSaves()
     {
         var saves = GalatimeGlobals.getSaves();
@@ -274,15 +252,15 @@ public partial class MainMenu : Control
             VisualButtons.Remove(item);
             item.QueueFree();
         }
-        Label perviousDeleteButton = null;
-        Label perviousPlayButton = null;
+        LabelButton perviousDeleteButton = null;
+        LabelButton perviousPlayButton = null;
         for (int i = 0; i < saves.Count; i++)
         {
             var instance = SaveContainerScene.Instantiate<SaveContainer>();
             GetNode("StartMenuContainer/SavesContainer").AddChild(instance);
 
-            Label deleteButton = instance.getDeleteButtonInstance();
-            Label playButton = instance.getPlayButtonInstance();
+            var deleteButton = instance.getDeleteButtonInstance();
+            var playButton = instance.getPlayButtonInstance();
 
             if (perviousDeleteButton != null && perviousPlayButton != null)
             {
@@ -309,33 +287,26 @@ public partial class MainMenu : Control
             perviousDeleteButton = deleteButton;
 
             var save = saves[i];
-            deleteButton.GuiInput += (InputEvent @event) => DeleteSaveButtonInput((int)save["id"], deleteButton, @event);
-            playButton.GuiInput += (InputEvent @event) => PlayButtonInput(@event, playButton, instance.id);
+            deleteButton.Pressed += () => DeleteSaveButtonInput((int)save["id"]);
+            playButton.Pressed += () => PlayButtonPressed(instance.id);
 
             VisualButtons.Add(deleteButton);
-            instance.loadData(saves[i]);
+            instance.LoadData(saves[i]);
         }
 
         UpdateVisualButtons();
         // clearVisualButtonsSaves();
     }
 
-    public void PlayButtonInput(InputEvent @event, Label playButtonInstance, int id)
+    public void PlayButtonPressed(int id)
     {
-        if (@event is InputEventMouseButton @eventMouse)
-        {
-            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
-            {
-                VisualButtonInput(playButtonInstance, @eventMouse);
-                AnimationPlayer.Play("start");
-                AudioButtonAccept.Play();
+        AnimationPlayer.Play("start");
+        AudioButtonAccept.Play();
 
-                GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
-                PlayerVariables.currentSave = id;
+        GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
+        PlayerVariables.currentSave = id;
 
-                DelayInteract.Start();
-            }
-        }
+        DelayInteract.Start();
     }
 
     public void OnStartAnimationEnded()
@@ -344,30 +315,23 @@ public partial class MainMenu : Control
         globals.LoadScene("res://assets/scenes/Lobby.tscn");
     }
 
-    public void DeleteSaveButtonInput(int saveId, Label button, InputEvent @event)
+    public void DeleteSaveButtonInput(int saveId)
     {
-        VisualButtonInput(button, @event);
-        if (@event is InputEventMouseButton @eventMouse)
+        appearAccept("Do you really want to delete the save?", (bool result) =>
         {
-            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
+            if (result)
             {
-                appearAccept("Do you really want to delete the save?", (bool result) =>
-                {
-                    if (result)
-                    {
-                        GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Deleting save {saveId}[/color]");
-                        GalatimeGlobals.createBlankSave(saveId);
-                        UpdateSaves();
-                        disappearAccept();
-                    }
-                    else
-                    {
-                        disappearAccept();
-                    }
-                }
-                , true);
+                GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Deleting save {saveId}[/color]");
+                GalatimeGlobals.createBlankSave(saveId);
+                UpdateSaves();
+                disappearAccept();
+            }
+            else
+            {
+                disappearAccept();
             }
         }
+        , true);
     }
 
     public void ClearVisualButtonsSaves()
@@ -608,10 +572,10 @@ public partial class MainMenu : Control
 
     public void ToMainMenu()
     {
-        GD.PrintRich($"[color=purple]MAIN MENU[/color]: Condition checking: [color=cyan]isMainMenu? - {IsMainMenu}, acceptIsVisible? - {acceptIsVisible()}[/color]");
+        GD.PrintRich($"[color=purple]MAIN MENU[/color]: Condition checking: [color=cyan]isMainMenu? - {IsMainMenu}, acceptIsVisible? - {AcceptIsVisible()}[/color]");
         if (DelayInteract.TimeLeft > 0) return;
-        if (acceptIsVisible()) return;
-        if (IsMainMenu && !acceptIsVisible())
+        if (AcceptIsVisible()) return;
+        if (IsMainMenu && !AcceptIsVisible())
         {
             appearAccept("Are you sure do you want to quit a game?", (bool result) =>
                 {
@@ -621,7 +585,7 @@ public partial class MainMenu : Control
             IsMainMenu = true;
             return;
         }
-        if (IsMainMenu && acceptIsVisible())
+        if (IsMainMenu && AcceptIsVisible())
         {
             disappearAccept();
             return;
