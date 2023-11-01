@@ -259,8 +259,8 @@ public partial class MainMenu : Control
             var instance = SaveContainerScene.Instantiate<SaveContainer>();
             GetNode("StartMenuContainer/SavesContainer").AddChild(instance);
 
-            var deleteButton = instance.getDeleteButtonInstance();
-            var playButton = instance.getPlayButtonInstance();
+            var deleteButton = instance.GetDeleteButtonInstance();
+            var playButton = instance.GetPlayButtonInstance();
 
             if (perviousDeleteButton != null && perviousPlayButton != null)
             {

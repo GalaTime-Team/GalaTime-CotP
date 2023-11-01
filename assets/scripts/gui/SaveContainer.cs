@@ -24,8 +24,8 @@ namespace Galatime
             PlayButton.PivotOffset = new Vector2(14, 5);
         }
 
-        public LabelButton getDeleteButtonInstance() => DeleteButton;
-        public LabelButton getPlayButtonInstance() => PlayButton;
+        public LabelButton GetDeleteButtonInstance() => DeleteButton;
+        public LabelButton GetPlayButtonInstance() => PlayButton;
 
         public void LoadData(Godot.Collections.Dictionary data)
         {
@@ -44,11 +44,6 @@ namespace Galatime
             {
                 GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=red]Data is null[/color]");
             }
-        }
-
-        public override void _Process(double delta)
-        {
-
         }
     }
 }
