@@ -1,6 +1,8 @@
 using Galatime;
 using Galatime.UI;
 using Godot;
+using System;
+using System.Collections.Generic;
 
 public partial class MainMenu : Control
 {
@@ -38,6 +40,8 @@ public partial class MainMenu : Control
     private Control SettingsMenuControl;
     private Control CreditsMenuControl;
 
+    private Dictionary<string, Control> Menus = new();
+
     private Label VersionLabel;
 
     private Control AcceptContainer;
@@ -45,23 +49,17 @@ public partial class MainMenu : Control
     private PackedScene SaveContainerScene;
 
     private Label AcceptName;
-    private Label AcceptYesButton;
-    private Label AcceptNoButton;
+    private LabelButton AcceptYesButton;
+    private LabelButton AcceptNoButton;
 
-    private Label ViewSavesButton;
+    private LabelButton ViewSavesButton;
 
     private Timer DelayInteract;
 
     public delegate void OnAccept(bool result);
     public static OnAccept onAccept;
-    public GuiInputEventHandler whenPressedYes = (InputEvent @event) =>
-    {
-        if (@event is InputEventMouseButton inputMouse && inputMouse.ButtonIndex == MouseButton.Left && inputMouse.Pressed) onAccept(true);
-    };
-    public GuiInputEventHandler whenPressedNo = (InputEvent @event) =>
-    {
-        if (@event is InputEventMouseButton inputMouse && inputMouse.ButtonIndex == MouseButton.Left && inputMouse.Pressed) onAccept(false);
-    };
+    public Action whenPressedYes = () => onAccept(true);
+    public Action whenPressedNo = () => onAccept(false);
 
     public override void _Ready()
     {
@@ -89,6 +87,11 @@ public partial class MainMenu : Control
         MainMenuControl = GetNode<Control>("MainMenuContainer");
         SettingsMenuControl = GetNode<Control>("SettingsMenuContainer");
         CreditsMenuControl = GetNode<Control>("CreditsContainer");
+        Menus.Add("start", StartMenuControl);
+        Menus.Add("main_menu", MainMenuControl);
+        Menus.Add("settings", SettingsMenuControl);
+        Menus.Add("credits", CreditsMenuControl);
+
         AcceptContainer = GetNode<Control>("AcceptContainer");
         #endregion
 
@@ -99,8 +102,8 @@ public partial class MainMenu : Control
 
         VersionLabel = GetNode<Label>("VersionLabel");
 
-        AcceptYesButton = GetNode<Label>("AcceptContainer/VBoxContainer/HBoxContainer/Yes");
-        AcceptNoButton = GetNode<Label>("AcceptContainer/VBoxContainer/HBoxContainer/No");
+        AcceptYesButton = GetNode<LabelButton>("AcceptContainer/VBoxContainer/HBoxContainer/Yes");
+        AcceptNoButton = GetNode<LabelButton>("AcceptContainer/VBoxContainer/HBoxContainer/No");
         AcceptYesButton.PivotOffset = new Vector2(10, 6);
         AcceptNoButton.PivotOffset = new Vector2(7, 6);
 
@@ -137,18 +140,8 @@ public partial class MainMenu : Control
     private void InitializeSavesContainers()
     {
         SaveContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/SaveContainer.tscn");
-        ViewSavesButton = GetNode<Label>("StartMenuContainer/ViewSavesFolder");
-        ViewSavesButton.GuiInput += (InputEvent @event) =>
-        {
-            if (@event is InputEventMouseButton @eventMouse)
-            {
-                if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
-                {
-                    OS.ShellOpen(ProjectSettings.GlobalizePath(GalatimeConstants.savesPath));
-                    VisualButtonInput(ViewSavesButton, @event);
-                }
-            }
-        };
+        ViewSavesButton = GetNode<LabelButton>("StartMenuContainer/ViewSavesFolder");
+        ViewSavesButton.Pressed += () => OS.ShellOpen(ProjectSettings.GlobalizePath(GalatimeConstants.savesPath));
     }
 
     public void ParseCMDLineArgs()
@@ -207,11 +200,11 @@ public partial class MainMenu : Control
         AcceptYesButton.MouseFilter = MouseFilterEnum.Stop;
         AcceptNoButton.MouseFilter = MouseFilterEnum.Stop;
 
-        AcceptYesButton.GuiInput -= whenPressedYes;
-        AcceptNoButton.GuiInput -= whenPressedNo;
+        AcceptYesButton.Pressed -= whenPressedYes;
+        AcceptNoButton.Pressed -= whenPressedNo;
 
-        AcceptYesButton.GuiInput += whenPressedYes;
-        AcceptNoButton.GuiInput += whenPressedNo;
+        AcceptYesButton.Pressed += whenPressedYes;
+        AcceptNoButton.Pressed += whenPressedNo;
 
         onAccept = callback;
     }
@@ -245,7 +238,7 @@ public partial class MainMenu : Control
         var saves = GalatimeGlobals.getSaves();
         GD.PrintRich("[color=purple]MAIN MENU[/color]: [color=cyan]UPDATE SAVES[/color]");
         var savesContainers = GetNode("StartMenuContainer/SavesContainer").GetChildren();
-
+            
         for (int i = 0; i < savesContainers.Count; i++)
         {
             var item = savesContainers[i];
@@ -382,6 +375,11 @@ public partial class MainMenu : Control
 
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Switch to {page} menu[/color]");
         AudioMenuWhoosh.Play();
+
+        CanvasItem swithingTo = null;
+        DisableButtons(true);
+        GetTree().CreateTimer(TransitionTime).Timeout += () => DisableButtons(false);
+
         switch (page)
         {
             case "start":
@@ -401,8 +399,16 @@ public partial class MainMenu : Control
             case "credits":
                 SwipePage(SwipeDirection.DOWN, MainMenuControl, CreditsMenuControl);
                 break;
-            default:
-                break;
+        }
+
+        swithingTo.Visible = true;
+
+        void DisableButtons(bool yes)
+        {
+            foreach (var item in GetTree().GetNodesInGroup("buttons"))
+            {
+                if (item is LabelButton button) button.Disabled = yes;
+            }
         }
     }
     private enum SwipeDirection { UP, RIGHT, DOWN, LEFT }

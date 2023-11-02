@@ -30,7 +30,8 @@ public partial class LabelButton : Button
 
     public override void _Ready()
     {
-        Label = GetNode<Label>("CenterContainer/Label");
+        Label = GetNode<Label>("Label");
+        Label.PivotOffset = Label.Size / 2;
 
         InitializeDefaults();
         InitializeAudios();
@@ -40,7 +41,7 @@ public partial class LabelButton : Button
 
     public override void _Draw()
     {
-        if (Label is not null && Disabled) Label.AddThemeColorOverride("font_color", DisabledColor);
+        Label?.AddThemeColorOverride("font_color", Disabled ? DisabledColor : DefaultColor);
     }
 
     private void InitializeDefaults()
@@ -64,11 +65,11 @@ public partial class LabelButton : Button
         {
             case NotificationMouseEnter:
             case NotificationFocusEnter:
-                Hover();
+                if (!Disabled) Hover();
                 break;
             case NotificationMouseExit:
             case NotificationFocusExit:
-                ExitHover();
+                if (!Disabled) ExitHover();
                 break;
             case NotificationResized when Label is not null:
                 Label.PivotOffset = Label.Size / 2;
