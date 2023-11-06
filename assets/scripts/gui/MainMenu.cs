@@ -1,8 +1,40 @@
-using Galatime;
-using Galatime.UI;
 using Godot;
 using System;
 using System.Collections.Generic;
+
+namespace Galatime.UI;
+
+public enum SwipeDirection { UP, RIGHT, DOWN, LEFT, BACK }
+
+public sealed class MainMenuPage
+{
+    public static Vector2 GetOffset(SwipeDirection swipeDirection, Vector2 size)
+    {
+        var offset = new Dictionary<SwipeDirection, Vector2>()
+        {
+            {SwipeDirection.UP, new Vector2(0, size.Y)},
+            {SwipeDirection.RIGHT, new Vector2(-size.X, 0)},
+            {SwipeDirection.DOWN, new Vector2(0, -size.Y)},
+            {SwipeDirection.LEFT, new Vector2(size.X, 0)}
+        };
+        return offset[swipeDirection];
+    }
+
+    private string scenePath;
+    public string ScenePath
+    {
+        get => scenePath;
+        set
+        {
+            scenePath = value;
+            Instance ??= GD.Load<PackedScene>(value).Instantiate<Control>();
+        }
+    }
+    public SwipeDirection SwipeDirection;
+    public Control Instance;
+    public MainMenuPage(SwipeDirection swipeDirection, string scenePath) =>
+        (SwipeDirection, ScenePath) = (swipeDirection, scenePath);
+}
 
 public partial class MainMenu : Control
 {
@@ -40,12 +72,11 @@ public partial class MainMenu : Control
     private Control SettingsMenuControl;
     private Control CreditsMenuControl;
 
+    /// <summary> The dictionaries of all menus (pages) of the main menu. </summary>
     private Dictionary<string, Control> Menus = new();
 
     private Label VersionLabel;
-
     private Control AcceptContainer;
-
     private PackedScene SaveContainerScene;
 
     private Label AcceptName;
@@ -53,6 +84,7 @@ public partial class MainMenu : Control
     private LabelButton AcceptNoButton;
 
     private LabelButton ViewSavesButton;
+    private VBoxContainer MainMenuControlButtons;
 
     private Timer DelayInteract;
 
@@ -93,6 +125,8 @@ public partial class MainMenu : Control
         Menus.Add("credits", CreditsMenuControl);
 
         AcceptContainer = GetNode<Control>("AcceptContainer");
+
+        MainMenuControlButtons = GetNode<VBoxContainer>("MainMenuContainer/VBoxContainer");
         #endregion
 
         StartOpacityTransition();
@@ -109,7 +143,6 @@ public partial class MainMenu : Control
 
         AcceptName = GetNode<Label>("AcceptContainer/VBoxContainer/Name");
 
-        UpdateVisualButtons();
         InitializeMainMenuButtons();
 
         GetViewport().GuiFocusChanged += guiFocusChanged;
@@ -229,8 +262,6 @@ public partial class MainMenu : Control
         AcceptNoButton.MouseFilter = MouseFilterEnum.Ignore;
 
         onAccept = null;
-
-        ResetButtons(false);
     }
 
     public void UpdateSaves()
@@ -238,15 +269,13 @@ public partial class MainMenu : Control
         var saves = GalatimeGlobals.getSaves();
         GD.PrintRich("[color=purple]MAIN MENU[/color]: [color=cyan]UPDATE SAVES[/color]");
         var savesContainers = GetNode("StartMenuContainer/SavesContainer").GetChildren();
-            
+
         for (int i = 0; i < savesContainers.Count; i++)
         {
             var item = savesContainers[i];
             VisualButtons.Remove(item);
             item.QueueFree();
         }
-        LabelButton perviousDeleteButton = null;
-        LabelButton perviousPlayButton = null;
         for (int i = 0; i < saves.Count; i++)
         {
             var instance = SaveContainerScene.Instantiate<SaveContainer>();
@@ -255,40 +284,19 @@ public partial class MainMenu : Control
             var deleteButton = instance.GetDeleteButtonInstance();
             var playButton = instance.GetPlayButtonInstance();
 
-            if (perviousDeleteButton != null && perviousPlayButton != null)
-            {
-                playButton.FocusNeighborTop = perviousPlayButton.GetPath();
-                deleteButton.FocusNeighborTop = perviousDeleteButton.GetPath();
-
-                perviousPlayButton.FocusNeighborBottom = playButton.GetPath();
-                perviousDeleteButton.FocusNeighborBottom = deleteButton.GetPath();
-
-                perviousDeleteButton.FocusNext = playButton.GetPath();
-
-                if (i == saves.Count - 1)
-                {
-                    playButton.FocusNeighborBottom = ViewSavesButton.GetPath();
-                    deleteButton.FocusNeighborBottom = ViewSavesButton.GetPath();
-
-                    ViewSavesButton.FocusNeighborTop = playButton.GetPath();
-                    ViewSavesButton.FocusNeighborRight = deleteButton.GetPath();
-                    ViewSavesButton.FocusNeighborLeft = playButton.GetPath();
-                }
-            }
-
-            perviousPlayButton = playButton;
-            perviousDeleteButton = deleteButton;
+            ViewSavesButton.FocusNeighborTop = playButton.GetPath();
+            ViewSavesButton.FocusNeighborRight = playButton.GetPath();
+            ViewSavesButton.FocusNeighborLeft = playButton.GetPath();
+            ViewSavesButton.FocusNeighborBottom = playButton.GetPath();
+            ViewSavesButton.FocusNext = playButton.GetPath();
+            ViewSavesButton.FocusPrevious = playButton.GetPath();
 
             var save = saves[i];
             deleteButton.Pressed += () => DeleteSaveButtonInput((int)save["id"]);
             playButton.Pressed += () => PlayButtonPressed(instance.id);
 
-            VisualButtons.Add(deleteButton);
             instance.LoadData(saves[i]);
         }
-
-        UpdateVisualButtons();
-        // clearVisualButtonsSaves();
     }
 
     public void PlayButtonPressed(int id)
@@ -327,36 +335,6 @@ public partial class MainMenu : Control
         , true);
     }
 
-    public void ClearVisualButtonsSaves()
-    {
-        for (int i = 0; i < VisualButtons.Count; i++)
-        {
-            var item = VisualButtons[i];
-            if (item.IsInGroup("delete"))
-            {
-                VisualButtons.Remove(item);
-            }
-        }
-    }
-
-    public void UpdateVisualButtons()
-    {
-        VisualButtons = GetTree().GetNodesInGroup("visual");
-
-        for (int i = 0; i < VisualButtons.Count; i++)
-        {
-            if (VisualButtons[i] is Node t)
-            {
-                var ii = t as Label;
-
-                ii.MouseEntered += () => VisualButtonHover(ii);
-                ii.MouseExited += () => VisualButtonExited(ii);
-                ii.FocusEntered += () => VisualButtonHover(ii);
-                ii.FocusExited += () => VisualButtonExited(ii);
-            }
-        }
-    }
-
     /// <summary> Handles event of main menu buttons being pressed </summary>
     public void MainMenuButtonsPressed(string page)
     {
@@ -369,62 +347,62 @@ public partial class MainMenu : Control
     /// <param name="page"> The name of the page to switch to. </param>
     public void SwitchPage(string page)
     {
+        if (DelayInteract.TimeLeft > 0) return;
         DelayInteract.Start();
 
         IsMainMenu = false;
-
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Switch to {page} menu[/color]");
         AudioMenuWhoosh.Play();
 
-        CanvasItem swithingTo = null;
-        DisableButtons(true);
-        GetTree().CreateTimer(TransitionTime).Timeout += () => DisableButtons(false);
+        var currentPage = Menus[page];
 
-        switch (page)
+        // A dictionary to store the swipe direction and the focus button for each page
+        var pageData = new Dictionary<string, (SwipeDirection, Control)>()
         {
-            case "start":
-                SwipePage(SwipeDirection.UP, MainMenuControl, StartMenuControl);
-                GetTree().CreateTimer(TransitionTime).Timeout += () => ViewSavesButton.GrabFocus();
-                break;
-            case "settings":
-                var linearTween = GetTree().CreateTween();
-                linearTween.SetParallel(true);
+            {"start", (SwipeDirection.UP, ViewSavesButton)},
+            {"settings", (SwipeDirection.LEFT, null)},
+            {"credits", (SwipeDirection.DOWN, null)}
+        };
 
-                SwipePage(SwipeDirection.LEFT, MainMenuControl, SettingsMenuControl);
+        // Get the swipe direction and the focus button for the page
+        var (direction, focusButton) = pageData[page];
 
-                linearTween.TweenProperty(AudioMenuMuffled, "volume_db", 0, TransitionTime / 2);
-                linearTween.TweenProperty(AudioMenu, "volume_db", -80, TransitionTime);
+        DisableMenus();
+        GetTree().CreateTimer(TransitionTime).Timeout += () =>
+        {
+            DisableMenuButtons(true);
+            focusButton?.GrabFocus();
+        };
 
-                break;
-            case "credits":
-                SwipePage(SwipeDirection.DOWN, MainMenuControl, CreditsMenuControl);
-                break;
+        // Swipe the page
+        SwipePage(direction, MainMenuControl, currentPage);
+
+        // Set the focus button if not null
+        if (focusButton != null) GetTree().CreateTimer(TransitionTime).Timeout += () => focusButton.GrabFocus();
+
+        // Adjust the audio volume for the settings page
+        if (page == "settings")
+        {
+            var linearTween = GetTree().CreateTween();
+            linearTween.SetParallel(true);
+
+            linearTween.TweenProperty(AudioMenuMuffled, "volume_db", 0, TransitionTime / 2);
+            linearTween.TweenProperty(AudioMenu, "volume_db", -80, TransitionTime);
         }
 
-        swithingTo.Visible = true;
-
-        void DisableButtons(bool yes)
-        {
-            foreach (var item in GetTree().GetNodesInGroup("buttons"))
-            {
-                if (item is LabelButton button) button.Disabled = yes;
-            }
-        }
+        // Make the page visible
+        currentPage.Visible = true;
     }
-    private enum SwipeDirection { UP, RIGHT, DOWN, LEFT }
 
     /// <summary> Gets the opposite swipe direction. </summary>
-    private SwipeDirection GetOppositeSwipeDirection(SwipeDirection direction)
+    private static SwipeDirection GetOppositeSwipeDirection(SwipeDirection direction) => direction switch
     {
-        return direction switch
-        {
-            SwipeDirection.UP => SwipeDirection.DOWN,
-            SwipeDirection.RIGHT => SwipeDirection.LEFT,
-            SwipeDirection.DOWN => SwipeDirection.UP,
-            SwipeDirection.LEFT => SwipeDirection.RIGHT,
-            _ => SwipeDirection.UP,
-        };
-    }
+        SwipeDirection.UP => SwipeDirection.DOWN,
+        SwipeDirection.RIGHT => SwipeDirection.LEFT,
+        SwipeDirection.DOWN => SwipeDirection.UP,
+        SwipeDirection.LEFT => SwipeDirection.RIGHT,
+        _ => SwipeDirection.UP,
+    };
 
     /// <summary>
     /// Swipes the current page to the specified direction.
@@ -436,145 +414,29 @@ public partial class MainMenu : Control
     {
         var previousPosition = previousControl.Position;
 
-        switch (direction)
+        // A dictionary to store the position offsets for each direction.
+        var offset = new Dictionary<SwipeDirection, Vector2>()
         {
-            case SwipeDirection.UP:
-                previousPosition.Y += MainMenuControl.Size.Y;
-                break;
-            case SwipeDirection.RIGHT:
-                previousPosition.X -= MainMenuControl.Size.X;
-                break;
-            case SwipeDirection.DOWN:
-                previousPosition.Y -= MainMenuControl.Size.Y;
-                break;
-            case SwipeDirection.LEFT:
-                previousPosition.X += MainMenuControl.Size.X;
-                break;
-        }
+            {SwipeDirection.UP, new Vector2(0, MainMenuControl.Size.Y)},
+            {SwipeDirection.RIGHT, new Vector2(-MainMenuControl.Size.X, 0)},
+            {SwipeDirection.DOWN, new Vector2(0, -MainMenuControl.Size.Y)},
+            {SwipeDirection.LEFT, new Vector2(MainMenuControl.Size.X, 0)}
+        };
 
+        // Add the offset to the previous position
+        previousPosition += offset[direction];
+
+        // Animate the previous control to the invisible position.
         GetTween().TweenProperty(previousControl, "position", previousPosition, TransitionTime);
-        previousPosition.X += 1152;
+        previousPosition.X += MainMenuControl.Size.X;
 
+        // Animate the next control to the next position.
         GetTween().TweenProperty(nextControl, "position", Vector2.Zero, TransitionTime);
 
         CurrentPageControl = nextControl;
         CurrentSwipeDirection = direction;
     }
 
-    public void VisualButtonHover(Label button)
-    {
-        if (button is null) return;
-        if (DelayInteract.TimeLeft <= 0)
-        {
-            var tween = GetTree().CreateTween();
-            tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-
-            button.GrabFocus();
-
-            if (!button.HasMeta("ScaleHoverOverride"))
-            {
-                var newScale = Vector2.Zero;
-                newScale.X = 1.25f;
-                newScale.Y = 1.25f;
-                tween.TweenProperty(button, "scale", newScale, 0.1f);
-            }
-            else
-            {
-                var newScale = (Vector2)button.GetMeta("ScaleHoverOverride");
-                tween.TweenProperty(button, "scale", newScale, 0.1f);
-            }
-            if (!button.HasMeta("ColorHoverOverride"))
-            {
-                button.Set("theme_override_colors/font_color", new Color(1, 1, 0));
-            }
-            else
-            {
-                var newColor = (Color)button.GetMeta("ColorHoverOverride");
-                button.Set("theme_override_colors/font_color", newColor);
-            }
-            AudioButtonHover.Play();
-        }
-    }
-
-    public void VisualButtonExited(Label button)
-    {
-        if (button is null) return;
-        if (DelayInteract.TimeLeft <= 0)
-        {
-            var tween = GetTree().CreateTween();
-            tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-
-            if (!button.HasMeta("ScaleHoverExitedOverride"))
-            {
-                tween.TweenProperty(button, "scale", Vector2.One, 0.1f);
-            }
-            else
-            {
-                var newScale = (Vector2)button.GetMeta("ScaleHoverExitedOverride");
-                tween.TweenProperty(button, "scale", newScale, 0.1f);
-            }
-
-            button.Set("theme_override_colors/font_color", new Color(1, 1, 1));
-        }
-    }
-    /// <summary>
-    /// Handles input events for a visual button.
-    /// </summary>
-    /// <param name="button">The visual button.</param>
-    /// <param name="event">The input event.</param>
-    /// <remarks>
-    /// This function plays an animation when the button is pressed.
-    /// </remarks>
-    public void VisualButtonInput(Label button, InputEvent @event)
-    {
-        if (@event is InputEventMouseButton @eventMouse)
-        {
-            if (@eventMouse.ButtonIndex == MouseButton.Left && @eventMouse.IsPressed() && DelayInteract.TimeLeft <= 0)
-            {
-                var tween = GetTree().CreateTween();
-                tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-
-                button.Set("theme_override_colors/font_color", new Color(0.5f, 0.5f, 0.5f));
-                tween.TweenProperty(button, "theme_override_colors/font_color", new Color(1, 1, 1), 0.6f);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Resets the visual buttons to their default state.
-    /// </summary>
-    /// <param name="changeMouse">Whether to change the mouse cursor shape to a pointing hand.</param>
-    /// <remarks>
-    /// This function resets the visual buttons to their default state, including their font color, scale, and mouse cursor shape.
-    /// </remarks>
-    public void ResetButtons(bool changeMouse = true)
-    {
-        UpdateVisualButtons();
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-        for (int i = 0; i < VisualButtons.Count; i++)
-        {
-            if (VisualButtons[i] is Node t)
-            {
-                var ii = t as Label;
-                if (VisualButtons[i] is Node)
-                {
-                    if (changeMouse) ii.MouseDefaultCursorShape = CursorShape.Arrow;
-                    ii.Set("theme_override_colors/font_color", new Color(1f, 1f, 1f));
-                    if (changeMouse) tween.TweenCallback(Callable.From(() => ii.MouseDefaultCursorShape = CursorShape.PointingHand)).SetDelay(TransitionTime);
-                    if (!ii.HasMeta("ScaleHoverExitedOverride"))
-                    {
-                        tween.TweenProperty(ii, "scale", Vector2.One, 0.6f);
-                    }
-                    else
-                    {
-                        var newScale = (Vector2)ii.GetMeta("ScaleHoverExitedOverride");
-                        tween.TweenProperty(ii, "scale", newScale, 0.6f);
-                    }
-                }
-            }
-        }
-    }
 
     public void ToMainMenu()
     {
@@ -597,13 +459,10 @@ public partial class MainMenu : Control
             return;
         };
 
+        DisableMenuButtons(false);
+
         DelayInteract.Start();
-        ResetButtons();
-
         AudioMenuWhoosh.Play();
-
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
 
         var linearTween = GetTree().CreateTween();
         linearTween.SetParallel(true);
@@ -615,9 +474,11 @@ public partial class MainMenu : Control
 
         for (int i = 0; i < MenuButtons.Count; i++)
         {
-            var button = MenuButtons[i] as Label;
+            var button = MenuButtons[i] as Control;
             if (i == 0) button.GrabFocus();
         }
+
+        GetTree().CreateTimer(TransitionTime).Timeout += () => DisableMenus();
 
         // Save settings to file when back to main menu.
         GetNode<SettingsGlobals>("/root/SettingsGlobals").SaveSettings();
@@ -625,19 +486,25 @@ public partial class MainMenu : Control
         IsMainMenu = true;
     }
 
+    void DisableMenus()
+    {
+        foreach (var menu in Menus)
+        {
+            if (menu.Key == "main_menu") continue;
+            menu.Value.Visible = false;
+        }
+    }
+
+    void DisableMenuButtons(bool yes)
+    {
+        foreach (var item in MainMenuControlButtons.GetChildren())
+        {
+            if (item is LabelButton button) button.Visible = !yes;
+        }
+    }
+
     public override void _Input(InputEvent @event)
     {
-        if (@event is InputEventKey inputKey)
-        {
-            if (inputKey.IsPressed() && inputKey.Keycode == Godot.Key.Escape && DelayInteract.TimeLeft <= 0) ToMainMenu();
-            if (inputKey.IsPressed() && inputKey.IsAction("ui_accept"))
-            {
-                var mouseEvent = new InputEventMouseButton();
-                mouseEvent.ButtonIndex = MouseButton.Left;
-                mouseEvent.Pressed = true;
-
-                if (CurrentFocus != null) CurrentFocus.EmitSignal("gui_input", mouseEvent);
-            }
-        }
+        if (@event.IsActionPressed("ui_cancel")) ToMainMenu();
     }
 }

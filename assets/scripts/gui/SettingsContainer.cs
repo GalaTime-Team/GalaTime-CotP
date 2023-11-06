@@ -4,6 +4,8 @@ using System.Reflection;
 using System;
 using System.Collections.Generic;
 
+namespace Galatime.UI;
+
 public partial class SettingsContainer : Control
 {
     public VBoxContainer SettingsListContainer;
@@ -25,7 +27,7 @@ public partial class SettingsContainer : Control
         // Call the UpdateSettings method to update the settings.
         SettingsGlobals.UpdateSettings();
 
-        Type settingsType = typeof(Settings);
+        Type settingsType = typeof(SettingsData);
         foreach (FieldInfo field in settingsType.GetFields())
         {
             // Get the name, type, and value of the field.

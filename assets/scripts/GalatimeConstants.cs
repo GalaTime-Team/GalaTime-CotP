@@ -16,8 +16,8 @@ namespace Galatime
 
     public readonly struct GalatimeConstants
     {
-        public const string version = "0.6.0";
-        public const string versionDescription = "Super combat update\nPREVIEW BUILD";
+        public const string version = "0.7.0";
+        public const string versionDescription = "B7\nPREVIEW BUILD";
         public const string savesPath = "user://saves/";
         public const string settingsPath = "user://settings.yml";
     }

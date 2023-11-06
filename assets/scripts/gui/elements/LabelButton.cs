@@ -15,6 +15,7 @@ public partial class LabelButton : Button
     #region Variables
     private Vector2 DefaultScale;
     private Color DefaultColor;
+    private Tween Tw;
     #endregion
 
     #region Nodes
@@ -42,6 +43,7 @@ public partial class LabelButton : Button
     public override void _Draw()
     {
         Label?.AddThemeColorOverride("font_color", Disabled ? DisabledColor : DefaultColor);
+        if (Disabled && Label is not null) Label.Scale = DefaultScale;
     }
 
     private void InitializeDefaults()
@@ -69,7 +71,16 @@ public partial class LabelButton : Button
                 break;
             case NotificationMouseExit:
             case NotificationFocusExit:
-                if (!Disabled) ExitHover();
+                if (!Disabled)
+                {
+                    ExitHover();
+                }
+                else
+                {
+                    Tw?.Kill();
+                    Tw = GetTween();
+                    TweenColor(Tw, Label.GetThemeColor("font_color"), DisabledColor, Speed * 4);
+                }
                 break;
             case NotificationResized when Label is not null:
                 Label.PivotOffset = Label.Size / 2;
@@ -91,13 +102,16 @@ public partial class LabelButton : Button
     // Method to apply hover effects with specified color and scale
     void ApplyHoverEffects(Color color, Vector2 scale)
     {
-        var tween = GetTween();
-        TweenColor(tween, DefaultColor, color, Speed);
-        tween.TweenProperty(Label, "scale", scale, Speed);
+        Tw?.Kill();
+        Tw = GetTween();
+        TweenColor(Tw, DefaultColor, color, Speed);
+        Tw.TweenProperty(Label, "scale", scale, Speed);
     }
 
-    private void TweenColor(Tween tween, Color From, Color To, float Duration) =>
-        tween.TweenMethod(Callable.From((Color x) => Label.AddThemeColorOverride("font_color", x)), From, To, Duration);
+    private void TweenColor(Tween tw, Color From, Color To, float Duration)
+    {
+        tw.TweenMethod(Callable.From((Color x) => Label.AddThemeColorOverride("font_color", x)), From, To, Duration);
+    }
 
     public void OnPressed()
     {
@@ -105,10 +119,11 @@ public partial class LabelButton : Button
         Label.AddThemeColorOverride("font_color", PressedColor);
         Label.Size = HoverScale;
 
-        var tween = GetTween();
+        Tw?.Kill();
+        Tw = GetTween();
 
         float duration = Speed * 2;
-        TweenColor(tween, PressedColor, DefaultColor, duration);
-        tween.TweenProperty(Label, "scale", DefaultScale, duration);
+        TweenColor(Tw, PressedColor, DefaultColor, duration);
+        Tw.TweenProperty(Label, "scale", DefaultScale, duration);
     }
 }

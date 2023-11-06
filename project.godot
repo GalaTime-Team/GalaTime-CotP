@@ -40,7 +40,7 @@ movie_writer/movie_file="D:/Projects/galatime-project-test/preview.avi"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/AS2P/plugin.cfg", "res://addons/csharpConsole/plugin.cfg")
+enabled=PackedStringArray("res://addons/AS2P/plugin.cfg")
 
 [global]
 

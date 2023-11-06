@@ -40,7 +40,7 @@ public partial class ShootingBuddy : Entity
         projectile.Power = 20;
         projectile.Visible = true;
         projectile.Moving = true;
-        projectile.Exploded += OnProjectileExploded;
+        projectile.Exploded += OnPro    ectileExploded;
         AddChild(projectile);
     }
 

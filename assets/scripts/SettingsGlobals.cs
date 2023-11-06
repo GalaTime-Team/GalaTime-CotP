@@ -4,13 +4,13 @@ using Godot;
 using YamlDotNet.Serialization;
 
 public partial class SettingsGlobals : Node {
-    public static Galatime.Settings.Settings Settings = new();
+    public static SettingsData Settings = new();
 
     public override void _Ready() => LoadSettings();
 
     /// <summary> Loads the settings from the settings.yml file. </summary>
     /// <returns> As option, returns loaded settings, otherwise use static type to get settings. </returns>
-    public Galatime.Settings.Settings LoadSettings() {
+    public Galatime.Settings.SettingsData LoadSettings() {
         var file = Godot.FileAccess.Open(GalatimeConstants.settingsPath, Godot.FileAccess.ModeFlags.Read);
 
         var error = Godot.FileAccess.GetOpenError();
@@ -22,7 +22,7 @@ public partial class SettingsGlobals : Node {
         
         var settingsText = file.GetAsText();
         var deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().Build();
-        Settings = deserializer.Deserialize<Galatime.Settings.Settings>(settingsText);
+        Settings = deserializer.Deserialize<SettingsData>(settingsText);
         
         return Settings;
     }

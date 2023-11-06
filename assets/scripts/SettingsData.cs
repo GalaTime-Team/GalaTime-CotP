@@ -3,7 +3,7 @@ using System;
 
 namespace Galatime.Settings;
 
-public class Settings {
+public class SettingsData {
     /// <summary> The master volume of the game. </summary>
     [YamlMember(Alias = "master_volume"), SettingProperties("Master Volume")]
     public double MasterVolume = 1;

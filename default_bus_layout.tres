@@ -8,7 +8,6 @@ resonance = 1.0
 [sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_7aqmo"]
 resource_name = "LowPassFilter"
 resonance = 1.0
-db = 1
 
 [sub_resource type="AudioEffectPitchShift" id="AudioEffectPitchShift_bwo0o"]
 resource_name = "PitchShift"

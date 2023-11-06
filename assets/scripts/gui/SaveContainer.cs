@@ -29,21 +29,18 @@ namespace Galatime
 
         public void LoadData(Godot.Collections.Dictionary data)
         {
-            if (data != null && data.Count >= 0)
+            if (data?.Count > 0)
             {
                 GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=cyan]Load data[/color]");
                 var id = data.ContainsKey("id") ? (int)data["id"] : 0;
                 NameLabel.Text = "Save " + (id == 0 ? "?" : id);
                 this.id = id;
-                DescriptionLabel.Text =
-                    $"Chapter " + (data.ContainsKey("chapter") ? (int)data["chapter"] : "?")
-                    + " - Day " + (data.ContainsKey("day") ? (int)data["day"] : "?")
-                    + " - " + (data.ContainsKey("playtime") ? Math.Round((float)data["playtime"] / 3600, 1) + " h" : "?");
+                DescriptionLabel.Text = $"Chapter {(data.ContainsKey("chapter") ? (int)data["chapter"] : "?")} - Day {(data.ContainsKey("day") ? (int)data["day"] : "?")} - {(data.ContainsKey("playtime") ? Math.Round((float)data["playtime"] / 3600, 1) + " h" : "?")}";
             }
             else
             {
                 GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=red]Data is null[/color]");
             }
         }
-    }
+    }   
 }
