@@ -1,6 +1,5 @@
 using Galatime;
 using Godot;
-using System;
 
 public partial class ShootingBuddy : Entity
 {
@@ -12,7 +11,7 @@ public partial class ShootingBuddy : Entity
 
     public override void _Ready()
     {
-        base._Ready();  
+        base._Ready();
 
         #region Get nodes
         ShootingTimer = GetNode<Timer>("ShootingTimer");
@@ -31,20 +30,23 @@ public partial class ShootingBuddy : Entity
         PhysicalDefense: 20,
         MagicalDefense: 20,
         Health: 20
-    ), GalatimeElement.Aqua) {}
+    ), GalatimeElement.Aqua)
+    { }
 
-    private void OnShootingTimerTimeout() {
+    private void OnShootingTimerTimeout()
+    {
         var projectile = Projectile.Duplicate() as Projectile;
         projectile.TargetTeam = Galatime.Helpers.Teams.Allies;
         projectile.AttackStat = Stats[EntityStatType.MagicalAttack].Value;
         projectile.Power = 20;
         projectile.Visible = true;
         projectile.Moving = true;
-        projectile.Exploded += OnPro    ectileExploded;
+        projectile.Exploded += OnProjectileExploded;
         AddChild(projectile);
     }
 
-    private void OnProjectileExploded(Projectile projectile = null) {
+    private void OnProjectileExploded(Projectile projectile = null)
+    {
         projectile.GetNode<Sprite2D>("Sprite").Visible = false;
     }
 

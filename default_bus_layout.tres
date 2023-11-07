@@ -1,11 +1,10 @@
 [gd_resource type="AudioBusLayout" load_steps=5 format=3 uid="uid://bbmwupkugava1"]
 
-[sub_resource type="AudioEffectHighPassFilter" id="AudioEffectHighPassFilter_s6tke"]
+[sub_resource type="AudioEffectHighPassFilter" id="AudioEffectHighPassFilter_d37j7"]
 resource_name = "HighPassFilter"
-cutoff_hz = 700.0
 resonance = 1.0
 
-[sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_7aqmo"]
+[sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_bntpy"]
 resource_name = "LowPassFilter"
 resonance = 1.0
 
@@ -30,9 +29,9 @@ bus/2/mute = false
 bus/2/bypass_fx = false
 bus/2/volume_db = 0.0
 bus/2/send = &"Music"
-bus/2/effect/0/effect = SubResource("AudioEffectHighPassFilter_s6tke")
+bus/2/effect/0/effect = SubResource("AudioEffectHighPassFilter_d37j7")
 bus/2/effect/0/enabled = true
-bus/2/effect/1/effect = SubResource("AudioEffectLowPassFilter_7aqmo")
+bus/2/effect/1/effect = SubResource("AudioEffectLowPassFilter_bntpy")
 bus/2/effect/1/enabled = true
 bus/2/effect/2/effect = SubResource("AudioEffectPitchShift_bwo0o")
 bus/2/effect/2/enabled = true

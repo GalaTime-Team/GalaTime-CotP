@@ -20,5 +20,6 @@ namespace Galatime
         public const string versionDescription = "B7\nPREVIEW BUILD";
         public const string savesPath = "user://saves/";
         public const string settingsPath = "user://settings.yml";
+        public const string DISCORD_ID = "1071756821158699068";
     }
 }

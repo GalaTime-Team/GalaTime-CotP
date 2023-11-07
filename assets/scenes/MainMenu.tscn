@@ -726,9 +726,6 @@ stream = ExtResource("6_p1ru6")
 stream = ExtResource("12_hmhgi")
 autoplay = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(0.4, 0.4)
-
 [editable path="StartMenuContainer/ViewSavesFolder"]
 [editable path="MainMenuContainer/VBoxContainer/StartButton"]
 [editable path="MainMenuContainer/VBoxContainer/SettingsButton"]

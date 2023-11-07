@@ -5,6 +5,7 @@
     <RootNamespace>galatimeproject</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="YamlDotNet" Version="13.7.1" />
   </ItemGroup>
