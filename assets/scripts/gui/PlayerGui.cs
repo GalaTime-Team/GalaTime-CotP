@@ -1,6 +1,7 @@
-using System.Collections.Generic;
-using System;
+using Galatime.UI;
 using Godot;
+using System;
+using System.Collections.Generic;
 
 namespace Galatime
 {
@@ -8,20 +9,16 @@ namespace Galatime
     {
         #region Nodes
         public ColorRect FadeScreen;
+        public PauseMenu PauseMenu;
 
         // Stats
         public ValueBar HealthValueBar;
         public ValueBar StaminaValueBar;
         public ValueBar ManaValueBar;
 
-        // Text Stats
-        public Label DodgeCountdownText;
-        public Timer DodgeTextTimer;
         public Label VersionText;
-
         public DialogBox DialogBox;
-
-        public Panel PauseContainer;
+        public Panel InventoryPanel;
 
         // Abilities
         public HBoxContainer AbilitiesContainer;
@@ -41,12 +38,15 @@ namespace Galatime
         public float RemainingDodge;
         public List<AbilityContainer> AbilityContainers = new();
         private bool isPause = false;
-        public bool IsPause {
+        public bool IsPause
+        {
             get => isPause;
-            set {
+            set
+            {
                 isPause = value;
-                OnPause?.Invoke(isPause );
-                PauseContainer.Visible = isPause;
+                OnPause?.Invoke(isPause);
+                PauseMenu.Paused = value;
+                // InventoryPanel.Visible = isPause;
             }
         }
 
@@ -61,7 +61,8 @@ namespace Galatime
         public override void _Ready()
         {
             #region Get nodes
-            FadeScreen = GetNode<ColorRect>("FadeScreen");  
+            FadeScreen = GetNode<ColorRect>("FadeScreen");
+            PauseMenu = GetNode<PauseMenu>("PauseMenu");
 
             // Stats
             HealthValueBar = GetNode<ValueBar>("HealthValueBar");
@@ -69,25 +70,19 @@ namespace Galatime
             ManaValueBar = GetNode<ValueBar>("ManaValueBar");
 
             VersionText = GetNode<Godot.Label>("Version");
-            DodgeCountdownText = GetNode<Godot.Label>("LeftCenter/DodgeContainer/Countdown");
 
             DialogBox = GetNode<DialogBox>("DialogBox");
-            
+
             AbilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
-            AbilitiesListContainer = GetNode<AbilitiesContainer>("PauseContainer/AbilitiesContainer");
-            PauseContainer = GetNode<Panel>("PauseContainer");
+            AbilitiesListContainer = GetNode<AbilitiesContainer>("InventoryContainer/AbilitiesContainer");
+            InventoryPanel = GetNode<Panel>("InventoryContainer");
 
             ParrySound = GetNode<AudioStreamPlayer>("ParrySound");
             ParryOverlay = GetNode<ColorRect>("ParryOverlay");
             #endregion
-            
+
             PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
             PlayerVariables.OnItemsChanged += DisplayItem;
-
-            // Setting up dodge timer
-            DodgeTextTimer = new Timer();
-            DodgeTextTimer.Timeout += ProcessDodgeReloading;
-            AddChild(DodgeTextTimer);
 
             ParryFlashScene = ResourceLoader.Load<PackedScene>(ParryFlashScenePath);
 
@@ -97,7 +92,8 @@ namespace Galatime
             // Loading ability containers scene 
             var abilityContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/AbilityContainer.tscn");
             // Adding ability containers
-            for (int i = 0; i < PlayerVariables.abilitySlots; i++) {
+            for (int i = 0; i < PlayerVariables.abilitySlots; i++)
+            {
                 // Instantiate ability container and add it to the abilities container
                 var instance = abilityContainerScene.Instantiate<AbilityContainer>();
                 AbilitiesContainer.AddChild(instance);
@@ -107,7 +103,8 @@ namespace Galatime
             OnFade(false);
         }
 
-        public override void _ExitTree() {
+        public override void _ExitTree()
+        {
             PlayerVariables.OnItemsChanged -= DisplayItem;
         }
 
@@ -135,14 +132,15 @@ namespace Galatime
 
         /// <summary> Plays a parry effect by pausing the game, showing an overlay, and playing a sound. </summary>
         /// <param name="position"> The position of the parry effect in global coordinates. </param>
-        public async void ParryEffect(Vector2 position) {
+        public async void ParryEffect(Vector2 position)
+        {
             var parryFlashInstance = ParryFlashScene.Instantiate<GpuParticles2D>();
             GetTree().Root.AddChild(parryFlashInstance);
             parryFlashInstance.GlobalPosition = position;
             parryFlashInstance.Emitting = true;
 
             GetTree().Paused = true;
-            ParrySound.Play();  
+            ParrySound.Play();
 
             ParryOverlay.Visible = true;
 
@@ -160,23 +158,6 @@ namespace Galatime
         public void AddAbility(AbilityData ab, int i) => AbilitiesContainer.GetChild<AbilityContainer>(i).Load(ab);
         public void RemoveAbility(int i) => AbilitiesContainer.GetChild<AbilityContainer>(i).Unload();
 
-        public void ReloadDodge()
-        {
-            RemainingDodge = 2;
-            DodgeTextTimer.Start();
-            ProcessDodgeReloading();
-        }
-
-        private void ProcessDodgeReloading()
-        {
-            RemainingDodge--;
-            DodgeCountdownText.Text = RemainingDodge + "s";
-            if (DodgeCountdownText.Text == "-1s")
-            {
-                DodgeTextTimer.Stop(); DodgeCountdownText.Text = "";
-            }
-        }
-        
         public AbilityContainer GetAbilityContainer(int i)
         {
             var ability = AbilitiesContainer.GetChild(i) as AbilityContainer;

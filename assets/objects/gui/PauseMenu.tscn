@@ -1,0 +1,123 @@
+[gd_scene load_steps=4 format=3 uid="uid://bqkuonmirsqx1"]
+
+[ext_resource type="PackedScene" uid="uid://dra0o6uwyaspw" path="res://assets/objects/gui/elements/LabelButton.tscn" id="1_a054u"]
+[ext_resource type="Script" path="res://assets/scripts/gui/PauseMenu.cs" id="1_a821v"]
+[ext_resource type="AudioStream" uid="uid://dkoptcipakjv0" path="res://assets/audios/soundtracks/galatime_settings.mp3" id="4_yqdgo"]
+
+[node name="PauseMenu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a821v")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = -256.0
+grow_vertical = 2
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -112.0
+offset_top = 64.0
+offset_bottom = 128.0
+grow_horizontal = 2
+scale = Vector2(2, 2)
+
+[node name="ResumeButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+layout_mode = 2
+
+[node name="Label" parent="Panel/ButtonsContainer/ResumeButton" index="0"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -21.0
+offset_top = -11.5
+offset_right = 21.0
+offset_bottom = 11.5
+grow_horizontal = 2
+text = "Resume"
+
+[node name="SaveButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+layout_mode = 2
+
+[node name="Label" parent="Panel/ButtonsContainer/SaveButton" index="0"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -14.0
+offset_top = -11.5
+offset_right = 14.0
+offset_bottom = 11.5
+grow_horizontal = 2
+text = "Save"
+
+[node name="ReloadButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+layout_mode = 2
+
+[node name="Label" parent="Panel/ButtonsContainer/ReloadButton" index="0"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -14.0
+offset_top = -11.5
+offset_right = 14.0
+offset_bottom = 11.5
+grow_horizontal = 2
+text = "Reload level"
+
+[node name="SettingsButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+layout_mode = 2
+
+[node name="Label" parent="Panel/ButtonsContainer/SettingsButton" index="0"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -14.0
+offset_top = -11.5
+offset_right = 14.0
+offset_bottom = 11.5
+grow_horizontal = 2
+text = "Settings"
+
+[node name="ExitButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+layout_mode = 2
+
+[node name="Label" parent="Panel/ButtonsContainer/ExitButton" index="0"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.5
+offset_top = -11.5
+offset_right = 12.5
+offset_bottom = 11.5
+grow_horizontal = 2
+text = "Exit"
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_yqdgo")
+volume_db = -80.0
+autoplay = true
+
+[editable path="Panel/ButtonsContainer/ResumeButton"]
+[editable path="Panel/ButtonsContainer/SaveButton"]
+[editable path="Panel/ButtonsContainer/ReloadButton"]
+[editable path="Panel/ButtonsContainer/SettingsButton"]
+[editable path="Panel/ButtonsContainer/ExitButton"]

@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://c1u2weprncgn6" path="res://assets/objects/gui/PauseContainer.tscn" id="13_co182"]
 [ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://sprites/gui/status/mana_progress.png" id="14"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="15_bhhfw"]
-[ext_resource type="Texture2D" uid="uid://dbliidd2bq780" path="res://sprites/characters/test/dodge_icon.png" id="24"]
+[ext_resource type="PackedScene" uid="uid://bqkuonmirsqx1" path="res://assets/objects/gui/PauseMenu.tscn" id="16_mf8j7"]
 [ext_resource type="AudioStream" uid="uid://dfwi2r7vfy2p5" path="res://assets/audios/sounds/parry.wav" id="27_4kcld"]
 [ext_resource type="Script" path="res://assets/scripts/gui/LeaveLabel.cs" id="27_i8qxk"]
 
@@ -124,31 +124,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("6")
-
-[node name="LeftCenter" type="VBoxContainer" parent="."]
-layout_mode = 0
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 10.0
-offset_top = -10.0
-offset_right = 38.0
-offset_bottom = 10.0
-scale = Vector2(2, 2)
-pivot_offset = Vector2(0, 10)
-
-[node name="DodgeContainer" type="HBoxContainer" parent="LeftCenter"]
-visible = false
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="LeftCenter/DodgeContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-texture = ExtResource("24")
-
-[node name="Countdown" type="Label" parent="LeftCenter/DodgeContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
 
 [node name="HealthValueBar" parent="." instance=ExtResource("3_ysutl")]
 offset_right = 0.0
@@ -316,19 +291,12 @@ layout_mode = 1
 [node name="Shader" type="ColorRect" parent="."]
 visible = false
 material = SubResource("6")
-layout_mode = 0
-offset_right = 1024.0
-offset_bottom = 560.0
-mouse_filter = 2
-
-[node name="Shader2" type="ColorRect" parent="."]
-visible = false
-material = SubResource("6")
-layout_mode = 0
-offset_left = -10.0
-offset_top = -10.0
-offset_right = 1030.0
-offset_bottom = 606.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="Version" type="Label" parent="."]
@@ -350,7 +318,18 @@ theme_override_fonts/font = ExtResource("9_lrd2i")
 horizontal_alignment = 2
 clip_text = true
 
-[node name="PauseContainer" parent="." instance=ExtResource("13_co182")]
+[node name="ParryOverlay" type="ColorRect" parent="."]
+process_mode = 3
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.627451)
+
+[node name="InventoryContainer" parent="." instance=ExtResource("13_co182")]
 visible = false
 layout_mode = 1
 grow_horizontal = 2
@@ -384,13 +363,5 @@ metadata/_edit_lock_ = true
 [node name="ParrySound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("27_4kcld")
 
-[node name="ParryOverlay" type="ColorRect" parent="."]
-process_mode = 3
-visible = false
+[node name="PauseMenu" parent="." instance=ExtResource("16_mf8j7")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 1, 1, 0.627451)

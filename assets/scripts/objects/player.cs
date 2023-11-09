@@ -229,7 +229,6 @@ namespace Galatime
 
         public override void _UnhandledInput(InputEvent @event)
         {
-            if (@event.IsActionPressed("ui_cancel")) PlayerGui.TogglePause();
             if (@event.IsActionPressed("game_attack"))
             {
                 Weapon.Attack(this);

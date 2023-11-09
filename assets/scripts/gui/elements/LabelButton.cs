@@ -89,7 +89,7 @@ public partial class LabelButton : Button
     }
 
     // Method to get a Tween instance with preset settings
-    Tween GetTween() => GetTree().CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel(true);
+    Tween GetTween() => CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel(true);
 
     void Hover()
     {

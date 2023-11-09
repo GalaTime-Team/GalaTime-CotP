@@ -74,7 +74,7 @@ public partial class DialogBox : NinePatchRect
             Visible = true;
             CanSkip = true;
 
-            CurrentPhrase += 1;
+            CurrentPhrase++;
         }
         else
         {
