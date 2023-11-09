@@ -29,9 +29,9 @@ public partial class PauseMenu : Control
         get => paused;
         set
         {
-            paused = value;
             // Don't pause a game when an animation is playing.
             if (Tw?.IsRunning() == true) return;
+            paused = value;
             GetTree().Paused = paused;
             // Set the value of a variable to check later if the animation is playing.
             Tw = GetTween();
@@ -65,7 +65,9 @@ public partial class PauseMenu : Control
         MusicPlayer = GetNode<AudioStreamPlayer>("MusicPlayer");
 
         // Buttons
-        ResumeButton = ButtonsContainer.GetNode<Button>("ResumeButton");\
+        ResumeButton = ButtonsContainer.GetNode<Button>("ResumeButton");
+        SaveButton = ButtonsContainer.GetNode<Button>("SaveButton");
+        ExitButton = ButtonsContainer.GetNode<Button>("ExitButton");
         #endregion
 
         InitializeButtons();
@@ -73,7 +75,20 @@ public partial class PauseMenu : Control
 
     private void InitializeButtons()
     {
+        var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
         ResumeButton.Pressed += () => Paused = false;
+        SaveButton.Pressed += () =>
+        {
+            Paused = false;
+            globals.Save(PlayerVariables.currentSave, this);
+        };
+        ExitButton.Pressed += () =>
+        {
+            Paused = false;
+            globals.LoadScene();
+            var levelManager = GetNode<LevelManager>("/root/LevelManager");
+            levelManager.EndAudioCombat();
+        };
     }
 
     public Tween GetTween() => CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel();

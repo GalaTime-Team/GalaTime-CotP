@@ -239,8 +239,6 @@ namespace Galatime
             if (@event.IsActionPressed("game_dodge"))
             {
                 dodge();
-                var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
-                globals.save(PlayerVariables.currentSave, PlayerGui);
             }
 
             // Checking for input for abilities.

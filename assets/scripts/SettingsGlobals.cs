@@ -1,34 +1,42 @@
 using Galatime;
+using Galatime.Global;
 using Galatime.Settings;
 using Godot;
+using System;
 using YamlDotNet.Serialization;
 
-public partial class SettingsGlobals : Node {
+namespace Galatime.Global;
+
+public partial class SettingsGlobals : Node
+{
     public static SettingsData Settings = new();
 
     public override void _Ready() => LoadSettings();
 
     /// <summary> Loads the settings from the settings.yml file. </summary>
     /// <returns> As option, returns loaded settings, otherwise use static type to get settings. </returns>
-    public Galatime.Settings.SettingsData LoadSettings() {
+    public Galatime.Settings.SettingsData LoadSettings()
+    {
         var file = Godot.FileAccess.Open(GalatimeConstants.settingsPath, Godot.FileAccess.ModeFlags.Read);
 
         var error = Godot.FileAccess.GetOpenError();
-        if (error != Error.Ok) {
+        if (error != Error.Ok)
+        {
             GD.PrintErr($"SETTINGS: Error when loading a config: {error}. Creating a new config.");
             SaveSettings();
             return new();
         }
-        
+
         var settingsText = file.GetAsText();
         var deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().Build();
         Settings = deserializer.Deserialize<SettingsData>(settingsText);
-        
+
         return Settings;
     }
 
     /// <summary> Saves the settings to the settings.yml file. </summary>
-    public void SaveSettings() {
+    public void SaveSettings()
+    {
         var saveProcessSceneInstance = GalatimeGlobals.saveProcessScene.Instantiate<SavingProcess>();
         GetTree().Root.AddChild(saveProcessSceneInstance);
 
@@ -52,8 +60,16 @@ public partial class SettingsGlobals : Node {
     /// <summary> Converts a bit value (0-1) to a dB value. </summary>
     static double BitToDb(double value) => value * 80 - 80;
 
-    public void UpdateSettings() {
+    public void UpdateSettings()
+    {
+        // Audio volume
         AudioServer.SetBusVolumeDb(0, (float)BitToDb(Settings.MasterVolume));
         AudioServer.SetBusVolumeDb(1, (float)BitToDb(Settings.MusicVolume));
+
+        // Discord RPC
+        var DiscordController = GetNode<DiscordController>("/root/DiscordController");
+        if (Settings.DiscordActivityDisabled) DiscordController.Client.ClearPresence();
+        // Restoring the previous presence when not Discord RPC is not disabled.
+        else DiscordController.CurrentRichPresence = DiscordController.CurrentRichPresence;
     }
 }

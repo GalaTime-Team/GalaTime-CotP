@@ -1,4 +1,5 @@
 using Galatime.Settings;
+using Galatime.Global;
 using Godot;
 using System.Reflection;
 using System;

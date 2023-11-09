@@ -9,6 +9,18 @@ public partial class DiscordController : Node
 {
     /// <summary> The Discord RPC client instance. </summary>
     public DiscordRpcClient Client;
+    private RichPresence currentRichPresence;
+    public RichPresence CurrentRichPresence
+    {
+        get => currentRichPresence;
+        set
+        {
+            currentRichPresence = value;
+
+            var SettingsGlobals = GetNode<SettingsGlobals>("/root/SettingsGlobals");
+            if (!SettingsGlobals.Settings.DiscordActivityDisabled) Client.SetPresence(currentRichPresence);
+        }
+    }
 
     public override void _Ready()
     {
@@ -23,7 +35,7 @@ public partial class DiscordController : Node
         Client.Initialize();
 
         // Setting up presence.
-        Client.SetPresence(new RichPresence()
+        CurrentRichPresence = new RichPresence()
         {
             Details = "Day 1",
             State = "Playing",
@@ -38,7 +50,7 @@ public partial class DiscordController : Node
                 SmallImageKey = "day_1",
                 SmallImageText = "Day 1"
             }
-        });
+        };
     }
 
     // Invoke Client each frame to update presence.

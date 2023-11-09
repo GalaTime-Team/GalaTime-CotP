@@ -228,7 +228,7 @@ public sealed partial class GalatimeGlobals : Node
         return saveData;
     }
 
-    public void save(int saveId, Node currentScene)
+    public void Save(int saveId, Node currentScene)
     {
         var saveProcessSceneInstance = saveProcessScene.Instantiate<SavingProcess>();
         if (currentScene != null)
@@ -296,7 +296,7 @@ public sealed partial class GalatimeGlobals : Node
         //     stats.Add(stat.ID, stat.Value);
         // }
         // saveData.Add("stats", stats);
-        saveData.Add("xp", playerVariables.Player.Xp);
+        if (playerVariables.Player is not null) saveData.Add("xp", playerVariables.Player.Xp);
         return saveData;
     }
 
