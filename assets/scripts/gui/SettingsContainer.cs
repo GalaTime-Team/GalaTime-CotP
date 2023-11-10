@@ -12,6 +12,9 @@ public partial class SettingsContainer : Control
     public VBoxContainer SettingsListContainer;
     private SettingsGlobals SettingsGlobals;
 
+    /// <summary> The first control when UI is builded. </summary>
+    public Control FirstControl;
+
     public override void _Ready()
     {
         SettingsListContainer = GetNode<VBoxContainer>("SettingsListContainer");
@@ -29,8 +32,10 @@ public partial class SettingsContainer : Control
         SettingsGlobals.UpdateSettings();
 
         Type settingsType = typeof(SettingsData);
-        foreach (FieldInfo field in settingsType.GetFields())
+        FieldInfo[] fields = settingsType.GetFields();
+        for (int i = 0; i < fields.Length; i++)
         {
+            FieldInfo field = fields[i];
             // Get the name, type, and value of the field.
             string name = field.Name;
             Type type = field.FieldType;
@@ -50,16 +55,19 @@ public partial class SettingsContainer : Control
             // Check the type of the field and create a corresponding UI node.
             if (type == typeof(double))
             {
+                var rangeAttribute = (RangeSettingAttribute)Attribute.GetCustomAttribute(field, typeof(RangeSettingAttribute));
+                if (rangeAttribute == null) GD.PushWarning("Range attribute is null, ignoring");
                 var slider = new HSlider
                 {
-                    MinValue = 0,
-                    MaxValue = 1,
+                    MinValue = rangeAttribute != null ? rangeAttribute.Min : 0,
+                    MaxValue = rangeAttribute != null ? rangeAttribute.Max : 1,
                     SizeFlagsHorizontal = SizeFlags.ExpandFill,
                     SizeFlagsVertical = SizeFlags.ShrinkCenter,
-                    Step = 0.01
+                    Step = rangeAttribute != null ? rangeAttribute.Step : 0.1
                 };
                 slider.Value = (double)value;
                 slider.ValueChanged += (value) => ValueChanged(value, field);
+                if (i == 0) FirstControl = slider;
                 container.AddChild(slider);
             }
             else if (type == typeof(bool))
@@ -67,6 +75,7 @@ public partial class SettingsContainer : Control
                 var checkBox = new CheckButton() { ButtonPressed = (bool)value };
                 checkBox.Toggled += (value) => ValueChanged(value, field);
                 container.AddChild(checkBox);
+                if (i == 0) FirstControl = checkBox;
                 GD.Print($"CheckBox value: {checkBox.ButtonPressed}");
             }
 

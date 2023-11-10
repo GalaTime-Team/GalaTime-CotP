@@ -73,6 +73,8 @@ public partial class MainMenu : Control
     private Control SettingsMenuControl;
     private Control CreditsMenuControl;
 
+    private SettingsContainer SettingsContainer;
+
     /// <summary> The dictionaries of all menus (pages) of the main menu. </summary>
     private Dictionary<string, Control> Menus = new();
 
@@ -120,6 +122,9 @@ public partial class MainMenu : Control
         MainMenuControl = GetNode<Control>("MainMenuContainer");
         SettingsMenuControl = GetNode<Control>("SettingsMenuContainer");
         CreditsMenuControl = GetNode<Control>("CreditsContainer");
+
+        SettingsContainer = GetNode<SettingsContainer>("SettingsMenuContainer/Settings");
+
         Menus.Add("start", StartMenuControl);
         Menus.Add("main_menu", MainMenuControl);
         Menus.Add("settings", SettingsMenuControl);
@@ -361,7 +366,7 @@ public partial class MainMenu : Control
         var pageData = new Dictionary<string, (SwipeDirection, Control)>()
         {
             {"start", (SwipeDirection.UP, ViewSavesButton)},
-            {"settings", (SwipeDirection.LEFT, null)},
+            {"settings", (SwipeDirection.LEFT, SettingsContainer.FirstControl)},
             {"credits", (SwipeDirection.DOWN, null)}
         };
 

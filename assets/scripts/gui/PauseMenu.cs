@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 namespace Galatime.UI;
 
@@ -11,6 +10,9 @@ public partial class PauseMenu : Control
     public Panel Panel;
     public VBoxContainer ButtonsContainer;
     public AudioStreamPlayer MusicPlayer;
+
+    // Windows
+    public SettingsContainer SettingsContainer;
 
     // Buttons
     public Button ResumeButton;
@@ -31,13 +33,19 @@ public partial class PauseMenu : Control
         {
             // Don't pause a game when an animation is playing.
             if (Tw?.IsRunning() == true) return;
+            if (CurrentWindow != null)
+            {
+                OpenWindow(CurrentWindow);
+                return;
+            }
+
             paused = value;
             GetTree().Paused = paused;
             // Set the value of a variable to check later if the animation is playing.
             Tw = GetTween();
             Tw.Finished += () =>
             {
-                if (paused) (ButtonsContainer.GetChildren()[0] as Control)?.GrabFocus(); // Focus on the first button when paused and when the animation ends.
+                if (paused) GrabFirstControl(); // Focus on the first button when paused and when the animation ends.
                 else GetViewport().GuiReleaseFocus();
             };
             // Create an animation that slides from the left corner and back again if there is no pause.
@@ -51,6 +59,9 @@ public partial class PauseMenu : Control
     #endregion
 
     #region Variables
+    public bool WindowIsVisible;
+    public Control CurrentWindow;
+
     public float TransitionDuration = 0.3f;
     public float MusicTransitionDuration = 3f;
     public Tween Tw;
@@ -64,13 +75,17 @@ public partial class PauseMenu : Control
         ButtonsContainer = GetNode<VBoxContainer>("Panel/ButtonsContainer");
         MusicPlayer = GetNode<AudioStreamPlayer>("MusicPlayer");
 
+        // Windows
+        SettingsContainer = GetNode<SettingsContainer>("SettingsContainer");
+
         // Buttons
         ResumeButton = ButtonsContainer.GetNode<Button>("ResumeButton");
         SaveButton = ButtonsContainer.GetNode<Button>("SaveButton");
         ExitButton = ButtonsContainer.GetNode<Button>("ExitButton");
+        SettingsButton = ButtonsContainer.GetNode<Button>("SettingsButton");
         #endregion
-
         InitializeButtons();
+
     }
 
     private void InitializeButtons()
@@ -89,9 +104,35 @@ public partial class PauseMenu : Control
             var levelManager = GetNode<LevelManager>("/root/LevelManager");
             levelManager.EndAudioCombat();
         };
+        SettingsButton.Pressed += () => OpenWindow(SettingsContainer, SettingsContainer.FirstControl);
+    }
+
+    public void OpenWindow(Control window, Control focusTo = null)
+    {
+        if (Tw?.IsRunning() == true) return;
+
+        WindowIsVisible = !WindowIsVisible;
+        CurrentWindow = WindowIsVisible ? window : null;
+        if (WindowIsVisible)
+        {
+            window.Visible = true;
+            focusTo?.GrabFocus();
+        }
+
+        Tw = GetTween();
+        Tw.TweenMethod(Callable.From<Vector2>(x => window.Position = x), window.Position, WindowIsVisible ? new Vector2(Panel.Size.X, 0) : new Vector2(-window.Size.X, 0), TransitionDuration * 2).Finished += () =>
+        {
+            if (!WindowIsVisible)
+            {
+                window.Visible = false;
+                GrabFirstControl();
+            }
+        };
     }
 
     public Tween GetTween() => CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel();
+
+    public void GrabFirstControl() => (ButtonsContainer.GetChild(0) as Control)?.GrabFocus();
 
     public override void _Input(InputEvent @event)
     {

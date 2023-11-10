@@ -57,14 +57,11 @@ public partial class SettingsGlobals : Node
         }
     }
 
-    /// <summary> Converts a bit value (0-1) to a dB value. </summary>
-    static double BitToDb(double value) => value * 80 - 80;
-
     public void UpdateSettings()
     {
         // Audio volume
-        AudioServer.SetBusVolumeDb(0, (float)BitToDb(Settings.MasterVolume));
-        AudioServer.SetBusVolumeDb(1, (float)BitToDb(Settings.MusicVolume));
+        AudioServer.SetBusVolumeDb(0, (float)Settings.MasterVolume);
+        AudioServer.SetBusVolumeDb(1, (float)Settings.MusicVolume);
 
         // Discord RPC
         var DiscordController = GetNode<DiscordController>("/root/DiscordController");
