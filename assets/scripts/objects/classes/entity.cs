@@ -1,6 +1,5 @@
 using Godot;
 using System;
-using System.Collections.Generic;
 
 namespace Galatime
 {
@@ -52,7 +51,8 @@ namespace Galatime
         public Action OnDeath;
         #endregion
 
-        public Entity(EntityStats stats, GalatimeElement element = null){
+        public Entity(EntityStats stats, GalatimeElement element = null)
+        {
             Stats = stats;
             Element = element ?? new();
         }
@@ -168,7 +168,7 @@ namespace Galatime
         }
 
         /// <summary>
-        /// Set knockback for entity by rotation and knockback (Applying movement impulse). 
+        /// Set knockback for entity by rotation and knockback (Applying movement impulse).
         /// </summary>
         /// <param name="knockback">How stronger is knockback. 100 is a small knockback</param>
         /// <param name="damageRotation">In radians, will knockback this way. </param>
@@ -266,7 +266,8 @@ namespace Galatime
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="type"></param>
-        public void SpawnDamageEffect(float amount, DamageDifferenceType type) {
+        public void SpawnDamageEffect(float amount, DamageDifferenceType type)
+        {
             var damageEffectInstance = DamageEffectScene.Instantiate<DamageEffect>();
 
             // Setting damage effect and his properties

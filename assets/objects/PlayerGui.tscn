@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://s184ap1aunq3"]
+[gd_scene load_steps=25 format=3 uid="uid://s184ap1aunq3"]
 
 [ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://sprites/gui/status/mana_progress.png" id="14"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="15_bhhfw"]
 [ext_resource type="PackedScene" uid="uid://bqkuonmirsqx1" path="res://assets/objects/gui/PauseMenu.tscn" id="16_mf8j7"]
+[ext_resource type="Shader" path="res://assets/shaders/NTSC.gdshader" id="17_glk77"]
 [ext_resource type="AudioStream" uid="uid://dfwi2r7vfy2p5" path="res://assets/audios/sounds/parry.wav" id="27_4kcld"]
 [ext_resource type="Script" path="res://assets/scripts/gui/LeaveLabel.cs" id="27_i8qxk"]
 
@@ -114,6 +115,12 @@ shader = SubResource("5")
 shader_parameter/scale = 20.0
 shader_parameter/shift = 0.05
 shader_parameter/seed = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4rru6"]
+shader = ExtResource("17_glk77")
+shader_parameter/blur_amount = 3.0
+shader_parameter/signal_quality = 0.0
+shader_parameter/bottom_strenth = 3.0
 
 [node name="PlayerGui" type="Control"]
 layout_mode = 3
@@ -365,3 +372,13 @@ stream = ExtResource("27_4kcld")
 
 [node name="PauseMenu" parent="." instance=ExtResource("16_mf8j7")]
 layout_mode = 1
+
+[node name="NTSC" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_4rru6")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
