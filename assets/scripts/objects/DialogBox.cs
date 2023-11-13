@@ -1,9 +1,9 @@
-using System;
-using System.Linq;
 using Galatime;
 using Galatime.Dialogue;
 using Galatime.UI.Helpers;
 using Godot;
+using System;
+using System.Linq;
 
 public partial class DialogBox : NinePatchRect
 {
@@ -91,11 +91,12 @@ public partial class DialogBox : NinePatchRect
     }
 
     // <summary> A method that appends a letter to the TextLabel. </summary>
-    private void AppendLetter() {
+    private void AppendLetter()
+    {
         var rnd = new Random();
-        DialogAudio.PitchScale = (float)rnd.NextDouble() / 10 + 0.99f;
+        DialogAudio.PitchScale = ((float)rnd.NextDouble() / 10) + 0.99f;
         DialogAudio.Play();
-    } 
+    }
 
     private void StopAndPlaySkipAnimation()
     {
@@ -126,7 +127,7 @@ public partial class DialogBox : NinePatchRect
         var voice = character.VoicePath != "" ? GD.Load<AudioStream>(character.VoicePath) : DefaultVoice;
 
         DialogAudio.Stream = voice;
-        
+
         Texture2D texture = GD.Load<Texture2D>(emotion.Path);
         CharacterNameLabel.Text = character.Name;
         if (texture is AnimatedTexture animatedTexture)

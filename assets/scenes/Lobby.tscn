@@ -1,10 +1,11 @@
-[gd_scene load_steps=14 format=3 uid="uid://txwr2a75w6yq"]
+[gd_scene load_steps=15 format=3 uid="uid://txwr2a75w6yq"]
 
 [ext_resource type="Script" path="res://assets/scripts/scenes/LLobby.cs" id="1_34ayc"]
 [ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://sprites/tilesets/dreamworld-floor.png" id="1_fcynh"]
 [ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="2_plqd3"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://sprites/particles/dream_world_particles.png" id="3_fwky3"]
 [ext_resource type="Texture2D" uid="uid://c8e7kphd2pqjt" path="res://sprites/levels/dream_world/portal.png" id="4_xfx06"]
+[ext_resource type="PackedScene" uid="uid://bxprylw0wb8gl" path="res://assets/objects/InteractiveTrigger.tscn" id="5_e5f46"]
 [ext_resource type="PackedScene" uid="uid://bljwt8h81gnrn" path="res://assets/objects/ItemPickup.tscn" id="7_ortjy"]
 [ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/Roomwrap.tscn" id="8_frg3l"]
 
@@ -111,9 +112,15 @@ visibility_rect = Rect2(-1000, -500, 2000, 1000)
 [node name="Portal" type="Sprite2D" parent="."]
 z_index = -1
 y_sort_enabled = true
-position = Vector2(0, -196)
+position = Vector2(896, -224)
 scale = Vector2(4, 4)
 texture = ExtResource("4_xfx06")
+
+[node name="InteractiveTrigger" parent="Portal" instance=ExtResource("5_e5f46")]
+VisualNodePath = NodePath("..")
+ExecuteNodePath = NodePath("../../Player")
+Method = "StartDialog"
+Args = PackedStringArray("test_0")
 
 [node name="Player" parent="." instance=ExtResource("2_plqd3")]
 position = Vector2(1216, -304)
@@ -135,5 +142,6 @@ metadata/_edit_lock_ = true
 
 [node name="ItemPickup" parent="." instance=ExtResource("7_ortjy")]
 position = Vector2(752, -192)
+ItemId = "barrel"
 
 [editable path="Roomwrap"]

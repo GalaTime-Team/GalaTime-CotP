@@ -1,52 +1,72 @@
 {
-	"dialogs": [
-		{
-			"id": "tutorial_0",
-			"lines": [
-				{
-					"text": "Hello my dear [color=yellow]player[/color]!",
-					"character": "rafael",
-					"emotion": "surprised",
-					"actions": [
-						"toggleMove"
-					]
-				},
-				{
-					"text": "It all looks very unfinished right now",
-					"character": "rafael",
-					"emotion": "sweating"
-				},
-				{
-					"text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]",
-					"character": "rafael",
-					"emotion": "neutral"
-				},
-				{
-					"text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]",
-					"character": "rafael",
-					"emotion": "neutral"
-				},
-				{
-					"text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped",
-					"character": "rafael",
-					"emotion": "neutral"
-				},
-				{
-					"text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]",
-					"character": "rafael",
-					"emotion": "neutral"
-				},
-				{
-					"text": "Soon the slimes will appear and you have to [color=red]eliminate[/color] them!",
-					"character": "rafael",
-					"emotion": "neutral"
-				},
-				{
-					"text": "Enjoy the game!",
-					"character": "rafael",
-					"emotion": "ready"
-				}
-			]
-		}
-	]
+  "dialogs": [
+    {
+      "id": "test_0",
+      "lines": [
+        {
+          "text": "What's this thing!?",
+          "character": "arthur",
+          "emotion": "neutral"
+        },
+        {
+          "text": "This kinda looks weird.",
+          "character": "arthur",
+          "emotion": "neutral"
+        },
+        {
+          "text": "It's worth it to enter?",
+          "character": "arthur",
+          "emotion": "neutral"
+        }
+      ]
+    },
+    {
+      "id": "tutorial_0",
+      "lines": [
+        {
+          "text": "Hello my dear [color=yellow]player[/color]!",
+          "character": "rafael",
+          "emotion": "surprised",
+          "actions": [
+            "toggleMove"
+          ]
+        },
+        {
+          "text": "It all looks very unfinished right now",
+          "character": "rafael",
+          "emotion": "sweating"
+        },
+        {
+          "text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]",
+          "character": "rafael",
+          "emotion": "neutral"
+        },
+        {
+          "text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]",
+          "character": "rafael",
+          "emotion": "neutral"
+        },
+        {
+          "text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped",
+          "character": "rafael",
+          "emotion": "neutral"
+        },
+        {
+          "text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]",
+          "character": "rafael",
+          "emotion": "neutral"
+        },
+        {
+          "text": "Soon the slimes will appear and you have to [color=red]eliminate[/color] them!",
+          "character": "rafael",
+          "emotion": "neutral"
+        },
+        {
+          "text": "Enjoy the game!",
+          "character": "rafael",
+          "emotion": "ready"
+        }
+      ]
+    }
+  ]
 }

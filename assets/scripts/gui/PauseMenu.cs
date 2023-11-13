@@ -1,3 +1,4 @@
+using Galatime.Global;
 using Godot;
 
 namespace Galatime.UI;
@@ -126,6 +127,11 @@ public partial class PauseMenu : Control
             {
                 window.Visible = false;
                 GrabFirstControl();
+                if (window.Name == SettingsContainer.Name)
+                {
+                    var settingsGlobals = GetNode<SettingsGlobals>("/root/SettingsGlobals");
+                    settingsGlobals.SaveSettings();
+                }
             }
         };
     }

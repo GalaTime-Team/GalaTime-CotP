@@ -244,5 +244,7 @@ namespace Galatime
             // Checking for input for abilities.
             for (int i = 0; i < PlayerVariables.abilities.Count; i++) if (@event.IsActionPressed($"game_ability_{i+1}")) _useAbility(i);
         }
+
+        public void StartDialog(string id) => PlayerGui.DialogBox.StartDialog(id);
     }
 }

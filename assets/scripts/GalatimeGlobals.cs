@@ -530,8 +530,8 @@ public sealed partial class GalatimeGlobals : Node
         }
     }
 
-    public static DialogData GetDialogById(string id) => dialogsList.FirstOrDefault(x => x.ID == id);
-    public static Character GetCharacterById(string id) => charactersList.FirstOrDefault(x => x.ID == id);
+    public static DialogData GetDialogById(string id) => dialogsList.Find(x => x.ID == id);
+    public static Character GetCharacterById(string id) => charactersList.Find(x => x.ID == id);
 
     public static AbilityData GetAbilityById(string id)
     {
