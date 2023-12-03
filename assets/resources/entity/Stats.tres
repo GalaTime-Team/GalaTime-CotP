@@ -1,6 +1,0 @@
-[gd_resource type="Resource" script_class="EntityStats" load_steps=2 format=3 uid="uid://bw77nd4owm2sn"]
-
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/EntityStats.cs" id="1_kuok5"]
-
-[resource]
-script = ExtResource("1_kuok5")

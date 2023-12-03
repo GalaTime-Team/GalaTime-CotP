@@ -1,4 +1,5 @@
 using Galatime;
+using Galatime.Helpers;
 using Godot;
 
 public partial class ShootingBuddy : Entity
@@ -7,7 +8,21 @@ public partial class ShootingBuddy : Entity
     public Timer ShootingTimer;
     public Projectile Projectile;
     public Sprite2D Sprite;
+    public TargetController TargetController;
     #endregion
+
+    // public ShootingBuddy() : base(new EntityStats(new()
+    // {
+    //     [EntityStatType.Health] = 50,
+    //     [EntityStatType.PhysicalAttack] = 50,
+    //     [EntityStatType.PhysicalDefense] = 50,
+    //     [EntityStatType.MagicalAttack] = 50,
+    //     [EntityStatType.MagicalDefense] = 50,
+    //     // Immune to all knockback.
+    //     [EntityStatType.KnockbackResistance] = 9999
+    // }))
+    // { }
+
 
     public override void _Ready()
     {
@@ -17,6 +32,7 @@ public partial class ShootingBuddy : Entity
         ShootingTimer = GetNode<Timer>("ShootingTimer");
         Projectile = GetNode<Projectile>("Projectile");
         Sprite = GetNode<Sprite2D>("Sprite2D");
+        TargetController = GetNode<TargetController>("TargetController");
         #endregion
 
         Body = this;
@@ -25,24 +41,25 @@ public partial class ShootingBuddy : Entity
         ShootingTimer.Start();
     }
 
-    public ShootingBuddy() : base(new(
-        PhysicalAttack: 20,
-        PhysicalDefense: 20,
-        MagicalDefense: 20,
-        Health: 20
-    ), GalatimeElement.Aqua)
-    { }
-
     private void OnShootingTimerTimeout()
     {
+        // Don't shoot if no target.
+        if (TargetController.CurrentTarget == null) return;
+
         var projectile = Projectile.Duplicate() as Projectile;
-        projectile.TargetTeam = Galatime.Helpers.Teams.Allies;
         projectile.AttackStat = Stats[EntityStatType.MagicalAttack].Value;
-        projectile.Power = 20;
         projectile.Visible = true;
         projectile.Moving = true;
+        projectile.Explosive = true;
         projectile.Exploded += OnProjectileExploded;
+        projectile.TopLevel = true;
+        
+        projectile.GlobalPosition = GlobalPosition;
+        projectile.Rotation = GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
+
         AddChild(projectile);
+        projectile.Explosion.Element = Element;
+        projectile.TimeoutTimer.WaitTime = 10f;
     }
 
     private void OnProjectileExploded(Projectile projectile = null)

@@ -1,5 +1,4 @@
-using Godot;
-using Galatime;
+using Galatime.Helpers;
 
 namespace Galatime.Animation;
 

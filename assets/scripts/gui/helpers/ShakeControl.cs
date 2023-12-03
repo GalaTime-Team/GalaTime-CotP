@@ -37,7 +37,7 @@ public partial class ShakeControl : Control
             float offsetX = (float)Random.NextDouble() * shakeAmount * 2 - shakeAmount;
             float offsetY = (float)Random.NextDouble() * shakeAmount * 2 - shakeAmount;
             Vector2 offset = new(offsetX, offsetY);
-            Position = OriginalPosition + offset;
+            if (IsInstanceValid(this)) Position = OriginalPosition + offset;
         }
     }
 }

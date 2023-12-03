@@ -27,7 +27,7 @@ public class Item
     /// <summary>
     /// If the item is stackable in the inventory. Stacking - is the ability to add multiple items to the inventory in one slot.
     /// </summary>
-    public bool Stackable = false;
+    public bool Stackable;
 
     /// <summary>
     /// The stack size of the item. It means the number of items can be stacked.
@@ -84,12 +84,12 @@ public class Item
     /// <summary>
     /// The loaded scene of the item.
     /// </summary> 
-    public PackedScene ItemScene = null;
+    public PackedScene ItemScene;
 
     /// <summary>
     /// The loaded icon of the item.
     /// </summary> 
-    public Texture2D Icon = null;
+    public Texture2D Icon;
 
     /// <summary>
     /// If the item is empty checked by the <see cref="Quantity"/> and <see cref="ID"/>

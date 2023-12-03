@@ -494,12 +494,6 @@ public sealed partial class GalatimeGlobals : Node
                 abilityList.Add(ability);
             }
 
-            // Printing all abilities of the list to make sure it works
-            foreach (var item in abilityList)
-            {
-                item.PrintAll();
-            };
-
             return abilityList;
         }
         else
@@ -509,7 +503,7 @@ public sealed partial class GalatimeGlobals : Node
         }
     }
 
-    public static Item getItemById(string id)
+    public static Item GetItemById(string id)
     {
         if (itemList.Count >= 0)
         {

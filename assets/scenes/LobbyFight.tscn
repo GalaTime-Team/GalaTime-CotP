@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://cblmuql6moq62"]
+[gd_scene load_steps=21 format=3 uid="uid://cblmuql6moq62"]
 
 [ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://sprites/tilesets/dreamworld-floor.png" id="1_fvkei"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://sprites/particles/dream_world_particles.png" id="2_b24jw"]
@@ -6,7 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://d4ati88xcg8y4" path="res://assets/objects/helpers/EnemySpawnPosition.tscn" id="4_wqiaw"]
 [ext_resource type="PackedScene" uid="uid://dddgyou1d5du5" path="res://assets/objects/EnemyRoom.tscn" id="5_pbbsp"]
 [ext_resource type="PackedScene" uid="uid://dig3jdhxm6cmi" path="res://assets/objects/DoorBlock.tscn" id="6_x3ocx"]
+[ext_resource type="PackedScene" uid="uid://bn0mp3n23lnba" path="res://assets/objects/TestCharacter.tscn" id="8_i7vfj"]
 [ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/Roomwrap.tscn" id="8_rru7k"]
+[ext_resource type="PackedScene" uid="uid://bljwt8h81gnrn" path="res://assets/objects/ItemPickup.tscn" id="9_7m3q7"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dyllh"]
 texture = ExtResource("1_fvkei")
@@ -61,6 +63,7 @@ texture = ExtResource("1_fvkei")
 
 [sub_resource type="TileSet" id="TileSet_mu3tk"]
 physics_layer_0/collision_layer = 1
+navigation_layer_0/layers = 1
 sources/0 = SubResource("TileSetAtlasSource_dyllh")
 
 [sub_resource type="Curve" id="Curve_tl2pf"]
@@ -71,26 +74,20 @@ point_count = 4
 curve = SubResource("Curve_tl2pf")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gnc7l"]
+particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(1500, 1000, 1)
-particle_flag_disable_z = true
 gravity = Vector3(0, -8, 0)
-orbit_velocity_min = 0.0
-orbit_velocity_max = 0.0
 scale_min = 4.0
 scale_max = 4.0
 scale_curve = SubResource("CurveTexture_xhcs6")
 hue_variation_max = 0.08
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_oh4rj"]
-vertices = PackedVector2Array(-1248, 608, -768, 608, -768, 736, -1248, 928, -576, 736, -576, 608, -128, 608, -128, 736, 64, 736, 64, 608, 704, 608, 704, 928, 64, 928, 64, 800, -128, 800, -128, 928, -576, 928, -576, 800, -768, 800, -768, 928)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7), PackedInt32Array(8, 9, 10, 11), PackedInt32Array(11, 12, 13), PackedInt32Array(8, 11, 13, 7), PackedInt32Array(7, 13, 14, 4), PackedInt32Array(14, 15, 16, 17), PackedInt32Array(4, 14, 17, 2), PackedInt32Array(2, 17, 18), PackedInt32Array(3, 2, 18), PackedInt32Array(3, 18, 19)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-1248, 608, -1248, 928, -768, 928, -768, 800, -576, 800, -576, 928, -128, 928, -128, 800, 64, 800, 64, 928, 704, 928, 704, 608, 64, 608, 64, 736, -128, 736, -128, 608, -576, 608, -576, 736, -768, 736, -768, 608)])
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_h4mwr"]
-vertices = PackedVector2Array(1280, -320, 1280, 480, 896, 480, 896, -320)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(1280, -320, 1280, 480, 896, 480, 896, -320)])
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_nr850"]
+vertices = PackedVector2Array(1287, -359, 1287, 455, 1095, 455, 889, -359, 1095, 761, 1127, 761, 1127, 775, 743, 775, 743, 935, 25, 935, 25, 775, -89, 775, -89, 935, -583, 935, -583, 775, -761, 775, -761, 935, -1255, 935, -1255, 601, -761, 601, -761, 761, -583, 761, -89, 761, -583, 601, -89, 601, 25, 761, 743, 761, 25, 601, 743, 601, 1081, 761, 1081, 455, 889, 455)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7), PackedInt32Array(7, 8, 9, 10), PackedInt32Array(11, 12, 13, 14), PackedInt32Array(15, 16, 17, 18), PackedInt32Array(18, 19, 20), PackedInt32Array(15, 18, 20), PackedInt32Array(14, 15, 20, 21), PackedInt32Array(11, 14, 21, 22), PackedInt32Array(21, 23, 24, 22), PackedInt32Array(10, 11, 22, 25), PackedInt32Array(7, 10, 25, 26), PackedInt32Array(25, 27, 28, 26), PackedInt32Array(7, 26, 29), PackedInt32Array(4, 7, 29), PackedInt32Array(2, 4, 29, 30), PackedInt32Array(3, 2, 30), PackedInt32Array(3, 30, 31)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-1280, 576, -1280, 960, -736, 960, -736, 800, -608, 800, -608, 960, -64, 960, -64, 800, 0, 800, 0, 960, 768, 960, 768, 800, 1152, 800, 1152, 736, 1120, 736, 1120, 480, 1312, 480, 1312, -384, 864, -384, 864, 480, 1056, 480, 1056, 736, 768, 736, 768, 576, 0, 576, 0, 736, -64, 736, -64, 576, -608, 576, -608, 736, -736, 736, -736, 576)])
+agent_radius = 25.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ygmfr"]
 size = Vector2(16, 16)
@@ -130,13 +127,8 @@ visibility_rect = Rect2(-2000, -1000, 4000, 2000)
 position = Vector2(-1248, 768)
 metadata/_edit_lock_ = true
 
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
-visible = false
-navigation_polygon = SubResource("NavigationPolygon_oh4rj")
-
-[node name="NavigationRegion2D2" type="NavigationRegion2D" parent="."]
-visible = false
-navigation_polygon = SubResource("NavigationPolygon_h4mwr")
+[node name="NavigationRegion2D3" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_nr850")
 
 [node name="Roomwrap" parent="." instance=ExtResource("8_rru7k")]
 position = Vector2(-1344, 768)
@@ -174,25 +166,47 @@ visible = false
 position = Vector2(116, 412)
 
 [node name="EnemySpawnPosition1" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-204, 284)
+position = Vector2(-428, 284)
 SpawningEnemyId = "shootingbuddy"
 
 [node name="EnemySpawnPosition2" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-396, 284)
-SpawningEnemyId = "slime"
+position = Vector2(-364, 284)
+SpawningEnemyId = "shootingbuddy"
 
 [node name="EnemySpawnPosition3" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-12, 284)
-SpawningEnemyId = "slime"
+position = Vector2(-300, 284)
+SpawningEnemyId = "shootingbuddy"
+
+[node name="EnemySpawnPosition4" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
+position = Vector2(-236, 284)
+SpawningEnemyId = "shootingbuddy"
+
+[node name="EnemySpawnPosition5" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
+position = Vector2(-172, 284)
+SpawningEnemyId = "shootingbuddy"
+
+[node name="EnemySpawnPosition6" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
+position = Vector2(-108, 284)
+SpawningEnemyId = "shootingbuddy"
+
+[node name="EnemySpawnPosition7" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
+position = Vector2(-44, 284)
+SpawningEnemyId = "shootingbuddy"
+
+[node name="EnemySpawnPosition8" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
+position = Vector2(20, 284)
+SpawningEnemyId = "shootingbuddy"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom"]
 position = Vector2(-206, 412)
 collision_layer = 0
 collision_mask = 2
+metadata/_edit_lock_ = true
 
 [node name="Collision" type="CollisionShape2D" parent="EnemyRoom/TriggerArea"]
-position = Vector2(-190, 96)
+position = Vector2(-158, -8)
 shape = SubResource("RectangleShape2D_1skem")
+metadata/_edit_lock_ = true
 
 [node name="EnemyRoom2" parent="." instance=ExtResource("5_pbbsp")]
 
@@ -222,10 +236,6 @@ shape = SubResource("RectangleShape2D_54wtc")
 position = Vector2(1044, -388)
 SpawningEnemyId = "shootingbuddy"
 
-[node name="EnemySpawnPosition4" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
-position = Vector2(1428, -388)
-SpawningEnemyId = "shootingbuddy"
-
 [node name="EnemySpawnPosition5" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
 position = Vector2(1428, -260)
 SpawningEnemyId = "slime"
@@ -249,6 +259,13 @@ collision_mask = 2
 
 [node name="Collision" type="CollisionShape2D" parent="EnemyRoom2/TriggerArea"]
 shape = SubResource("RectangleShape2D_qkx30")
+
+[node name="TestCharacter" parent="." instance=ExtResource("8_i7vfj")]
+position = Vector2(1056, 416)
+
+[node name="ItemPickup" parent="." instance=ExtResource("9_7m3q7")]
+position = Vector2(-1024, 768)
+ItemId = "golden_holder_sword"
 
 [editable path="Roomwrap"]
 [editable path="Roomwrap2"]

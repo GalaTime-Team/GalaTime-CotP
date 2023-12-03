@@ -1,7 +1,8 @@
 using Galatime;
 using Godot;
-using System;
 using System.Collections.Generic;
+
+using Galatime.Helpers;
 
 public partial class HumanoidCharacter : Entity
 {
@@ -27,11 +28,10 @@ public partial class HumanoidCharacter : Entity
     protected Timer ManaCountdownTimer;
     protected Timer ManaRegenTimer;
 
-    protected AnimationPlayer AnimationPlayer;
-
-    protected Sprite2D Sprite;
-    protected GpuParticles2D TrailParticles;
-
+    // Required nodes for the character
+    public HumanoidDoll HumanoidDoll;
+    public Sprite2D Sprite;
+    public GpuParticles2D TrailParticles;
     public Hand Weapon;
 
     private float mana;
@@ -62,6 +62,21 @@ public partial class HumanoidCharacter : Entity
         }
     }
 
+    public override void _MoveProcess()
+    {        
+        // Required for the rotate character animation.
+        SetDirectionByWeapon();
+
+        // Switching between idle and walk state.
+        if (IsWalk) State = Body.Velocity.Length() <= 20 ? HumanoidStates.Idle : HumanoidStates.Walk;
+
+        // Set the animation based on the velocity and the state.
+        HumanoidDoll.SetAnimation(VectorRotation, State);
+
+        // Set the trail particles texture to the same as the sprite texture.
+        TrailParticles.Texture = Sprite?.Texture;
+    }
+
     protected virtual void OnManaChanged(float mana)
     {
     }
@@ -69,6 +84,8 @@ public partial class HumanoidCharacter : Entity
     protected virtual void OnStaminaChanged(float stamina)
     {
     }
+
+    // public HumanoidCharacter(EntityStats stats) : base(stats) {}
 
     public override void _Ready()
     {
@@ -80,8 +97,6 @@ public partial class HumanoidCharacter : Entity
 
         InitializeTimers();
     }
-
-    public HumanoidCharacter(EntityStats stats, GalatimeElement element = null) : base(stats, element) { }
 
     private void InitializeTimers()
     {
@@ -106,7 +121,7 @@ public partial class HumanoidCharacter : Entity
             OneShot = true,
             Name = "StaminaCountdown"
         };
-        StaminaCountdownTimer.Timeout += _onCountdownStaminaRegen;
+        StaminaCountdownTimer.Timeout += OnCountdownStaminaRegen;
         AddChild(StaminaCountdownTimer);
 
         StaminaRegenTimer = new Timer
@@ -115,7 +130,7 @@ public partial class HumanoidCharacter : Entity
             OneShot = false,
             Name = "StaminaRegenCountdown"
         };
-        StaminaRegenTimer.Timeout += _regenStamina;
+        StaminaRegenTimer.Timeout += RegenStamina;
         AddChild(StaminaRegenTimer);
 
         ManaCountdownTimer = new Timer
@@ -124,7 +139,7 @@ public partial class HumanoidCharacter : Entity
             OneShot = true,
             Name = "ManaCountdown"
         };
-        ManaCountdownTimer.Timeout += _onCountdownManaRegen;
+        ManaCountdownTimer.Timeout += OnCountdownManaRegen;
         AddChild(ManaCountdownTimer);
 
         ManaRegenTimer = new Timer
@@ -133,23 +148,23 @@ public partial class HumanoidCharacter : Entity
             OneShot = false,
             Name = "ManaRegenCountdown"
         };
-        ManaRegenTimer.Timeout += _regenMana;
+        ManaRegenTimer.Timeout += RegenMana;
         AddChild(ManaRegenTimer);
     }
 
-    protected void _onCountdownStaminaRegen()
+    protected void OnCountdownStaminaRegen()
     {
         StaminaCountdownTimer.Stop();
         StaminaRegenTimer.Start();
     }
 
-    protected void _onCountdownManaRegen()
+    protected void OnCountdownManaRegen()
     {
         ManaCountdownTimer.Stop();
         ManaRegenTimer.Start();
     }
 
-    protected void _regenStamina()
+    protected void RegenStamina()
     {
         Heal(5);
         stamina += 10;
@@ -159,7 +174,7 @@ public partial class HumanoidCharacter : Entity
         OnStaminaChanged(stamina);
     }
 
-    protected void _regenMana()
+    protected void RegenMana()
     {
         mana += 10;
         mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.Mana].Value);
@@ -173,7 +188,7 @@ public partial class HumanoidCharacter : Entity
         if (Weapon != null) if (toUp) Weapon.ZIndex = 1; else Weapon.ZIndex = 0;
     }
 
-    public virtual AbilityData addAbility(AbilityData ab, int i)
+    public virtual AbilityData AddAbility(AbilityData ab, int i)
     {
         Abilities[i] = ab;
         Abilities[i].CooldownTimer = new Timer
@@ -205,7 +220,7 @@ public partial class HumanoidCharacter : Entity
 
     public override void _ExitTree()
     {
-        // Deleting isnstances of ability timer from the abilities list to avoid memory leaks
+        // Deleting instances of ability timer from the abilities list to avoid memory leaks
         foreach (var ab in Abilities)
         {
             ab.CooldownTimer.QueueFree();
@@ -220,7 +235,7 @@ public partial class HumanoidCharacter : Entity
         ability.CooldownTimer.Stop();
     }
 
-    protected virtual bool _useAbility(int i)
+    protected virtual bool UseAbility(int i)
     {
         var ability = Abilities[i];
         if (!ability.IsEmpty && ability.IsReloaded)
@@ -250,14 +265,11 @@ public partial class HumanoidCharacter : Entity
             ability.Charges--;
             _OnAbilityReload(i);
         }
-        else
-        {
-            return false;
-        }
+        else return false;
         return true;
     }
 
-    protected async void dodge()
+    protected async void Dodge()
     {
         if (Stamina - 15 >= 0 && !IsDodge && CanMove)
         {
@@ -272,10 +284,10 @@ public partial class HumanoidCharacter : Entity
         }
     }
 
-    protected void setDirectionByWeapon()
+    protected void SetDirectionByWeapon()
     {
         var r = Mathf.Wrap(Weapon.RotationDegrees, 0, 360);
-        var v = r switch
+        VectorRotation = r switch
         {
             <= 45 or >= 320 => Vector2.Right,
             >= 45 and <= 135 => Vector2.Down,
@@ -283,42 +295,7 @@ public partial class HumanoidCharacter : Entity
             >= 220 and <= 320 => Vector2.Up,
             _ => Vector2.Zero
         };
-        VectorRotation = v;
     }
 
-    public void StepForward(float rotation)
-    {
-        SetKnockback(100, rotation);
-    }
-
-    // protected void _SetAnimation(Vector2 animationVelocity, bool idle)
-    // {
-    //     if (idle) AnimationPlayer.Stop();
-    //     AnimationPlayer.SpeedScale = Speed / 100;
-    //     if (animationVelocity.Y != 0)
-    //     {
-    //         if (animationVelocity.Y <= -1 && AnimationPlayer.CurrentAnimation != "walk_up")
-    //         {
-    //             if (!idle) AnimationPlayer.Play("walk_up"); else AnimationPlayer.Play("idle_up");
-    //         }
-    //         if (animationVelocity.Y >= 1 && AnimationPlayer.CurrentAnimation != "walk_down")
-    //         {
-    //             if (!idle) AnimationPlayer.Play("walk_down"); else AnimationPlayer.Play("idle_down");
-    //             _setLayerToWeapon(true);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         if (animationVelocity.X >= 1 && AnimationPlayer.CurrentAnimation != "walk_right")
-    //         {
-    //             if (!idle) AnimationPlayer.Play("walk_right"); else AnimationPlayer.Play("idle_right");
-    //         }
-    //         if (animationVelocity.X <= -1 && AnimationPlayer.CurrentAnimation != "walk_left")
-    //         {
-    //             if (!idle) AnimationPlayer.Play("walk_left"); else AnimationPlayer.Play("idle_left");
-    //         }
-    //     }
-    //     _setLayerToWeapon(AnimationPlayer.CurrentAnimation == "idle_up" || AnimationPlayer.CurrentAnimation == "walk_up" ? false : true);
-    //     TrailParticles.Texture = Sprite.Texture;
-    // }
+    public void StepForward(float rotation) => SetKnockback(100, rotation);
 }

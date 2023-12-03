@@ -6,10 +6,16 @@ namespace Galatime
     public partial class Entity : CharacterBody2D
     {
         #region Variables
-        [Export] public float Speed = 200f;
-        public EntityStats Stats = new();
+        /// <summary> Stats, which are applied to entity. </summary>
+        // [Export] public EntityStats Stats = new(new());
+        [Export] public EntityStats Stats;
+        [Export] public GalatimeElement Element;
+        /// <summary> How many XP is dropped from entity when it's died </summary>
         [Export] public int DroppedXp;
+        /// <summary> Speed of the entity moving. </summary>
+        [Export] public float Speed = 200f;
         private Vector2 KnockbackVelocity = Vector2.Zero;
+        public bool CanMove = true;
         #endregion
 
         #region Scenes
@@ -21,7 +27,6 @@ namespace Galatime
         #endregion
 
         #region Nodes
-        public GalatimeElement Element = null;
         public CharacterBody2D Body = null;
         public AnimationPlayer DamageSpritePlayer = null;
         public AudioStreamPlayer2D DamageAudioPlayer = null;
@@ -51,11 +56,7 @@ namespace Galatime
         public Action OnDeath;
         #endregion
 
-        public Entity(EntityStats stats, GalatimeElement element = null)
-        {
-            Stats = stats;
-            Element = element ?? new();
-        }
+        // public Entity(EntityStats stats = null) => (Stats) = (stats);
 
         public override void _Ready()
         {
@@ -87,7 +88,7 @@ namespace Galatime
         /// <summary>
         /// Damages and reduces entity health. If health is less than 0 it will call the function <see cref="OnDeath"/> and fire the <see cref="OnDeath"/> event. 
         /// It will also call the <c>_healthChangedEvent()</c> function 
-        /// </summary>
+        /// </summary> 
         /// <param name="power">Attacker PWR</param>
         /// <param name="attackStat">Attacker ATK</param>
         /// <param name="element">Attacker element</param>
@@ -174,21 +175,24 @@ namespace Galatime
         /// <param name="damageRotation">In radians, will knockback this way. </param>
         public void SetKnockback(float knockback = 0f, float damageRotation = 0f)
         {
-            KnockbackVelocity = Vector2.Right.Rotated(damageRotation) * knockback;
+            KnockbackVelocity = Vector2.Right.Rotated(damageRotation) * Math.Max(knockback - Stats[EntityStatType.KnockbackResistance].Value, 0);
         }
 
         public override void _PhysicsProcess(double delta)
         {
             _MoveProcess();
             KnockbackVelocity = KnockbackVelocity.Lerp(Vector2.Zero, 0.05f);
-            Velocity += KnockbackVelocity;
-            MoveAndSlide();
+            if (Body is not null)
+            {
+                Body.Velocity += KnockbackVelocity;
+                Body.MoveAndSlide();
+            }
         }
 
         /// <summary> Physics process for entity's </summary>
         public virtual void _MoveProcess()
         {
-            Velocity = Vector2.Zero;
+            if (Body is not null) Body.Velocity = Vector2.Zero;
         }
 
         /// <summary> If entity dies event </summary>
@@ -242,7 +246,7 @@ namespace Galatime
             var xpOrb = XpOrbScene.Instantiate<ExperienceOrb>();
             xpOrb.Quantity = DroppedXp;
             xpOrb.GlobalPosition = Body.GlobalPosition;
-            GetParent().AddChild(xpOrb);
+            AddChild(xpOrb);
         }
 
         public void Heal(float amount, int timeToHeal = 0)

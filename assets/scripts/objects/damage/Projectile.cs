@@ -16,14 +16,14 @@ public partial class Projectile : CharacterBody2D
     /// <summary> The speed of the projectile (how fast it moves). </summary>
     [Export] public float Speed = 400f;
 
-    /// <summary> The target of the projectile to aim to. If this is null, the projectile will move by <see cref="Rotation"/>. </summary>
-    public Node2D CurrentTarget;
-
     /// <summary> The the attack stat of the projectile. </summary>
     public float AttackStat = 0;
 
     /// <summary> The damage of the projectile to deal. </summary>
     [Export] public int Power = 10;
+
+    /// <summary> The element of the projectile. </summary>
+    [Export] public GalatimeElement Element;
 
     /// <summary> How many times the projectile can be pierce through the entities. </summary>
     [Export] public int PiercingTimes = 0;
@@ -32,9 +32,6 @@ public partial class Projectile : CharacterBody2D
     public float Duration;
 
     public int CurrentPiercingTimes { get; private set; } = 0;
-
-    /// <summary> The element of the projectile. </summary>
-    public GalatimeElement Element = new();
 
     /// <summary> Target team to deal damage. Don't confuse with friendly fire, because this target to deal damage. Can be "allies" or "enemies". </summary>
     [Export] public Teams TargetTeam = Teams.Enemies;
@@ -47,6 +44,8 @@ public partial class Projectile : CharacterBody2D
 
     /// <summary> If the projectile can explode. </summary>
     [Export] public bool Explosive = false;
+
+    [Export] public int ExplosionPower;
 
     /// <summary> If the projectile is moving in the direction. </summary>
     [Export] public bool Moving = true;
@@ -72,24 +71,23 @@ public partial class Projectile : CharacterBody2D
 
     public override void _Ready()
     {   
-        ExplosionScene = ResourceLoader.Load<PackedScene>("res://assets/objects/damage/Explosion.tscn");
-        Explosion = ExplosionScene.Instantiate<Explosion>();
+        ExplosionScene = ResourceLoader.Load<PackedScene>("res://assets/objects/damage/Explosion.tscn").Duplicate() as PackedScene;
+        Explosion = ExplosionScene.Instantiate<Explosion>().Duplicate() as Explosion;
 
         #region Get nodes
         TargetController = GetNode<TargetController>("TargetController");
         DamageArea = GetNode<Area2D>("DamageArea");
         TimeoutTimer = GetNode<Timer>("TimeoutTimer");
         Collision = GetNode<CollisionShape2D>("Collision");
-        // DurationTimer = GetNode<Timer>("DurationTimer");
         #endregion
-
-        // DurationTimer.Timeout += Destroy;
         
         TimeoutTimer.Timeout += QueueFree;
         DamageArea.BodyEntered += OnDamageAreaBodyEntered;
+    }
 
-        // if (Duration > 0) DurationTimer.Start();
-        Rotation = TargetAngle;
+    public override void _Process(double delta)
+    {
+        Explosion.Power = ExplosionPower;
     }
 
     public override void _PhysicsProcess(double delta)
@@ -106,7 +104,16 @@ public partial class Projectile : CharacterBody2D
         MoveAndSlide();
     }
 
-    public float TargetAngle => GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition) + Mathf.DegToRad(360);
+    public float TargetAngle
+    {
+        get
+        {
+            if (TargetController.CurrentTarget != null) return GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition) + Mathf.DegToRad(360);
+            return 0;
+        }
+
+    }
+
     private void OnDamageAreaBodyEntered(Node node)
     {
         if (node is Entity entity && !entity.DeathState && entity.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam)) && Moving) {
@@ -130,6 +137,7 @@ public partial class Projectile : CharacterBody2D
     }
 
     public void Destroy() {
+        if (!Moving) return;
         if (Explosive) {
             // Explosion.TopLevel = true; 
             // Explosion.GlobalPosition = GlobalPosition;

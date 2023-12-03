@@ -139,32 +139,6 @@ namespace Galatime
             return (AbilityData)MemberwiseClone();
         }
 
-        public void PrintAll() {
-            // Print the properties of the ability using reflection.
-            var output = $"[color=blue]*==========================*[/color]\n\n[color=cyan]Properties of the {Name} ability[/color]:\n\n";
-            foreach (var property in GetType().GetProperties()) {
-                output += $"{property.Name}: [color=ORANGE_RED]{property.GetValue(this)}[/color]\n";
-            }
-            output += $"\n[color=cyan]Fields of the {Name} ability fields[/color]:\n\n";
-            foreach (var field in GetType().GetFields()) {
-                if (field.GetValue(this).GetType() == typeof(Costs)) { 
-                    // Get the costs of the ability and print them
-                    var costs = (Costs)field.GetValue(this);
-                    output += $"{field.Name}: [color=ORANGE_RED]Mana: {costs.Mana}, Stamina: {costs.Stamina}[/color]\n";
-                    continue;
-                }
-                if (field.GetValue(this).GetType() == typeof(GalatimeElement)) {
-                    // Get the element of the ability and print it
-                    var element = (GalatimeElement)field.GetValue(this);
-                    output += $"{field.Name}: [color=ORANGE_RED]{element.Name}[/color]\n";
-                    continue;
-                }
-                output += $"{field.Name}: [color=ORANGE_RED]{field.GetValue(this)}[/color]\n";
-            }
-            output += "\n[color=blue]*==========================*[/color]";
-            GD.PrintRich(output);
-        }
-
         public AbilityData() {
             if (Reload > 0) CooldownTimer.WaitTime = Reload;
         }

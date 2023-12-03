@@ -19,7 +19,7 @@ namespace Galatime
         {
             var Item = nodeItem.GetChild(0) as ItemContainer;
             var data = Item.Data;
-            if (!data.IsEmpty)
+            if (data is not null && !data.IsEmpty)
             {
                 nameNode.Text = data.Name;
                 descriptionNode.Text = data.Description;

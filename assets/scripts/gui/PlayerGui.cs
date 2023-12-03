@@ -37,16 +37,14 @@ namespace Galatime
         #region Variables
         public float RemainingDodge;
         public List<AbilityContainer> AbilityContainers = new();
-        private bool isPause = false;
-        public bool IsPause
+        private bool inventoryOpen;
+        public bool InventoryOpen
         {
-            get => isPause;
+            get => InventoryPanel.Visible;
             set
             {
-                isPause = value;
-                OnPause?.Invoke(isPause);
-                PauseMenu.Paused = value;
-                // InventoryPanel.Visible = isPause;
+                inventoryOpen = value;
+                InventoryPanel.Visible = value;
             }
         }
 
@@ -64,15 +62,12 @@ namespace Galatime
             FadeScreen = GetNode<ColorRect>("FadeScreen");
             PauseMenu = GetNode<PauseMenu>("PauseMenu");
 
-            // Stats
             HealthValueBar = GetNode<ValueBar>("HealthValueBar");
             StaminaValueBar = GetNode<ValueBar>("StaminaValueBar");
             ManaValueBar = GetNode<ValueBar>("ManaValueBar");
 
-            VersionText = GetNode<Godot.Label>("Version");
-
+            VersionText = GetNode<Label>("Version");
             DialogBox = GetNode<DialogBox>("DialogBox");
-
             AbilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
             AbilitiesListContainer = GetNode<AbilitiesContainer>("InventoryContainer/AbilitiesContainer");
             InventoryPanel = GetNode<Panel>("InventoryContainer");
@@ -165,6 +160,5 @@ namespace Galatime
         }
 
         public void DisplayItem() => OnItemsChanged?.Invoke();
-        public void TogglePause() => IsPause = !IsPause;
     }
 }

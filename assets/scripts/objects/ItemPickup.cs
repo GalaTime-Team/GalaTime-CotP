@@ -48,14 +48,14 @@ namespace Galatime
         {
             if (node is Player)
             {
-                GetNode<PlayerVariables>("/root/PlayerVariables").addItem(Item, Quantity);
+                GetNode<PlayerVariables>("/root/PlayerVariables").AddItem(Item, Quantity);
                 QueueFree();
             }
         }
 
         public void DisplayItem(string id)
         {
-            Item = GalatimeGlobals.getItemById(id);
+            Item = GalatimeGlobals.GetItemById(id);
             ItemContainer1.DisplayItem(Item);
             if (Quantity >= 2 && Quantity < 5)
             {

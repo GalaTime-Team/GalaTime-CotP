@@ -188,12 +188,10 @@ point_count = 4
 curve = SubResource("Curve_devbq")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ym4fn"]
+particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(300, 2000, 1)
-particle_flag_disable_z = true
 gravity = Vector3(0, 10, 0)
-orbit_velocity_min = 0.0
-orbit_velocity_max = 0.0
 scale_min = 4.0
 scale_max = 4.0
 scale_curve = SubResource("CurveTexture_nicso")
@@ -202,12 +200,10 @@ color_ramp = SubResource("GradientTexture1D_ggaop")
 hue_variation_max = 0.07
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_abecs"]
+particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(1500, 1500, 0)
-particle_flag_disable_z = true
 gravity = Vector3(0, 10, 0)
-orbit_velocity_min = 0.0
-orbit_velocity_max = 0.0
 scale_min = 4.0
 scale_max = 4.0
 scale_curve = SubResource("CurveTexture_nicso")
@@ -225,10 +221,10 @@ script = ExtResource("1_ibgb5")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../StartMenuContainer")
-speed_scale = 0.4
 libraries = {
 "": SubResource("AnimationLibrary_h4px0")
 }
+speed_scale = 0.4
 
 [node name="SettingsMenuContainer" type="Control" parent="."]
 layout_mode = 1
@@ -722,7 +718,6 @@ volume_db = 10.0
 stream = ExtResource("6_p1ru6")
 
 [node name="AudioStreamPlayerWhoosh" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("12_hmhgi")
 autoplay = true
 
 [editable path="StartMenuContainer/ViewSavesFolder"]

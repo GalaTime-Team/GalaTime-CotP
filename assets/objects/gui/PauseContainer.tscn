@@ -17,11 +17,10 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oxmcq"]
 bg_color = Color(0, 0, 0, 1)
 
-[node name="PauseContainer" type="Panel"]
+[node name="InventoryContainer" type="Panel"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-mouse_filter = 2
 
 [node name="StatsContainer" type="Control" parent="."]
 visible = false
@@ -259,7 +258,6 @@ size_flags_vertical = 0
 alignment = 2
 
 [node name="Inventory" type="GridContainer" parent="."]
-visible = false
 clip_contents = true
 layout_mode = 0
 anchor_left = 0.5

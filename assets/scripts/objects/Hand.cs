@@ -13,15 +13,17 @@ namespace Galatime
             RemoveItem();
             if (item.ItemScene != null)
             {
-                this.ItemData = item;
+                ItemData = item;
                 var objScene = item.ItemScene;
                 var objNode = objScene.Instantiate<IWeapon>();
-                AddChild(objNode as Node); 
+                CallDeferred("AddChildDeferred", objNode as Node);
                 Item = objNode;
             }
         }
 
-        private void RemoveItem()
+        private void AddChildDeferred(Node node) => AddChild(node);
+
+        public void RemoveItem()
         {
             if (GetChildCount() != 0)
             {

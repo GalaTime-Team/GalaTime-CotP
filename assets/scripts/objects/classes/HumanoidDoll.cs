@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-using Galatime;
 using Galatime.Animation;
+
+namespace Galatime.Helpers;
 
 /// <summary> List of animations for the humanoid doll. </summary>
 public enum HumanoidDollAnimations
@@ -93,8 +94,6 @@ public partial class HumanoidDoll : Node2D
             AnimationDirection.Down => Animations[state].Down,
             _ => throw new ArgumentException(),
         });
-
-
     }
 
     /// <summary>
@@ -111,7 +110,7 @@ public partial class HumanoidDoll : Node2D
             Vector2 v when v.X < 0 => AnimationDirection.Left,
             Vector2 v when v.Y > 0 => AnimationDirection.Down,
             Vector2 v when v.Y < 0 => AnimationDirection.Up,
-            _ => throw new ArgumentException()
+            _ => throw new NotImplementedException(),
         };
     }
 

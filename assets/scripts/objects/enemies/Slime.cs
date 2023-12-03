@@ -1,14 +1,11 @@
 using Galatime;
 using Galatime.Helpers;
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 public partial class Slime : Entity
 {
     #region Nodes
-    private NavigationAgent2D Navigation = null;
+    private NavigationAgent2D Navigation;
     private Sprite2D Sprite;
 
     /// <summary> Area for the character's weapon. </summary>
@@ -18,6 +15,8 @@ public partial class Slime : Entity
     /// <summary> Timer for countdown to attack. </summary>
     private Timer AttackCountdownTimer;
     private TargetController TargetController;
+
+    private GpuParticles2D Particles;
     #endregion
 
     #region Variables
@@ -26,30 +25,37 @@ public partial class Slime : Entity
     /// <summary> Character speed. </summary>
     #endregion
 
-    public Slime() : base(new(
-        PhysicalAttack: 20,
-        PhysicalDefense: 20,
-        MagicalDefense: 20,
-        Health: 20
-    ), GalatimeElement.Aqua) {}
+    // public Slime() : base(new EntityStats(new()
+    // {
+    //     [EntityStatType.Health] = 50,
+    //     [EntityStatType.Mana] = 50,
+    //     [EntityStatType.Stamina] = 50,
+    //     [EntityStatType.PhysicalAttack] = 50,
+    //     [EntityStatType.PhysicalDefense] = 50,
+    //     [EntityStatType.MagicalAttack] = 50,
+    //     [EntityStatType.MagicalDefense] = 50,
+    //     [EntityStatType.Agility] = 50,
+    // }))
+    // { }
+
 
     public override void _Ready()
     {
         base._Ready();
-        Body = this;
+        CanMove = false;
 
-        AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+        Body = this;
 
         SlimeScene = ResourceLoader.Load<PackedScene>("res://assets/objects/enemy/Slime.tscn");
 
-        var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-
         Sprite = GetNode<Sprite2D>("Sprite2D");
-        Navigation = GetNode<NavigationAgent2D>("NavigationAgent3D");
+        Navigation = GetNode<NavigationAgent2D>("Navigation");
+        Particles = GetNode<GpuParticles2D>("Particles");
         TargetController = GetNode<TargetController>("TargetController");
-        TargetController.TargetTeam = Teams.Allies;
-
+        AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
         Weapon = GetNode<Area2D>("Weapon");
+
+        TargetController.TargetTeam = Teams.Allies;
 
         Weapon.BodyEntered += Attack;
         Weapon.BodyExited += OnAreaExit;
@@ -61,8 +67,6 @@ public partial class Slime : Entity
         };
         AttackCountdownTimer.Timeout += JustHit;
         AddChild(AttackCountdownTimer);
-
-        AnimationPlayer.Play("intro");
     }
 
     public override void _ExitTree()
@@ -71,9 +75,15 @@ public partial class Slime : Entity
         Weapon.BodyExited -= OnAreaExit;
     }
 
+    public void Spawned()
+    {
+        CanMove = true;
+        AnimationPlayer.Play("walk");
+    }
+
     public override void _MoveProcess()
     {
-        if (!DeathState) Move(); else Velocity = Vector2.Zero;
+        if (!DeathState) Move(); else Body.Velocity = Vector2.Zero;
     }
 
     public override void _DeathEvent(float damageRotation = 0f)
@@ -90,7 +100,7 @@ public partial class Slime : Entity
 
     public void JustHit()
     {
-        var bodies = Weapon.GetOverlappingBodies()[0] as CharacterBody2D;
+        var bodies = Weapon.GetOverlappingBodies()[0] as Entity;
         if (bodies is Entity entity) DealDamage(entity);
     }
 
@@ -99,7 +109,18 @@ public partial class Slime : Entity
         AttackCountdownTimer.Start();
         GalatimeElement element = GalatimeElement.Aqua;
         float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-        entity.TakeDamage(30, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.physical, 500, damageRotation);
+        entity.TakeDamage(50, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.physical, 500, damageRotation);
+
+        AnimationPlayer.Play("hit");
+    }
+
+    public void SpawnParticles()
+    {
+        var particles = Particles.Duplicate() as GpuParticles2D;
+        AddChild(particles);
+        particles.TopLevel = true;
+        particles.Emitting = true;
+        particles.GlobalPosition = GlobalPosition;
     }
 
     public void OnAreaExit(Node2D body) => AttackCountdownTimer.Stop();
@@ -107,7 +128,7 @@ public partial class Slime : Entity
     public void Move()
     {
         var enemy = TargetController.CurrentTarget;
-        if (enemy != null)
+        if (enemy != null && CanMove)
         {
             Vector2 vectorPath = Vector2.Zero;
             Navigation.TargetPosition = enemy.GlobalPosition;
@@ -116,9 +137,9 @@ public partial class Slime : Entity
             Weapon.Rotation = rotation;
             float rotationDeg = Mathf.RadToDeg(rotation);
             float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
-            if (rotationDegPositive <= 90) Sprite.FlipH = true; else Sprite.FlipH = false;
-            Velocity = vectorPath;
+            Sprite.FlipH = rotationDegPositive <= 90;
+            Body.Velocity = vectorPath;
         }
-        else Velocity = Vector2.Zero;
+        else Body.Velocity = Vector2.Zero;
     }
 }

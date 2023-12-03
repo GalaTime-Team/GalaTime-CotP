@@ -14,38 +14,37 @@ public partial class Inventory : GridContainer
 
     public override void _Ready()
     {
-        PlayerGui gui = GetNode<PlayerGui>("../../");
-
         Tooltip = GetNode<Tooltip>("../Tooltip");
         DragPreview = GetNode<DragPreview>("../DragPreview");
-
         PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
-        gui.OnItemsChanged += () => _on_inventory_items_changed();
-        gui.OnPause += (bool visible) => _onPause();
-        PackedScene slot = GD.Load<PackedScene>("res://assets/objects/Slot.tscn");
+        var gui = GetNode<PlayerGui>("../../");
+        gui.OnItemsChanged += OnInventoryChanged;
+        gui.OnPause += OnPause;
+
+        var slotScene = GD.Load<PackedScene>("res://assets/objects/Slot.tscn");
         for (int i = 0; i < PlayerVariables.slots; i++)
         {
-            Slot ItemSlot = (Slot)slot.Instantiate();
-            ItemSlot.slotType = Slot.InventorySlotType.INVENTORY;
-            if (i == 0) ItemSlot.slotType = Slot.InventorySlotType.WEAPON;
+            Slot itemSlot = (Slot)slotScene.Instantiate();
+            itemSlot.slotType = Slot.InventorySlotType.INVENTORY;
+            if (i == 0) itemSlot.slotType = Slot.InventorySlotType.WEAPON;
 
-            ItemSlot.MouseEntered += () => _mouseEnterSlot(ItemSlot);
-            ItemSlot.MouseExited += () => _mouseExitSlot();
-            ItemSlot.GuiInput += (InputEvent @event) => _guiInputSlot(@event, ItemSlot.GetIndex());
+            itemSlot.MouseEntered += () => Tooltip.Display(itemSlot);
+            itemSlot.MouseExited += () => Tooltip.Hide();
+            itemSlot.GuiInput += (InputEvent @event) => GuiInputSlot(@event, itemSlot.GetIndex());
 
-            AddChild(ItemSlot);
+            AddChild(itemSlot);
         }
     }
 
-    public void _onPause()
+    public void OnPause(bool paused)
     {
         // var draggedItem = (Godot.Collections.Dictionary)dragPreview.Get("draggedItem");
         // if (draggedItem != null) if (draggedItem.Count >= 0) playerVariables.setItem(draggedItem, _previousItemId);
         // dragPreview.draggedItem = null;
     }
 
-    void _on_inventory_items_changed()
+    void OnInventoryChanged()
     {
         for (int i = 0; i < PlayerVariables.inventory.Count; i++)
         {
@@ -65,29 +64,19 @@ public partial class Inventory : GridContainer
         }
     }
 
-    public void _mouseEnterSlot(Slot item)
-    {
-        Tooltip.Display(item);
-    }
-
-    public void _mouseExitSlot()
-    {
-        Tooltip.Call("_hide");
-    }
-
-    public void _guiInputSlot(InputEvent @event, int slot)
+    public void GuiInputSlot(InputEvent @event, int slot)
     {
         if (@event is InputEventMouseButton)
         {
             var @mouseEvent = @event as InputEventMouseButton;
             if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
             {
-                dragItem(slot);
+                DragItem(slot);
                 GD.Print("get input");
             }
         }
     }
-    public void dragItem(int slot)
+    public void DragItem(int slot)
     {
         var inventoryItem = PlayerVariables.inventory[slot];
         var draggedItem = DragPreview.DraggedItem;
@@ -95,7 +84,7 @@ public partial class Inventory : GridContainer
         GD.Print($"CURRENT PRESSED INDEX: {slot}. Dragged item is empty: {draggedItem.IsEmpty}, Inventory item is empty: {inventoryItem.IsEmpty} (Quantity: {inventoryItem.Quantity}, ID: {inventoryItem.ID})");
         if (draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
-            DragPreview.DraggedItem = PlayerVariables.removeItem(slot);
+            DragPreview.DraggedItem = PlayerVariables.RemoveItem(slot);
             PreviousItemId = slot;
         }
         else if (!draggedItem.IsEmpty && inventoryItem.IsEmpty)
@@ -106,7 +95,7 @@ public partial class Inventory : GridContainer
                 return;
             }   
             DragPreview.DraggedItem = new Item();
-            PlayerVariables.setItem(draggedItem, slot);
+            PlayerVariables.SetItem(draggedItem, slot);
         }
         else if (!draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
@@ -115,10 +104,8 @@ public partial class Inventory : GridContainer
                 DragPreview.Prevent();
                 return;
             }
-            DragPreview.DraggedItem = PlayerVariables.setItem(draggedItem, slot);
+            DragPreview.DraggedItem = PlayerVariables.SetItem(draggedItem, slot);
             PreviousItemId = slot;
         }
     }
 }
-
-

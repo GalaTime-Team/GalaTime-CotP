@@ -1,22 +1,24 @@
-using System;
 using Godot;
 
 namespace Galatime;
 
-public struct AudioPack
+public class AudioPack
 {
-    public string AudioCombatPathFile;
-    public string AudioCombatCalmPathFile;
+    /// <summary> Path to audio files for combat and calm audio. </summary>
+    public string AudioCombatPath, AudioCombatCalmPath;
 
-    public AudioStream AudioCombat;
-    public AudioStream AudioCombatCalm;
+    public AudioStream AudioCombat, AudioCombatCalm;
 
-    public readonly bool IsLoaded => AudioCombat != null && AudioCombatCalm != null;
+    public AudioPack(string audioCombat, string audioCombatCalmPath)
+    {
+        // Assign the audio paths.
+        (AudioCombatPath, AudioCombatCalmPath) = (audioCombat, audioCombatCalmPath);
+    }
 
-    public AudioPack(string audioCombat, string audioCombatCalm) {
-        AudioCombatPathFile = audioCombat;
-        AudioCombatCalmPathFile = audioCombatCalm;
-        AudioCombat = GD.Load<AudioStream>(audioCombat);
-        AudioCombatCalm = GD.Load<AudioStream>(audioCombatCalm);
+    public void Load()
+    {
+        // Load the combat and calm audio streams.
+        AudioCombat = GD.Load<AudioStream>(AudioCombatPath);
+        AudioCombatCalm = GD.Load<AudioStream>(AudioCombatCalmPath);
     }
 }

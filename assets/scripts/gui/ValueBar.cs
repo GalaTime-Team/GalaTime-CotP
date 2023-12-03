@@ -129,7 +129,7 @@ public partial class ValueBar : Control
         // Set transient progress bar texture and other properties.
         TransientProgressBar.TextureProgress = TransientTexture;
         TransientProgressBar.Name = "TransientProgressBar";
-        TransientProgressBar.ZIndex -= 1;
+        TransientProgressBar.ZIndex--;
 
         // Add transient progress bar to the scene.
         AddChild(TransientProgressBar);
@@ -152,11 +152,11 @@ public partial class ValueBar : Control
         var initialValue = CurrentTransientProgressBar.Value;
 
         // Tween to the new value for 2 seconds.
-        TweenTransientProgressBar.TweenMethod(Callable.From<float>((x) => CurrentTransientProgressBar.Value = x), initialValue, Value, TransientDuration);
+        TweenTransientProgressBar.TweenMethod(Callable.From<float>((x) => { if (IsInstanceValid(CurrentTransientProgressBar)) CurrentTransientProgressBar.Value = x; }), initialValue, Value, TransientDuration);
     }
     
     public void StartTransientColor() {
         TweenColor = GetTree().CreateTween();
-        TweenColor.TweenMethod(Callable.From<Color>((x) => Label.Modulate = x), ChangedColor, NormalColor, TransientDuration);
+        TweenColor.TweenMethod(Callable.From<Color>((x) => { if (IsInstanceValid(Label)) Label.Modulate = x; }), ChangedColor, NormalColor, TransientDuration);
     }
 }

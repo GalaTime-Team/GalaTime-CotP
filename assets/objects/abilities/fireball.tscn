@@ -38,12 +38,10 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kw371"]
+particle_flag_disable_z = true
 emission_shape = 1
 emission_sphere_radius = 32.0
-particle_flag_disable_z = true
 gravity = Vector3(0, 0, 0)
-orbit_velocity_min = 0.0
-orbit_velocity_max = 0.0
 scale_min = 4.0
 scale_max = 4.0
 anim_speed_min = 1.0
@@ -215,6 +213,10 @@ one_shot = true
 
 [node name="Projectile" parent="." instance=ExtResource("2_t52am")]
 collision_layer = 8
+Power = 40
+Accuracy = 0.0
+Explosive = true
+ExplosionPower = 8
 metadata/_edit_lock_ = true
 
 [node name="Particles" type="GPUParticles2D" parent="Projectile"]

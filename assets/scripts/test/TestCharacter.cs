@@ -1,179 +1,174 @@
 using Galatime;
+using Galatime.Helpers;
+
 using Godot;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 public partial class TestCharacter : HumanoidCharacter
 {
-    [Export] private int followOrder = 0;
+    [Export] public int FollowOrder;
 
-    private Vector2[] _path = null;
-    private Line2D _line = null;
-    private NavigationAgent2D _navigation = null;
-    private RayCast2D _rayCast;
+    public NavigationAgent2D Navigation;
+    public RayCast2D RayCast;
+    public AnimationPlayer AnimationPlayer;
 
-    private Timer retreatDelay;
-    private Timer moveDelay;
+    public TargetController TargetController;
 
-    private Timer enemySwitchDelay;
+    public Timer RetreatDelayTimer;
+    public Timer MoveDelayTimer;
+    public Timer EnemySwitchDelayTimer;
 
-    private Player _player;
+    public Player Player;
 
-    private Entity currentEnemy = null;
+    // public TestCharacter() : base(new EntityStats(new()
+    // {
+    //     [EntityStatType.Health] = 100,
+    //     [EntityStatType.Mana] = 100,
+    //     [EntityStatType.Stamina] = 100,
+    //     [EntityStatType.PhysicalAttack] = 100,
+    //     [EntityStatType.PhysicalDefense] = 100,
+    //     [EntityStatType.MagicalAttack] = 100,
+    //     [EntityStatType.MagicalDefense] = 100,
+    //     [EntityStatType.Agility] = 100,
+    // }))
+    // { }
+
 
     public override void _Ready()
     {
         base._Ready();
-        AnimationPlayer = GetNode<AnimationPlayer>("Animation");
-        Sprite = GetNode<Sprite2D>("Sprite2D");
-        TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
-        Weapon = GetNode<Hand>("Hand");
 
-        _navigation = GetNode<NavigationAgent2D>("NavigationAgent3D");
-        _rayCast = GetNode<RayCast2D>("RayCast3D");
+        Weapon = GetNode<Hand>("Hand");
+        HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
+        TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
         Body = this;
 
-        var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-        _player = playerVariables.Player;
+        AnimationPlayer = GetNode<AnimationPlayer>("Animation");
+        TargetController = GetNode<TargetController>("TargetController");
+        Navigation = GetNode<NavigationAgent2D>("Navigation");
+        RayCast = GetNode<RayCast2D>("RayCast");
 
-        Speed = 300f;
-        AnimationPlayer.SpeedScale = Speed / 100;
+        var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+        Player = playerVariables.Player;
 
         Stamina += 99999;
         Mana += 99999;
 
-        retreatDelay = new Timer();
-        retreatDelay.WaitTime = 0.3f;
-        retreatDelay.OneShot = true;
-        AddChild(retreatDelay);
+        InitializeTimers();
 
-        moveDelay = new Timer();
-        moveDelay.WaitTime = 0.3f;
-        moveDelay.OneShot = true;
-        AddChild(moveDelay);
-
-        enemySwitchDelay = new Timer();
-        enemySwitchDelay.WaitTime = 0.5f;
-        enemySwitchDelay.Timeout += () => _setEnemy();
-        AddChild(enemySwitchDelay);
-        enemySwitchDelay.Start();
-
-        addAbility(GalatimeGlobals.GetAbilityById("flamethrower"), 0);
-        addAbility(GalatimeGlobals.GetAbilityById("fireball"), 1);
-        addAbility(GalatimeGlobals.GetAbilityById("firewave"), 2);
+        AddAbility(GalatimeGlobals.GetAbilityById("flamethrower"), 0);
+        AddAbility(GalatimeGlobals.GetAbilityById("fireball"), 1);
+        AddAbility(GalatimeGlobals.GetAbilityById("firewave"), 2);
     }
 
-    public TestCharacter() : base(new(
-            PhysicalAttack: 100,
-            MagicalAttack: 100,
-            PhysicalDefense: 100,
-            MagicalDefense: 100,
-            Health: 100,
-            Mana: 100,
-            Stamina: 100,
-            Agility: 100
-        )) {}
+    private void InitializeTimers()
+    {
+        RetreatDelayTimer = new()
+        {
+            WaitTime = 0.3f,
+            OneShot = true
+        };
+        AddChild(RetreatDelayTimer);
+
+        MoveDelayTimer = new()
+        {
+            WaitTime = 0.3f,
+            OneShot = true
+        };
+        AddChild(MoveDelayTimer);
+    }
+
+    float PathRotation => Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());
 
     public override void _MoveProcess()
     {
         base._MoveProcess();
-        Vector2 vectorPath = Vector2.Zero;
-        float pathRotation = 0;
-        if (currentEnemy != null)
-        {
-            if (Weapon.Item == null) Weapon.TakeItem(GalatimeGlobals.getItemById("golden_holder_sword"));
-            _rayCast.TargetPosition = Vector2.Right.Rotated(GlobalPosition.AngleToPoint(currentEnemy.GlobalPosition)) * 200;
-            _navigation.TargetPosition = currentEnemy.GlobalPosition;
-            vectorPath = Body.GlobalPosition.DirectionTo(_navigation.GetNextPathPosition());
-            pathRotation = Body.GlobalPosition.AngleToPoint(_navigation.GetNextPathPosition());
-            float enemyRotation = Body.GlobalPosition.AngleToPoint(currentEnemy.GlobalPosition);
-            Weapon.Rotation = pathRotation;
-            var distance = Body.GlobalPosition.DistanceTo(currentEnemy.GlobalPosition);
-            if (distance >= 200)
-            {
-                if (moveDelay.TimeLeft == 0) moveDelay.Start();
-            }
-            vectorPath = moveDelay.TimeLeft > 0 ? vectorPath : Vector2.Zero;
-            if (retreatDelay.TimeLeft > 0)
-            {
-                vectorPath = Vector2.Right.Rotated(enemyRotation + MathF.PI);
-            }
-            if (distance <= 150)
-            {
-                if (retreatDelay.TimeLeft == 0) retreatDelay.Start();
-            }
-            if (_rayCast.IsColliding())
-            {
-                var obj = _rayCast.GetCollider();
-                if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState)
-                {
-                    var rotation = Body.GlobalPosition.AngleToPoint(currentEnemy.GlobalPosition);
-                    Weapon.Rotation = rotation;
-                    for (int i = 0; i < Abilities.Count; i++)
-                    {
-                        var ability = Abilities[i];
-                        if (ability.IsReloaded) _useAbility(i);
-                    }
-                }
-            }
-            var swordColliders = Weapon.GetOverlappingBodies();
-            if (swordColliders.Count >= 1)
-            {
-                var obj = (Node2D)swordColliders[0];
-                if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState)
-                {
-                    var rotation = Body.GlobalPosition.AngleToPoint(currentEnemy.GlobalPosition);
-                    Weapon.Rotation = rotation;
-                    Weapon.Attack(this);
-                }
-            }
-            Body.Velocity = vectorPath.Normalized() * Speed;
-            MoveAndSlide();
-            // _SetAnimation((Vector2.Right.Rotated(pathRotation) * 2).Round(), vectorPath.Length() == 0 ? true : false);
-        }
-        else
-        {
-            _defaultMotion();
-        }
+
+        if (TargetController.CurrentTarget != null) CombatMovement();
+        // Moving normally when there is no enemies.
+        else NormalMovement();
     }
 
-    private void _setEnemy()
+    private async void CombatMovement()
     {
-        var enemies = GetTree().GetNodesInGroup("enemy");
-        Entity enemy = null;
-        List<object> NonTypedEnemies = new List<object>();
-        for (int i = 0; i < enemies.Count; i++)
+        Vector2 vectorPath;
+
+        // Take a sword if not equipped.
+        if (Weapon.Item == null) Weapon.TakeItem(GalatimeGlobals.GetItemById("golden_holder_sword"));
+        // Set RayCast position by angle to the enemy.
+        RayCast.TargetPosition = Vector2.Right.Rotated(GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition)) * 200;
+        // Set target position to the next enemy.
+        Navigation.TargetPosition = TargetController.CurrentTarget.GlobalPosition;
+
+        // Vector from the target.
+        await ToSignal(GetTree(), "physics_frame"); // Wait one physics frame
+        vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition());
+
+        // Rotation to the enemy.
+        var enemyRotation = Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
+        Weapon.Rotation = enemyRotation;
+
+        // Moving behavior based on distance.
+        var distance = Body.GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition);
+        if (distance >= 200 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
+        vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
+        if (RetreatDelayTimer.TimeLeft > 0) vectorPath = Vector2.Right.Rotated(enemyRotation + MathF.PI);
+        if (distance <= 150 && RetreatDelayTimer.TimeLeft == 0) RetreatDelayTimer.Start();
+
+        // Checking if enemy is close.
+        if (RayCast.IsColliding())
         {
-            NonTypedEnemies.Add(enemies[i]);
+            var obj = RayCast.GetCollider();
+
+            // Check if enemy is enemy and not dead.
+            if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState)
+            {
+                // Weapon.Rotation = (float)Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
+
+                // Use all abilities by order.
+                for (int i = 0; i < Abilities.Count; i++)
+                {
+                    var ability = Abilities[i];
+                    if (ability.IsReloaded) UseAbility(i);
+                }
+            }
         }
-        var sortedEnemies = NonTypedEnemies.OrderBy(x => x as Entity != null ? Body.GlobalPosition.DistanceTo((x as Entity).GlobalPosition) : 0).ToList();
-        sortedEnemies.RemoveAll(x => x as Entity != null ? (x as Entity).DeathState : false);
-        if (sortedEnemies.ToList().Count > 0) enemy = sortedEnemies[0] as Entity;
-        currentEnemy = enemy;
+        // Check if any enemies are too close.
+        var swordColliders = Weapon.GetOverlappingBodies();
+        if (swordColliders.Count >= 1)
+        {
+            var obj = swordColliders[0];
+            // Check if enemy is enemy and not dead.
+            if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState) Weapon.Attack(this);
+        }
+        Body.Velocity = vectorPath.Normalized() * Speed;
+        Body.MoveAndSlide();
+
+        State = Body.Velocity.Length() == 0 ? HumanoidStates.Idle : HumanoidStates.Walk;
+        HumanoidDoll.SetAnimation(VectorRotation, State);
     }
 
-    private void _defaultMotion()
+    /// <summary> Process of normal movement of the character. </summary>
+    private async void NormalMovement()
     {
-        // if (weapon._item != null) weapon.takeItem(new Godot.Collections.Dictionary());
+        Weapon.Rotation = PathRotation;
 
         var allies = GetTree().GetNodesInGroup("ally");
-        var followTo = allies[followOrder] as CharacterBody2D;
-        Vector2 vectorPath = Vector2.Zero;
-        _rayCast.TargetPosition = Vector2.Zero;
-        _navigation.TargetPosition = followTo.GlobalPosition;
-        vectorPath = Body.GlobalPosition.DirectionTo(_navigation.GetNextPathPosition());
-        float pathRotation = Body.GlobalPosition.AngleToPoint(_navigation.GetNextPathPosition());
-        Weapon.Rotation = pathRotation;
+        var followTo = allies[FollowOrder] as CharacterBody2D;
+
+        Vector2 vectorPath;
+        RayCast.TargetPosition = Vector2.Zero;
+        Navigation.TargetPosition = followTo.GlobalPosition;
+
+        await ToSignal(GetTree(), "physics_frame"); // Wait one physics frame
+        vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition());
         var distance = Body.GlobalPosition.DistanceTo(followTo.GlobalPosition);
-        // vectorPath = distance >= 100 ? vectorPath : Vector2.Zero;
-        if (distance >= 150)
-        {
-            if (moveDelay.TimeLeft == 0) moveDelay.Start();
-        }
-        vectorPath = moveDelay.TimeLeft > 0 ? vectorPath : Vector2.Zero;
+        if (distance >= 150 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
+        vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
         Body.Velocity = vectorPath.Normalized() * Speed;
-        MoveAndSlide();
-        // _SetAnimation((Vector2.Right.Rotated(pathRotation) * 2).Round(), vectorPath.Length() == 0 ? true : false);
+        Body.MoveAndSlide();
+
+        State = Body.Velocity.Length() == 0 ? HumanoidStates.Idle : HumanoidStates.Walk;
+        HumanoidDoll.SetAnimation(VectorRotation, State);
     }
 }

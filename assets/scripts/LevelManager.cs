@@ -1,22 +1,20 @@
-using System.Collections.Generic;
-using Godot;
-using System;
 using Galatime;
+using Godot;
+using System.Collections.Generic;
 
 public partial class LevelManager : Node
 {
     /// <summary> The audio pack, which contains the audios for the level, contains the both calm and combat versions. </summary>
     public Dictionary<string, AudioPack> AudioPacks = new() {
-        {"classicalbreak", new AudioPack(
-            "res://assets/audios/soundtracks/enemies_test_level/classicalbreak.wav",
-            "res://assets/audios/soundtracks/enemies_test_level/classicalbreakcalm.wav"
-        )},
-        {"mountains", new AudioPack(
-            "res://assets/audios/soundtracks/enemies_test_level/Deep_Mountains.mp3",
-            "res://assets/audios/soundtracks/enemies_test_level/Deep_hidden_in_the_Mountain.mp3"
-        )
-        }
-    };
+            {"classicalbreak", new AudioPack(
+                "res://assets/audios/soundtracks/enemies_test_level/classicalbreak.wav",
+                "res://assets/audios/soundtracks/enemies_test_level/classicalbreakcalm.wav"
+            )},
+            {"mountains", new AudioPack(
+                "res://assets/audios/soundtracks/enemies_test_level/Deep_Mountains.mp3",
+                "res://assets/audios/soundtracks/enemies_test_level/Deep_hidden_in_the_Mountain.mp3"
+            )}
+        };
 
     /// <summary> The audio player when the character is in combat. </summary>
     public AudioStreamPlayer AudioPlayerCombat;
@@ -73,8 +71,6 @@ public partial class LevelManager : Node
     {
         // Check if the combat audios is played, if so, don't stop playing.
         if (AudioCombatIsPlaying) return;
-        // Check if the audio pack is valid
-        if (AudioPacks.ContainsKey(audioPack)) GD.PrintErr($"Invalid audio pack. Requested: {audioPack}");
 
         // Set the audio stream and play it
         // We can also just play calm or combat, but sound will be unsynchronized.
@@ -92,7 +88,8 @@ public partial class LevelManager : Node
 
     /// <summary> Smoothly fades the time scale. </summary>
     /// <param name="duration"> The duration of the transition. </param>
-    public void TweenTimeScale(float duration = 0.5f) {
+    public void TweenTimeScale(float duration = 0.5f)
+    {
         var tween = GetTree().CreateTween().SetParallel();
         tween.TweenMethod(Callable.From<float>(x => Engine.TimeScale = x), 0.1f, 1f, duration);
         AudioPlayerCombat.PitchScale = 0.1f;
@@ -114,7 +111,8 @@ public partial class LevelManager : Node
         tween.TweenProperty(secondaryPlayer, "volume_db", -80, duration).SetDelay(stopMusic ? 0 : duration / 1.25).Finished += () =>
         {
             // Stop the music if needed by waiting for the tween to finish.
-            if (stopMusic) { 
+            if (stopMusic)
+            {
                 primaryPlayer.Stop();
                 secondaryPlayer.Stop();
             }

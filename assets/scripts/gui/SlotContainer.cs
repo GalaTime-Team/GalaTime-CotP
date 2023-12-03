@@ -95,7 +95,7 @@ public partial class SlotContainer : GridContainer
         GD.Print($"CURRENT PRESSED INDEX: {slot}. Dragged item is empty: {draggedItem.IsEmpty}, Inventory item is empty: {inventoryItem.IsEmpty} (Quantity: {inventoryItem.Quantity}, ID: {inventoryItem.ID})");
         if (draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
-            dragPreview.DraggedItem = playerVariables.removeItem(slot);
+            dragPreview.DraggedItem = playerVariables.RemoveItem(slot);
             _previousItemId = slot;
         }
         else if (!draggedItem.IsEmpty && inventoryItem.IsEmpty)
@@ -106,7 +106,7 @@ public partial class SlotContainer : GridContainer
                 return;
             }   
             dragPreview.DraggedItem = new Item();
-            playerVariables.setItem(draggedItem, slot);
+            playerVariables.SetItem(draggedItem, slot);
         }
         else if (!draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
@@ -115,7 +115,7 @@ public partial class SlotContainer : GridContainer
                 dragPreview.Prevent();
                 return;
             }
-            dragPreview.DraggedItem = playerVariables.setItem(draggedItem, slot);
+            dragPreview.DraggedItem = playerVariables.SetItem(draggedItem, slot);
             _previousItemId = slot;
         }
     }

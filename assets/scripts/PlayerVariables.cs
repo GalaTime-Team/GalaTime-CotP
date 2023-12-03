@@ -1,9 +1,8 @@
+using ExtensionMethods;
 using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using ExtensionMethods;
 
 namespace Galatime
 {
@@ -91,7 +90,8 @@ namespace Galatime
                     for (int i = 0; i < inventoryUnconverted.Count; i++)
                     {
                         // Checking if the save contains the item by current index
-                        if (!inventoryUnconverted.ContainsKey(i)) { 
+                        if (!inventoryUnconverted.ContainsKey(i))
+                        {
                             // If not, we add empty item (space between items)
                             inventory[i] = new Item();
                             continue;
@@ -101,26 +101,14 @@ namespace Galatime
                         if (item.ContainsKey("id"))
                         {
                             // Adding the item to the inventory
-                            inventory[i] = GalatimeGlobals.getItemById((string)item["id"]);
+                            inventory[i] = GalatimeGlobals.GetItemById((string)item["id"]);
                             // Adding the quantity as well
                             inventory[i].Quantity = (int)item["quantity"];
                         }
                     }
                 }
-
-                // if (saveData.ContainsKey("stats"))
-                // {
-                //     Godot.Collections.Dictionary stats = (Godot.Collections.Dictionary)saveData["stats"];
-                //     foreach (string key in stats.Keys.Select(v => (string)v))
-                //     {
-                //         Player.Stats[key].Value = (int)stats[key];
-                //     }
-                // }
-
                 Player.Xp = (int)saveData.GetOrNull("xp");
                 learnedAbilities = (Godot.Collections.Array<string>)saveData["learned_abilities"];
-
-                // playtimeTimer.Start();
 
                 // Invoke the events to intalize the player and global variables
                 OnItemsChanged?.Invoke();
@@ -211,25 +199,8 @@ namespace Galatime
             return LearnedStatus.ok;
         }
 
-        // public bool isAbilityReloaded(int id)
-        // {
-        //     if (Player == null)
-        //     {
-        //         GD.PrintErr("Сouldn't find a player, return false"); return false;
-        //     }
-
-        //     if (Player._abiltiesReloadTimes[id] <= 0)
-        //     {
-        //         return true;
-        //     }
-        //     else
-        //     {
-        //         return false;
-        //     }
-        // }
-
         /// <summary> Add item to free slot in inventory </summary>
-        public void addItem(Item item, int quantity)
+        public void AddItem(Item item, int quantity)
         {
             // Go through all items
             for (var i = 0; i < inventory.Count; i++)
@@ -268,7 +239,7 @@ namespace Galatime
                         item.Quantity += quantity;
                     }
                     // Add item
-                    setItem(item.Clone(), i);
+                    SetItem(item.Clone(), i);
                     return;
                 }
             }
@@ -279,7 +250,7 @@ namespace Galatime
         /// </summary>
         /// <param name="ability">JSON ability data</param>
         /// <param name="slot">Up to three slots</param>
-        public void setAbility(AbilityData ability, int slot)
+        public void SetAbility(AbilityData ability, int slot)
         {
             if (abilities.Count > abilitySlots)
             {
@@ -294,7 +265,7 @@ namespace Galatime
         /// </summary>
         /// <param name="slot">Item slot to delete</param>
         /// <returns>Previous ability</returns>
-        public AbilityData removeAbility(int slot)
+        public AbilityData RemoveAbility(int slot)
         {
             // Get pervious item to return
             var previousItem = new AbilityData();
@@ -307,7 +278,7 @@ namespace Galatime
         }
 
         /// <summary> Set inventory item to slot </summary>
-        public Item setItem(Item item, int slot)
+        public Item SetItem(Item item, int slot)
         {
             // Get pervious item to return
             var previousItem = inventory[slot];
@@ -320,7 +291,7 @@ namespace Galatime
         }
 
         /// <summary> Remove inventory item from slot </summary>
-        public Item removeItem(int slot)
+        public Item RemoveItem(int slot)
         {
             // Get pervious item to return
             var previousItem = inventory[slot];

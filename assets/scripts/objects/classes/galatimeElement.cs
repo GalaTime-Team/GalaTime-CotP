@@ -1,6 +1,5 @@
 using Godot;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Galatime
 {
@@ -19,38 +18,64 @@ namespace Galatime
         public DamageDifferenceType Type = DamageDifferenceType.equal;
     }
 
-    [Tool]
+    [GlobalClass, Tool]
     public partial class GalatimeElement : Resource
     {
+        private string initializerElement = "Default";
+        /// <summary> Initializer for a current element. For example you can initialize with "Chaos + Ignis" </summary>
+        [Export]
+        public string InitializerElement
+        {
+            get => initializerElement;
+            set
+            {
+                initializerElement = value;
+                var e = ConvertStringToElement(initializerElement);
+
+                if (e is not null)
+                {
+                    Name = e.Name;
+                    Description = e.Description;
+                    DamageMultipliers = e.DamageMultipliers;
+
+                    GD.Print($"Name: {Name}, Description: {Description}");
+                }
+                else
+                {
+                    GD.Print("Element is not out.");
+                }
+            }
+        }
+
+        /// <summary> Name of the element. </summary>
         public string Name = "Default";
+        /// <summary> Description of the element. </summary>
         public string Description = "No description";
 
-        public float AttackPhysics = 1.0f;
-        public float AttackMagic = 1.0f;
-        public float DefensePhysics = 1.0f;
-        public float DefenseMagic = 1.0f;
-        public float HpMultiplier = 1.0f;
-        public float ManaMultiplier = 1.0f;
-        public float StaminaMultiplier = 1.0f;
-        public float AgilityMultiplier = 1.0f;
-
+        /// <summary> Damage multipliers of the current element. </summary>
         public Dictionary<string, float> DamageMultipliers = new();
 
-        /// <summary>
-        /// Gets damage in float from the source of the damage, depending on its element
-        /// </summary>
+        /// <summary> A method that calculates the received damage from another element and returns a result object. </summary>
+        /// <param name="e"> The element that is attacking this element. </param>
+        /// <param name="amount"> The base damage amount of the attack. </param>
+        /// <returns> A result object that contains the received damage value and the type of damage difference. </returns>
         public GalatimeElementDamageResult GetReceivedDamage(GalatimeElement e, float amount)
         {
             GalatimeElementDamageResult result = new();
+
+            // Use the standard multiplier if no element against this element is found.
             if (!DamageMultipliers.ContainsKey(e.Name))
             {
                 GD.Print("No element is found, the standard multiplier will be used (1x)");
                 result.Damage = amount;
                 return result;
             }
-            float multiplier = (float)DamageMultipliers[e.Name];
-            float damage = amount * multiplier;
-            result.Damage = damage;
+
+            // Calculate the received damage.
+            var multiplier = DamageMultipliers[e.Name];
+            result.Damage = amount * multiplier;
+
+            // Determine the type of damage difference.
             result.Type = multiplier switch
             {
                 1 => DamageDifferenceType.equal,
@@ -61,44 +86,67 @@ namespace Galatime
             return result;
         }
 
+        /// <summary> Converts a string to an element. </summary>
+        /// <param name="elementsSum"> String in format "Ignis + Chaos" </param>
+        public static GalatimeElement ConvertStringToElement(string elementsSum)
+        {
+            var elements = elementsSum.Split('+');
+            GalatimeElement result = null;
+
+            // Return one element if there's only one element.
+            if (elements.Length == 1) return GetByName(elements[0].Trim());
+
+            // Combine the elements.
+            foreach (var element in elements)
+            {
+                string trimmedElement = element.Trim();
+                GalatimeElement convertedElement = GetByName(trimmedElement);
+
+                // If if the first element, set it as first.
+                if (result == null)
+                    result = convertedElement;
+                // Combine the elements.
+                else
+                    if (convertedElement is not null) result += convertedElement;
+            }
+
+            return result;
+        }
+
+        /// <summary> Combines two elements by taking take the average of the two multipliers if there's. </summary>
         public static GalatimeElement operator +(GalatimeElement a, GalatimeElement b)
         {
             var c = new GalatimeElement
             {
-                Name = a.Name + " + " + b.Name
+                // Combine the names of the elements.
+                Name = $"{a.Name} + {b.Name}",
+                Description = $"The combination of {a.Name}, {b.Name} elements.",
+                // Damage multipliers assigned to the new element.
+                DamageMultipliers = a.DamageMultipliers
             };
-            foreach (var elem in a.DamageMultipliers.Keys)
-            {
-                c.DamageMultipliers[elem] = a.DamageMultipliers[elem];
-            }
             foreach (var elem in b.DamageMultipliers.Keys)
             {
+                // Check if the element already exists, if it does, take the average of the two multipliers.
                 if (c.DamageMultipliers.ContainsKey(elem))
                 {
                     c.DamageMultipliers[elem] = (b.DamageMultipliers[elem] + c.DamageMultipliers[elem]) / 2;
+                    // Skip the assignment to escape overriding the element.
                     continue;
                 }
+                // Add the element to the dictionary if no multiplier.
                 c.DamageMultipliers[elem] = b.DamageMultipliers[elem];
             }
             return c;
         }
-        
-        /// <summary>
-        /// Fire element
-        /// </summary>
+
         public static GalatimeElement Ignis
         {
             get
             {
                 GalatimeElement e = new()
-
                 {
                     Name = "Ignis",
                     Description = "This element has fiery abilities. Don't get burned!",
-                    AttackMagic = 1.25f,
-                    DefenseMagic = 1.25f,
-                    ManaMultiplier = 0.8f,
-                    StaminaMultiplier = 0.8f
                 };
 
                 e.DamageMultipliers["Aqua"] = 2f;
@@ -116,10 +164,7 @@ namespace Galatime
                 GalatimeElement e = new()
                 {
                     Name = "Chaos",
-                    Description = "The element that forces destruction. A very destructive thing",
-                    AttackMagic = 0.75f,
-                    StaminaMultiplier = 1.25f,
-                    AgilityMultiplier = 0.75f
+                    Description = "The element that forces destruction. A very destructive thing.",
                 };
 
                 e.DamageMultipliers["Caeli"] = 0.5f;
@@ -138,10 +183,6 @@ namespace Galatime
                 {
                     Name = "Aqua",
                     Description = "This element has the power of water. Do not drown!",
-
-                    AttackMagic = 0.75f,
-                    StaminaMultiplier = 1.25f,
-                    AgilityMultiplier = 0.75f
                 };
 
                 e.DamageMultipliers["Chaos"] = 2f;
@@ -158,10 +199,6 @@ namespace Galatime
             Aqua
         };
 
-        public static GalatimeElement GetByName(string name)
-        {
-            foreach (GalatimeElement e in Elements) if (e.Name == name) return e;
-            return null;
-        }
+        public static GalatimeElement GetByName(string name) => Elements.Find(e => e.Name == name);
     }
 }

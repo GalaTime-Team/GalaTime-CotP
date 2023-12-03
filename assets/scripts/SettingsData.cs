@@ -20,8 +20,15 @@ public class SettingsData {
 [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 public class SettingPropertiesAttribute : Attribute
 {
-    public SettingPropertiesAttribute(string name) => Name = name;
+    public enum SettingType
+    {
+        Category,
+        Setting
+    }
+
+    public SettingPropertiesAttribute(string name, SettingType type = SettingType.Setting) => (Name, Type) = (name, type);
     public string Name;
+    public SettingType Type;
 }
 
 [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]

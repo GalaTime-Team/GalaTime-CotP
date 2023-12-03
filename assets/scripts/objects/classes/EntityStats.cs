@@ -1,130 +1,243 @@
+using Godot;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
-using Godot;
+namespace Galatime;
 
-namespace Galatime
+/// <summary> Represents the types of entity stats. </summary>
+public enum EntityStatType
 {
-    /// <summary> Represents the types of entity stats. </summary>
-    public enum EntityStatType
+    Unsigned,
+    /// <summary> Represents the health stat. Determines the maximum amount of health. </summary>
+    Health,
+    /// <summary> Represents the mana stat. Determines the maximum amount of mana. </summary>
+    Mana,
+    /// <summary> Represents the stamina stat. Determines the maximum amount of stamina. </summary>
+    Stamina,
+    /// <summary> Represents the agility stat. Increases the reload speed. </summary>
+    Agility,
+    /// <summary> Represents the physical attack stat. Increases the power of physical attacks. </summary>
+    PhysicalAttack,
+    /// <summary> Represents the magical attack stat. Increases the power of magical attacks. </summary>
+    MagicalAttack,
+    /// <summary> Represents the physical defense stat. Increases the protection against physical attacks. </summary>
+    PhysicalDefense,
+    /// <summary> Represents the magical defense stat. Increases the protection against magical attacks. </summary>
+    MagicalDefense,
+    /// <summary> Represents the knockback resistance stat. Decreases the knockback from the damage. </summary>
+    KnockbackResistance
+}
+
+/// <summary> This class represents a collection of entity stats, such as health, mana, stamina, etc. </summary>
+
+// Should be used as a global class, but for now, in future versions of Godot it will be used as a tool in the editor.
+// I hate these bugs.
+[GlobalClass, Tool, Icon("res://sprites/editoricons/stats.svg")]
+public partial class EntityStats : Resource, IEnumerable<EntityStat>
+{
+    private Godot.Collections.Array<EntityStatType> statsNames = new();
+    [Export]
+    public Godot.Collections.Array<EntityStatType> StatsNames
     {
-        /// <summary> Represents the physical attack stat. Increases the power of physical attacks. </summary>
-        PhysicalAttack,
-        /// <summary> Represents the magical attack stat. Increases the power of magical attacks. </summary>
-        MagicalAttack,
-        /// <summary> Represents the physical defence stat. Increases the protection against physical attacks. </summary>
-        PhysicalDefense,
-        /// <summary> Represents the magical defence stat. Increases the protection against magical attacks. </summary>
-        MagicalDefense,
-        /// <summary> Represents the health stat. Determines the maximum amount of health. </summary>
-        Health,
-        /// <summary> Represents the mana stat. Determines the maximum amount of mana. </summary>
-        Mana,
-        /// <summary> Represents the stamina stat. Determines the maximum amount of stamina. </summary>
-        Stamina,
-        /// <summary> Represents the agility stat. Increases the reload speed. </summary>
-        Agility
+        get => statsNames; set
+        {
+            statsNames = value;
+            RemoveDuplicates(statsNames);
+            MatchSize(statsValues, statsNames);
+        }
+    }
+    private Godot.Collections.Array<float> statsValues = new();
+    [Export]
+    public Godot.Collections.Array<float> StatsValues
+    {
+        get => statsValues; set
+        {
+            statsValues = value;
+            MatchSize(statsValues, statsNames);
+            InitializeStats();
+        }
     }
 
-    /// <summary> Represents the stats of an entity. Sorry about implementation. </summary>
-    public partial class EntityStats : IEnumerable<EntityStat>
-    {   
-        private Dictionary<EntityStatType, EntityStat> Stats = new() {
-            { EntityStatType.PhysicalAttack, new(EntityStatType.PhysicalAttack, 0) },
-            { EntityStatType.MagicalAttack, new(EntityStatType.MagicalAttack, 0) },
-            { EntityStatType.PhysicalDefense, new(EntityStatType.PhysicalDefense, 0) },
-            { EntityStatType.MagicalDefense, new(EntityStatType.MagicalDefense, 0) },
-            { EntityStatType.Health, new(EntityStatType.Health, 0) },
-            { EntityStatType.Mana, new(EntityStatType.Mana, 0) },
-            { EntityStatType.Stamina, new(EntityStatType.Stamina, 0) },
-            { EntityStatType.Agility, new(EntityStatType.Agility, 0) }
-        };
-        public Action<EntityStats> OnStatsChanged;
+    // Matches the size of two arrays by adding default values to the smaller array or removing values from the larger array.
+    public void MatchSize<[MustBeVariant] T, [MustBeVariant] T2>(Godot.Collections.Array<T> a, Godot.Collections.Array<T2> b)
+    {
+        while (a.Count < b.Count) a.Add(default);
+        while (a.Count > b.Count) a.RemoveAt(a.Count - 1);
+    }
 
-        public EntityStats(int PhysicalAttack = 0, int MagicalAttack = 0 , int PhysicalDefense = 0, int MagicalDefense = 0, int Health = 0, int Mana = 0, int Stamina = 0, int Agility = 0) : base() {
-            Stats[EntityStatType.PhysicalAttack].Value = PhysicalAttack;
-            Stats[EntityStatType.MagicalAttack].Value = MagicalAttack;
-            Stats[EntityStatType.PhysicalDefense].Value = PhysicalDefense;
-            Stats[EntityStatType.MagicalDefense].Value = MagicalDefense;
-            Stats[EntityStatType.Health].Value = Health;
-            Stats[EntityStatType.Mana].Value = Mana;
-            Stats[EntityStatType.Stamina].Value = Stamina;
-            Stats[EntityStatType.Agility].Value = Agility;
-            foreach (var item in this) item.StatChanged += OnStatChanged;
+    public Godot.Collections.Array<EntityStatType> RemoveDuplicates(Godot.Collections.Array<EntityStatType> a)
+    {
+        var tempArray = a;
+        for (int i = 0; i < tempArray.Count; i++)
+        {
+            for (int j = i + 1; j < tempArray.Count; j++)
+            {
+                if (tempArray[i] == tempArray[j] && tempArray[i] != EntityStatType.Unsigned) a.RemoveAt(j);
+            }
+        }
+        return a;
+    }
+
+    /// <summary> This dictionary stores the stats by their type as the key and the EntityStat object as the value. </summary>
+    public Dictionary<EntityStatType, EntityStat> Stats { get; set; } = new();
+    /// <summary> This event is triggered when any of the stats changes its value. </summary>
+    public Action<EntityStats> OnStatsChanged;
+
+    public void InitializeStats()
+    {
+        // Initialize the dictionary by enum values.
+        Stats = new();
+        foreach (EntityStatType stat in Enum.GetValues(typeof(EntityStatType)))
+        {
+            Stats.Add(stat, new EntityStat(stat, 0));
+
+            // Subscribe to the StatChanged event of the EntityStat object.
+            Stats[stat].StatChanged += OnStatChanged;
         }
 
-        private void OnStatChanged(EntityStat stat)
+        // Initialize the dictionary by editor values.
+        for (int i = 0; i < StatsNames.Count; i++)
         {
+            EntityStatType statType = StatsNames[i];
+            Stats[statType] = new EntityStat(statType, (int)StatsValues[i]);
+        }
+        
+        // GD.Print("Stats: ", StatsNames, StatsValues);
+        // var s = new StringBuilder();
+        // foreach(var stat in Stats) {
+        //     s.Append("Stat: " + stat.Key + " Value: " + stat.Value.Value + "\n");
+        // }
+        // GD.Print(s.ToString());
+    }
+
+    // public EntityStats(Dictionary<EntityStatType, float> stats = null)
+    // {
+    //     // Initialize the dictionary.
+    //     Stats = new();
+    //     // Loop through all the possible stat types defined in the enum.
+    //     foreach (EntityStatType stat in Enum.GetValues(typeof(EntityStatType)))
+    //     {
+    //         var s = new EntityStat(stat, 0);
+    //         Stats.Add(stat, s);
+
+    //         // Set the initial value of the stat if it defined in the dictionary.
+    //         if (stats.ContainsKey(stat)) Stats[stat].Value = stats[stat];
+
+    //         // Subscribe to the StatChanged event of the EntityStat object.
+    //         // This will allow us to notify the OnStatsChanged event of this class when any stat changes.
+    //         s.StatChanged += OnStatChanged;
+    //     }
+    // }
+
+    // In current version of Godot, these functions are not working.
+    // Should to be fixed in future versions of Godot.
+
+    /* public override Variant _Get(StringName property)
+    {
+        if (Enum.TryParse(property, out EntityStatType statType))
+        {
+            var value = Stats[statType].Value;
+            return value;
+        }
+        return default;
+    }
+
+    public override bool _Set(StringName property, Variant value)
+    {
+        base._Get(property, value);
+
+        // Trying to get the stat type from the property name.
+        if (Enum.TryParse(property, out EntityStatType statType))
+        {
+            Stats[statType].Value = (int)value;
+            return true;
+        }
+        return false;
+    }
+
+    public override Godot.Collections.Array<Godot.Collections.Dictionary> _GetPropertyList()
+    {
+        base._GetPropertyList();
+
+        var properties = new Godot.Collections.Array<Godot.Collections.Dictionary>();
+
+        foreach (var stat in Stats)
+        {
+            var property = new Godot.Collections.Dictionary
+            {
+                ["name"] = stat.Key.ToString(),
+                ["type"] = (int)Variant.Type.Int,
+                ["hint"] = (int)PropertyHint.Range,
+                ["hint_string"] = "0,999"
+            };
+
+            properties.Add(property);
+        }
+
+        return properties;
+    } */
+
+    private void OnStatChanged(EntityStat stat) => OnStatsChanged?.Invoke(this);
+    public IEnumerator<EntityStat> GetEnumerator() => Stats.Values.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <summary> Gets or sets the <see cref="EntityStat"/> with the specified <see cref="EntityStatType"/>. </summary>
+    /// <param name="type">The <see cref="EntityStatType"/> of the <see cref="EntityStat"/> to get or set.</param>
+    /// <returns>The <see cref="EntityStat"/> with the specified <see cref="EntityStatType"/>.</returns>
+    public EntityStat this[EntityStatType type]
+    {
+        get => Stats[type];
+        set
+        {
+            Stats[type] = value;
             OnStatsChanged?.Invoke(this);
         }
-
-        public IEnumerator<EntityStat> GetEnumerator()
-        {
-            return Stats.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        /// <summary>
-        /// Gets or sets the <see cref="EntityStat"/> with the specified <see cref="EntityStatType"/>.
-        /// </summary>
-        /// <param name="type">The <see cref="EntityStatType"/> of the <see cref="EntityStat"/> to get or set.</param>
-        /// <returns>The <see cref="EntityStat"/> with the specified <see cref="EntityStatType"/>.</returns>
-        public EntityStat this[EntityStatType type]
-        {
-            get => Stats[type];
-            set
-            {
-                Stats[type] = value;
-                OnStatsChanged?.Invoke(this);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the <see cref="EntityStat"/> at the specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index of the <see cref="EntityStat"/> to get or set.</param>
-        /// <returns>The <see cref="EntityStat"/> at the specified index.</returns>
-        public EntityStat this[int index]
-        {
-            get => Stats.ElementAt(index).Value;
-            set
-            {
-                Stats[Stats.ElementAt(index).Key] = value;
-                OnStatsChanged?.Invoke(this);
-            }
-        }
-
-        public int Count => Stats.Count;
     }
 
-    public class EntityStat
+    /// <summary>  Gets or sets the <see cref="EntityStat"/> at the specified index. </summary>
+    /// <param name="index">The zero-based index of the <see cref="EntityStat"/> to get or set.</param>
+    /// <returns>The <see cref="EntityStat"/> at the specified index.</returns>
+    public EntityStat this[int index]
     {
-        public Action<EntityStat> StatChanged;
-
-        public EntityStat(EntityStatType type, int value) => (Type, Value) = (type, value);
-
-        private float value;
-        public float Value
+        get => Stats.ElementAt(index).Value;
+        set
         {
-            get => value;
-            set
-            {
-                this.value = value;
-                StatChanged?.Invoke(this);
-            }
+            Stats[Stats.ElementAt(index).Key] = value;
+            OnStatsChanged?.Invoke(this);
         }
-        public EntityStatType Type;
     }
 
-    public enum DamageType
+    /// <summary> Current count of stats. </summary>
+    public int Count => Stats.Count;
+}
+
+public class EntityStat
+{
+    /// <summary> This event is triggered when stat changes its value </summary>
+    public Action<EntityStat> StatChanged;
+
+    public EntityStat(EntityStatType type, int value) => (Type, Value) = (type, value);
+
+    private float value;
+    /// <summary> Value of stat </summary>
+    public float Value
     {
-        physical,
-        magical
+        get => value;
+        set
+        {
+            this.value = value;
+            StatChanged?.Invoke(this);
+        }
     }
+    /// <summary> Type/Name of stat </summary>
+    public EntityStatType Type;
+}
+
+public enum DamageType
+{
+    physical,
+    magical
 }

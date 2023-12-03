@@ -70,8 +70,6 @@ _data = {
 z_index = 2
 collision_layer = 0
 script = ExtResource("4")
-spawnVelocity = Vector2(100, 100)
-itemId = "golden_holder_sword"
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("22")
