@@ -227,6 +227,7 @@ libraries = {
 speed_scale = 0.4
 
 [node name="SettingsMenuContainer" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -340,6 +341,7 @@ enabled = false
 [node name="CanvasModulate" type="CanvasModulate" parent="StartMenuContainer"]
 
 [node name="MainMenuContainer" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

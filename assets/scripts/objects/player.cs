@@ -222,6 +222,11 @@ namespace Galatime
                 CanMove = !PlayerGui.InventoryOpen;
             }
 
+            if (@event.IsActionPressed("game_potion_wheel"))
+            {
+                PlayerGui.CallItemWheel();
+            }
+
             // Checking for input for abilities.
             for (int i = 0; i < PlayerVariables.abilities.Count; i++) if (@event.IsActionPressed($"game_ability_{i + 1}")) UseAbility(i);
         }

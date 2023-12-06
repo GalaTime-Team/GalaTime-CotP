@@ -120,6 +120,7 @@ offset_bottom = 32.0
 texture = ExtResource("4_utkxg")
 
 [node name="AbilitiesContainer" type="ScrollContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -258,6 +259,7 @@ size_flags_vertical = 0
 alignment = 2
 
 [node name="Inventory" type="GridContainer" parent="."]
+visible = false
 clip_contents = true
 layout_mode = 0
 anchor_left = 0.5

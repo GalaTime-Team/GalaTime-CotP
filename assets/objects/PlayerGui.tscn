@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://s184ap1aunq3"]
+[gd_scene load_steps=26 format=3 uid="uid://s184ap1aunq3"]
 
 [ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
@@ -15,6 +15,7 @@
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="15_bhhfw"]
 [ext_resource type="PackedScene" uid="uid://bqkuonmirsqx1" path="res://assets/objects/gui/PauseMenu.tscn" id="16_mf8j7"]
 [ext_resource type="Shader" path="res://assets/shaders/NTSC.gdshader" id="17_glk77"]
+[ext_resource type="PackedScene" uid="uid://dfp7cajwd17tw" path="res://assets/objects/gui/SelectWheel.tscn" id="18_uvxe6"]
 [ext_resource type="AudioStream" uid="uid://dfwi2r7vfy2p5" path="res://assets/audios/sounds/parry.wav" id="27_4kcld"]
 [ext_resource type="Script" path="res://assets/scripts/gui/LeaveLabel.cs" id="27_i8qxk"]
 
@@ -365,6 +366,7 @@ metadata/_edit_lock_ = true
 stream = ExtResource("27_4kcld")
 
 [node name="PauseMenu" parent="." instance=ExtResource("16_mf8j7")]
+visible = false
 layout_mode = 1
 mouse_filter = 2
 
@@ -385,3 +387,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="SelectWheel" parent="." instance=ExtResource("18_uvxe6")]
+visible = false
+layout_mode = 1

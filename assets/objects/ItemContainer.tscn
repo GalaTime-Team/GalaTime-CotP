@@ -56,6 +56,7 @@ layout_mode = 0
 offset_right = 16.0
 offset_bottom = 16.0
 pivot_offset = Vector2(8, 8)
+mouse_filter = 2
 
 [node name="CountLabel" type="Label" parent="."]
 layout_mode = 0

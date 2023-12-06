@@ -14,17 +14,15 @@ namespace Galatime
 
         private AbilityContainerItem CurrentAbilityItemContainer;
 
-        private Godot.Collections.Array<AbilityContainerItem> AbilityContainerItems = new();
+        private List<AbilityContainerItem> AbilityContainerItems = new();
 
         private const float MoveDuration = 0.3f;
 
         private PlayerVariables PlayerVariables;
 
-        private Tooltip Tooltip;
 
         public override void _Ready()
         {
-            Tooltip = GetNode<Tooltip>("../Tooltip");
             AbilitiesPanel = GetNode<Panel>("Panel");
             AbilityItemsContainers = GetTree().GetNodesInGroup("abilityItem");
 
@@ -49,7 +47,8 @@ namespace Galatime
         private void OnAbilityLearned() => CurrentAbilityItemContainer?.SetLearned(true, true);
 
         private void OnLearnedAbilitiesUpdated() {
-            foreach (var i in AbilityContainerItems) {
+            foreach (var i in AbilityContainerItems) 
+            {
                 var learned = PlayerVariables.AbilityIsLearned(i.AbilityData.ID);
                 i.SetLearned(learned);
             }

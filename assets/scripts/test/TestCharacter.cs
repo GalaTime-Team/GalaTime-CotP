@@ -143,9 +143,6 @@ public partial class TestCharacter : HumanoidCharacter
         }
         Body.Velocity = vectorPath.Normalized() * Speed;
         Body.MoveAndSlide();
-
-        State = Body.Velocity.Length() == 0 ? HumanoidStates.Idle : HumanoidStates.Walk;
-        HumanoidDoll.SetAnimation(VectorRotation, State);
     }
 
     /// <summary> Process of normal movement of the character. </summary>
@@ -167,8 +164,5 @@ public partial class TestCharacter : HumanoidCharacter
         vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
         Body.Velocity = vectorPath.Normalized() * Speed;
         Body.MoveAndSlide();
-
-        State = Body.Velocity.Length() == 0 ? HumanoidStates.Idle : HumanoidStates.Walk;
-        HumanoidDoll.SetAnimation(VectorRotation, State);
     }
 }

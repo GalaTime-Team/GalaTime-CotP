@@ -40,6 +40,8 @@ public partial class PauseMenu : Control
                 return;
             }
 
+            Visible = value;
+
             paused = value;
             GetTree().Paused = paused;
             // Set the value of a variable to check later if the animation is playing.

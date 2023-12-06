@@ -222,6 +222,7 @@ metadata/_edit_lock_ = true
 [node name="Particles" type="GPUParticles2D" parent="Projectile"]
 material = SubResource("CanvasItemMaterial_crpnl")
 position = Vector2(-16, 0)
+emitting = false
 amount = 16
 process_material = SubResource("ParticleProcessMaterial_kw371")
 texture = ExtResource("2_dxy86")

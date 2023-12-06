@@ -44,7 +44,7 @@ public partial class ShootingBuddy : Entity
     private void OnShootingTimerTimeout()
     {
         // Don't shoot if no target.
-        if (TargetController.CurrentTarget == null) return;
+        if (TargetController.CurrentTarget == null) return; 
 
         var projectile = Projectile.Duplicate() as Projectile;
         projectile.AttackStat = Stats[EntityStatType.MagicalAttack].Value;

@@ -2,6 +2,7 @@ using Galatime.UI;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Galatime
 {
@@ -27,6 +28,8 @@ namespace Galatime
         // Audio
         public AudioStreamPlayer ParrySound;
         public ColorRect ParryOverlay;
+
+        public SelectWheel SelectWheel;
         #endregion
 
         #region Scenes
@@ -74,6 +77,8 @@ namespace Galatime
 
             ParrySound = GetNode<AudioStreamPlayer>("ParrySound");
             ParryOverlay = GetNode<ColorRect>("ParryOverlay");
+
+            SelectWheel = GetNode<SelectWheel>("SelectWheel");
             #endregion
 
             PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
@@ -158,6 +163,48 @@ namespace Galatime
             var ability = AbilitiesContainer.GetChild(i) as AbilityContainer;
             return ability;
         }
+
+            public void CallItemWheel() 
+            {
+                var itemContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ItemContainer.tscn");
+
+                var max = SelectWheel.WheelSegmentMaxCount;
+
+                // Needed arrays for the wheel to work.
+                var placeholders = new ItemContainer[max];
+                var names = new string[max];
+                
+                // Copy player inventory.
+                var inventory = new List<Item>().Concat(GetNode<PlayerVariables>("/root/PlayerVariables").inventory).ToList();
+                // Remove all empty items.
+                inventory.RemoveAll(item => item.IsEmpty);
+
+                var count = Math.Min(inventory.Count, max);
+
+                for (int i = 0; i < count; i++)
+                {
+                    // Instantiate item container and add it to the wheel segment.
+                    var ic = itemContainerScene.Instantiate<ItemContainer>();
+
+                    var item = inventory[i];
+                    ic.Data = item;
+                    
+                    // Add item container to the arrays of placeholders and names.
+                    placeholders[i] = ic;
+                    names[i] = item.Name;
+
+                    // Disabling mouse filter to make sure that hover event will be triggered.
+                    ic.MouseFilter = MouseFilterEnum.Ignore;
+                    // Set position of the item container in the wheel segment.
+                    ic.Position = new Vector2(10, 3);
+                }
+
+                Engine.TimeScale = 0.1f;
+                SelectWheel.CallWheel("item_wheel", count, placeholders, names, (int i) => {
+                    Engine.TimeScale = 1f;
+                    GD.Print($"Selected item: {i}");
+                });
+            }
 
         public void DisplayItem() => OnItemsChanged?.Invoke();
     }

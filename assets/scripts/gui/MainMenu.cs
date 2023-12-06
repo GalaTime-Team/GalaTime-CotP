@@ -98,8 +98,6 @@ public partial class MainMenu : Control
 
     public override void _Ready()
     {
-        base._Ready();
-
         ParseCMDLineArgs();
 
         #region Get nodes
@@ -130,36 +128,26 @@ public partial class MainMenu : Control
         Menus.Add("settings", SettingsMenuControl);
         Menus.Add("credits", CreditsMenuControl);
 
-        AcceptContainer = GetNode<Control>("AcceptContainer");
-
         MainMenuControlButtons = GetNode<VBoxContainer>("MainMenuContainer/VBoxContainer");
-        #endregion
-
-        StartOpacityTransition();
-
-        DelayInteract.Start();
-        InitializeSavesContainers();
-
         VersionLabel = GetNode<Label>("VersionLabel");
 
+        AcceptContainer = GetNode<Control>("AcceptContainer");
         AcceptYesButton = GetNode<LabelButton>("AcceptContainer/VBoxContainer/HBoxContainer/Yes");
         AcceptNoButton = GetNode<LabelButton>("AcceptContainer/VBoxContainer/HBoxContainer/No");
         AcceptYesButton.PivotOffset = new Vector2(10, 6);
         AcceptNoButton.PivotOffset = new Vector2(7, 6);
-
         AcceptName = GetNode<Label>("AcceptContainer/VBoxContainer/Name");
+        #endregion
 
+        StartOpacityTransition();
+        InitializeSavesContainers();
         InitializeMainMenuButtons();
-
-        GetViewport().GuiFocusChanged += guiFocusChanged;
-
-        GalatimeGlobals.CheckSaves();
         UpdateSaves();
 
-        AnimationPlayer.Play("idle");
+        GetViewport().GuiFocusChanged += guiFocusChanged;
+        GalatimeGlobals.CheckSaves();
 
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
-
         GetTree().Root.Title = "GalaTime - Main Menu";
     }
 

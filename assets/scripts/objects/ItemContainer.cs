@@ -5,9 +5,9 @@ namespace Galatime;
 public partial class ItemContainer : Control
 {
     #region Nodes
-    TextureRect IconTexture;
-    Label CountLabel;
-    AnimationPlayer AnimationPlayer;
+    public TextureRect IconTexture;
+    public Label CountLabel;
+    public AnimationPlayer AnimationPlayer;
     #endregion
 
     /// <summary>
@@ -22,6 +22,9 @@ public partial class ItemContainer : Control
         CountLabel = GetNode<Label>("CountLabel");
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
         #endregion
+
+        DisplayItem(Data);
+
     }
 
     /// <summary>
@@ -32,7 +35,7 @@ public partial class ItemContainer : Control
     public void DisplayItem(Item i, bool _playAnimation = false)
     {
         // Check if the item is empty, if so, do nothing (don't display anything).
-        if (i.IsEmpty) {
+        if (i == null || i.IsEmpty) {
             IconTexture.Texture = null;
             CountLabel.Text = "";
             return;

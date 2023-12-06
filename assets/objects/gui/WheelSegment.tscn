@@ -1,0 +1,48 @@
+[gd_scene load_steps=10 format=3 uid="uid://dnnhsv5fbr76j"]
+
+[ext_resource type="Texture2D" uid="uid://c87vmr5yjgx1k" path="res://sprites/gui/wheel_segment.png" id="1_5t21u"]
+[ext_resource type="Script" path="res://assets/scripts/gui/WheelSegment.cs" id="2_36nrb"]
+[ext_resource type="AudioStream" uid="uid://dpqsqejx16ml8" path="res://assets/audios/sounds/spin_click.wav" id="3_r5sg6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fmefa"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ml6kj"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6ro1n"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_f3anb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_30ps2"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_pobqa"]
+random_pitch = 1.05
+random_volume_offset_db = 2.0
+streams_count = 1
+stream_0/stream = ExtResource("3_r5sg6")
+stream_0/weight = 1.0
+
+[node name="WheelSegment" type="TextureRect"]
+offset_left = -18.0
+offset_top = -57.0
+offset_right = 18.0
+offset_bottom = -34.0
+pivot_offset = Vector2(18, 57)
+mouse_filter = 2
+texture = ExtResource("1_5t21u")
+stretch_mode = 2
+script = ExtResource("2_36nrb")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = -4.0
+offset_top = -23.0
+offset_right = 40.0
+offset_bottom = 57.0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_fmefa")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_ml6kj")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_6ro1n")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_f3anb")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_30ps2")
+
+[node name="Sound" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_pobqa")
