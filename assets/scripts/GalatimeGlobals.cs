@@ -76,6 +76,15 @@ public sealed partial class GalatimeGlobals : Node
         dialogsList = GetDataFromJson<DialogsData>(pathListDialogs).Dialogs;
         charactersList = GetDataFromJson<CharactersData>(pathListCharacters).Characters;
 
+        GetItemById("heal_potion", false).OnUse += () => {
+            playerVariables.Player.PlayDrinkingSound();
+            GetTree().CreateTimer(1f).Timeout += () => playerVariables.Player.Heal(playerVariables.Player.Stats[EntityStatType.Health].Value * 0.5f);
+        };
+        GetItemById("mana_potion", false).OnUse += () => {
+            playerVariables.Player.PlayDrinkingSound();
+            GetTree().CreateTimer(1f).Timeout += () => playerVariables.Player.Mana += playerVariables.Player.Stats[EntityStatType.Mana].Value * 0.5f;
+        };
+
         foreach (var dialog in dialogsList)
         {
             foreach (var line in dialog.Lines) GD.Print($"Text: {line.Text}, Speaker: {line.CharacterID}, Emotion: {line.EmotionID}");
@@ -398,10 +407,11 @@ public sealed partial class GalatimeGlobals : Node
                 Type = data.ContainsKey("type") ? (string)data["type"] switch
                 {
                     // If the "type" value is "weapon", set the Type property to WEAPON
-                    "weapon" => SlotType.WEAPON,
+                    "weapon" => ItemType.WEAPON,
+                    "consumable" => ItemType.CONSUMABLE,
                     // For any other value, set the Type property as common item.
-                    _ => SlotType.COMMON
-                } : SlotType.COMMON,
+                    _ => ItemType.COMMON
+                } : ItemType.COMMON,
                 Quantity = 1
             };
             return (T)(object)item;
@@ -503,7 +513,7 @@ public sealed partial class GalatimeGlobals : Node
         }
     }
 
-    public static Item GetItemById(string id)
+    public static Item GetItemById(string id, bool newItem = true)
     {
         if (itemList.Count >= 0)
         {
@@ -511,7 +521,9 @@ public sealed partial class GalatimeGlobals : Node
             {
                 if (item.ID == id)
                 {
-                    return item.Clone();
+                    Item i;
+                    if (newItem) i = item.Clone(); else i = item; 
+                    return i;
                 }
             }
             GD.PrintErr($"GLOBALS: Item ID is invalid. Item ID: {id}");

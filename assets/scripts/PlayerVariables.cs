@@ -131,6 +131,15 @@ namespace Galatime
             }
         }
 
+        public Item[] GetConsumables()
+        {
+            // Copy player inventory.
+            var inventory = new List<Item>().Concat(GetNode<PlayerVariables>("/root/PlayerVariables").inventory).ToList();
+            // Remove all empty items.
+            inventory.RemoveAll(item => item.IsEmpty || item.Type != ItemType.CONSUMABLE);
+            return inventory.ToArray();
+        }
+
         // I am not sure if this is the best way to do this. But it works. So I will leave it.
         public void setPlayerInstance(Player instance)
         {
@@ -202,44 +211,56 @@ namespace Galatime
         /// <summary> Add item to free slot in inventory </summary>
         public void AddItem(Item item, int quantity)
         {
-            // Go through all items
+            if (item == null) return;
+
+            var itm = item.Clone();
+
+            GD.Print($"ADD ITEM: {quantity}. {itm.Name}");
+
             for (var i = 0; i < inventory.Count; i++)
             {
-                // Getting an existing Item
                 var existedItem = inventory[i];
-                if (item.Stackable && existedItem.Stackable && !existedItem.IsEmpty)
+                if
+                (   
+                    itm.Stackable &&
+                    !existedItem.IsEmpty && existedItem.ID == itm.ID &&
+                    !existedItem.StackIsFull
+                )
                 {
-                    // Check if there is a similar stackable item
-                    if (existedItem.ID == item.ID)
-                    {
-                        // Add quantity if find a similar item
-                        AddQuantity(i, quantity);
-                        return;
-                    }
+                    GD.Print($"STACKABLE ITEM FOUND IN SLOT {i} ({existedItem.Name}). Adding {quantity}");
+                    // Add quantity if find a similar item  
+                    existedItem.Quantity += quantity;
+                    if (quantity > item.StackSize) AddItem(itm, quantity - item.StackSize);
+                    return;
                 }
             }
 
-            // If there is no item for stackability, then add it to any free slot
+            GD.Print($"THIS'S NOT A STACKABLE OR ITEM DOESN'T EXIST ITEM. ADDING TO EMPTY SLOT");
 
-            // Go through all items
+            // If there is no stackable item, then add it to any free slot
+
             for (int i = 0; i < inventory.Count; i++)
             {
-                // Getting an existing Item
                 var existedItem = inventory[i];
 
                 // Check if there is a free slot
                 if (existedItem.IsEmpty)
                 {
                     // Prevent an item from being added to a weapon slot
-                    if (item.Type != SlotType.WEAPON && i == 0) continue;
+                    if (itm.Type != ItemType.WEAPON && i == 0) continue;
+
+                    // Add item
+                    SetItem(itm, i);
 
                     // Check if it's stackable.
-                    if (item.Stackable)
+                    if (itm.Stackable)
                     {
-                        item.Quantity += quantity;
+                        itm.Quantity = quantity;
+                        if (quantity > itm.StackSize) AddItem(itm, quantity - itm.StackSize);
                     }
-                    // Add item
-                    SetItem(item.Clone(), i);
+
+                    GD.Print($"ADDING ITEM TO SLOT {i} ({existedItem.Name}). Adding {quantity}");
+
                     return;
                 }
             }
@@ -287,6 +308,8 @@ namespace Galatime
             currentItem = slot;
             // Send item_changed signal to GUI
             OnItemsChanged?.Invoke();
+            item.OnItemChanged += () => OnItemsChanged?.Invoke();
+
             return previousItem;
         }
 
@@ -300,15 +323,6 @@ namespace Galatime
             // Send item_changed signal to GUI
             OnItemsChanged?.Invoke();
             return previousItem;
-        }
-
-        public void AddQuantity(int slot, int amount)
-        {
-            var item = inventory[slot];
-            item.Quantity += amount;
-
-            GD.Print("ITEM QUANTITY: " + item.Quantity);
-            OnItemsChanged?.Invoke();
         }
     }
 

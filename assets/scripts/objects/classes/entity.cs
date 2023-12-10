@@ -22,6 +22,9 @@ namespace Galatime
         public PackedScene DamageEffectScene;
         public PackedScene DamageAnimationPlayerScene;
         public PackedScene DamageAudioScene;
+
+        public PackedScene HealAudioScene;
+
         public PackedScene ItemPickupScene;
         public PackedScene XpOrbScene;
         #endregion
@@ -30,6 +33,7 @@ namespace Galatime
         public CharacterBody2D Body = null;
         public AnimationPlayer DamageSpritePlayer = null;
         public AudioStreamPlayer2D DamageAudioPlayer = null;
+        public AudioStreamPlayer2D HealAudioPlayer = null;
         public Timer DamageDelay = null;
         #endregion
 
@@ -81,6 +85,9 @@ namespace Galatime
             DamageAnimationPlayerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/DamageAnimationPlayer.tscn");
             DamageAudioScene = ResourceLoader.Load<PackedScene>("res://assets/objects/DamageAudioPlayer.tscn");
             DamageEffectScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/DamageEffect.tscn");
+
+            HealAudioScene = ResourceLoader.Load<PackedScene>("res://assets/objects/entity/HealAudioPlayer.tscn");
+
             ItemPickupScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ItemPickup.tscn");
             XpOrbScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ExperienceOrb.tscn");
         }
@@ -166,6 +173,13 @@ namespace Galatime
                 DamageAudioPlayer = damageAudioPlayerInstance;
                 Body.AddChild(damageAudioPlayerInstance);
             }
+
+            if (HealAudioPlayer == null)
+            {
+                var healAudioPlayerInstance = HealAudioScene.Instantiate<AudioStreamPlayer2D>();
+                HealAudioPlayer = healAudioPlayerInstance;
+                Body.AddChild(healAudioPlayerInstance);
+            }
         }
 
         /// <summary>
@@ -175,7 +189,7 @@ namespace Galatime
         /// <param name="damageRotation">In radians, will knockback this way. </param>
         public void SetKnockback(float knockback = 0f, float damageRotation = 0f)
         {
-            KnockbackVelocity = Vector2.Right.Rotated(damageRotation) * Math.Max(knockback - Stats[EntityStatType.KnockbackResistance].Value, 0);
+            KnockbackVelocity += Vector2.Right.Rotated(damageRotation) * Math.Max(knockback - Stats[EntityStatType.KnockbackResistance].Value, 0);
         }
 
         public override void _PhysicsProcess(double delta)
@@ -246,8 +260,10 @@ namespace Galatime
             var xpOrb = XpOrbScene.Instantiate<ExperienceOrb>();
             xpOrb.Quantity = DroppedXp;
             xpOrb.GlobalPosition = Body.GlobalPosition;
-            AddChild(xpOrb);
+            CallDeferred(nameof(AddChildDeferred), xpOrb);
         }
+
+        public void AddChildDeferred(Node node) => AddChild(node);
 
         public void Heal(float amount, int timeToHeal = 0)
         {
@@ -260,6 +276,8 @@ namespace Galatime
             }
 
             SpawnDamageEffect(amount, DamageDifferenceType.heal);
+
+            if (HealAudioPlayer is not null) HealAudioPlayer.Play();
 
             // Adding health to the entity.
             Health += amount;

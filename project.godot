@@ -43,6 +43,24 @@ movie_writer/movie_file="D:/Projects/galatime-project-test/preview.avi"
 
 enabled=PackedStringArray("res://addons/AS2P/plugin.cfg")
 
+[file_customization]
+
+folder_colors={
+"res://assets/audios/": "yellow",
+"res://assets/data/": "gray",
+"res://assets/fonts/": "gray",
+"res://assets/objects/": "blue",
+"res://assets/objects/abilities/": "yellow",
+"res://assets/objects/damage/": "red",
+"res://assets/objects/enemy/": "red",
+"res://assets/objects/gui/": "purple",
+"res://assets/objects/helpers/": "green",
+"res://assets/objects/weapons/": "orange",
+"res://assets/scenes/": "teal",
+"res://assets/scripts/": "purple",
+"res://assets/shaders/": "purple"
+}
+
 [global]
 
 collision=false

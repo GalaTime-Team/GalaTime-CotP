@@ -24,7 +24,6 @@ public partial class ItemContainer : Control
         #endregion
 
         DisplayItem(Data);
-
     }
 
     /// <summary>
@@ -48,6 +47,12 @@ public partial class ItemContainer : Control
         IconTexture.Texture = i.Icon;
         CountLabel.Text = i.Quantity <= 1 ? "" : i.Quantity.ToString();
         if (!i.Stackable) CountLabel.Text = "";
-        if (_playAnimation) AnimationPlayer.Play("pop");
+        if (_playAnimation) PopAnimation();
+    }
+
+    public void PopAnimation() 
+    { 
+        AnimationPlayer.Stop();
+        AnimationPlayer.Play("pop");
     }
 }

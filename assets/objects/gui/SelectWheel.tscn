@@ -16,6 +16,9 @@ grow_vertical = 2
 scale = Vector2(4, 4)
 script = ExtResource("1_0i0v7")
 
+[node name="AppearTimer" type="Timer" parent="."]
+wait_time = 0.1
+
 [node name="SegmentName" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -36,6 +39,3 @@ of this"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
-
-[node name="AppearTimer" type="Timer" parent="."]
-wait_time = 0.1

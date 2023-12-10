@@ -100,7 +100,7 @@ public partial class SlotContainer : GridContainer
         }
         else if (!draggedItem.IsEmpty && inventoryItem.IsEmpty)
         {
-            if (slot == 0 && draggedItem.Type != SlotType.WEAPON)
+            if (slot == 0 && draggedItem.Type != ItemType.WEAPON)
             {
                 dragPreview.Prevent();
                 return;
@@ -110,7 +110,7 @@ public partial class SlotContainer : GridContainer
         }
         else if (!draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
-            if (slot == 0 && draggedItem.Type != SlotType.WEAPON)
+            if (slot == 0 && draggedItem.Type != ItemType.WEAPON)
             {
                 dragPreview.Prevent();
                 return;

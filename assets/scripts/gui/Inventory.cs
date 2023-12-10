@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Galatime;
 using Godot;
 
@@ -49,7 +50,7 @@ public partial class Inventory : GridContainer
         for (int i = 0; i < PlayerVariables.inventory.Count; i++)
         {
             var ItemSlot = GetChild(i) as Slot;
-            ItemSlot.Data = !ItemSlot.Data.IsEmpty ? PlayerVariables.inventory[i].Clone() : new Item();
+            ItemSlot.Data = PlayerVariables.inventory[i].Clone();
 
             var Item = ItemSlot.GetChild<ItemContainer>(0);
             if (PlayerVariables.currentItem == i)
@@ -57,10 +58,7 @@ public partial class Inventory : GridContainer
                 Item.DisplayItem(PlayerVariables.inventory[i], true);
                 PlayerVariables.currentItem = -1;
             }
-            else
-            {
-                Item.DisplayItem(PlayerVariables.inventory[i]);
-            }
+            else Item.DisplayItem(PlayerVariables.inventory[i]);
         }
     }
 
@@ -69,13 +67,29 @@ public partial class Inventory : GridContainer
         if (@event is InputEventMouseButton)
         {
             var @mouseEvent = @event as InputEventMouseButton;
-            if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
-            {
-                DragItem(slot);
-                GD.Print("get input");
-            }
+            if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed) DragItem(slot);
+            if (@mouseEvent.ButtonIndex == MouseButton.Right && mouseEvent.Pressed) TakeFromStack(slot);
         }
     }
+
+    /// <summary> Returns item from the slot and dragged item. </summary>
+    public (Item existed, Item dragged) GetBoth(int slot) => (PlayerVariables.inventory[slot], DragPreview.DraggedItem);
+
+    /// <summary> Takes item from the stack. </summary>
+    public void TakeFromStack(int slot)
+    {
+        var (existed, dragged) = GetBoth(slot);
+        // Checking if item is stackable and not empty and if dragged item is the same as the item in the slot.
+        // Then we can take item from the stack.
+        if (!existed.IsEmpty && !dragged.IsEmpty && existed.Stackable && existed.ID == dragged.ID && !dragged.StackIsFull)
+        {
+            dragged.Quantity++;
+            existed.Quantity--;
+            DragPreview.ItemContainer.PopAnimation();
+        }
+        else DragPreview.Prevent();
+    }
+
     public void DragItem(int slot)
     {
         var inventoryItem = PlayerVariables.inventory[slot];
@@ -89,17 +103,17 @@ public partial class Inventory : GridContainer
         }
         else if (!draggedItem.IsEmpty && inventoryItem.IsEmpty)
         {
-            if (slot == 0 && draggedItem.Type != SlotType.WEAPON)
+            if (slot == 0 && draggedItem.Type != ItemType.WEAPON)
             {
                 DragPreview.Prevent();
                 return;
-            }   
+            }
             DragPreview.DraggedItem = new Item();
             PlayerVariables.SetItem(draggedItem, slot);
         }
         else if (!draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
-            if (slot == 0 && draggedItem.Type != SlotType.WEAPON)
+            if (slot == 0 && draggedItem.Type != ItemType.WEAPON)
             {
                 DragPreview.Prevent();
                 return;

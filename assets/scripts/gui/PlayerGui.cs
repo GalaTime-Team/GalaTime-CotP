@@ -164,7 +164,7 @@ namespace Galatime
             return ability;
         }
 
-            public void CallItemWheel() 
+            public void CallConsumableWheel() 
             {
                 var itemContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ItemContainer.tscn");
 
@@ -173,13 +173,13 @@ namespace Galatime
                 // Needed arrays for the wheel to work.
                 var placeholders = new ItemContainer[max];
                 var names = new string[max];
-                
-                // Copy player inventory.
-                var inventory = new List<Item>().Concat(GetNode<PlayerVariables>("/root/PlayerVariables").inventory).ToList();
-                // Remove all empty items.
-                inventory.RemoveAll(item => item.IsEmpty);
 
-                var count = Math.Min(inventory.Count, max);
+                var inventory = PlayerVariables.GetConsumables();
+
+                var count = Math.Min(inventory.Length, max);
+
+                // Don't do anything if no specified items.
+                if (count == 0) return;
 
                 for (int i = 0; i < count; i++)
                 {
@@ -199,10 +199,13 @@ namespace Galatime
                     ic.Position = new Vector2(10, 3);
                 }
 
-                Engine.TimeScale = 0.1f;
                 SelectWheel.CallWheel("item_wheel", count, placeholders, names, (int i) => {
-                    Engine.TimeScale = 1f;
-                    GD.Print($"Selected item: {i}");
+                    var items = PlayerVariables.GetConsumables();
+                    // Check if the index is valid.
+                    if (i < 0 || i >= items.Length) return;
+                    var item = items[i];
+                    item.Use();
+                    GD.Print($"Consumed {item.Name}, now have {item.Quantity}.");
                 });
             }
 

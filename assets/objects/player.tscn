@@ -1,4 +1,4 @@
-[gd_scene load_steps=80 format=3 uid="uid://dxkmenalovoja"]
+[gd_scene load_steps=81 format=3 uid="uid://dxkmenalovoja"]
 
 [ext_resource type="Animation" uid="uid://co6srb7oraj3q" path="res://assets/animations/characters/artur/walk_left.tres" id="2"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/EntityStats.cs" id="2_51x1c"]
@@ -66,6 +66,7 @@
 [ext_resource type="Texture2D" uid="uid://83qle2ebjnjd" path="res://sprites/characters/arthur/attacking/up_combo9.png" id="55_wp4ow"]
 [ext_resource type="Texture2D" uid="uid://da7dsnw24gvux" path="res://sprites/characters/arthur/attacking/up_combo13.png" id="56_n4k1e"]
 [ext_resource type="Texture2D" uid="uid://dw5doqh3c28yd" path="res://sprites/characters/arthur/attacking/up_combo10.png" id="56_snla6"]
+[ext_resource type="AudioStream" uid="uid://cq1ia6igrejmx" path="res://assets/audios/sounds/drink.wav" id="67_jvyc2"]
 
 [sub_resource type="Resource" id="Resource_u2rbo"]
 script = ExtResource("2_51x1c")
@@ -234,3 +235,6 @@ libraries = {
 }
 
 [node name="Timer" type="Timer" parent="."]
+
+[node name="DrinkingAudioPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("67_jvyc2")

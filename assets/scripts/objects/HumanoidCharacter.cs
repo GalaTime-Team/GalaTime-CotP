@@ -33,6 +33,7 @@ public partial class HumanoidCharacter : Entity
     public Sprite2D Sprite;
     public GpuParticles2D TrailParticles;
     public Hand Weapon;
+    public AudioStreamPlayer2D DrinkingAudioPlayer;
 
     private float mana;
     public float Mana
@@ -296,6 +297,8 @@ public partial class HumanoidCharacter : Entity
             _ => Vector2.Zero
         };
     }
+
+    public void PlayDrinkingSound() => DrinkingAudioPlayer.Play();
 
     public void StepForward(float rotation) => SetKnockback(100, rotation);
 }

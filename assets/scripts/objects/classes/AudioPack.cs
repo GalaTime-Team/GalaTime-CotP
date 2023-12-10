@@ -13,6 +13,7 @@ public class AudioPack
     {
         // Assign the audio paths.
         (AudioCombatPath, AudioCombatCalmPath) = (audioCombat, audioCombatCalmPath);
+        Load();
     }
 
     public void Load()

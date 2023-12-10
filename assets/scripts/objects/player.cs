@@ -51,6 +51,7 @@ namespace Galatime
             Sprite = GetNode<Sprite2D>("Sprite2D");
             TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
             HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
+            DrinkingAudioPlayer = GetNode<AudioStreamPlayer2D>("DrinkingAudioPlayer");
 
             Camera = GetNode<Camera2D>("Camera");
 
@@ -224,7 +225,7 @@ namespace Galatime
 
             if (@event.IsActionPressed("game_potion_wheel"))
             {
-                PlayerGui.CallItemWheel();
+                PlayerGui.CallConsumableWheel();
             }
 
             // Checking for input for abilities.

@@ -5,50 +5,47 @@ using System.Threading.Tasks;
 using Godot;
 
 namespace Galatime;
-public enum SlotType { COMMON, WEAPON };
+public enum ItemType { COMMON, WEAPON, CONSUMABLE };
 
 public class Item
 {
-    /// <summary>
-    /// The name of the item.
-    /// </summary> 
+    /// <summary> The name of the item. </summary>
     public string Name = "";
 
-    /// <summary>
-    /// The unique identificator of the item. MAKE IT UNIQUE.
-    /// </summary>
+    /// <summary> The unique identificator of the item. MAKE IT UNIQUE. </summary>
     public string ID = "";
 
-    /// <summary>
-    /// The description of the item.
-    /// </summary>
+    /// <summary> The description of the item. </summary>
     public string Description = "";
 
-    /// <summary>
-    /// If the item is stackable in the inventory. Stacking - is the ability to add multiple items to the inventory in one slot.
-    /// </summary>
+    /// <summary> If the item is stackable in the inventory. Stacking - is the ability to add multiple items to the inventory in one slot. </summary>
     public bool Stackable;
 
-    /// <summary>
-    /// The stack size of the item. It means the number of items can be stacked.
-    /// </summary>
+    /// <summary> The stack size of the item. It means the number of items can be stacked. </summary>
     /// <remarks> It's not currently used. </remarks>
     public int StackSize = 1;
 
-    /// <summary>
-    /// The type of the item.
-    /// </summary>
-    public SlotType Type = SlotType.COMMON;
+    /// <summary> The type of the item. </summary>
+    public ItemType Type = ItemType.COMMON;
 
-    /// <summary>
-    /// The amount of the item.
-    /// </summary> 
-    public int Quantity = 0;
+    private int quantity = 0;
+    /// <summary> The amount of the item. </summary>
+    public int Quantity 
+    {
+        get => quantity;
+        set 
+        {
+            // Quantity can't be less than 0 or more than stack size.
+            quantity = Math.Min(Math.Max(value, 0), StackSize);
+            if (quantity <= 0) ResetToDefault();
+            
+            OnItemChanged?.Invoke();
+            if (quantity <= 0) OnItemChanged = null;
+        }
+    }
 
     private string iconPath = "";
-    /// <summary>
-    /// The path of the icon of the item.
-    /// </summary>
+    /// <summary> The path of the icon of the item. </summary>
     public string IconPath
     {
         get => iconPath;
@@ -64,9 +61,7 @@ public class Item
     }
 
     private string scenePath = "";
-    /// <summary>
-    /// The path of the scene of the item.
-    /// </summary>
+    /// <summary> The path of the scene of the item. </summary>
     public string ScenePath
     {
         get => scenePath;
@@ -81,29 +76,37 @@ public class Item
         }
     }
 
-    /// <summary>
-    /// The loaded scene of the item.
-    /// </summary> 
+    /// <summary> The loaded scene of the item. </summary>
     public PackedScene ItemScene;
 
-    /// <summary>
-    /// The loaded icon of the item.
-    /// </summary> 
+    /// <summary> The loaded icon of the item. </summary>
     public Texture2D Icon;
 
-    /// <summary>
-    /// If the item is empty checked by the <see cref="Quantity"/> and <see cref="ID"/>
-    /// </summary>
-    public bool IsEmpty
+    /// <summary> If the item is empty checked by the <see cref="Quantity"/> and <see cref="ID"/> </summary>
+    public bool IsEmpty => Quantity <= 0 && ID == "";
+
+    public bool StackIsFull => Quantity == StackSize && !IsEmpty;
+
+    /// <summary> Use the item. Decrease <see cref="Quantity"/> by 1. </summary>
+    public void Use() 
     {
-        get => Quantity <= 0 && ID == "";
+        if (IsEmpty) return;
+        OnUse?.Invoke();
+        Quantity -= 1;
     }
 
-    /// <summary>
-    /// Create a new instance of the Item class. This prevents the item to being wrong referenced.
-    /// </summary>
+    /// <summary> Callback for when the item is used. </summary>
+    public Action OnUse;
+
+    /// <summary> Callback for when the item is changed. For example, when the quantity is changed. </summary>
+    public Action OnItemChanged;
+
+    /// <summary> Create a new instance of the Item class. This prevents the item to being wrong referenced. </summary>
     /// <returns> A new instance of the Item class. </returns>
-    public Item Clone() {
-        return (Item)MemberwiseClone();
+    public Item Clone() => (Item)MemberwiseClone();
+
+    public void ResetToDefault() 
+    {
+        ID = "";
     }
 }

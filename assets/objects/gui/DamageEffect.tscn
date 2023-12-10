@@ -85,7 +85,6 @@ color_ramp = SubResource("14")
 script = ExtResource("2")
 
 [node name="DamageLabel" type="Label" parent="."]
-modulate = Color(1, 1, 1, 0)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -100,7 +99,7 @@ grow_vertical = 2
 scale = Vector2(2, 2)
 theme_override_colors/font_color = Color(0.784314, 0.784314, 0.784314, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
+theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("2_lgtu8")
 text = "92"
 

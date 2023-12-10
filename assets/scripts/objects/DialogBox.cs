@@ -101,7 +101,7 @@ public partial class DialogBox : NinePatchRect
     private void StopAndPlaySkipAnimation()
     {
         SkipAnimationPlayer.Play("loop");
-        CanSkip = true;
+        CanSkip = true;     
     }
 
     public void StartTyping() => TypingLabel.StartTyping();

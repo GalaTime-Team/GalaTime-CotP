@@ -1,10 +1,13 @@
-using Galatime.UI;
 using Godot;
 using System;
 using System.Collections.Generic;
 
+namespace Galatime.UI;
+
+/// <summary> Represents a select wheel in the UI. Selects an item in the wheel with the mouse or keyboard. </summary>
 public partial class SelectWheel : Control
 {
+    /// <summary> The maximum number of items in the wheel. Sprite is too big to fit more then 8. </summary>
     public const int WheelSegmentMaxCount = 8;
 
     #region Nodes
@@ -13,19 +16,15 @@ public partial class SelectWheel : Control
     public Label SegmentName;
     public PackedScene WheelSegmentScene;
     public Tween Tween;
+
+    public Control[] Placeholders;
+
+    public string[] Names;
     #endregion
 
     #region Variables
-    private int selected;
+    public int Selected;
     /// <summary> Which item is selected in the wheel. </summary>
-    public int Selected
-    {
-        get => selected;
-        set
-        {
-            selected = value;
-        }
-    }
     private int itemCount = 8;
     [Export(PropertyHint.Range, "1,8")]
     /// <summary> Number of items in the wheel. </summary>
@@ -33,10 +32,7 @@ public partial class SelectWheel : Control
     {
         get => itemCount;
         // Don't allow less than 1 item and more than 8 because sprite is too big.
-        set 
-            {
-            itemCount = Mathf.Clamp(value, 1, WheelSegmentMaxCount);
-        }
+        set => itemCount = Mathf.Clamp(value, 1, WheelSegmentMaxCount);
     }
     /// <summary> The ID of the currently opened wheel. </summary>
     public string CurrentWheelId { get; private set; } = "";
@@ -48,6 +44,7 @@ public partial class SelectWheel : Control
         SegmentName = GetNode<Label>("SegmentName");
     }
 
+    // TODO: Move all the tweening stuff to the separate class.
     private void SetTween()
     {
         if (Tween != null && !Tween.IsRunning()) Tween?.Kill();
@@ -56,51 +53,67 @@ public partial class SelectWheel : Control
 
     public void TweenSegmentNameColor(Color from, Color to) => Tween.TweenMethod(Callable.From<Color>(x => SegmentName.Modulate = x), from, to, .1f);
 
-    /// <summary> Rebuilds the wheel by instantiating and adding the wheel segments. </summary>
-    public void Rebuild()
+/// <summary> Rebuilds the wheel by instantiating and adding the wheel segments. </summary>
+public void Rebuild()
+{
+    // Remove all the old wheel segments.
+    foreach (var segment in WheelSegments)
     {
-        // Remove all the old wheel segments.
-        foreach (var segment in WheelSegments)
-        {
-            RemoveChild(segment);
-            segment.QueueFree();
-        }
-        WheelSegments.Clear();
-
-        WheelSegmentScene = GD.Load<PackedScene>("res://assets/objects/gui/WheelSegment.tscn");
-        for (var i = 0; i < ItemCount; i++)
-        {
-            var segment = WheelSegmentScene.Instantiate<WheelSegment>();
-
-            // Adding the segment to the wheel by rotating it.
-            segment.RotationDegrees = i * (360 / ItemCount);
-
-            // Adding the segment to the list.
-
-            // Setting the index of the segment.
-            segment.Index = i;
-
-            // Adding pressed event to the segment.
-            segment.Pressed += () =>
-            {
-                Selected = segment.Index;
-                // Call the callback with the selected index.
-                SelectedCallback?.Invoke(Selected);
-
-                // Close the wheel, because the user can't select anything else.
-                CloseWheel();
-            };
-            // Set the name of the segment when segment hovered.
-            segment.Hover += (bool entered) => SetName(segment.SegmentName, entered);
-
-            // Adding the segment to the list and to the wheel.
-            AddChild(segment);
-            WheelSegments.Add(segment);
-
-            // Play the animation of appearing.
-            segment.Shown = true;
-        }
+        RemoveChild(segment);
+        segment.QueueFree();
     }
+    WheelSegments.Clear();
+
+    GD.Print($"Rebuilding wheel with {ItemCount} items. Names count: {Names.Length}, placeholders count: {Placeholders.Length}");
+
+    WheelSegmentScene = GD.Load<PackedScene>("res://assets/objects/gui/WheelSegment.tscn");
+    for (var i = 0; i < ItemCount; i++)
+    {
+        var segment = WheelSegmentScene.Instantiate<WheelSegment>();
+
+        var rotation = i * (360 / ItemCount);
+        // Adding the segment to the wheel by rotating it.
+        segment.RotationDegrees = rotation;
+
+        // Adding the segment to the list.
+
+        // Setting the index of the segment.
+        segment.Index = i;
+
+        // Adding pressed event to the segment.
+        segment.Pressed += () =>
+        {
+            Selected = segment.Index;
+            // Call the callback with the selected index.
+            SelectedCallback?.Invoke(Selected);
+
+            // Close the wheel, because the user can't select anything else.
+            CloseWheel();
+        };
+        // Set the name of the segment when segment hovered.
+        segment.Hover += (bool entered) => SetName(segment.SegmentName, entered);
+
+        // Adding the segment to the list and to the wheel.
+        AddChild(segment);
+        WheelSegments.Add(segment);
+
+        // Play the animation of appearing.
+        segment.Shown = true;
+
+        // Logging statement for debugging.
+        GD.Print("Segment added: " + segment.SegmentName);
+
+        // Add the placeholders and names to the segments.
+        var s = WheelSegments[i];
+        segment.SegmentName = Names[i];
+
+        var placeholder = Placeholders[i];
+        placeholder.PivotOffset = placeholder.Size / 2;
+        placeholder.RotationDegrees = -rotation;
+
+        segment.AddChild(Placeholders[i]);
+    }
+}
 
     private void CloseWheel()
     {
@@ -137,21 +150,17 @@ public partial class SelectWheel : Control
             return;
         }
 
+        // Set the callback to be called when the wheel is closed.
+        SelectedCallback = callback;
+
+        Placeholders = placeholders;
+        Names = names;
         CurrentWheelId = id;
-        Visible = true;
+
         // Rebuild the wheel segments.
         Rebuild();
 
-        // Add the placeholders and names to the segments.
-        for (var i = 0; i < WheelSegments.Count; i++)
-        {
-            var segment = WheelSegments[i];
-            segment.SegmentName = names[i];
-            segment.AddChild(placeholders[i]);
-        }
-
-        // Set the callback to be called when the wheel is closed.
-        SelectedCallback = callback;
+        Visible = true;
 
         // Play the animation of appearing.
         SetTween();

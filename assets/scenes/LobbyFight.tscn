@@ -125,11 +125,11 @@ preprocess = 10.0
 visibility_rect = Rect2(-2000, -1000, 4000, 2000)
 
 [node name="Player" parent="." instance=ExtResource("4_mp3x6")]
-position = Vector2(-1248, 768)
-metadata/_edit_lock_ = true
+position = Vector2(-1120, 768)
 
 [node name="NavigationRegion2D3" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_nr850")
+metadata/_edit_lock_ = true
 
 [node name="Roomwrap" parent="." instance=ExtResource("8_rru7k")]
 position = Vector2(-1344, 768)
@@ -170,29 +170,13 @@ position = Vector2(116, 412)
 position = Vector2(-428, 284)
 SpawningEnemyId = "shootingbuddy"
 
-[node name="EnemySpawnPosition2" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-364, 284)
-SpawningEnemyId = "shootingbuddy"
-
-[node name="EnemySpawnPosition3" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-300, 284)
-SpawningEnemyId = "shootingbuddy"
-
 [node name="EnemySpawnPosition4" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-236, 284)
-SpawningEnemyId = "shootingbuddy"
+position = Vector2(-300, 316)
+SpawningEnemyId = "slime"
 
 [node name="EnemySpawnPosition5" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-172, 284)
-SpawningEnemyId = "shootingbuddy"
-
-[node name="EnemySpawnPosition6" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-108, 284)
-SpawningEnemyId = "shootingbuddy"
-
-[node name="EnemySpawnPosition7" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-44, 284)
-SpawningEnemyId = "shootingbuddy"
+position = Vector2(-108, 316)
+SpawningEnemyId = "slime"
 
 [node name="EnemySpawnPosition8" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
 position = Vector2(20, 284)
@@ -264,9 +248,14 @@ shape = SubResource("RectangleShape2D_qkx30")
 [node name="TestCharacter" parent="." instance=ExtResource("8_i7vfj")]
 position = Vector2(1056, 416)
 
-[node name="ItemPickup" parent="." instance=ExtResource("9_7m3q7")]
-position = Vector2(-1024, 768)
+[node name="ItemPickup2" parent="." instance=ExtResource("9_7m3q7")]
+position = Vector2(-1024, 832)
 ItemId = "golden_holder_sword"
+
+[node name="ItemPickup3" parent="." instance=ExtResource("9_7m3q7")]
+position = Vector2(-1024, 896)
+ItemId = "heal_potion"
+Quantity = 17
 
 [editable path="Roomwrap"]
 [editable path="Roomwrap2"]

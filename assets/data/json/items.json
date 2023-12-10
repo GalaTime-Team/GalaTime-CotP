@@ -21,6 +21,24 @@
 			"icon": "res://sprites/bagtest.png",
 			"stackable": true,
 			"stack_size": 16
+		},
+		{
+			"name": "Heal potion",
+			"id": "heal_potion",
+			"description": "When you drink it, it heals you for 50% of your HP. Smells like mint.",
+			"type": "consumable",
+			"icon": "res://sprites/gui/heal_potion.png",
+			"stackable": true,
+			"stack_size": 16
+		},
+		{
+			"name": "Mana potion",
+			"id": "mana_potion",
+			"description": "When you drink it, it will gain 50% of your Mana.",
+			"type": "consumable",
+			"icon": "res://sprites/gui/mana_potion.png",
+			"stackable": true,
+			"stack_size": 16
 		}
 	]
 }
