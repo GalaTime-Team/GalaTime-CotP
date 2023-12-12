@@ -94,7 +94,7 @@ public partial class HumanoidCharacter : Entity
 
         // Initialize abilities
         Abilities = new List<AbilityData>();
-        for (int i = 0; i < PlayerVariables.abilitySlots; i++) Abilities.Add(new());
+        for (int i = 0; i < PlayerVariables.AbilitySlots; i++) Abilities.Add(new());
 
         InitializeTimers();
     }

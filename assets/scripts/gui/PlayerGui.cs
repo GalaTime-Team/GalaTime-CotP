@@ -87,12 +87,12 @@ namespace Galatime
             ParryFlashScene = ResourceLoader.Load<PackedScene>(ParryFlashScenePath);
 
             // Setting up text of the version
-            VersionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
+            VersionText.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
 
             // Loading ability containers scene 
             var abilityContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/AbilityContainer.tscn");
             // Adding ability containers
-            for (int i = 0; i < PlayerVariables.abilitySlots; i++)
+            for (int i = 0; i < PlayerVariables.AbilitySlots; i++)
             {
                 // Instantiate ability container and add it to the abilities container
                 var instance = abilityContainerScene.Instantiate<AbilityContainer>();

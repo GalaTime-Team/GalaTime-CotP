@@ -65,13 +65,13 @@ namespace Galatime
             try
             {
                 NameLabel.Text = $"Learn ability \"{abilityData.Name}\"?";
-                if (PlayerVariables.LearnAbility(abilityData, true) == LearnedStatus.noRequiredPath)
+                if (PlayerVariables.LearnAbility(abilityData, true) == LearnedStatus.NoRequiredPath)
                 {
                     LearnButtonLabel.Text = $"{CostXPString} You need to open the previous path";
                     SetButtonDisabled(true);
                     return;
                 }
-                else if (PlayerVariables.LearnAbility(abilityData, true) == LearnedStatus.noEnoughCurrency)
+                else if (PlayerVariables.LearnAbility(abilityData, true) == LearnedStatus.NoEnoughCurrency)
                 {
                     SetButtonDisabled(true);
                     LearnButtonLabel.Text = $"{CostXPString} You don't have enough XP";
@@ -128,7 +128,7 @@ namespace Galatime
                     if (!abilityData.IsEmpty)
                     {
                         var result = PlayerVariables.LearnAbility(abilityData);
-                        if (result == LearnedStatus.ok)
+                        if (result == LearnedStatus.Ok)
                         {
                             learnButton.AddThemeColorOverride("font_color", DefaultColorButton);
                             Visible = false;

@@ -46,8 +46,6 @@ public partial class MainMenu : Control
 
     /// <summary> The buttons of the main menu. </summary>
     private Godot.Collections.Array<Node> MenuButtons;
-    /// <summary> The buttons, which are has visuals. </summary>
-    private Godot.Collections.Array<Node> VisualButtons;
 
     /// <summary> The current focus element. </summary>
     private Control CurrentFocus;
@@ -147,7 +145,7 @@ public partial class MainMenu : Control
         GetViewport().GuiFocusChanged += guiFocusChanged;
         GalatimeGlobals.CheckSaves();
 
-        VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.version}\n{GalatimeConstants.versionDescription}";
+        VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
         GetTree().Root.Title = "GalaTime - Main Menu";
     }
 
@@ -168,14 +166,14 @@ public partial class MainMenu : Control
     {
         SaveContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/SaveContainer.tscn");
         ViewSavesButton = GetNode<LabelButton>("StartMenuContainer/ViewSavesFolder");
-        ViewSavesButton.Pressed += () => OS.ShellOpen(ProjectSettings.GlobalizePath(GalatimeConstants.savesPath));
+        ViewSavesButton.Pressed += () => OS.ShellOpen(ProjectSettings.GlobalizePath(GalatimeConstants.SavesPath));
     }
 
     public void ParseCMDLineArgs()
     {
         if (GalatimeGlobals.CMDArgs.ContainsKey("save"))
         {
-            PlayerVariables.currentSave = int.Parse(GalatimeGlobals.CMDArgs["save"]);
+            PlayerVariables.CurrentSave = int.Parse(GalatimeGlobals.CMDArgs["save"]);
 
             var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
             globals.LoadScene("res://assets/scenes/Lobby.tscn");
@@ -260,17 +258,16 @@ public partial class MainMenu : Control
 
     public void UpdateSaves()
     {
-        var saves = GalatimeGlobals.getSaves();
+        var saves = GalatimeGlobals.GetSaves();
         GD.PrintRich("[color=purple]MAIN MENU[/color]: [color=cyan]UPDATE SAVES[/color]");
         var savesContainers = GetNode("StartMenuContainer/SavesContainer").GetChildren();
 
         for (int i = 0; i < savesContainers.Count; i++)
         {
             var item = savesContainers[i];
-            VisualButtons.Remove(item);
             item.QueueFree();
         }
-        for (int i = 0; i < saves.Count; i++)
+        for (int i = 0; i < GalatimeGlobals.MaxSaves; i++)
         {
             var instance = SaveContainerScene.Instantiate<SaveContainer>();
             GetNode("StartMenuContainer/SavesContainer").AddChild(instance);
@@ -285,11 +282,14 @@ public partial class MainMenu : Control
             ViewSavesButton.FocusNext = playButton.GetPath();
             ViewSavesButton.FocusPrevious = playButton.GetPath();
 
-            var save = saves[i];
-            deleteButton.Pressed += () => DeleteSaveButtonInput((int)save["id"]);
-            playButton.Pressed += () => PlayButtonPressed(instance.id);
+            // var save = saves[i];
+            // deleteButton.Pressed += () => DeleteSaveButtonInput((int)save["id"]);
+    
+            instance.id = i + 1;
+            if (i < saves.Count) instance.LoadData(saves[i]);
+            else instance.LoadData(new());
 
-            instance.LoadData(saves[i]);
+            playButton.Pressed += () => PlayButtonPressed(instance.id);
         }
     }
 
@@ -299,7 +299,7 @@ public partial class MainMenu : Control
         AudioButtonAccept.Play();
 
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
-        PlayerVariables.currentSave = id;
+        PlayerVariables.CurrentSave = id - 1;
 
         DelayInteract.Start();
     }
@@ -317,7 +317,6 @@ public partial class MainMenu : Control
             if (result)
             {
                 GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Deleting save {saveId}[/color]");
-                GalatimeGlobals.createBlankSave(saveId);
                 UpdateSaves();
                 disappearAccept();
             }

@@ -98,7 +98,7 @@ public partial class PauseMenu : Control
         SaveButton.Pressed += () =>
         {
             Paused = false;
-            globals.Save(PlayerVariables.currentSave, this);
+            globals.Save(PlayerVariables.CurrentSave, this);
         };
         ExitButton.Pressed += () =>
         {

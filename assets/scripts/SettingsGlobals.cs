@@ -17,7 +17,7 @@ public partial class SettingsGlobals : Node
     /// <returns> As option, returns loaded settings, otherwise use static type to get settings. </returns>
     public Galatime.Settings.SettingsData LoadSettings()
     {
-        var file = Godot.FileAccess.Open(GalatimeConstants.settingsPath, Godot.FileAccess.ModeFlags.Read);
+        var file = Godot.FileAccess.Open(GalatimeConstants.SettingsPath, Godot.FileAccess.ModeFlags.Read);
 
         var error = Godot.FileAccess.GetOpenError();
         if (error != Error.Ok)
@@ -37,13 +37,13 @@ public partial class SettingsGlobals : Node
     /// <summary> Saves the settings to the settings.yml file. </summary>
     public void SaveSettings()
     {
-        var saveProcessSceneInstance = GalatimeGlobals.saveProcessScene.Instantiate<SavingProcess>();
+        var saveProcessSceneInstance = GalatimeGlobals.SaveProcessScene.Instantiate<SavingProcess>();
         GetTree().Root.AddChild(saveProcessSceneInstance);
 
         var serializer = new Serializer();
         var saveYaml = serializer.Serialize(Settings);
 
-        var file = Godot.FileAccess.Open(GalatimeConstants.settingsPath, Godot.FileAccess.ModeFlags.Write);
+        var file = Godot.FileAccess.Open(GalatimeConstants.SettingsPath, Godot.FileAccess.ModeFlags.Write);
         var error = Godot.FileAccess.GetOpenError();
         if (error != Error.Ok)
         {

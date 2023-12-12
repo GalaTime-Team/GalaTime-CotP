@@ -255,7 +255,7 @@ ItemId = "golden_holder_sword"
 [node name="ItemPickup3" parent="." instance=ExtResource("9_7m3q7")]
 position = Vector2(-1024, 896)
 ItemId = "heal_potion"
-Quantity = 17
+Quantity = 36
 
 [editable path="Roomwrap"]
 [editable path="Roomwrap2"]

@@ -74,7 +74,7 @@ namespace Galatime
             Stats.OnStatsChanged += OnStatsChanged;
             OnStatsChanged(Stats);
 
-            PlayerVariables.setPlayerInstance(this);
+            PlayerVariables.SetPlayerInstance(this);
         }
 
         public override void _ExitTree()
@@ -146,9 +146,9 @@ namespace Galatime
 
         private void OnAbilitiesChanged()
         {
-            for (int i = 0; i < PlayerVariables.abilities.Count; i++)
+            for (int i = 0; i < PlayerVariables.Abilities.Length; i++)
             {
-                var ability = PlayerVariables.abilities[i];
+                var ability = PlayerVariables.Abilities[i];
                 // Print current ability information
                 GD.PrintRich($"[color=purple]ABILITIES CHANGED FOR PLAYER[/color]: Is empty: {ability.IsEmpty}. Name: {ability.Name}. Index: {i}");
                 if (!ability.IsEmpty)
@@ -203,7 +203,7 @@ namespace Galatime
 
         private void _onItemsChanged()
         {
-            var obj = PlayerVariables.inventory[0];
+            var obj = PlayerVariables.Inventory[0];
             if (obj == Weapon.ItemData) return;
             if (obj.IsEmpty) Weapon.RemoveItem();
             Weapon.TakeItem(obj);
@@ -229,7 +229,7 @@ namespace Galatime
             }
 
             // Checking for input for abilities.
-            for (int i = 0; i < PlayerVariables.abilities.Count; i++) if (@event.IsActionPressed($"game_ability_{i + 1}")) UseAbility(i);
+            for (int i = 0; i < PlayerVariables.Abilities.Length; i++) if (@event.IsActionPressed($"game_ability_{i + 1}")) UseAbility(i);
         }
 
         public void StartDialog(string id) => PlayerGui.DialogBox.StartDialog(id);

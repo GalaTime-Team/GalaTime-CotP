@@ -1,43 +1,39 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using Galatime;
 using Godot;
-using YamlDotNet;
 using Newtonsoft.Json;
 using Galatime.Dialogue;
+using Newtonsoft.Json.Linq;
+using System;
 
 public sealed partial class GalatimeGlobals : Node
 {
-    public static List<Item> itemList = new();
-    public static List<AbilityData> abilitiesList = new();
-    public static List<DialogData> dialogsList = new();
-    public static List<Character> charactersList = new();
-    public static Godot.Collections.Array tipsList = new();
+    /// <summary> List of every single item data that is registered in the game. </summary>
+    public static List<Item> ItemList = new();
+    /// <summary> List of every single ability data that is registered in the game. </summary>
+    public static List<AbilityData> AbilitiesList = new();
+    /// <summary> List of every single dialog data that is registered in the game. </summary>
+    public static List<DialogData> DialogsList = new();
+    /// <summary> List of every single dialog character data that is registered in the game. </summary>
+    public static List<Character> CharactersList = new();
+    public static Godot.Collections.Array TipsList = new();
 
-    public static string pathListItems = "res://assets/data/json/items.json";
-    public static string pathListAbilities = "res://assets/data/json/abilities.json";
-    public static string pathListTips = "res://assets/data/json/tips.json";
-    public static string pathListDialogs = "res://assets/data/json/dialogs.json";
-    public static string pathListCharacters = "res://assets/data/json/talking_characters.json";
+    public static string PathListItems = "res://assets/data/json/items.json";
+    public static string PathListAbilities = "res://assets/data/json/abilities.json";
+    public static string PathListTips = "res://assets/data/json/tips.json";
+    public static string PathListDialogs = "res://assets/data/json/dialogs.json";
+    public static string PathListCharacters = "res://assets/data/json/talking_characters.json";
 
-    public static PackedScene loadingScene;
-    public static PackedScene saveProcessScene;
+    /// <summary> The maximum number of saves that can be stored. </summary>
+    public const int MaxSaves = 5;
 
-    //itemList = _getItemsFromJson();
-    //ablitiesList = _getAbilitiesFromJson();
-    //1071756821158699068
+    public static PackedScene LoadingScene;
+    public static PackedScene SaveProcessScene;
 
-    public PlayerVariables playerVariables;
+    public PlayerVariables PlayerVariables;
 
-    /// <summary> Slot type for inventory </summary>
-    public enum slotType
-    {
-        slotDefault,
-        slotSword
-    }
-
+    /// <summary> Returns the command line arguments passed to the game. </summary>
     public static Dictionary<string, string> CMDArgs
     {
         get
@@ -65,120 +61,48 @@ public sealed partial class GalatimeGlobals : Node
 
     public override void _Ready()
     {
-        playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+        PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
-        loadingScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/Loading.tscn");
-        saveProcessScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/SavingProcess.tscn");
+        LoadingScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/Loading.tscn");
+        SaveProcessScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/SavingProcess.tscn");
 
-        itemList = _getItemsFromJson();
-        abilitiesList = _getAbilitiesFromJson();
-        tipsList = _getTipsFromJson();
-        dialogsList = GetDataFromJson<DialogsData>(pathListDialogs).Dialogs;
-        charactersList = GetDataFromJson<CharactersData>(pathListCharacters).Characters;
+        ItemList = GetFromJson<Item>(PathListItems, "items");
+        AbilitiesList = GetFromJson<AbilityData>(PathListAbilities, "abilities");
+        TipsList = GetTipsFromJson();
+        DialogsList = GetDataFromJson<DialogsData>(PathListDialogs).Dialogs;
+        CharactersList = GetDataFromJson<CharactersData>(PathListCharacters).Characters;
 
-        GetItemById("heal_potion", false).OnUse += () => {
-            playerVariables.Player.PlayDrinkingSound();
-            GetTree().CreateTimer(1f).Timeout += () => playerVariables.Player.Heal(playerVariables.Player.Stats[EntityStatType.Health].Value * 0.5f);
-        };
-        GetItemById("mana_potion", false).OnUse += () => {
-            playerVariables.Player.PlayDrinkingSound();
-            GetTree().CreateTimer(1f).Timeout += () => playerVariables.Player.Mana += playerVariables.Player.Stats[EntityStatType.Mana].Value * 0.5f;
-        };
-
-        foreach (var dialog in dialogsList)
+        // TODO: Move this to another file that handling the behavior of items.
+        GetItemById("heal_potion", false).OnUse += () =>
         {
-            foreach (var line in dialog.Lines) GD.Print($"Text: {line.Text}, Speaker: {line.CharacterID}, Emotion: {line.EmotionID}");
-        }
+            PlayerVariables.Player.PlayDrinkingSound();
+            GetTree().CreateTimer(1f).Timeout += () => PlayerVariables.Player.Heal(PlayerVariables.Player.Stats[EntityStatType.Health].Value * 0.5f);
+        };
+        GetItemById("mana_potion", false).OnUse += () =>
+        {
+            PlayerVariables.Player.PlayDrinkingSound();
+            GetTree().CreateTimer(1f).Timeout += () => PlayerVariables.Player.Mana += PlayerVariables.Player.Stats[EntityStatType.Mana].Value * 0.5f;
+        };
+        // TODO: Move this to another file that handling the behavior of items.
     }
 
-    public void LoadScene(string nextScene = "res://assets/scenes/MainMenu.tscn")
+    public void LoadScene(string nextScene = "res://assets/scenes/MainMenu.tscn") => CallDeferred(nameof(DeferredLoadScene), nextScene);
+    private void DeferredLoadScene(string path)
     {
-        CallDeferred(nameof(deferredLoadScene), nextScene);
-    }
-
-    private void deferredLoadScene(string path)
-    {
-        var loadingSceneInstance = loadingScene.Instantiate<Loading>();
+        var loadingSceneInstance = LoadingScene.Instantiate<Loading>();
         loadingSceneInstance.sceneName = path;
         GetTree().Root.AddChild(loadingSceneInstance);
     }
 
-    /// <summary>
-    /// Checks for the presence of saves and also creates them if they are absent
-    /// </summary>
+    /// <summary>  Checks for the presence of saves and also creates them if they are absent </summary>
     public static void CheckSaves()
     {
-        if (!DirAccess.DirExistsAbsolute(GalatimeConstants.savesPath))
-        {
-            DirAccess.MakeDirAbsolute(GalatimeConstants.savesPath);
-        }
-        var savesCount = getSaves().Count;
-        if (savesCount <= 5)
-        {
-            for (int i = 1; i <= 5 - savesCount; i++)
-            {
-                createBlankSave(i);
-            }
-        }
+        if (!DirAccess.DirExistsAbsolute(GalatimeConstants.SavesPath)) DirAccess.MakeDirAbsolute(GalatimeConstants.SavesPath);
     }
 
-    public static System.Collections.Generic.Dictionary<string, string> loadSettingsConfig()
+    public static Godot.Collections.Array<Godot.Collections.Dictionary> GetSaves()
     {
-        string SETTINGS_FILE_PATH = "user://settings.yml";
-
-        GD.Print($"Settings path: {SETTINGS_FILE_PATH}");
-
-        var file = Godot.FileAccess.Open(SETTINGS_FILE_PATH, Godot.FileAccess.ModeFlags.Read);
-
-        var deserializer = new YamlDotNet.Serialization.Deserializer();
-        var data = deserializer.Deserialize<System.Collections.Generic.Dictionary<string, string>>(file.GetAsText());
-
-        file.Close();
-
-        return data;
-    }
-
-    public static void updateSettingsConfig(Node currentScene, double musicVolume = 1, double soundsVolume = 1, bool discordActivityDisabled = false)
-    {
-        var saveProcessSceneInstance = saveProcessScene.Instantiate<SavingProcess>();
-        currentScene.GetTree().Root.AddChild(saveProcessSceneInstance);
-
-        string SETTINGS_FILE_PATH = "user://settings.yml";
-
-        GD.Print($"Settings path: {SETTINGS_FILE_PATH}");
-
-        var file = Godot.FileAccess.Open(SETTINGS_FILE_PATH, Godot.FileAccess.ModeFlags.Write);
-        if (Godot.FileAccess.GetOpenError() != Error.Ok)
-        {
-            saveProcessSceneInstance.PlayFailedAnimation();
-            GD.Print("Error when saving a config: " + Godot.FileAccess.GetOpenError().ToString());
-        }
-        else
-        {
-            var serializer = new YamlDotNet.Serialization.Serializer();
-            var saveData = getSettingsData(musicVolume, soundsVolume, discordActivityDisabled);
-            var saveYaml = serializer.Serialize(saveData);
-
-            file.StoreString(saveYaml);
-
-            file.Close();
-        }
-    }
-
-    private static System.Collections.Generic.Dictionary<string, object> getSettingsData(double musicVolume = 1, double soundsVolume = 1, bool discordActivityDisable = false)
-    {
-        var saveData = new System.Collections.Generic.Dictionary<string, object>();
-        saveData.Add("music_volume", musicVolume);
-        saveData.Add("sounds_volume", soundsVolume);
-        // saveData.Add("discord_presence_disabled", discordActivityDisable);
-        saveData.Add("config_version", 1);
-
-        return saveData;
-    }
-
-    public static Godot.Collections.Array<Godot.Collections.Dictionary> getSaves()
-    {
-        var saves = DirAccess.Open(GalatimeConstants.savesPath);
+        var saves = DirAccess.Open(GalatimeConstants.SavesPath);
         var results = new Godot.Collections.Array<Godot.Collections.Dictionary>();
 
         if (saves != null)
@@ -187,8 +111,7 @@ public sealed partial class GalatimeGlobals : Node
             var fileName = saves.GetNext();
             while (fileName != "")
             {
-                // GD.Print($"user://saves/{fileName}");
-                var file = Godot.FileAccess.Open($"{GalatimeConstants.savesPath}{fileName}", Godot.FileAccess.ModeFlags.Read);
+                var file = FileAccess.Open($"{GalatimeConstants.SavesPath}{fileName}", Godot.FileAccess.ModeFlags.Read);
                 var json = new Json();
                 var parsedJson = json.Parse(file.GetAsText());
                 if (parsedJson == Error.Ok)
@@ -206,67 +129,38 @@ public sealed partial class GalatimeGlobals : Node
         return results;
     }
 
-    public static void createBlankSave(int saveId)
+    public static Godot.Collections.Dictionary LoadSave(int saveId)
     {
-        string SAVE_FILE_PATH = GalatimeConstants.savesPath;
-        SAVE_FILE_PATH += "save" + saveId + ".json";
-
-        GD.Print($"Save path: {SAVE_FILE_PATH}");
-
-        var file = Godot.FileAccess.Open(SAVE_FILE_PATH, Godot.FileAccess.ModeFlags.Write);
-
-        var saveData = getBlankSaveData(saveId);
-        var saveJson = Json.Stringify(saveData, "\t");
-
-        file.StoreString(saveJson);
-
-        file.Close();
-    }
-
-    public static Godot.Collections.Dictionary loadSave(int saveId)
-    {
-        string SAVE_FILE_PATH = GalatimeConstants.savesPath;
-        SAVE_FILE_PATH += "save" + saveId + ".json";
-
-        var file = Godot.FileAccess.Open(SAVE_FILE_PATH, Godot.FileAccess.ModeFlags.Read);
-
+        string SAVE_FILE_PATH = $"{GalatimeConstants.SavesPath}save{saveId}.json";
+        var file = FileAccess.Open(SAVE_FILE_PATH, FileAccess.ModeFlags.Read);
         var saveData = (Godot.Collections.Dictionary)Json.ParseString(file.GetAsText());
-
         file.Close();
-
         return saveData;
     }
 
     public void Save(int saveId, Node currentScene)
     {
-        var saveProcessSceneInstance = saveProcessScene.Instantiate<SavingProcess>();
-        if (currentScene != null)
-        {
-            currentScene.GetTree().Root.AddChild(saveProcessSceneInstance);
-        }
+        var saveProcessSceneInstance = SaveProcessScene.Instantiate<SavingProcess>();
+        currentScene?.GetTree().Root.AddChild(saveProcessSceneInstance);
 
-        string SAVE_FILE_PATH = GalatimeConstants.savesPath;
-        SAVE_FILE_PATH += "save" + saveId + ".json";
+        var savePath = $"{GalatimeConstants.SavesPath}save{saveId}.json";
+        var file = FileAccess.Open(savePath, FileAccess.ModeFlags.Write);
 
-        var file = Godot.FileAccess.Open(SAVE_FILE_PATH, Godot.FileAccess.ModeFlags.Write);
-
-        if (Godot.FileAccess.GetOpenError() != Error.Ok)
+        if (FileAccess.GetOpenError() != Error.Ok)
         {
             if (currentScene != null) saveProcessSceneInstance.PlayFailedAnimation();
-            GD.Print("Error when saving a config: " + Godot.FileAccess.GetOpenError().ToString());
+            GD.Print("Error when saving a config: " + FileAccess.GetOpenError().ToString());
         }
         else
         {
-            var saveData = getSaveData(saveId);
+            var saveData = GetSaveData(saveId);
             var saveJson = Json.Stringify(saveData, "\t");
-
             file.StoreString(saveJson);
-
             file.Close();
         }
     }
 
-    private Godot.Collections.Dictionary getSaveData(int saveId)
+    private Godot.Collections.Dictionary GetSaveData(int saveId)
     {
         var saveData = new Godot.Collections.Dictionary
         {
@@ -275,12 +169,12 @@ public sealed partial class GalatimeGlobals : Node
             { "chapter", 1 },
             { "day", 1 },
             { "playtime", 0 },
-            { "learned_abilities", playerVariables.learnedAbilities }
+            { "learned_abilities", PlayerVariables.LearnedAbilities }
         };
         var inventory = new Godot.Collections.Dictionary();
-        for (int i = 0; i < playerVariables.inventory.Count; i++)
+        for (int i = 0; i < PlayerVariables.Inventory.Length; i++)
         {
-            var item = playerVariables.inventory[i];
+            var item = PlayerVariables.Inventory[i];
             if (!item.IsEmpty)
             {
                 inventory.Add(i, new Godot.Collections.Dictionary {
@@ -291,46 +185,22 @@ public sealed partial class GalatimeGlobals : Node
         }
         saveData.Add("inventory", inventory);
         var abilities = new Godot.Collections.Dictionary();
-        for (int i = 0; i < playerVariables.abilities.Count; i++)
+        for (int i = 0; i < PlayerVariables.Abilities.Length; i++)
         {
-            var ability = playerVariables.abilities[i];
+            var ability = PlayerVariables.Abilities[i];
             abilities.Add(i, new Godot.Collections.Dictionary());
             ((Godot.Collections.Dictionary)abilities[i]).Add("id", ability.ID);
         }
-        saveData.Add("equiped_abilities", abilities);
-        // var stats = new Godot.Collections.Dictionary();
-        // for (int i = 0; i < playerVariables.Player.Stats.Count; i++)
-        // {
-        //     var stat = playerVariables.Player.Stats[i];
-        //     stats.Add(stat.ID, stat.Value);
-        // }
-        // saveData.Add("stats", stats);
-        if (playerVariables.Player is not null) saveData.Add("xp", playerVariables.Player.Xp);
+        saveData.Add("equipped_abilities", abilities);
+        if (PlayerVariables.Player is not null) saveData.Add("xp", PlayerVariables.Player.Xp);
         return saveData;
     }
 
-    private static Godot.Collections.Dictionary getBlankSaveData(int saveId)
+    private static Godot.Collections.Array GetTipsFromJson()
     {
-        var saveData = new Godot.Collections.Dictionary
+        if (FileAccess.FileExists(PathListTips))
         {
-            { "DO_NOT_MODIFY_THIS_FILE_ONLY_MODIFY_IF_YOU_KNOW_WHAT_YOURE_DOING", 0 },
-            { "id", saveId },
-            { "chapter", 1 },
-            { "day", 1 },
-            { "playtime", 0 },
-            { "learned_abilities", new Godot.Collections.Dictionary() },
-            { "inventory", new Godot.Collections.Dictionary() },
-            { "equiped_abilities", new Godot.Collections.Dictionary() }
-        };
-
-        return saveData;
-    }
-
-    private static Godot.Collections.Array _getTipsFromJson()
-    {
-        if (Godot.FileAccess.FileExists(pathListTips))
-        {
-            var file = Godot.FileAccess.Open(pathListTips, Godot.FileAccess.ModeFlags.Read);
+            var file = FileAccess.Open(PathListTips, Godot.FileAccess.ModeFlags.Read);
             var json = new Json();
             json.Parse(file.GetAsText());
             return (Godot.Collections.Array)((Godot.Collections.Dictionary)json.Data)["tips"];
@@ -339,87 +209,6 @@ public sealed partial class GalatimeGlobals : Node
         {
             GD.PrintErr("GLOBALS: Invalid path for tips");
             return new Godot.Collections.Array();
-        }
-    }
-
-    /// <summary> Loads from path and parses a json file into a dictionary of data. </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public static Godot.Collections.Dictionary LoadAndGetParsedJson(string path)
-    {
-        var json = new Json();
-        json.Parse(LoadAndGetJsonText(path));
-        return (Godot.Collections.Dictionary)json.Data;
-    }
-
-    public static string LoadAndGetJsonText(string path)
-    {
-        var file = Godot.FileAccess.Open(path, Godot.FileAccess.ModeFlags.Read);
-        return file.GetAsText();
-    }
-
-    /// <summary>
-    /// Parses a dictionary of data into an object of type T.
-    /// </summary>
-    /// <typeparam name="T">The type of object to create.</typeparam>
-    /// <param name="data">The dictionary of data to parse.</param>
-    /// <returns>An object of type T with its properties set based on the data in the dictionary.</returns>
-    public static T ParseJson<T>(Godot.Collections.Dictionary data)
-    {
-        if (typeof(T) == typeof(AbilityData))
-        {
-            var ab = new AbilityData()
-            {
-                // Set the all properties of the ability based on the parsed data
-                ID = data.ContainsKey("id") ? (string)data["id"] : "",
-                Name = data.ContainsKey("name") ? (string)data["name"] : "",
-                Description = data.ContainsKey("description") ? (string)data["description"] : "",
-                IconPath = data.ContainsKey("icon") ? (string)data["icon"] : "",
-                ScenePath = data.ContainsKey("scene") ? (string)data["scene"] : "",
-                Reload = data.ContainsKey("reload") ? (float)data["reload"] : 0,
-                Duration = data.ContainsKey("duration") ? (float)data["duration"] : 0,
-                Element = data.ContainsKey("element") ? GalatimeElement.GetByName((string)data["element"]) : new(),
-                RequiredIDs = data.ContainsKey("required") ? data["required"].AsStringArray() : new string[0],
-                CostXP = data.ContainsKey("cost") ? (int)data["cost"] : 0,
-                // Set the costs of the ability
-                Costs = data.ContainsKey("costs") ? new Costs
-                {
-                    Mana = ((Godot.Collections.Dictionary)data["costs"]).ContainsKey("mana") ? (int)((Godot.Collections.Dictionary)data["costs"])["mana"] : 0,
-                    Stamina = ((Godot.Collections.Dictionary)data["costs"]).ContainsKey("stamina") ? (int)((Godot.Collections.Dictionary)data["costs"])["stamina"] : 0
-                } : new(),
-                Charges = data.ContainsKey("charges") ? (int)data["charges"] : 1,
-                MaxCharges = data.ContainsKey("charges") ? (int)data["charges"] : 1
-            };
-            return (T)(object)ab;
-        }
-        else if (typeof(T) == typeof(Item))
-        {
-            var item = new Item()
-            {
-                // Set the all properties of the item based on the parsed data
-                ID = data.ContainsKey("id") ? (string)data["id"] : "",
-                Name = data.ContainsKey("name") ? (string)data["name"] : "",
-                Description = data.ContainsKey("description") ? (string)data["description"] : "",
-                IconPath = data.ContainsKey("icon") ? (string)data["icon"] : "",
-                ScenePath = data.ContainsKey("scene") ? (string)data["scene"] : "",
-                StackSize = data.ContainsKey("stack_size") ? (int)data["stack_size"] : 1,
-                Stackable = data.ContainsKey("stackable") && (bool)data["stackable"],
-                Type = data.ContainsKey("type") ? (string)data["type"] switch
-                {
-                    // If the "type" value is "weapon", set the Type property to WEAPON
-                    "weapon" => ItemType.WEAPON,
-                    "consumable" => ItemType.CONSUMABLE,
-                    // For any other value, set the Type property as common item.
-                    _ => ItemType.COMMON
-                } : ItemType.COMMON,
-                Quantity = 1
-            };
-            return (T)(object)item;
-        }
-        else
-        {
-            GD.Print($"GLOBALS: Invalid type passed to ParseJson, not supported type: {typeof(T)}");
-            return default;
         }
     }
 
@@ -439,31 +228,22 @@ public sealed partial class GalatimeGlobals : Node
         return default;
     }
 
-    private static List<Item> _getItemsFromJson()
+    /// <summary> Loads and parses a json file into an object of type T. </summary>
+    public static List<T> GetFromJson<T>(string path, string name)
     {
         // Check if the file exists
-        if (Godot.FileAccess.FileExists(pathListItems))
+        if (FileAccess.FileExists(path))
         {
             // Open the file in read mode
-            var file = Godot.FileAccess.Open(pathListItems, Godot.FileAccess.ModeFlags.Read);
-            // Create a new instance of the Json parser
-            var json = new Json();
-            // Parse the file content as text
-            json.Parse(file.GetAsText());
-            // Get the parsed data as a dictionary
-            var data = (Godot.Collections.Dictionary)json.Data;
+            var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
 
-            // Get the data of the json file
-            var itemListData = (Godot.Collections.Array)data["items"];
-            var itemList = new List<Item>();
-
-            // Iterate over the json data
+            JObject json = JObject.Parse(file.GetAsText());
+            var itemListData = json[name];
+            var itemList = new List<T>();
             foreach (var i in itemListData)
             {
-                // Get the parsed data as a dictionary
-                var itemData = (Godot.Collections.Dictionary)i;
                 // Create a new instance of the Item class
-                var item = ParseJson<Item>(itemData);
+                var item = i.ToObject<T>();
                 // Add the item to the list
                 itemList.Add(item);
             }
@@ -474,55 +254,21 @@ public sealed partial class GalatimeGlobals : Node
         else
         {
             // If the file doesn't exist, print an error message and return a new instance of the Item class
-            GD.PrintErr($"GLOBALS: Invalid path for inventory. Path: {pathListItems}");
-            return new();
-        }
-    }
-
-
-    private static List<AbilityData> _getAbilitiesFromJson()
-    {
-        if (FileAccess.FileExists(pathListItems))
-        {
-            var file = FileAccess.Open(pathListAbilities, Godot.FileAccess.ModeFlags.Read);
-            var json = new Json();
-            json.Parse(file.GetAsText());
-            // Get the parsed data as a dictionary
-            var data = (Godot.Collections.Dictionary)json.Data;
-
-            // Get the data of the json file
-            var abilityListData = (Godot.Collections.Array)data["abilities"];
-            var abilityList = new List<AbilityData>();
-
-            // Iterate over the json data
-            foreach (var i in abilityListData)
-            {
-                // Get the parsed data as a dictionary
-                var abilityData = (Godot.Collections.Dictionary)i;
-                // Create a new instance of the AbilityData class
-                AbilityData ability = ParseJson<AbilityData>(abilityData);
-                abilityList.Add(ability);
-            }
-
-            return abilityList;
-        }
-        else
-        {
-            GD.PrintErr($"GLOBALS: Invalid path for abilities. Path: {pathListAbilities}");
+            GD.PrintErr($"GLOBALS: Invalid path for {name}. Path: {path}");
             return new();
         }
     }
 
     public static Item GetItemById(string id, bool newItem = true)
     {
-        if (itemList.Count >= 0)
+        if (ItemList.Count >= 0)
         {
-            foreach (var item in itemList)
+            foreach (var item in ItemList)
             {
                 if (item.ID == id)
                 {
                     Item i;
-                    if (newItem) i = item.Clone(); else i = item; 
+                    if (newItem) i = item.Clone(); else i = item;
                     return i;
                 }
             }
@@ -536,14 +282,14 @@ public sealed partial class GalatimeGlobals : Node
         }
     }
 
-    public static DialogData GetDialogById(string id) => dialogsList.Find(x => x.ID == id);
-    public static Character GetCharacterById(string id) => charactersList.Find(x => x.ID == id);
+    public static DialogData GetDialogById(string id) => DialogsList.Find(x => x.ID == id);
+    public static Character GetCharacterById(string id) => CharactersList.Find(x => x.ID == id);
 
     public static AbilityData GetAbilityById(string id)
     {
-        if (abilitiesList.Count >= 0)
+        if (AbilitiesList.Count >= 0)
         {
-            var ability = abilitiesList.FirstOrDefault(x => x.ID == id);
+            var ability = AbilitiesList.FirstOrDefault(x => x.ID == id);
             if (ability is null) GD.PrintErr($"GLOBALS: Ability ID is invalid. Ability ID is {(ability is null ? "null" : ability.Name)}");
             return ability is null ? new() : ability.Clone();
         }

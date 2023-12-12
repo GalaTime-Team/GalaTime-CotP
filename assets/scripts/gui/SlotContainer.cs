@@ -6,7 +6,7 @@ public partial class SlotContainer : GridContainer
     public Tooltip tooltip;
     public DragPreview dragPreview;
 
-    public PlayerVariables playerVariables;
+    public PlayerVariables PlayerVariables;
 
     private int _previousItemId;
 
@@ -19,12 +19,12 @@ public partial class SlotContainer : GridContainer
         tooltip = GetNode<Tooltip>("../Tooltip");
         dragPreview = GetNode<DragPreview>("../DragPreview");
 
-        playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+        PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
         gui.OnItemsChanged += () => _on_inventory_items_changed();
         gui.OnPause += (bool visible) => _onPause();
         PackedScene slot = GD.Load<PackedScene>("res://assets/objects/Slot.tscn");
-        for (int i = 0; i < PlayerVariables.slots; i++)
+        for (int i = 0; i < PlayerVariables.InventorySlots; i++)
         {
             Slot ItemSlot = (Slot)slot.Instantiate();
             ItemSlot.slotType = Slot.InventorySlotType.INVENTORY;
@@ -47,20 +47,20 @@ public partial class SlotContainer : GridContainer
 
     void _on_inventory_items_changed()
     {
-        for (int i = 0; i < playerVariables.inventory.Count; i++)
+        for (int i = 0; i < PlayerVariables.Inventory.Length; i++)
         {
             var ItemSlot = GetChild(i) as Slot;
-            ItemSlot.Data = !ItemSlot.Data.IsEmpty ? playerVariables.inventory[i].Clone() : new Item();
+            ItemSlot.Data = !ItemSlot.Data.IsEmpty ? PlayerVariables.Inventory[i].Clone() : new Item();
 
             var Item = ItemSlot.GetChild<ItemContainer>(0);
-            if (PlayerVariables.currentItem == i)
+            if (PlayerVariables.CurrentInventoryItem == i)
             {
-                Item.DisplayItem(playerVariables.inventory[i], true);
-                PlayerVariables.currentItem = -1;
+                Item.DisplayItem(PlayerVariables.Inventory[i], true);
+                PlayerVariables.CurrentInventoryItem = -1;
             }
             else
             {
-                Item.DisplayItem(playerVariables.inventory[i]);
+                Item.DisplayItem(PlayerVariables.Inventory[i]);
             }
         }
     }
@@ -89,13 +89,13 @@ public partial class SlotContainer : GridContainer
     }
     public void dragItem(int slot)
     {
-        var inventoryItem = playerVariables.inventory[slot];
+        var inventoryItem = PlayerVariables.Inventory[slot];
         var draggedItem = dragPreview.DraggedItem;
         tooltip.Hide();
         GD.Print($"CURRENT PRESSED INDEX: {slot}. Dragged item is empty: {draggedItem.IsEmpty}, Inventory item is empty: {inventoryItem.IsEmpty} (Quantity: {inventoryItem.Quantity}, ID: {inventoryItem.ID})");
         if (draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
-            dragPreview.DraggedItem = playerVariables.RemoveItem(slot);
+            dragPreview.DraggedItem = PlayerVariables.RemoveItem(slot);
             _previousItemId = slot;
         }
         else if (!draggedItem.IsEmpty && inventoryItem.IsEmpty)
@@ -106,7 +106,7 @@ public partial class SlotContainer : GridContainer
                 return;
             }   
             dragPreview.DraggedItem = new Item();
-            playerVariables.SetItem(draggedItem, slot);
+            PlayerVariables.SetItem(draggedItem, slot);
         }
         else if (!draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
@@ -115,7 +115,7 @@ public partial class SlotContainer : GridContainer
                 dragPreview.Prevent();
                 return;
             }
-            dragPreview.DraggedItem = playerVariables.SetItem(draggedItem, slot);
+            dragPreview.DraggedItem = PlayerVariables.SetItem(draggedItem, slot);
             _previousItemId = slot;
         }
     }

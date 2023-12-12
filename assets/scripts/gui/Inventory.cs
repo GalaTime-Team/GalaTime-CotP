@@ -24,7 +24,7 @@ public partial class Inventory : GridContainer
         gui.OnPause += OnPause;
 
         var slotScene = GD.Load<PackedScene>("res://assets/objects/Slot.tscn");
-        for (int i = 0; i < PlayerVariables.slots; i++)
+        for (int i = 0; i < PlayerVariables.InventorySlots; i++)
         {
             Slot itemSlot = (Slot)slotScene.Instantiate();
             itemSlot.slotType = Slot.InventorySlotType.INVENTORY;
@@ -47,18 +47,18 @@ public partial class Inventory : GridContainer
 
     void OnInventoryChanged()
     {
-        for (int i = 0; i < PlayerVariables.inventory.Count; i++)
+        for (int i = 0; i < PlayerVariables.Inventory.Length; i++)
         {
             var ItemSlot = GetChild(i) as Slot;
-            ItemSlot.Data = PlayerVariables.inventory[i].Clone();
+            ItemSlot.Data = PlayerVariables.Inventory[i].Clone();
 
             var Item = ItemSlot.GetChild<ItemContainer>(0);
-            if (PlayerVariables.currentItem == i)
+            if (PlayerVariables.CurrentInventoryItem == i)
             {
-                Item.DisplayItem(PlayerVariables.inventory[i], true);
-                PlayerVariables.currentItem = -1;
+                Item.DisplayItem(PlayerVariables.Inventory[i], true);
+                PlayerVariables.CurrentInventoryItem = -1;
             }
-            else Item.DisplayItem(PlayerVariables.inventory[i]);
+            else Item.DisplayItem(PlayerVariables.Inventory[i]);
         }
     }
 
@@ -73,7 +73,7 @@ public partial class Inventory : GridContainer
     }
 
     /// <summary> Returns item from the slot and dragged item. </summary>
-    public (Item existed, Item dragged) GetBoth(int slot) => (PlayerVariables.inventory[slot], DragPreview.DraggedItem);
+    public (Item existed, Item dragged) GetBoth(int slot) => (PlayerVariables.Inventory[slot], DragPreview.DraggedItem);
 
     /// <summary> Takes item from the stack. </summary>
     public void TakeFromStack(int slot)
@@ -92,7 +92,7 @@ public partial class Inventory : GridContainer
 
     public void DragItem(int slot)
     {
-        var inventoryItem = PlayerVariables.inventory[slot];
+        var inventoryItem = PlayerVariables.Inventory[slot];
         var draggedItem = DragPreview.DraggedItem;
         Tooltip.Hide();
         GD.Print($"CURRENT PRESSED INDEX: {slot}. Dragged item is empty: {draggedItem.IsEmpty}, Inventory item is empty: {inventoryItem.IsEmpty} (Quantity: {inventoryItem.Quantity}, ID: {inventoryItem.ID})");

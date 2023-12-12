@@ -9,10 +9,6 @@ public partial class LevelManager : Node
             {"classicalbreak", new AudioPack(
                 "res://assets/audios/soundtracks/enemies_test_level/classicalbreak.wav",
                 "res://assets/audios/soundtracks/enemies_test_level/classicalbreakcalm.wav"
-            )},
-            {"mountains", new AudioPack(
-                "res://assets/audios/soundtracks/enemies_test_level/Deep_Mountains.mp3",
-                "res://assets/audios/soundtracks/enemies_test_level/Deep_hidden_in_the_Mountain.mp3"
             )}
         };
 

@@ -46,7 +46,7 @@ public partial class DiscordController : Node
             Assets = new Assets()
             {
                 LargeImageKey = "default",
-                LargeImageText = $"GalaTime {GalatimeConstants.version}",
+                LargeImageText = $"GalaTime {GalatimeConstants.Version}",
                 SmallImageKey = "day_1",
                 SmallImageText = "Day 1"
             }

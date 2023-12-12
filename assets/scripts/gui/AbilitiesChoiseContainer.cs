@@ -19,7 +19,7 @@ namespace Galatime
 
             var abilityContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/AbilityContainer.tscn");
             // Adding ability containers
-            for (int i = 0; i < PlayerVariables.abilitySlots; i++)
+            for (int i = 0; i < PlayerVariables.AbilitySlots; i++)
             {
                 // Instantiate ability container and add it to the abilities container
                 var instance = abilityContainerScene.Instantiate<AbilityContainer>();
@@ -41,7 +41,7 @@ namespace Galatime
         private void _onAbilitiesChanged()
         {
             int i = 0;
-            foreach (var ability in playerVariables.abilities)
+            foreach (var ability in playerVariables.Abilities)
             {
                 if (!ability.IsEmpty)
                 {
@@ -67,10 +67,10 @@ namespace Galatime
                 {
                     // Get the ability container.
                     var abilityContainer = abilityContainers[id];
-                    for (int i = 0; i < playerVariables.abilities.Count; i++)
+                    for (int i = 0; i < playerVariables.Abilities.Length; i++)
                     {
-                        var ability = playerVariables.abilities[i];
-                        var choiceAbility = playerVariables.abilities[id];
+                        var ability = playerVariables.Abilities[i];
+                        var choiceAbility = playerVariables.Abilities[id];
                         GD.Print(" reloaded? " + ability.IsEmpty + " " + choiceAbility.IsEmpty);
                         if (!ability.IsEmpty)
                         {
@@ -78,7 +78,7 @@ namespace Galatime
                             {
                                 if (ability.IsFullyReloaded && choiceAbility.IsFullyReloaded)
                                 {
-                                    var previous = playerVariables.abilities[id];
+                                    var previous = playerVariables.Abilities[id];
                                     _playerVariables.SetAbility(GalatimeGlobals.GetAbilityById(ChoiceId), id);
                                     _playerVariables.SetAbility(previous, i);
                                     abilityContainer.Click();
@@ -92,7 +92,7 @@ namespace Galatime
                             }
                         }
                     }
-                    if (playerVariables.abilities[id].IsReloaded)
+                    if (playerVariables.Abilities[id].IsReloaded)
                     {
                         _playerVariables.SetAbility(GalatimeGlobals.GetAbilityById(ChoiceId), id);
                         abilityContainer.Click();

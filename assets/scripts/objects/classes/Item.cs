@@ -1,34 +1,41 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Godot;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Galatime;
 public enum ItemType { COMMON, WEAPON, CONSUMABLE };
 
+[JsonObject(MemberSerialization.OptIn)]
 public class Item
 {
-    /// <summary> The name of the item. </summary>
+    [JsonProperty("name")]
+    /// <summary> The name of the item. </summary>  
     public string Name = "";
 
+    [JsonProperty("id")]
     /// <summary> The unique identificator of the item. MAKE IT UNIQUE. </summary>
     public string ID = "";
 
+    [JsonProperty("description")]
     /// <summary> The description of the item. </summary>
     public string Description = "";
 
+    [JsonProperty("stackable")]
     /// <summary> If the item is stackable in the inventory. Stacking - is the ability to add multiple items to the inventory in one slot. </summary>
     public bool Stackable;
 
+    [JsonProperty("stack_size")]
     /// <summary> The stack size of the item. It means the number of items can be stacked. </summary>
     /// <remarks> It's not currently used. </remarks>
     public int StackSize = 1;
 
     /// <summary> The type of the item. </summary>
+    [JsonConverter(typeof(StringEnumConverter)), JsonProperty("type")]
     public ItemType Type = ItemType.COMMON;
 
     private int quantity = 0;
+    [JsonProperty("quantity")]
     /// <summary> The amount of the item. </summary>
     public int Quantity 
     {
@@ -45,6 +52,7 @@ public class Item
     }
 
     private string iconPath = "";
+    [JsonProperty("icon")]
     /// <summary> The path of the icon of the item. </summary>
     public string IconPath
     {
@@ -61,6 +69,7 @@ public class Item
     }
 
     private string scenePath = "";
+    [JsonProperty("scene")]
     /// <summary> The path of the scene of the item. </summary>
     public string ScenePath
     {
