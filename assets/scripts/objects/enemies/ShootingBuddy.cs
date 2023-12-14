@@ -9,19 +9,8 @@ public partial class ShootingBuddy : Entity
     public Projectile Projectile;
     public Sprite2D Sprite;
     public TargetController TargetController;
+    public CollisionShape2D Collision;
     #endregion
-
-    // public ShootingBuddy() : base(new EntityStats(new()
-    // {
-    //     [EntityStatType.Health] = 50,
-    //     [EntityStatType.PhysicalAttack] = 50,
-    //     [EntityStatType.PhysicalDefense] = 50,
-    //     [EntityStatType.MagicalAttack] = 50,
-    //     [EntityStatType.MagicalDefense] = 50,
-    //     // Immune to all knockback.
-    //     [EntityStatType.KnockbackResistance] = 9999
-    // }))
-    // { }
 
 
     public override void _Ready()
@@ -33,6 +22,7 @@ public partial class ShootingBuddy : Entity
         Projectile = GetNode<Projectile>("Projectile");
         Sprite = GetNode<Sprite2D>("Sprite2D");
         TargetController = GetNode<TargetController>("TargetController");
+        Collision = GetNode<CollisionShape2D>("Collision");
         #endregion
 
         Body = this;
@@ -72,6 +62,6 @@ public partial class ShootingBuddy : Entity
         base._DeathEvent(damageRotation);
         Sprite.Visible = false;
         ShootingTimer.Stop();
-        // QueueFree();
+        Callable.From(() => Collision.Disabled = true).CallDeferred();
     }
 }

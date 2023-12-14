@@ -113,73 +113,6 @@ public partial class EntityStats : Resource, IEnumerable<EntityStat>
         // GD.Print(s.ToString());
     }
 
-    // public EntityStats(Dictionary<EntityStatType, float> stats = null)
-    // {
-    //     // Initialize the dictionary.
-    //     Stats = new();
-    //     // Loop through all the possible stat types defined in the enum.
-    //     foreach (EntityStatType stat in Enum.GetValues(typeof(EntityStatType)))
-    //     {
-    //         var s = new EntityStat(stat, 0);
-    //         Stats.Add(stat, s);
-
-    //         // Set the initial value of the stat if it defined in the dictionary.
-    //         if (stats.ContainsKey(stat)) Stats[stat].Value = stats[stat];
-
-    //         // Subscribe to the StatChanged event of the EntityStat object.
-    //         // This will allow us to notify the OnStatsChanged event of this class when any stat changes.
-    //         s.StatChanged += OnStatChanged;
-    //     }
-    // }
-
-    // In current version of Godot, these functions are not working.
-    // Should to be fixed in future versions of Godot.
-
-    /* public override Variant _Get(StringName property)
-    {
-        if (Enum.TryParse(property, out EntityStatType statType))
-        {
-            var value = Stats[statType].Value;
-            return value;
-        }
-        return default;
-    }
-
-    public override bool _Set(StringName property, Variant value)
-    {
-        base._Get(property, value);
-
-        // Trying to get the stat type from the property name.
-        if (Enum.TryParse(property, out EntityStatType statType))
-        {
-            Stats[statType].Value = (int)value;
-            return true;
-        }
-        return false;
-    }
-
-    public override Godot.Collections.Array<Godot.Collections.Dictionary> _GetPropertyList()
-    {
-        base._GetPropertyList();
-
-        var properties = new Godot.Collections.Array<Godot.Collections.Dictionary>();
-
-        foreach (var stat in Stats)
-        {
-            var property = new Godot.Collections.Dictionary
-            {
-                ["name"] = stat.Key.ToString(),
-                ["type"] = (int)Variant.Type.Int,
-                ["hint"] = (int)PropertyHint.Range,
-                ["hint_string"] = "0,999"
-            };
-
-            properties.Add(property);
-        }
-
-        return properties;
-    } */
-
     private void OnStatChanged(EntityStat stat) => OnStatsChanged?.Invoke(this);
     public IEnumerator<EntityStat> GetEnumerator() => Stats.Values.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -238,6 +171,6 @@ public class EntityStat
 
 public enum DamageType
 {
-    physical,
-    magical
+    Physical,
+    Magical
 }

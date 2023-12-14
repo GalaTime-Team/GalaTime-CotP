@@ -109,7 +109,7 @@ public partial class Slime : Entity
         AttackCountdownTimer.Start();
         GalatimeElement element = GalatimeElement.Aqua;
         float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-        entity.TakeDamage(50, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.physical, 500, damageRotation);
+        entity.TakeDamage(50, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.Physical, 500, damageRotation);
 
         AnimationPlayer.Play("hit");
     }

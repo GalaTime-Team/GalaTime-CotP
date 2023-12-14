@@ -64,7 +64,7 @@ public partial class Explosion : Area2D
         // Deal damage to the entity.
         if (node is Entity e) {
             float damageRotation = GlobalPosition.AngleToPoint(e.GlobalPosition);
-            e.TakeDamage(7 * Power, 150, Element, DamageType.magical, 100 * Power, damageRotation);
+            e.TakeDamage(7 * Power, 150, Element, DamageType.Magical, 100 * Power, damageRotation);
         }
     }
 

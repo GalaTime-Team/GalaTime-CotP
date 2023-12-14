@@ -17,7 +17,7 @@ public partial class DamageArea : Area2D
     /// <summary> The element of the damage area. </summary>
     public GalatimeElement Element = new();
     /// <summary> The type of damage of the damage area. </summary>
-    public DamageType Type = DamageType.physical; 
+    public DamageType Type = DamageType.Physical; 
     /// <summary> The attack stat (can be magical or physical) of the damage area. </summary>
     public float AttackStat = 0;
     /// <summary> The power of the damage area. </summary>

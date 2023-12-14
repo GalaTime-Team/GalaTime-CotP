@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://dfsfnjxcwp6ye"]
+[gd_scene load_steps=35 format=3 uid="uid://dfsfnjxcwp6ye"]
 
 [ext_resource type="Script" path="res://assets/scripts/objects/enemies/Slime.cs" id="1_ufwr7"]
 [ext_resource type="Texture2D" uid="uid://cyglxm8058sgm" path="res://sprites/particles/Slime_particles.png" id="2_h3u7x"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bxtr8vepdgom0" path="res://sprites/entity/slime/walk/slime-walk.png" id="4_7rx10"]
 [ext_resource type="Texture2D" uid="uid://5woajs1ijig4" path="res://sprites/entity/slime/idle/slime_idle.png" id="5_3qjpr"]
 [ext_resource type="Texture2D" uid="uid://cvhy0adnokmjs" path="res://sprites/entity/slime/hit/slime_hit.png" id="6_a2u57"]
+[ext_resource type="Texture2D" uid="uid://btyuawnmohqgj" path="res://sprites/entity/slime/slime_die.png" id="8_6anry"]
 [ext_resource type="Texture2D" uid="uid://uobi5sye5gk8" path="res://sprites/entity/slime/spawn/slime_spawn.png" id="9_0bcgf"]
 [ext_resource type="AudioStream" uid="uid://7gul7fejjvh8" path="res://assets/audios/sounds/enemies/slime/slimesound1.wav" id="10_0hirf"]
 [ext_resource type="AudioStream" uid="uid://dk715b6w0trdm" path="res://assets/audios/sounds/enemies/slime/slimesound3.wav" id="12_nqco5"]
@@ -295,7 +296,31 @@ tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [1]
+"values": [6]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Sprite2D:texture")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("8_6anry"), null]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Sprite2D:frame")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
 }
 
 [sub_resource type="Animation" id="Animation_pbee1"]

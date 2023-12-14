@@ -80,7 +80,7 @@ public partial class FireBullet : GalatimeAbility
         foreach (var body in bodies)
         {
             if (body is Entity entity)
-                entity.TakeDamage(40, Caster.Stats[EntityStatType.MagicalAttack].Value, Data.Element, DamageType.magical);
+                entity.TakeDamage(40, Caster.Stats[EntityStatType.MagicalAttack].Value, Data.Element, DamageType.Magical);
             if (body is Projectile projectile && projectile.Moving)
             {
                 PlayerVariables.Player.PlayerGui.ParryEffect(projectile.GlobalPosition);

@@ -1,4 +1,4 @@
-[gd_scene load_steps=81 format=3 uid="uid://dxkmenalovoja"]
+[gd_scene load_steps=80 format=3 uid="uid://dxkmenalovoja"]
 
 [ext_resource type="Animation" uid="uid://co6srb7oraj3q" path="res://assets/animations/characters/artur/walk_left.tres" id="2"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/EntityStats.cs" id="2_51x1c"]
@@ -18,7 +18,6 @@
 [ext_resource type="Animation" uid="uid://8p6sai8frm0r" path="res://assets/animations/characters/artur/idle_right.tres" id="9"]
 [ext_resource type="Script" path="res://assets/scripts/objects/Player.cs" id="10"]
 [ext_resource type="Script" path="res://assets/scripts/objects/Hand.cs" id="12"]
-[ext_resource type="Texture2D" uid="uid://cw61pjdcs013a" path="res://sprites/characters/artur/arthur_down_1.png" id="14"]
 [ext_resource type="Texture2D" uid="uid://dcqfpyclso664" path="res://sprites/characters/arthur/attacking/down_combo1.png" id="15_q7q18"]
 [ext_resource type="Texture2D" uid="uid://bjokfsc7q3ven" path="res://sprites/characters/arthur/attacking/down_combo2.png" id="16_w4y3h"]
 [ext_resource type="Texture2D" uid="uid://cxx3mtncmpw7u" path="res://sprites/characters/arthur/attacking/down_combo3.png" id="17_dpi6e"]
@@ -192,7 +191,6 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody2D" groups=["ally", "player"]]
-z_index = -1
 y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("10")
@@ -207,13 +205,12 @@ script = ExtResource("12")
 emitting = false
 amount = 4
 process_material = SubResource("17")
-texture = ExtResource("14")
 lifetime = 0.3
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 y_sort_enabled = true
 scale = Vector2(4, 4)
-texture = ExtResource("15_q7q18")
+texture = ExtResource("6_cgo0e")
 
 [node name="Camera" type="Camera2D" parent="."]
 z_index = 4096

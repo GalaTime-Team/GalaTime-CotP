@@ -102,7 +102,7 @@ namespace Galatime
         /// <param name="type">Damage type</param>
         /// <param name="knockback">The Power of Knockback</param>
         /// <param name="damageRotation">In radians, will knockback this way. 100 is a small knockback</param>
-        public void TakeDamage(float power, float attackStat, GalatimeElement element, DamageType type = DamageType.physical, float knockback = 0f, float damageRotation = 0f)
+        public void TakeDamage(float power, float attackStat, GalatimeElement element, DamageType type = DamageType.Physical, float knockback = 0f, float damageRotation = 0f)
         {
             // Checking if entity is delayed
             if (DeathState || DamageDelay.TimeLeft > 0) return;
@@ -114,8 +114,8 @@ namespace Galatime
             float damageN = 0;
             var damageMultiplier = attackStat * (power / 10);
             // Calculating damage based on type.
-            if (type == DamageType.physical) damageN = damageMultiplier / Stats[EntityStatType.PhysicalDefense].Value;
-            if (type == DamageType.magical) damageN = damageMultiplier / Stats[EntityStatType.MagicalDefense].Value;
+            if (type == DamageType.Physical) damageN = damageMultiplier / Stats[EntityStatType.PhysicalDefense].Value;
+            if (type == DamageType.Magical) damageN = damageMultiplier / Stats[EntityStatType.MagicalDefense].Value;
 
             // Calculating weaknesses
             GalatimeElementDamageResult damageResult = new();

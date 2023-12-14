@@ -57,7 +57,7 @@ public partial class GoldenHolderSword : Area2D, IWeapon
             {
                 GalatimeElement element = new();
                 float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.TakeDamage(10, PhysicalAttack, element, DamageType.physical, 500, damageRotation);
+                entity.TakeDamage(10, PhysicalAttack, element, DamageType.Physical, 500, damageRotation);
             }
         }
     }

@@ -118,7 +118,7 @@ public partial class Projectile : CharacterBody2D
     {
         if (node is Entity entity && !entity.DeathState && entity.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam)) && Moving) {
             var damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-            if (!Explosive) entity.TakeDamage(Power, AttackStat, Element, DamageType.magical, 500, damageRotation);
+            if (!Explosive) entity.TakeDamage(Power, AttackStat, Element, DamageType.Magical, 500, damageRotation);
 
             // Pierce the entity if the projectile can.
             if (CurrentPiercingTimes >= PiercingTimes) {

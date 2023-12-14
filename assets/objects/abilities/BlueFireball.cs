@@ -28,7 +28,7 @@ namespace Galatime
             {
                 GalatimeElement element = GalatimeElement.Ignis;
                 float damageRotation = _kinematicBody.GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.TakeDamage(25, magicalAttack, element, DamageType.magical, 500, damageRotation);
+                entity.TakeDamage(25, magicalAttack, element, DamageType.Magical, 500, damageRotation);
                 destroy();
             }
         }

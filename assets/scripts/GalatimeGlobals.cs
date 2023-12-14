@@ -24,6 +24,7 @@ public sealed partial class GalatimeGlobals : Node
     public static string PathListTips = "res://assets/data/json/tips.json";
     public static string PathListDialogs = "res://assets/data/json/dialogs.json";
     public static string PathListCharacters = "res://assets/data/json/talking_characters.json";
+    public static string PathListAllies = "res://assets/data/json/allies.json";
 
     /// <summary> The maximum number of saves that can be stored. </summary>
     public const int MaxSaves = 5;
