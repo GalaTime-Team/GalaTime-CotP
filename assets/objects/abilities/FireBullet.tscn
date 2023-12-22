@@ -110,7 +110,7 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yl7vd"]
-size = Vector2(432, 16)
+size = Vector2(448, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0mhsn"]
 atlas = ExtResource("1_054b6")

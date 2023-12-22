@@ -1,7 +1,6 @@
 using Galatime;
 using Galatime.Damage;
 using Godot;
-using System;
 
 public partial class FireBullet : GalatimeAbility
 {
@@ -49,21 +48,34 @@ public partial class FireBullet : GalatimeAbility
         if (RayCast.IsColliding())
         {
             var position = RayCast.GetCollisionPoint(); // Get the position of the collision point in global coordinates.
-            Line.SetPointPosition(1, new Vector2(RayCast.GlobalPosition.DistanceTo(position) + 64, 0));
-            var shape = DamageAreaCollisionShape.Shape as RectangleShape2D;
-            var shapeSize = shape.Size;
-            shapeSize.X = RayCast.GlobalPosition.DistanceTo(position) + 10;
-            DamageAreaCollisionShape.Position = new(shapeSize.X / 2, 0);
-            shape.Size = shapeSize;
-            DamageAreaCollisionShape.Shape = shape;
+            var lineLength = RayCast.GlobalPosition.DistanceTo(position) + 64;
+            var collisionLength = RayCast.GlobalPosition.DistanceTo(position) + 16;
+            Cut(lineLength, collisionLength);
+        }
+        else
+        {
+            var lineLength = 528;
+            var collisionLength = 448;
+            Cut(lineLength, collisionLength);
         }
         if (!Shotted)
         {
-            PlayerVariables.Player.CameraShakeAmount += 0.3f;
+            PlayerVariables.Player.CameraShakeAmount += 0.1f;
 
             Projectile.GlobalPosition = Caster.Weapon.GlobalPosition;
             Projectile.Rotation = Caster.Weapon.Rotation;
         }
+    }
+
+    public void Cut(float lineLength = 0, float collisionLength = 0) 
+    {
+        Line.SetPointPosition(1, new Vector2(lineLength, 0));
+        var shape = DamageAreaCollisionShape.Shape as RectangleShape2D;
+        var shapeSize = shape.Size;
+        shapeSize.X = collisionLength;
+        DamageAreaCollisionShape.Position = new(shapeSize.X / 2, 0);
+        shape.Size = shapeSize;
+        DamageAreaCollisionShape.Shape = shape;
     }
 
     public override void Execute(HumanoidCharacter p)

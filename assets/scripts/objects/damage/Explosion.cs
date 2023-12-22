@@ -15,10 +15,8 @@ public enum ExplosionType {
 public partial class Explosion : Area2D
 {   
     #region Nodes
-    // <summary> The explosion visual. </summary>
-    public GpuParticles2D Particles;
-    public GpuParticles2D HoleParticles;
-    public GpuParticles2D SmokeParticles;
+    // <summary> The explosion particles visual nodes. </summary>
+    public GpuParticles2D Particles, WhiteParticles, HoleParticles, SmokeParticles, TrailParticles;
     // <summary> The explosion audio. </summary>
     public AudioStreamPlayer2D AudioStreamPlayer;
     public CollisionShape2D Collision;
@@ -44,8 +42,10 @@ public partial class Explosion : Area2D
     public override void _Ready() {
         #region Get nodes
         Particles = GetNode<GpuParticles2D>("Particles");
+        WhiteParticles = GetNode<GpuParticles2D>("WhiteParticles");
         HoleParticles = GetNode<GpuParticles2D>("HoleParticles");
         SmokeParticles = GetNode<GpuParticles2D>("SmokeParticles");
+        TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
         AudioStreamPlayer = GetNode<AudioStreamPlayer2D>("AudioStreamPlayer");
         Collision = GetNode<CollisionShape2D>("Collision");
         #endregion
@@ -79,6 +79,7 @@ public partial class Explosion : Area2D
 
         SetProcessMaterialSize(Particles, particleSize);
         SetProcessMaterialSize(HoleParticles, particleSize);
+        SetProcessMaterialSize(WhiteParticles, particleSize * 1.25f);
         SetProcessMaterialEmissionShapeRadius(SmokeParticles, particleSize * 2);
 
         SmokeParticles.Amount = Power * 2;
@@ -92,12 +93,20 @@ public partial class Explosion : Area2D
         
         // Apply to the particles as well.
         Particles.Lifetime = Power * .06f;
+        WhiteParticles.Lifetime = Particles.Lifetime / 2;
         HoleParticles.Lifetime = Particles.Lifetime * 3;
+
+        TrailParticles.Amount = Power * 2;
+        TrailParticles.Lifetime = Particles.Lifetime / 2;
 
         // Enable particles.
         Particles.Emitting = true;
+        WhiteParticles.Emitting = true;
         HoleParticles.Emitting = true;
+        TrailParticles.Emitting = true;
         AudioStreamPlayer.Play();
+
+        PlayerVariables.Instance.Player.CameraShakeAmount = Power * 2;
 
         GetTree().CreateTimer(disableOn).Timeout += () => {
             SmokeParticles.Emitting = true;

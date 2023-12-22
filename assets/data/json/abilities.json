@@ -5,7 +5,7 @@
 			"id": "fireball",
 			"description": "A large projectile that does medium area damage",
 			"element": "Ignis",
-			"reload": 5,
+			"reload": 2,
 			"costs": {
 				"mana": 10
 			},
@@ -85,7 +85,7 @@
 			"id": "firebullet",
 			"description": "Fires a hitscan piercing bullet projectile, which does medium damage",
 			"element": "Ignis",
-			"reload": 10,
+			"reload": 2,
 			"costs": {
 				"mana": 15
 			},

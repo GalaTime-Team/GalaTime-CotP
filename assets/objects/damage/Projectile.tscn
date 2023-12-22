@@ -9,7 +9,7 @@ script = ExtResource("2_rexgk")
 InitializerElement = "Default"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e52ow"]
-radius = 8.0
+radius = 16.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uaj6o"]
 radius = 24.0

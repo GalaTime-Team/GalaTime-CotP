@@ -101,7 +101,7 @@ namespace Galatime
             return line;
         }
 
-        public AbilityContainerItem FindItemByAbilityId(string id) => AbilityContainerItems.FirstOrDefault(item => item.AbilityName == id);
+        public AbilityContainerItem FindItemByAbilityId(string id) => AbilityContainerItems.Find(item => item.AbilityName == id);
 
         public void GuiItemInput(InputEvent @event, AbilityContainerItem item)
         {

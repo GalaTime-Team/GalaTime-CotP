@@ -148,7 +148,10 @@ namespace Galatime
             PlayerGui.OnStaminaChanged(stamina);
         }
 
-        public void OnAbilitiesChangedForCharacter()
+        public void OnAbilitiesChangedForCharacter() => OnAbilitiesChangedForCharacter(false);
+
+        /// <summary> Event for when character's abilities changed. </summary>
+        public void OnAbilitiesChangedForCharacter(bool justUpdate = true)
         {
             var c = CurrentCharacter;
             if (c == null) return;
@@ -159,7 +162,7 @@ namespace Galatime
             for (int i = 0; i < abilityList.Count; i++)
             {
                 var ability = abilityList[i];
-                if (CurrentAlly.ID == "arthur")
+                if (CurrentAlly.ID == "arthur" && !justUpdate)
                 {
                     // Print current ability information
                     GD.PrintRich($"[color=purple]ABILITIES CHANGED FOR PLAYER[/color]: Is empty: {ability.IsEmpty}. Name: {ability.Name}. Index: {i}");
