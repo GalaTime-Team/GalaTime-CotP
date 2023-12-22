@@ -1,7 +1,7 @@
 [gd_scene load_steps=82 format=3 uid="uid://bn0mp3n23lnba"]
 
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="2_ce5xp"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/EntityStats.cs" id="2_vy6nv"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_cvrli"]
 [ext_resource type="PackedScene" uid="uid://dc61rj5d7csf6" path="res://assets/objects/HumanoidDoll.tscn" id="2_wu8m3"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_ktjnv"]
 [ext_resource type="Texture2D" uid="uid://bkbhbif8jr0qc" path="res://sprites/characters/arthur/attacking/down_combo13.png" id="4_fdsq3"]
@@ -63,7 +63,7 @@
 [ext_resource type="Texture2D" uid="uid://bhk3fni388qj7" path="res://sprites/characters/raphael/raphael_walking_up.png" id="63_jsb7w"]
 
 [sub_resource type="Resource" id="Resource_chepg"]
-script = ExtResource("2_vy6nv")
+script = ExtResource("2_cvrli")
 StatsNames = [1, 2, 3, 4, 5, 6, 7, 8]
 StatsValues = [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
 
@@ -74,12 +74,12 @@ InitializerElement = "Aqua"
 [sub_resource type="Gradient" id="18"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
-[sub_resource type="GradientTexture2D" id="19"]
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_mawto"]
 gradient = SubResource("18")
 
 [sub_resource type="ParticleProcessMaterial" id="17"]
 gravity = Vector3(0, 0, 0)
-color_ramp = SubResource("19")
+color_ramp = SubResource("GradientTexture2D_mawto")
 
 [sub_resource type="CircleShape2D" id="20"]
 radius = 30.0
@@ -528,7 +528,7 @@ lifetime = 0.3
 [node name="Sprite2D" type="Sprite2D" parent="."]
 y_sort_enabled = true
 scale = Vector2(4, 4)
-texture = ExtResource("19_41jmv")
+texture = ExtResource("61_0udl2")
 hframes = 8
 
 [node name="Hand" type="Marker2D" parent="."]

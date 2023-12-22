@@ -50,7 +50,7 @@ public class DialogLineData
 }
 
 /// <summary> Represents a character. </summary>
-public class Character
+public class DialogCharacter
 {
     [JsonProperty("id")]
     /// <summary> The ID of the character. </summary>
@@ -73,7 +73,7 @@ public class CharactersData
 {
     [JsonProperty("characters")]
     /// <summary> Gets or sets the list of characters. </summary>
-    public List<Character> Characters = new();
+    public List<DialogCharacter> Characters = new();
 }
 
 public class EmotionData

@@ -1,6 +1,8 @@
 namespace Galatime;
 
 using Godot;
+using NodeExtensionMethods;
+
 
 /// <summary>
 /// Represents a trigger, which transitions to a new room (Scene)
@@ -25,10 +27,12 @@ public partial class Roomwrap : Node2D
 
     private void OnEnter(Node node)
     {
-        if (node is Player p)
+        // if (node is Player p)
+        if (node.IsPossessed())
         {
+            var p = node as TestCharacter;
             p.CanMove = false;
-            p.PlayerGui.OnFade(true, AnimationDuration, OnFadeEnded);
+            PlayerVariables.Instance.Player.PlayerGui.OnFade(true, AnimationDuration, OnFadeEnded);
         }
     }
     private void OnFadeEnded()

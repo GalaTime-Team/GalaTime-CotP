@@ -4,13 +4,13 @@
             "id": "raphael",
             "name": "Raphael",
             "icon": "res://sprites/gui/characters/icon/raphael_icon.png",
-            "scene": "res://assets/objects/characters/Raphael.tscn"
+            "scene": "res://assets/objects/entity/character/Raphael.tscn"
         },
         {
             "id": "arthur",
             "name": "Arthur",
             "icon": "res://sprites/gui/characters/icon/arthur_icon.png",
-            "scene": "res://assets/objects/characters/Arthur.tscn"
+            "scene": "res://assets/objects/entity/character/Arthur.tscn"
         }
     ]
 }

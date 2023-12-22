@@ -3,6 +3,7 @@ using Galatime.Dialogue;
 using Galatime.UI.Helpers;
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public partial class DialogBox : NinePatchRect
@@ -15,7 +16,6 @@ public partial class DialogBox : NinePatchRect
     private TextureRect CharacterPortraitTexture;
     private AnimationPlayer SkipAnimationPlayer;
 
-    private GalatimeGlobals Globals;
     private Player Player;
 
     private int currentPhrase = -1;
@@ -41,6 +41,9 @@ public partial class DialogBox : NinePatchRect
         }
     }
 
+    public static readonly Vector2 DefaultSize = new(196, 56);
+    public static readonly Vector2 NASize = new(272, 72);
+
     /// <summary> Represents the current dialog. </summary>
     private DialogData CurrentDialog;
     /// <summary> Indicates whether skipping dialog line is allowed. </summary>
@@ -57,30 +60,49 @@ public partial class DialogBox : NinePatchRect
         SkipAnimationPlayer = GetNode<AnimationPlayer>("SkipAnimationPlayer");
         CharacterNameLabel = GetNode<Label>("CharacterName");
 
-        Globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
-
         TypingLabel.OnType += AppendLetter;
         TypingLabel.OnTypingFinished += StopAndPlaySkipAnimation;
     }
 
+    /// <summary> Start a dialog by registered dialog id in the game. </summary>
+    /// <remarks> If the dialog is not exist, the dialog will be ended. Dialogs taken from the <see cref="GalatimeGlobals.DialogsList"/> </remarks>
     public void StartDialog(string id)
     {
         var dialog = GalatimeGlobals.GetDialogById(id);
-        if (dialog is not null)
-        {
-            CurrentDialog = dialog;
-
-            TypingLabel.Text = "";
-            Visible = true;
-            CanSkip = true;
-
-            CurrentPhrase++;
-        }
+        if (dialog is not null) StartDialog(dialog);
         else
         {
             GD.PrintErr("DIALOG: dialog " + id + " is not exist");
             EndDialog();
         }
+    }
+
+    /// <summary> Show a simple message as a dialog. </summary>
+    public void MessageDialog(string text)
+    {
+        var dialog = new DialogData
+        {
+            Lines = new List<DialogLineData>
+            {
+                new()
+                {
+                    Text = text
+                }
+            }
+        };
+
+        StartDialog(dialog);
+    }
+
+    public void StartDialog(DialogData dialog)
+    {
+        CurrentDialog = dialog;
+
+        TypingLabel.Text = "";
+        Visible = true;
+        CanSkip = true;
+
+        CurrentPhrase++;
     }
 
     public void EndDialog()
@@ -101,7 +123,7 @@ public partial class DialogBox : NinePatchRect
     private void StopAndPlaySkipAnimation()
     {
         SkipAnimationPlayer.Play("loop");
-        CanSkip = true;     
+        CanSkip = true;
     }
 
     public void StartTyping() => TypingLabel.StartTyping();
@@ -112,6 +134,7 @@ public partial class DialogBox : NinePatchRect
         CanSkip = false;
 
         var phrase = CurrentDialog.Lines[phraseId];
+        // Check if the phrase is empty to not play empty lines.
         if (phrase.Text.Length == 0)
         {
             CurrentPhrase++;
@@ -120,16 +143,20 @@ public partial class DialogBox : NinePatchRect
 
         var character = GalatimeGlobals.GetCharacterById(phrase.CharacterID);
 
+        // Set the character portrait and name, but only if the character is not N/A, because it's means that the character is not exist.
+        Size = character.ID == "na" ? NASize : DefaultSize;
+        CharacterNameLabel.Text = character.ID == "na" ? "" : character.Name;
+
         TypingLabel.VisibleCharacters = 0;
         TypingLabel.Text = phrase.Text;
 
-        var emotion = character.EmotionPaths.FirstOrDefault(x => x.Id == phrase.EmotionID);
+        var emotion = character.EmotionPaths.Find(x => x.Id == phrase.EmotionID);
         var voice = character.VoicePath != "" ? GD.Load<AudioStream>(character.VoicePath) : DefaultVoice;
 
         DialogAudio.Stream = voice;
 
+        // Determine if character is animated or not.
         Texture2D texture = GD.Load<Texture2D>(emotion.Path);
-        CharacterNameLabel.Text = character.Name;
         if (texture is AnimatedTexture animatedTexture)
         {
             animatedTexture.CurrentFrame = 0;

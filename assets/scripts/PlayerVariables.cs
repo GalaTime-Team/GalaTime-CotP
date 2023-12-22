@@ -17,6 +17,8 @@ public enum LearnedStatus
 /// <summary> Singleton, which contains all the player variables and methods. </summary>
 public partial class PlayerVariables : Node
 {
+    public static PlayerVariables Instance { get; private set; }
+
     /// <summary> Max number of inventory slots. </summary>
     public static int InventorySlots = 16;
     /// <summary> Max number of ability slots. </summary>
@@ -39,6 +41,7 @@ public partial class PlayerVariables : Node
     /// <summary> List of the learned abilities of the player. </summary>
     /// <remarks> Use <see cref="LearnAbility"/> to add an ability. </remarks>
     public Godot.Collections.Array<string> LearnedAbilities = new();
+    public AllyData[] Allies = new AllyData[6];
     #endregion
     public Timer PlaytimeTimer;
 
@@ -50,6 +53,7 @@ public partial class PlayerVariables : Node
     public Action OnAbilitiesChanged;
     /// <summary> Emitted when an ability is learned. </summary>
     public Action OnAbilityLearned;
+    public Action OnAlliesChanged;
     #endregion
 
     public static Action<float> OnXpChanged;
@@ -67,10 +71,13 @@ public partial class PlayerVariables : Node
     {
         Array.Fill(Inventory, new());
         Array.Fill(Abilities, new());
+        Array.Fill(Allies, new());
     }
 
     public override void _Ready()
     {
+        Instance = this;
+
         ResetValues();
 
         // Initializing the inventory and abilities
@@ -129,6 +136,17 @@ public partial class PlayerVariables : Node
                     }
                 }
             }
+
+            if (saveData.ContainsKey("allies")) 
+            {
+                Godot.Collections.Array alliesDeserialized = (Godot.Collections.Array)saveData["allies"];
+                for (int i = 0; i < alliesDeserialized.Count; i++) 
+                {
+                    var ally = (string)alliesDeserialized[i];
+                    Allies[i] = GalatimeGlobals.GetAllyById(ally);
+                }
+            }
+
             Player.Xp = (int)saveData.GetOrNull("xp");
             LearnedAbilities = (Godot.Collections.Array<string>)saveData["learned_abilities"];
 
@@ -136,6 +154,7 @@ public partial class PlayerVariables : Node
             OnItemsChanged?.Invoke();
             OnAbilitiesChanged?.Invoke();
             OnAbilityLearned?.Invoke();
+            OnAlliesChanged?.Invoke();
         }
         catch (Exception e)
         {

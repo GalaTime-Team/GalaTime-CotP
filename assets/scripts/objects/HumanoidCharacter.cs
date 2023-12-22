@@ -3,6 +3,13 @@ using Godot;
 using System.Collections.Generic;
 
 using Galatime.Helpers;
+using System;
+
+public enum HumanoidValues
+{
+    Mana,
+    Stamina
+}
 
 public partial class HumanoidCharacter : Entity
 {
@@ -23,10 +30,6 @@ public partial class HumanoidCharacter : Entity
 
     protected Timer DodgeTimer;
     protected Timer AbilityCountdownTimer;
-    protected Timer StaminaCountdownTimer;
-    protected Timer StaminaRegenTimer;
-    protected Timer ManaCountdownTimer;
-    protected Timer ManaRegenTimer;
 
     // Required nodes for the character
     public HumanoidDoll HumanoidDoll;
@@ -34,37 +37,16 @@ public partial class HumanoidCharacter : Entity
     public GpuParticles2D TrailParticles;
     public Hand Weapon;
     public AudioStreamPlayer2D DrinkingAudioPlayer;
+    public ResourceValue Mana;
+    public ResourceValue Stamina;
 
-    private float mana;
-    public float Mana
-    {
-        get { return mana; }
-        set
-        {
-            mana = value;
-            mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.Mana].Value);
-            ManaRegenTimer.Stop();
-            ManaCountdownTimer.Start();
-            OnManaChanged(mana);
-        }
-    }
-
-    private float stamina;
-    public float Stamina
-    {
-        get { return stamina; }
-        set
-        {
-            stamina = value;
-            stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.Stamina].Value);
-            StaminaRegenTimer.Stop();
-            StaminaCountdownTimer.Start();
-            OnStaminaChanged(stamina);
-        }
-    }
+    public Action<AbilityData, int> OnAbilityAdded;
+    public Action OnAbilityRemoved;
+    public Action<int, bool> OnAbilityUsed;
+    public Action<int, double> OnAbilityReload;
 
     public override void _MoveProcess()
-    {        
+    {
         // Required for the rotate character animation.
         SetDirectionByWeapon();
 
@@ -86,8 +68,6 @@ public partial class HumanoidCharacter : Entity
     {
     }
 
-    // public HumanoidCharacter(EntityStats stats) : base(stats) {}
-
     public override void _Ready()
     {
         base._Ready();
@@ -96,7 +76,20 @@ public partial class HumanoidCharacter : Entity
         Abilities = new List<AbilityData>();
         for (int i = 0; i < PlayerVariables.AbilitySlots; i++) Abilities.Add(new());
 
+        InitializeValues();
         InitializeTimers();
+    }
+
+    public void InitializeValues()
+    {
+        Stamina = new("Stamina", Stats[EntityStatType.Stamina].Value, 3, 1);
+        Mana = new("Mana", Stats[EntityStatType.Mana].Value, 3, 1);
+
+        AddChild(Stamina);
+        AddChild(Mana);
+
+        Stamina.OnValueChanged += OnStaminaChanged;
+        Mana.OnValueChanged += OnManaChanged;
     }
 
     private void InitializeTimers()
@@ -115,73 +108,6 @@ public partial class HumanoidCharacter : Entity
             Name = "AbilityCountdown"
         };
         AddChild(AbilityCountdownTimer);
-
-        StaminaCountdownTimer = new Timer
-        {
-            WaitTime = 5f,
-            OneShot = true,
-            Name = "StaminaCountdown"
-        };
-        StaminaCountdownTimer.Timeout += OnCountdownStaminaRegen;
-        AddChild(StaminaCountdownTimer);
-
-        StaminaRegenTimer = new Timer
-        {
-            WaitTime = 1f,
-            OneShot = false,
-            Name = "StaminaRegenCountdown"
-        };
-        StaminaRegenTimer.Timeout += RegenStamina;
-        AddChild(StaminaRegenTimer);
-
-        ManaCountdownTimer = new Timer
-        {
-            WaitTime = 5f,
-            OneShot = true,
-            Name = "ManaCountdown"
-        };
-        ManaCountdownTimer.Timeout += OnCountdownManaRegen;
-        AddChild(ManaCountdownTimer);
-
-        ManaRegenTimer = new Timer
-        {
-            WaitTime = 1f,
-            OneShot = false,
-            Name = "ManaRegenCountdown"
-        };
-        ManaRegenTimer.Timeout += RegenMana;
-        AddChild(ManaRegenTimer);
-    }
-
-    protected void OnCountdownStaminaRegen()
-    {
-        StaminaCountdownTimer.Stop();
-        StaminaRegenTimer.Start();
-    }
-
-    protected void OnCountdownManaRegen()
-    {
-        ManaCountdownTimer.Stop();
-        ManaRegenTimer.Start();
-    }
-
-    protected void RegenStamina()
-    {
-        Heal(5);
-        stamina += 10;
-        stamina = Mathf.Clamp(stamina, 0, Stats[EntityStatType.Stamina].Value);
-        // EmitSignal("on_stamina_changed", stamina);
-        if (stamina >= Stats[EntityStatType.Stamina].Value) StaminaRegenTimer.Stop();
-        OnStaminaChanged(stamina);
-    }
-
-    protected void RegenMana()
-    {
-        mana += 10;
-        mana = Mathf.Clamp(mana, 0, Stats[EntityStatType.Mana].Value);
-        // EmitSignal("on_mana_changed", mana);
-        if (mana >= Stats[EntityStatType.Mana].Value) ManaRegenTimer.Stop();
-        OnManaChanged(mana);
     }
 
     protected void SetLayerToWeapon(bool toUp)
@@ -191,30 +117,61 @@ public partial class HumanoidCharacter : Entity
 
     public virtual AbilityData AddAbility(AbilityData ab, int i)
     {
-        Abilities[i] = ab;
-        Abilities[i].CooldownTimer = new Timer
+        bool isValid(Node i) => i != null && IsInstanceValid(i);
+
+        double previousTime = 0;
+        if (isValid(Abilities[i].CooldownTimer))
         {
-            Name = $"{ab.Name}TimerCountdown",
-            WaitTime = ab.Reload,
-            OneShot = true
-        };
-        Abilities[i].CooldownTimer.Timeout += () => _OnCooldownTimerTimeout(i);
-        AddChild(Abilities[i].CooldownTimer);
+            previousTime = Abilities[i].CooldownTimer.TimeLeft;
+        }
+
+        Abilities[i] = ab;
+        if (ab.Reload > 0)
+        {
+            ref Timer cooldownTimer = ref Abilities[i].CooldownTimer;
+            
+            // Deleting previous timer if it exists to avoid memory leaks.
+            if (isValid(cooldownTimer))
+            {
+                cooldownTimer.Stop();
+                cooldownTimer.QueueFree();
+                cooldownTimer = null;
+            }
+
+            // Creating new timer
+            cooldownTimer = new Timer
+            {
+                Name = $"{ab.Name}TimerCountdown",
+                WaitTime = ab.Reload,
+                OneShot = true
+            };
+            cooldownTimer.Timeout += () => OnCooldownTimerTimeout(i);
+            AddChild(cooldownTimer);
+
+            // Starting timer if the ability is not reloaded.
+            if (Abilities[i].Charges < Abilities[i].MaxCharges)
+            {
+                cooldownTimer.Start();
+                OnAbilityReload?.Invoke(i, previousTime);
+            }
+        }
+        OnAbilityAdded?.Invoke(Abilities[i], i);
         return Abilities[i];
     }
 
-    private void _OnCooldownTimerTimeout(int i)
+    private void OnCooldownTimerTimeout(int i)
     {
         var ability = Abilities[i];
         if (ability.Charges < ability.MaxCharges)
         {
             ability.Charges++;
             _OnAbilityReload(i);
+            OnAbilityReload?.Invoke(i, 0);
             ability.CooldownTimer.Start();
         }
     }
 
-    protected virtual void _OnAbilityReload(int i)
+    public virtual void _OnAbilityReload(int i)
     {
     }
 
@@ -229,14 +186,15 @@ public partial class HumanoidCharacter : Entity
         }
     }
 
-    protected virtual void RemoveAbility(int i)
+    public virtual void RemoveAbility(int i)
     {
         AbilityData ability = new();
         Abilities[i] = ability;
         ability.CooldownTimer.Stop();
+        OnAbilityRemoved?.Invoke();
     }
 
-    protected virtual bool UseAbility(int i)
+    public virtual bool UseAbility(int i)
     {
         var ability = Abilities[i];
         if (!ability.IsEmpty && ability.IsReloaded)
@@ -250,10 +208,10 @@ public partial class HumanoidCharacter : Entity
             abilityInstance.Data = ability;
 
             // Check if the character has enough stamina and mana, if not, return false.
-            if (stamina - abilityInstance.Data.Costs.Stamina < 0) return false;
-            if (abilityInstance.Data.Costs.Stamina > 0) Stamina -= abilityInstance.Data.Costs.Stamina;
-            if (mana - abilityInstance.Data.Costs.Mana < 0) return false;
-            if (abilityInstance.Data.Costs.Mana > 0) Mana -= abilityInstance.Data.Costs.Mana;
+            if (Stamina.Value - abilityInstance.Data.Costs.Stamina < 0) return false;
+            if (abilityInstance.Data.Costs.Stamina > 0) Stamina.Value -= abilityInstance.Data.Costs.Stamina;
+            if (Mana.Value - abilityInstance.Data.Costs.Mana < 0) return false;
+            if (abilityInstance.Data.Costs.Mana > 0) Mana.Value -= abilityInstance.Data.Costs.Mana;
 
             // Add the ability and execute it.
             GetParent().AddChild(abilityInstance);
@@ -264,21 +222,29 @@ public partial class HumanoidCharacter : Entity
             ability.CooldownTimer.Start();
 
             ability.Charges--;
+
+            OnAbilityReload?.Invoke(i, 0);
             _OnAbilityReload(i);
         }
-        else return false;
+        else
+        {
+            OnAbilityUsed?.Invoke(i, false);
+            return false;
+        }
+        OnAbilityUsed?.Invoke(i, true);
         return true;
     }
 
-    protected async void Dodge()
+    public async void Dodge()
     {
-        if (Stamina - 15 >= 0 && !IsDodge && CanMove)
+        if (Stamina.Value - 15 >= 0 && !IsDodge && CanMove)
         {
+            TrailParticles.Texture = Sprite?.Texture;
             IsDodge = true;
             float direction = Weapon.Rotation;
             SetKnockback(1200, direction);
             TrailParticles.Emitting = true;
-            Stamina -= 15;
+            Stamina.Value -= 15;
             await ToSignal(GetTree().CreateTimer(0.3f), "timeout");
             IsDodge = false;
             TrailParticles.Emitting = false;

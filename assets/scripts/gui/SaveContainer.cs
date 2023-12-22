@@ -32,9 +32,15 @@ namespace Galatime
         {
             GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=cyan]Load data[/color]");
             NameLabel.Text = $"Save {id}";
-            var chapter = data.GetOrDefaultValue("chapter", "?");
-            var day = data.GetOrDefaultValue("day", "?");
-            var playtime = data.GetOrDefaultValue(Math.Round((float)data.GetOrDefaultValue("playtime", 0) / 3600, 1).ToString(), "?");
+            var chapter = (string)data.GetOrDefaultValue("chapter", "?");
+            var day = (string)data.GetOrDefaultValue("day", "?");
+            var playtime = (string)data.GetOrDefaultValue(Math.Round((float)data.GetOrDefaultValue("playtime", 0) / 3600, 1).ToString(), "?");
+            if (chapter == "?" && day == "?") 
+            {
+                DescriptionLabel.Text = "No saved data";
+                DeleteButton.Disabled = true;
+                return;
+            }
             DescriptionLabel.Text = $"Chapter {chapter} - Day {day} - {playtime} h";
         }
     }   

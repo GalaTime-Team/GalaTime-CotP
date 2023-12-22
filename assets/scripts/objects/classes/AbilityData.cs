@@ -81,7 +81,7 @@ namespace Galatime
         public bool IsReloaded => CooldownTimer.TimeLeft <= 0 || Charges > 0;
 
         /// <summary> If the ability is fully reloaded with all charges. </summary> 
-        public bool IsFullyReloaded => CooldownTimer.TimeLeft <= 0 && Charges >= MaxCharges;
+        public bool IsFullyReloaded => GodotObject.IsInstanceValid(CooldownTimer) && CooldownTimer.TimeLeft <= 0 || Charges >= MaxCharges;
 
         public GalatimeAbility Instance;
 

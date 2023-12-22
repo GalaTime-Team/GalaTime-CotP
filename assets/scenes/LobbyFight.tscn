@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cblmuql6moq62"]
+[gd_scene load_steps=20 format=3 uid="uid://cblmuql6moq62"]
 
 [ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://sprites/tilesets/dreamworld-floor.png" id="1_fvkei"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://sprites/particles/dream_world_particles.png" id="2_b24jw"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://d4ati88xcg8y4" path="res://assets/objects/helpers/EnemySpawnPosition.tscn" id="4_wqiaw"]
 [ext_resource type="PackedScene" uid="uid://dddgyou1d5du5" path="res://assets/objects/EnemyRoom.tscn" id="5_pbbsp"]
 [ext_resource type="PackedScene" uid="uid://dig3jdhxm6cmi" path="res://assets/objects/DoorBlock.tscn" id="6_x3ocx"]
-[ext_resource type="PackedScene" uid="uid://bn0mp3n23lnba" path="res://assets/objects/TestCharacter.tscn" id="8_i7vfj"]
 [ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/Roomwrap.tscn" id="8_rru7k"]
 [ext_resource type="PackedScene" uid="uid://bljwt8h81gnrn" path="res://assets/objects/ItemPickup.tscn" id="9_7m3q7"]
 
@@ -126,7 +125,7 @@ preprocess = 10.0
 visibility_rect = Rect2(-2000, -1000, 4000, 2000)
 
 [node name="Player" parent="." instance=ExtResource("4_mp3x6")]
-position = Vector2(-1120, 800)
+position = Vector2(-1119, 832)
 
 [node name="NavigationRegion" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_nr850")
@@ -245,9 +244,6 @@ collision_mask = 2
 
 [node name="Collision" type="CollisionShape2D" parent="EnemyRoom2/TriggerArea"]
 shape = SubResource("RectangleShape2D_qkx30")
-
-[node name="TestCharacter" parent="." instance=ExtResource("8_i7vfj")]
-position = Vector2(-1120, 736)
 
 [node name="ItemPickup2" parent="." instance=ExtResource("9_7m3q7")]
 position = Vector2(-1024, 704)

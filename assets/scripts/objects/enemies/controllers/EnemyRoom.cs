@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Godot;
 using Galatime.Helpers;
 using Galatime;
+using NodeExtensionMethods;
 
 /// <summary> Node, which controls the enemy room. Spawns enemies and controls doors. </summary>
 public partial class EnemyRoom : Node2D
@@ -43,7 +44,7 @@ public partial class EnemyRoom : Node2D
 
     private void OnEnter(Node node)
     {
-        if (node is Player p)
+        if (node.IsPossessed())
         {
             StartBattle();
 
@@ -57,9 +58,7 @@ public partial class EnemyRoom : Node2D
     /// </summary>
     public async void StartBattle()
     {
-        var LevelManager = GetNode<LevelManager>("/root/LevelManager");
-        // Set the IsCombat flag to true
-        LevelManager.IsCombat = true;
+        LevelManager.Instance.IsCombat = true;
 
         // Close all the doors
         foreach (var door in DoorBlocks) door.IsOpen = false;
@@ -102,10 +101,7 @@ public partial class EnemyRoom : Node2D
         LevelManager.IsCombat = false;
 
         // Open all the doors
-        foreach (var door in DoorBlocks)
-        {
-            door.IsOpen = true;
-        }
+        DoorBlocks.ForEach(door => door.IsOpen = true);
 
         // Clear the CurrentEnemies list
         CurrentEnemies.Clear();

@@ -1,8 +1,9 @@
+using System;
 using Galatime;
 using Galatime.Helpers;
 
 using Godot;
-using System;
+using Vector2 = Godot.Vector2;
 
 public partial class TestCharacter : HumanoidCharacter
 {
@@ -17,21 +18,12 @@ public partial class TestCharacter : HumanoidCharacter
     public Timer RetreatDelayTimer;
     public Timer MoveDelayTimer;
     public Timer EnemySwitchDelayTimer;
+    public Timer AttackTimer;
 
     public Player Player;
 
-    // public TestCharacter() : base(new EntityStats(new()
-    // {
-    //     [EntityStatType.Health] = 100,
-    //     [EntityStatType.Mana] = 100,
-    //     [EntityStatType.Stamina] = 100,
-    //     [EntityStatType.PhysicalAttack] = 100,
-    //     [EntityStatType.PhysicalDefense] = 100,
-    //     [EntityStatType.MagicalAttack] = 100,
-    //     [EntityStatType.MagicalDefense] = 100,
-    //     [EntityStatType.Agility] = 100,
-    // }))
-    // { }
+    /// <summary> True if the character is currently being possessed. That means the player is controlling it. </summary>
+    public bool Possessed = false;
 
 
     public override void _Ready()
@@ -41,6 +33,8 @@ public partial class TestCharacter : HumanoidCharacter
         Weapon = GetNode<Hand>("Hand");
         HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
         TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
+        DrinkingAudioPlayer = GetNode<AudioStreamPlayer2D>("DrinkingAudioPlayer");
+        
         Body = this;
 
         AnimationPlayer = GetNode<AnimationPlayer>("Animation");
@@ -50,9 +44,6 @@ public partial class TestCharacter : HumanoidCharacter
 
         var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
         Player = playerVariables.Player;
-
-        Stamina += 99999;
-        Mana += 99999;
 
         InitializeTimers();
 
@@ -76,6 +67,14 @@ public partial class TestCharacter : HumanoidCharacter
             OneShot = true
         };
         AddChild(MoveDelayTimer);
+
+        AttackTimer = new()
+        {
+            WaitTime = 0.25f
+        };
+        AddChild(AttackTimer);
+        AttackTimer.Timeout += Attack;
+        AttackTimer.Start();
     }
 
     float PathRotation => Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());
@@ -83,6 +82,8 @@ public partial class TestCharacter : HumanoidCharacter
     public override void _MoveProcess()
     {
         base._MoveProcess();
+
+        if (Possessed) return;
 
         if (TargetController.CurrentTarget != null) CombatMovement();
         // Moving normally when there is no enemies.
@@ -102,7 +103,7 @@ public partial class TestCharacter : HumanoidCharacter
 
         // Vector from the target.
         await ToSignal(GetTree(), "physics_frame"); // Wait one physics frame
-        vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition());
+        vectorPath = Vector2.Right.Rotated(Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition())) * Speed;
 
         // Rotation to the enemy.
         var enemyRotation = Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
@@ -115,24 +116,6 @@ public partial class TestCharacter : HumanoidCharacter
         if (RetreatDelayTimer.TimeLeft > 0) vectorPath = Vector2.Right.Rotated(enemyRotation + MathF.PI);
         if (distance <= 150 && RetreatDelayTimer.TimeLeft == 0) RetreatDelayTimer.Start();
 
-        // Checking if enemy is close.
-        if (RayCast.IsColliding())
-        {
-            var obj = RayCast.GetCollider();
-
-            // Check if enemy is enemy and not dead.
-            if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState)
-            {
-                // Weapon.Rotation = (float)Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
-
-                // Use all abilities by order.
-                for (int i = 0; i < Abilities.Count; i++)
-                {
-                    var ability = Abilities[i];
-                    if (ability.IsReloaded) UseAbility(i);
-                }
-            }
-        }
         // Check if any enemies are too close.
         var swordColliders = Weapon.GetOverlappingBodies();
         if (swordColliders.Count >= 1)
@@ -141,17 +124,40 @@ public partial class TestCharacter : HumanoidCharacter
             // Check if enemy is enemy and not dead.
             if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState) Weapon.Attack(this);
         }
-        Body.Velocity = vectorPath.Normalized() * Speed;
+        // For some reason it is moving at twice the speed, so it is divided by 2.
+        Body.Velocity = vectorPath.Normalized() * Speed / 2;
         Body.MoveAndSlide();
+    }
+
+    public void Attack()
+    {
+        var obj = RayCast.GetCollider();
+        // Check if enemy is enemy and not dead.
+        if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState)
+        {
+            // Use all abilities by order.
+            for (int i = 0; i < Abilities.Count; i++)
+            {
+                var ability = Abilities[i];
+                if (ability.IsReloaded)
+                {
+                    UseAbility(i);
+                    break;
+                }
+            }
+        }
     }
 
     /// <summary> Process of normal movement of the character. </summary>
     private async void NormalMovement()
-    {
+    {   
         Weapon.Rotation = PathRotation;
 
-        var allies = GetTree().GetNodesInGroup("ally");
-        var followTo = allies[FollowOrder] as CharacterBody2D;
+        // var allies = GetTree().GetNodesInGroup("ally");
+        // var followTo = allies[FollowOrder] as CharacterBody2D;
+        var followTo = Player.CurrentCharacter;
+
+        if (followTo == null) return;
 
         Vector2 vectorPath;
         RayCast.TargetPosition = Vector2.Zero;
@@ -162,7 +168,8 @@ public partial class TestCharacter : HumanoidCharacter
         var distance = Body.GlobalPosition.DistanceTo(followTo.GlobalPosition);
         if (distance >= 150 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
         vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
-        Body.Velocity = vectorPath.Normalized() * Speed;
+        // For some reason it is moving at twice the speed, so it is divided by 2.
+        Body.Velocity = vectorPath.Normalized() * Speed / 2;
         Body.MoveAndSlide();
     }
 }

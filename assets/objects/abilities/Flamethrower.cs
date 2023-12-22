@@ -15,8 +15,10 @@ namespace Galatime
         {
             sprite = GetNode<Sprite2D>("Sprite2D");
 
-            shotTimer = new Timer();
-            shotTimer.WaitTime = 0.05f;
+            shotTimer = new Timer
+            {
+                WaitTime = 0.015f
+            };
         }
 
         public override void _PhysicsProcess(double delta)
@@ -52,7 +54,7 @@ namespace Galatime
         private void _onTimeoutShot(float physicalAttack, float magicalAttack, Sprite2D spr)
         {
             var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            if (playerVariables.Player is Player player) player.CameraShakeAmount += 0.4f;
+            if (playerVariables.Player is Player player) player.CameraShakeAmount += 0.2f;
             FlamethrowerShells ability = projectiveScene.Instantiate<FlamethrowerShells>();
             var position = spr.GlobalPosition;
             AddChild(ability);

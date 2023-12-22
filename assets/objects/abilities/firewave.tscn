@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dvcqo3s12tkuf"]
+[gd_scene load_steps=14 format=3 uid="uid://dvcqo3s12tkuf"]
 
 [ext_resource type="Script" path="res://assets/objects/abilities/Firewave.cs" id="1_63eig"]
 [ext_resource type="AudioStream" uid="uid://bx75a101a77ss" path="res://assets/audios/sounds/firebal.mp3" id="2_pxsvg"]
+[ext_resource type="Texture2D" uid="uid://cc5ckgkkw1l7g" path="res://sprites/abilities/firewave.png" id="3_4vmuv"]
 
 [sub_resource type="RectangleShape2D" id="5"]
 size = Vector2(8, 64)
@@ -9,6 +10,7 @@ size = Vector2(8, 64)
 [sub_resource type="Animation" id="1"]
 resource_name = "intro"
 length = 0.4
+step = 0.05
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -38,20 +40,33 @@ tracks/1/use_blend = true
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("CharacterBody/Line2D:scale")
+tracks/2/path = NodePath("CharacterBody/Sprite:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1, 0.1), Vector2(1, 1)]
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterBody/Sprite:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("3_4vmuv")]
 }
 
 [sub_resource type="Animation" id="2"]
 resource_name = "loop"
 length = 0.45
 loop_mode = 1
+step = 0.05
 tracks/0/type = "audio"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -67,10 +82,35 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0)
 }
 tracks/0/use_blend = true
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterBody/Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [13, 14, 15, 16, 17, 18, 19, 20]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterBody/Particles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="3"]
 resource_name = "outro"
-length = 0.4
+length = 30.0
+step = 0.05
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -78,7 +118,7 @@ tracks/0/path = NodePath(".")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.4),
+"times": PackedFloat32Array(30),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -103,18 +143,82 @@ tracks/1/use_blend = true
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("CharacterBody/Line2D:scale")
+tracks/2/path = NodePath("CharacterBody/Particles:emitting")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.3),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterBody/Sprite:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CharacterBody/Sprite:texture")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.55),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(1, 0)]
+"update": 1,
+"values": [ExtResource("3_4vmuv"), null]
+}
+
+[sub_resource type="Animation" id="Animation_ijh0k"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterBody/Sprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [33]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterBody/Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterBody/Particles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_uqupi"]
 _data = {
+"RESET": SubResource("Animation_ijh0k"),
 "intro": SubResource("1"),
 "loop": SubResource("2"),
 "outro": SubResource("3")
@@ -123,11 +227,31 @@ _data = {
 [sub_resource type="RectangleShape2D" id="4"]
 size = Vector2(8, 8)
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_b7f11"]
+particles_animation = true
+particles_anim_h_frames = 6
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yk0fi"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(2, -16, 0)
+gravity = Vector3(0, 0, 0)
+scale_min = 4.0
+scale_max = 4.0
+anim_speed_min = 1.0
+anim_speed_max = 2.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6voer"]
+load_path = "res://.godot/imported/fire.png-66da15853b624a6c2c0a9a5e78e64414.ctex"
+
 [node name="Firewave" type="Node2D"]
 script = ExtResource("1_63eig")
 
 [node name="CharacterBody" type="CharacterBody2D" parent="."]
 z_index = -1
+scale = Vector2(4, 4)
 collision_layer = 0
 collision_mask = 0
 
@@ -149,7 +273,18 @@ shape = SubResource("4")
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="CharacterBody"]
 
-[node name="Line2D" type="Line2D" parent="CharacterBody"]
-scale = Vector2(1, 1e-05)
-points = PackedVector2Array(0, -64, 0, 64)
-default_color = Color(1, 0.4, 0.4, 1)
+[node name="Particles" type="GPUParticles2D" parent="CharacterBody"]
+material = SubResource("CanvasItemMaterial_b7f11")
+emitting = false
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_yk0fi")
+texture = SubResource("CompressedTexture2D_6voer")
+lifetime = 2.0
+metadata/_edit_lock_ = true
+
+[node name="Sprite" type="Sprite2D" parent="CharacterBody"]
+position = Vector2(-13, 0)
+texture = ExtResource("3_4vmuv")
+flip_h = true
+hframes = 33
+frame = 1

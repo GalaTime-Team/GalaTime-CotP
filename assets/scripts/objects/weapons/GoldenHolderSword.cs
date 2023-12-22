@@ -29,7 +29,7 @@ public partial class GoldenHolderSword : Area2D, IWeapon
             p.State = HumanoidStates.Attack;
             p.CanMove = false;
 
-            p.Stamina -= p.Stats[EntityStatType.Stamina].Value * 0.03f;
+            p.Stamina.Value -= p.Stats[EntityStatType.Stamina].Value * 0.03f;
 
             // Play animation.
             AnimationPlayer.Stop();
@@ -71,5 +71,5 @@ public partial class GoldenHolderSword : Area2D, IWeapon
         projectile.Explosive = true;
     }
 
-    public void StepForwardAnimation(float step) => CurrentHumanoidCharacter?.SetKnockback(CurrentHumanoidCharacter.Stamina <= 0 ? 0 : step, CurrentHumanoidCharacter.Weapon.Rotation);
+    public void StepForwardAnimation(float step) => CurrentHumanoidCharacter?.SetKnockback(CurrentHumanoidCharacter.Stamina.Value <= 0 ? 0 : step, CurrentHumanoidCharacter.Weapon.Rotation);
 }

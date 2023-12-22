@@ -81,10 +81,16 @@ namespace Galatime
         {
             AbilityData = data;
 
+            StopReload();
             ReloadProgressBar.TextureUnder = data.Icon ?? defaultTexture;
             ReloadTime = data.Reload;
             MaxCharges = data.MaxCharges;
-            Charges = data.Charges; 
+            Charges = data.Charges;
+
+            // if (!data.IsFullyReloaded) 
+            // {
+            //     StartReload(data.Charges, (float)data.CooldownTimer.TimeLeft);
+            // }
         }
 
         /// <summary>
@@ -101,24 +107,46 @@ namespace Galatime
         /// <summary>
         /// Starts the ability reload display. Call it once the ability is starting to reload. 
         /// </summary>
-        public void StartReload(int charges)
+        public void StartReload(int charges, float reloadTime = 0)
         {
+            GD.Print($"Starting reload with {charges} charges, {reloadTime} reload time");
+
             Charges = charges;
-            if (charges >= MaxCharges) return;
+            // Don't reload if max charges is reached
+            if (Charges >= AbilityData.MaxCharges) return;
 
-            ReloadProgressBar.Value = 100;
-
-            // Setting the label to the remaining time
-            Remaining = ReloadTime;
+            if (reloadTime <= 0) 
+            {
+                // Setting the clock timer to the reload time
+                Delay = ReloadTime / 100;
+                ProgressBarTimer.WaitTime = Delay;
+                ReloadProgressBar.Value = 100;
+                // Setting the label to the remaining time
+                Remaining = ReloadTime;
+            }
+            else // If custom reload time is set, use it
+            {
+                Delay = reloadTime / 100;
+                ProgressBarTimer.WaitTime = Delay;
+                ReloadProgressBar.Value = reloadTime / 100;
+                // Setting the label to the remaining time
+                Remaining = reloadTime;
+            }
+            
             ReloadLabel.Text = Remaining + "s";
-
-            // Setting the clock timer to the reload time
-            Delay = ReloadTime / 100;
-            ProgressBarTimer.WaitTime = Delay;
 
             // Starting the clock timer
             ProgressBarTimer.Start();
             TextTimer.Start();
+        }
+
+        public void StopReload()
+        {
+            ReloadLabel.Text = "";
+            ReloadProgressBar.Value = 0;
+
+            ProgressBarTimer.Stop();
+            TextTimer.Stop();
         }
 
         /// <summary>

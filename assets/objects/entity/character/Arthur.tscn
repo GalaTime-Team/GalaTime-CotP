@@ -1,0 +1,248 @@
+[gd_scene load_steps=83 format=3 uid="uid://b3swrkwv16hh8"]
+
+[ext_resource type="Script" path="res://assets/scripts/test/TestCharacter.cs" id="1_bupbm"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ansg2"]
+[ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="2_yypln"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_mapt0"]
+[ext_resource type="PackedScene" uid="uid://dc61rj5d7csf6" path="res://assets/objects/HumanoidDoll.tscn" id="3_njik4"]
+[ext_resource type="Texture2D" uid="uid://cix3e7gxy5gsx" path="res://sprites/characters/arthur/attacking/left_combo1.png" id="4_4ipih"]
+[ext_resource type="Script" path="res://assets/scripts/objects/Hand.cs" id="5_fet1m"]
+[ext_resource type="Texture2D" uid="uid://5syk67gdgwia" path="res://sprites/characters/arthur/walking/arthur_left1.png" id="6_08mln"]
+[ext_resource type="Texture2D" uid="uid://dcqfpyclso664" path="res://sprites/characters/arthur/attacking/down_combo1.png" id="6_epprk"]
+[ext_resource type="Texture2D" uid="uid://bjokfsc7q3ven" path="res://sprites/characters/arthur/attacking/down_combo2.png" id="7_ck8yy"]
+[ext_resource type="Texture2D" uid="uid://cxx3mtncmpw7u" path="res://sprites/characters/arthur/attacking/down_combo3.png" id="8_04m00"]
+[ext_resource type="Texture2D" uid="uid://b3ax3270ex7lm" path="res://sprites/characters/arthur/attacking/down_combo4.png" id="9_i0kq5"]
+[ext_resource type="Texture2D" uid="uid://bia8s60bjp6q8" path="res://sprites/characters/arthur/attacking/down_combo5.png" id="10_dgtjt"]
+[ext_resource type="Texture2D" uid="uid://2v3obj551gsj" path="res://sprites/characters/arthur/attacking/down_combo6.png" id="11_sexx4"]
+[ext_resource type="Texture2D" uid="uid://byvii0yavbd4u" path="res://sprites/characters/arthur/attacking/down_combo7.png" id="12_n5pyr"]
+[ext_resource type="Texture2D" uid="uid://0ahom7xtm0uw" path="res://sprites/characters/arthur/attacking/down_combo8.png" id="13_munrj"]
+[ext_resource type="Texture2D" uid="uid://bb57q4y44n84t" path="res://sprites/characters/arthur/attacking/down_combo9.png" id="14_webpu"]
+[ext_resource type="Texture2D" uid="uid://hrf3hoq0h18s" path="res://sprites/characters/arthur/attacking/down_combo10.png" id="15_k2ret"]
+[ext_resource type="Texture2D" uid="uid://bfb8hwpib4vdo" path="res://sprites/characters/arthur/attacking/down_combo11.png" id="16_4r04l"]
+[ext_resource type="Texture2D" uid="uid://b1i6qqcilvs0y" path="res://sprites/characters/arthur/attacking/down_combo12.png" id="17_f2inw"]
+[ext_resource type="Texture2D" uid="uid://bkbhbif8jr0qc" path="res://sprites/characters/arthur/attacking/down_combo13.png" id="18_0wiln"]
+[ext_resource type="Texture2D" uid="uid://cr7caqhpfb87o" path="res://sprites/characters/arthur/attacking/left_combo2.png" id="19_eih8t"]
+[ext_resource type="Texture2D" uid="uid://c72kit00vdcvk" path="res://sprites/characters/arthur/attacking/left_combo3.png" id="20_0drbg"]
+[ext_resource type="Texture2D" uid="uid://bk3u0rm1yw053" path="res://sprites/characters/arthur/attacking/left_combo4.png" id="21_ltu31"]
+[ext_resource type="Texture2D" uid="uid://donics1dituwp" path="res://sprites/characters/arthur/attacking/left_combo5.png" id="22_7dhsc"]
+[ext_resource type="Texture2D" uid="uid://edewxtwnqso7" path="res://sprites/characters/arthur/attacking/left_combo6.png" id="23_p631w"]
+[ext_resource type="Texture2D" uid="uid://c5lc4jiboeg5n" path="res://sprites/characters/arthur/attacking/left_combo7.png" id="24_mmjii"]
+[ext_resource type="Texture2D" uid="uid://itmc3il5lo8h" path="res://sprites/characters/arthur/attacking/left_combo8.png" id="25_mfsbb"]
+[ext_resource type="Texture2D" uid="uid://bs8d7kifw58hj" path="res://sprites/characters/arthur/attacking/left_combo9.png" id="26_ufi5t"]
+[ext_resource type="Texture2D" uid="uid://by1xwjm5du5s1" path="res://sprites/characters/arthur/attacking/left_combo10.png" id="27_0l22q"]
+[ext_resource type="Texture2D" uid="uid://dyr8jkss1u5bt" path="res://sprites/characters/arthur/attacking/left_combo11.png" id="28_8rtht"]
+[ext_resource type="Texture2D" uid="uid://bd16t7scdqtpt" path="res://sprites/characters/arthur/attacking/left_combo12.png" id="29_rkqne"]
+[ext_resource type="Texture2D" uid="uid://0xe2il5q7qcw" path="res://sprites/characters/arthur/attacking/left_combo13.png" id="30_axiyn"]
+[ext_resource type="Texture2D" uid="uid://bdbsjpga5hurf" path="res://sprites/characters/arthur/attacking/right_combo1.png" id="31_qnwpa"]
+[ext_resource type="Texture2D" uid="uid://dya3mxfy6reyd" path="res://sprites/characters/arthur/attacking/right_combo2.png" id="32_gj7ri"]
+[ext_resource type="Texture2D" uid="uid://d3qq7qnw28toi" path="res://sprites/characters/arthur/attacking/right_combo3.png" id="33_kpqj6"]
+[ext_resource type="Texture2D" uid="uid://c0e0chcb8yfir" path="res://sprites/characters/arthur/attacking/right_combo4.png" id="34_4dj55"]
+[ext_resource type="Texture2D" uid="uid://b6ekfa63frk45" path="res://sprites/characters/arthur/attacking/right_combo5.png" id="35_s3j13"]
+[ext_resource type="Texture2D" uid="uid://7el4rlcxt7t5" path="res://sprites/characters/arthur/attacking/right_combo6.png" id="36_nivhc"]
+[ext_resource type="Texture2D" uid="uid://24elknnr53h5" path="res://sprites/characters/arthur/attacking/right_combo7.png" id="37_w8lqs"]
+[ext_resource type="Texture2D" uid="uid://clwuoy7lvg4wa" path="res://sprites/characters/arthur/attacking/right_combo8.png" id="38_snhqv"]
+[ext_resource type="Texture2D" uid="uid://dj4l5up7hp3g1" path="res://sprites/characters/arthur/attacking/right_combo9.png" id="39_s1d62"]
+[ext_resource type="Texture2D" uid="uid://bdw5q1q65c8rx" path="res://sprites/characters/arthur/attacking/right_combo10.png" id="40_bum4s"]
+[ext_resource type="Texture2D" uid="uid://cprhggnnurqgj" path="res://sprites/characters/arthur/attacking/right_combo12.png" id="41_cog2k"]
+[ext_resource type="Texture2D" uid="uid://cb1cajxddvkof" path="res://sprites/characters/arthur/attacking/right_combo13.png" id="42_gkrk1"]
+[ext_resource type="Texture2D" uid="uid://d03rb83xvk432" path="res://sprites/characters/arthur/attacking/up_combo1.png" id="43_ijfww"]
+[ext_resource type="Texture2D" uid="uid://ds53sgik4pgq2" path="res://sprites/characters/arthur/attacking/up_combo2.png" id="44_wqi68"]
+[ext_resource type="Texture2D" uid="uid://bpj41sm03gd22" path="res://sprites/characters/arthur/attacking/up_combo3.png" id="45_wmxtn"]
+[ext_resource type="Texture2D" uid="uid://bjwu7e3nl7uj7" path="res://sprites/characters/arthur/attacking/up_combo4.png" id="46_ucmsq"]
+[ext_resource type="Texture2D" uid="uid://c3o8eroj2hbr3" path="res://sprites/characters/arthur/attacking/up_combo5.png" id="47_p3psa"]
+[ext_resource type="Texture2D" uid="uid://d0bdk3eduwb8m" path="res://sprites/characters/arthur/attacking/up_combo6.png" id="48_n70pb"]
+[ext_resource type="Texture2D" uid="uid://pp2dhkrx2lv0" path="res://sprites/characters/arthur/attacking/up_combo7.png" id="49_17824"]
+[ext_resource type="Texture2D" uid="uid://dl00kotmlabea" path="res://sprites/characters/arthur/attacking/up_combo8.png" id="50_f3yel"]
+[ext_resource type="Texture2D" uid="uid://83qle2ebjnjd" path="res://sprites/characters/arthur/attacking/up_combo9.png" id="51_0qag6"]
+[ext_resource type="Texture2D" uid="uid://dw5doqh3c28yd" path="res://sprites/characters/arthur/attacking/up_combo10.png" id="52_l0hc6"]
+[ext_resource type="Texture2D" uid="uid://b3fx1k71fxeax" path="res://sprites/characters/arthur/attacking/up_combo11.png" id="53_iyagc"]
+[ext_resource type="Texture2D" uid="uid://l6dka6vae2ra" path="res://sprites/characters/arthur/attacking/up_combo12.png" id="54_ky00a"]
+[ext_resource type="Texture2D" uid="uid://da7dsnw24gvux" path="res://sprites/characters/arthur/attacking/up_combo13.png" id="55_fcoat"]
+[ext_resource type="Texture2D" uid="uid://w51ndcix5o1x" path="res://sprites/characters/arthur/walking/arthur_down1.png" id="56_jdtu3"]
+[ext_resource type="Animation" uid="uid://cujxvxahqev2b" path="res://assets/animations/characters/artur/idle_left.tres" id="57_oq2d5"]
+[ext_resource type="Animation" uid="uid://8p6sai8frm0r" path="res://assets/animations/characters/artur/idle_right.tres" id="58_kcvf4"]
+[ext_resource type="Animation" uid="uid://bgsskthjuyooq" path="res://assets/animations/characters/artur/idle_up.tres" id="59_iymjp"]
+[ext_resource type="Animation" uid="uid://g82xlv1qh4dx" path="res://assets/animations/characters/artur/walk_down.tres" id="60_6efpi"]
+[ext_resource type="Animation" uid="uid://co6srb7oraj3q" path="res://assets/animations/characters/artur/walk_left.tres" id="61_vompq"]
+[ext_resource type="Animation" uid="uid://chwhjkjfct2xe" path="res://assets/animations/characters/artur/walk_right.tres" id="62_lycik"]
+[ext_resource type="Animation" uid="uid://c1sxvrqaexeyd" path="res://assets/animations/characters/artur/walk_up.tres" id="63_kor26"]
+[ext_resource type="AudioStream" uid="uid://cq1ia6igrejmx" path="res://assets/audios/sounds/drink.wav" id="67_i5yqt"]
+
+[sub_resource type="Resource" id="Resource_76knt"]
+script = ExtResource("2_ansg2")
+StatsNames = [1, 2, 3, 5, 6, 7, 8]
+StatsValues = [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+
+[sub_resource type="Resource" id="Resource_53up3"]
+script = ExtResource("3_mapt0")
+InitializerElement = "Ignis + Chaos"
+
+[sub_resource type="Gradient" id="Gradient_mvm2k"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_tt8d5"]
+gradient = SubResource("Gradient_mvm2k")
+
+[sub_resource type="Curve" id="Curve_v15w3"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_p463s"]
+curve = SubResource("Curve_v15w3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rj76l"]
+gravity = Vector3(0, 0, 0)
+scale_min = 32.0
+scale_max = 32.0
+scale_curve = SubResource("CurveTexture_p463s")
+color_ramp = SubResource("GradientTexture2D_tt8d5")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_r02rj"]
+radius = 30.0
+
+[sub_resource type="Animation" id="Animation_edjqb"]
+resource_name = "AttackDown"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("6_epprk"), ExtResource("7_ck8yy"), ExtResource("8_04m00"), ExtResource("9_i0kq5"), ExtResource("10_dgtjt"), ExtResource("11_sexx4"), ExtResource("12_n5pyr"), ExtResource("13_munrj"), ExtResource("14_webpu"), ExtResource("15_k2ret"), ExtResource("16_4r04l"), ExtResource("17_f2inw"), ExtResource("18_0wiln")]
+}
+
+[sub_resource type="Animation" id="Animation_ooin2"]
+resource_name = "AttackLeft"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("4_4ipih"), ExtResource("19_eih8t"), ExtResource("20_0drbg"), ExtResource("21_ltu31"), ExtResource("22_7dhsc"), ExtResource("23_p631w"), ExtResource("24_mmjii"), ExtResource("25_mfsbb"), ExtResource("26_ufi5t"), ExtResource("27_0l22q"), ExtResource("28_8rtht"), ExtResource("29_rkqne"), ExtResource("30_axiyn")]
+}
+
+[sub_resource type="Animation" id="Animation_leklu"]
+resource_name = "AttackRight"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("31_qnwpa"), ExtResource("32_gj7ri"), ExtResource("33_kpqj6"), ExtResource("34_4dj55"), ExtResource("35_s3j13"), ExtResource("36_nivhc"), ExtResource("37_w8lqs"), ExtResource("38_snhqv"), ExtResource("38_snhqv"), ExtResource("39_s1d62"), ExtResource("40_bum4s"), ExtResource("41_cog2k"), ExtResource("42_gkrk1")]
+}
+
+[sub_resource type="Animation" id="Animation_gnkkp"]
+resource_name = "AttackUp"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("43_ijfww"), ExtResource("44_wqi68"), ExtResource("45_wmxtn"), ExtResource("46_ucmsq"), ExtResource("47_p3psa"), ExtResource("48_n70pb"), ExtResource("49_17824"), ExtResource("50_f3yel"), ExtResource("51_0qag6"), ExtResource("52_l0hc6"), ExtResource("53_iyagc"), ExtResource("54_ky00a"), ExtResource("55_fcoat")]
+}
+
+[sub_resource type="Animation" id="2"]
+resource_name = "IdleDown"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [ExtResource("56_jdtu3")]
+}
+
+[sub_resource type="Animation" id="3"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jfmqd"]
+_data = {
+"AttackDown": SubResource("Animation_edjqb"),
+"AttackLeft": SubResource("Animation_ooin2"),
+"AttackRight": SubResource("Animation_leklu"),
+"AttackUp": SubResource("Animation_gnkkp"),
+"IdleDown": SubResource("2"),
+"IdleLeft": ExtResource("57_oq2d5"),
+"IdleRight": ExtResource("58_kcvf4"),
+"IdleUp": ExtResource("59_iymjp"),
+"RESET": SubResource("3"),
+"WalkDown": ExtResource("60_6efpi"),
+"WalkLeft": ExtResource("61_vompq"),
+"WalkRight": ExtResource("62_lycik"),
+"WalkUp": ExtResource("63_kor26")
+}
+
+[node name="Arthur" type="CharacterBody2D" groups=["ally"]]
+y_sort_enabled = true
+collision_layer = 2
+script = ExtResource("1_bupbm")
+Stats = SubResource("Resource_76knt")
+Element = SubResource("Resource_53up3")
+
+[node name="TrailParticles" type="GPUParticles2D" parent="."]
+emitting = false
+process_material = SubResource("ParticleProcessMaterial_rj76l")
+lifetime = 0.3
+
+[node name="TargetController" parent="." instance=ExtResource("2_yypln")]
+TargetTeam = -1
+SwitchDuration = 0.5
+
+[node name="HumanoidDoll" parent="." instance=ExtResource("3_njik4")]
+AnimationPlayerPath = NodePath("../Animation")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+y_sort_enabled = true
+scale = Vector2(4, 4)
+texture = ExtResource("6_08mln")
+
+[node name="Hand" type="Marker2D" parent="."]
+position = Vector2(0, 30)
+script = ExtResource("5_fet1m")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, 30)
+shape = SubResource("CircleShape2D_r02rj")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Navigation" type="NavigationAgent2D" parent="."]
+
+[node name="RayCast" type="RayCast2D" parent="."]
+target_position = Vector2(0, 0)
+collision_mask = 7
+
+[node name="Animation" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_jfmqd")
+}
+
+[node name="DrinkingAudioPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("67_i5yqt")

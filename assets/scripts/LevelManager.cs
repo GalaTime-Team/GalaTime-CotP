@@ -2,8 +2,11 @@ using Galatime;
 using Godot;
 using System.Collections.Generic;
 
+/// <summary> Manages the level. Contains the audios for the level and managing the time scale. </summary>
 public partial class LevelManager : Node
 {
+    public static LevelManager Instance { get; private set; }
+
     /// <summary> The audio pack, which contains the audios for the level, contains the both calm and combat versions. </summary>
     public Dictionary<string, AudioPack> AudioPacks = new() {
             {"classicalbreak", new AudioPack(
@@ -38,6 +41,8 @@ public partial class LevelManager : Node
 
     public override void _Ready()
     {
+        Instance = this;
+
         // Initialize audio players by creating them and adding them to the scene.
         InitializeAudioPlayers();
     }

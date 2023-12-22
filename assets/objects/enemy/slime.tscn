@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://assets/scripts/objects/enemies/Slime.cs" id="1_ufwr7"]
 [ext_resource type="Texture2D" uid="uid://cyglxm8058sgm" path="res://sprites/particles/Slime_particles.png" id="2_h3u7x"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/EntityStats.cs" id="2_qtebx"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_qtebx"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="2_wehpt"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_6ijah"]
 [ext_resource type="Texture2D" uid="uid://bxtr8vepdgom0" path="res://sprites/entity/slime/walk/slime-walk.png" id="4_7rx10"]

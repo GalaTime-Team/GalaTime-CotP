@@ -108,11 +108,11 @@ namespace Galatime
             PlayerVariables.OnItemsChanged -= DisplayItem;
         }
 
-        public void OnStatsChanged(EntityStats stats)
+        public void OnStatsChanged(EntityStats stats, float currentHealth, float currentStamina, float currentMana)
         {
-            HealthValueBar.MaxValue = stats[EntityStatType.Health].Value;
-            StaminaValueBar.MaxValue = stats[EntityStatType.Stamina].Value;
-            ManaValueBar.MaxValue = stats[EntityStatType.Mana].Value;
+            HealthValueBar.SetMaxValue(stats[EntityStatType.Health].Value, currentHealth);
+            StaminaValueBar.SetMaxValue(stats[EntityStatType.Stamina].Value, currentStamina);
+            ManaValueBar.SetMaxValue(stats[EntityStatType.Mana].Value, currentMana);
         }
 
         /// <summary> Makes the fade animation, which fades the screen in and out. </summary>
@@ -164,50 +164,90 @@ namespace Galatime
             return ability;
         }
 
-            public void CallConsumableWheel() 
+        public void CallConsumableWheel()
+        {
+            var itemContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ItemContainer.tscn");
+
+            var max = SelectWheel.WheelSegmentMaxCount;
+
+            // Needed arrays for the wheel to work.
+            var placeholders = new ItemContainer[max];
+            var names = new string[max];
+
+            var inventory = PlayerVariables.GetConsumables();
+
+            var count = Math.Min(inventory.Length, max);
+
+            // Don't do anything if no specified items.
+            if (count == 0) return;
+
+            for (int i = 0; i < count; i++)
             {
-                var itemContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/ItemContainer.tscn");
+                // Instantiate item container and add it to the wheel segment.
+                var ic = itemContainerScene.Instantiate<ItemContainer>();
 
-                var max = SelectWheel.WheelSegmentMaxCount;
+                var item = inventory[i];
+                ic.Data = item;
 
-                // Needed arrays for the wheel to work.
-                var placeholders = new ItemContainer[max];
-                var names = new string[max];
+                // Add item container to the arrays of placeholders and names.
+                placeholders[i] = ic;
+                names[i] = item.Name;
 
-                var inventory = PlayerVariables.GetConsumables();
-
-                var count = Math.Min(inventory.Length, max);
-
-                // Don't do anything if no specified items.
-                if (count == 0) return;
-
-                for (int i = 0; i < count; i++)
-                {
-                    // Instantiate item container and add it to the wheel segment.
-                    var ic = itemContainerScene.Instantiate<ItemContainer>();
-
-                    var item = inventory[i];
-                    ic.Data = item;
-                    
-                    // Add item container to the arrays of placeholders and names.
-                    placeholders[i] = ic;
-                    names[i] = item.Name;
-
-                    // Disabling mouse filter to make sure that hover event will be triggered.
-                    ic.MouseFilter = MouseFilterEnum.Ignore;
-                    // Set position of the item container in the wheel segment.
-                    ic.Position = new Vector2(10, 3);
-                }
-
-                SelectWheel.CallWheel("item_wheel", count, placeholders, names, (int i) => {
-                    var items = PlayerVariables.GetConsumables();
-                    // Check if the index is valid.
-                    if (i < 0 || i >= items.Length) return;
-                    var item = items[i];
-                    item.Use();
-                    GD.Print($"Consumed {item.Name}, now have {item.Quantity}.");
-                });
+                // Disabling mouse filter to make sure that hover event will be triggered.
+                ic.MouseFilter = MouseFilterEnum.Ignore;
+                // Set position of the item container in the wheel segment.
+                ic.Position = new Vector2(10, 3);
             }
+
+            SelectWheel.CallWheel("item_wheel", count, placeholders, names, (int i) =>
+            {
+                var items = PlayerVariables.GetConsumables();
+                // Check if the index is valid.
+                if (i < 0 || i >= items.Length) return;
+                var item = items[i];
+                item.Use();
+                GD.Print($"Consumed {item.Name}, now have {item.Quantity}.");
+            });
+        }
+
+        public void CallCharacterWheel()
+        {
+            // Don't let the player select characters if not in combat.
+            // if (!LevelManager.Instance.IsCombat) return;
+
+            var max = SelectWheel.WheelSegmentMaxCount;
+
+            // Needed arrays for the wheel to work.
+            var placeholders = new TextureRect[max];
+            var names = new string[max];
+
+            var characters = Array.FindAll(PlayerVariables.Allies, c => !c.IsEmpty);
+            for (int i = 0; i < characters.Length; i++)
+            {
+                var character = characters[i];
+
+                var ic = new TextureRect
+                {
+                    // Disabling mouse filter to make sure that hover event will be triggered.
+                    MouseFilter = MouseFilterEnum.Ignore,
+                    // Set position of the item container in the wheel segment.
+                    Position = new Vector2(10, 3),
+                    Size = new Vector2(16, 16),
+                    PivotOffset = new Vector2(8, 8),
+                    Texture = character.Icon
+                };
+                placeholders[i] = ic;
+                names[i] = character.Name;
+            }
+
+            if (characters.Length == 0) return;
+
+            SelectWheel.CallWheel("character_wheel", characters.Length, placeholders, names, (int i) => 
+            {
+                GD.Print($"Selected character {i} ({PlayerVariables.Allies[i].Name}).");
+                PlayerVariables.Player.SwitchCharacter(PlayerVariables.Allies[i]);
+            });
+        }
 
         public void DisplayItem() => OnItemsChanged?.Invoke();
     }

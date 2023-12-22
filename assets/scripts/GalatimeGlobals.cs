@@ -5,7 +5,6 @@ using Godot;
 using Newtonsoft.Json;
 using Galatime.Dialogue;
 using Newtonsoft.Json.Linq;
-using System;
 
 public sealed partial class GalatimeGlobals : Node
 {
@@ -16,7 +15,9 @@ public sealed partial class GalatimeGlobals : Node
     /// <summary> List of every single dialog data that is registered in the game. </summary>
     public static List<DialogData> DialogsList = new();
     /// <summary> List of every single dialog character data that is registered in the game. </summary>
-    public static List<Character> CharactersList = new();
+    public static List<DialogCharacter> CharactersList = new();
+    /// <summary> List of every single ally data that is registered in the game. </summary>
+    public static List<AllyData> AlliesList = new();
     public static Godot.Collections.Array TipsList = new();
 
     public static string PathListItems = "res://assets/data/json/items.json";
@@ -72,17 +73,18 @@ public sealed partial class GalatimeGlobals : Node
         TipsList = GetTipsFromJson();
         DialogsList = GetDataFromJson<DialogsData>(PathListDialogs).Dialogs;
         CharactersList = GetDataFromJson<CharactersData>(PathListCharacters).Characters;
+        AlliesList = GetFromJson<AllyData>(PathListAllies, "allies");
 
         // TODO: Move this to another file that handling the behavior of items.
         GetItemById("heal_potion", false).OnUse += () =>
         {
-            PlayerVariables.Player.PlayDrinkingSound();
-            GetTree().CreateTimer(1f).Timeout += () => PlayerVariables.Player.Heal(PlayerVariables.Player.Stats[EntityStatType.Health].Value * 0.5f);
+            Player.CurrentCharacter?.PlayDrinkingSound();
+            GetTree().CreateTimer(1f).Timeout += () => Player.CurrentCharacter?.Heal(PlayerVariables.Player.Stats[EntityStatType.Health].Value * 0.5f);
         };
         GetItemById("mana_potion", false).OnUse += () =>
         {
-            PlayerVariables.Player.PlayDrinkingSound();
-            GetTree().CreateTimer(1f).Timeout += () => PlayerVariables.Player.Mana += PlayerVariables.Player.Stats[EntityStatType.Mana].Value * 0.5f;
+            Player.CurrentCharacter?.PlayDrinkingSound();
+            GetTree().CreateTimer(1f).Timeout += () => { if (Player.CurrentCharacter != null) Player.CurrentCharacter.Mana.Value += PlayerVariables.Player.Stats[EntityStatType.Mana].Value * 0.5f; };
         };
         // TODO: Move this to another file that handling the behavior of items.
     }
@@ -95,7 +97,7 @@ public sealed partial class GalatimeGlobals : Node
         GetTree().Root.AddChild(loadingSceneInstance);
     }
 
-    /// <summary>  Checks for the presence of saves and also creates them if they are absent </summary>
+    /// <summary>  Checks for the presence of saves and also creates them if they are absent. </summary>
     public static void CheckSaves()
     {
         if (!DirAccess.DirExistsAbsolute(GalatimeConstants.SavesPath)) DirAccess.MakeDirAbsolute(GalatimeConstants.SavesPath);
@@ -130,14 +132,7 @@ public sealed partial class GalatimeGlobals : Node
         return results;
     }
 
-    public static Godot.Collections.Dictionary LoadSave(int saveId)
-    {
-        string SAVE_FILE_PATH = $"{GalatimeConstants.SavesPath}save{saveId}.json";
-        var file = FileAccess.Open(SAVE_FILE_PATH, FileAccess.ModeFlags.Read);
-        var saveData = (Godot.Collections.Dictionary)Json.ParseString(file.GetAsText());
-        file.Close();
-        return saveData;
-    }
+
 
     public void Save(int saveId, Node currentScene)
     {
@@ -161,6 +156,16 @@ public sealed partial class GalatimeGlobals : Node
         }
     }
 
+    public static Godot.Collections.Dictionary LoadSave(int saveId)
+    {
+        string SAVE_FILE_PATH = $"{GalatimeConstants.SavesPath}save{saveId}.json";
+        var file = FileAccess.Open(SAVE_FILE_PATH, FileAccess.ModeFlags.Read);
+        var saveData = (Godot.Collections.Dictionary)Json.ParseString(file.GetAsText());
+        file.Close();
+        return saveData;
+    }
+
+
     private Godot.Collections.Dictionary GetSaveData(int saveId)
     {
         var saveData = new Godot.Collections.Dictionary
@@ -172,6 +177,7 @@ public sealed partial class GalatimeGlobals : Node
             { "playtime", 0 },
             { "learned_abilities", PlayerVariables.LearnedAbilities }
         };
+        // Inventory
         var inventory = new Godot.Collections.Dictionary();
         for (int i = 0; i < PlayerVariables.Inventory.Length; i++)
         {
@@ -185,6 +191,7 @@ public sealed partial class GalatimeGlobals : Node
             }
         }
         saveData.Add("inventory", inventory);
+        // Abilities
         var abilities = new Godot.Collections.Dictionary();
         for (int i = 0; i < PlayerVariables.Abilities.Length; i++)
         {
@@ -193,6 +200,14 @@ public sealed partial class GalatimeGlobals : Node
             ((Godot.Collections.Dictionary)abilities[i]).Add("id", ability.ID);
         }
         saveData.Add("equipped_abilities", abilities);
+        // Allies
+        var allies = new Godot.Collections.Array();
+        for (int i = 0; i < PlayerVariables.Allies.Length; i++) 
+        {
+            var ally = PlayerVariables.Allies[i];
+            allies.Add(ally.ID);
+        }
+        saveData.Add("allies", allies);
         if (PlayerVariables.Player is not null) saveData.Add("xp", PlayerVariables.Player.Xp);
         return saveData;
     }
@@ -284,7 +299,8 @@ public sealed partial class GalatimeGlobals : Node
     }
 
     public static DialogData GetDialogById(string id) => DialogsList.Find(x => x.ID == id);
-    public static Character GetCharacterById(string id) => CharactersList.Find(x => x.ID == id);
+    public static DialogCharacter GetCharacterById(string id) => CharactersList.Find(x => x.ID == id);
+    public static AllyData GetAllyById(string id) => AlliesList.Find(x => x.ID == id);
 
     public static AbilityData GetAbilityById(string id)
     {

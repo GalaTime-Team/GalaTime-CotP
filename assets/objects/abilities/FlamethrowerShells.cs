@@ -27,7 +27,7 @@ namespace Galatime
             {
                 GalatimeElement element = GalatimeElement.Ignis;
                 float damageRotation = _kinematicBody.GlobalPosition.AngleToPoint(entity.GlobalPosition);
-                entity.TakeDamage(3f, magicalAttack, element, DamageType.Magical, 50, damageRotation);
+                entity.TakeDamage(5f, magicalAttack, element, DamageType.Magical, 50, damageRotation);
             }
         }
 
@@ -36,11 +36,11 @@ namespace Galatime
             var rand = new Random();
             Rotation = rotation + (float)rand.NextDouble() / 5 * rand.Next(-1, 2);
             _kinematicBody.GlobalPosition = position;
-            _velocity.X += 1;
+            _velocity.X += 1.3f;
             _animationPlayer.Play("intro");
             _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, physicalAttack, magicalAttack);
 
-            await ToSignal(GetTree().CreateTimer(0.5f + (float)rand.NextDouble() / 10), "timeout");
+            await ToSignal(GetTree().CreateTimer(0.3f + (float)rand.NextDouble() / 10), "timeout");
             destroy();
         }
 

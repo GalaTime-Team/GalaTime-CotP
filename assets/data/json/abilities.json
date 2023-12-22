@@ -54,7 +54,7 @@
 			"id": "firewave",
 			"description": "Deals damage to a very large area",
 			"element": "Ignis",
-			"reload": 20,
+			"reload": 2,
 			"costs": {
 				"mana": 10
 			},

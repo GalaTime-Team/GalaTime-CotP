@@ -110,7 +110,7 @@ public partial class HumanoidDoll : Node2D
             Vector2 v when v.X < 0 => AnimationDirection.Left,
             Vector2 v when v.Y > 0 => AnimationDirection.Down,
             Vector2 v when v.Y < 0 => AnimationDirection.Up,
-            _ => throw new NotImplementedException(),
+            _ => AnimationDirection.Down
         };
     }
 
