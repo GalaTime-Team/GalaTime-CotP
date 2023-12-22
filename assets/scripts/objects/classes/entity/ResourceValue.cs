@@ -59,8 +59,12 @@ public partial class ResourceValue : Node
     public void SetValue(float newValue, bool justSet = false)
     {
         value = Mathf.Clamp(newValue, 0, MaxValue);
-        if (!justSet) CountdownTimer.Start();
-        if (!justSet) OnValueChanged?.Invoke(value);
+        if (!justSet) 
+        {
+            CountdownTimer.Start();
+            RegenTimer.Stop();
+            OnValueChanged?.Invoke(value);
+        }
     }
 
     // The method that regenerates the resource by a fixed amount

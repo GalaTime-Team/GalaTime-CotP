@@ -60,7 +60,7 @@ public partial class FireBullet : GalatimeAbility
         }
         if (!Shotted)
         {
-            PlayerVariables.Player.CameraShakeAmount += 0.1f;
+            PlayerVariables.Player.CameraShakeAmount += 0.2f;
 
             Projectile.GlobalPosition = Caster.Weapon.GlobalPosition;
             Projectile.Rotation = Caster.Weapon.Rotation;
@@ -93,14 +93,14 @@ public partial class FireBullet : GalatimeAbility
         {
             if (body is Entity entity)
                 entity.TakeDamage(40, Caster.Stats[EntityStatType.MagicalAttack].Value, Data.Element, DamageType.Magical);
-            if (body is Projectile projectile && projectile.Moving)
+            if (body is Projectile projectile && projectile.Moving && RayCast.IsColliding())
             {
                 PlayerVariables.Player.PlayerGui.ParryEffect(projectile.GlobalPosition);
                 var explosion = projectile.Explosion;
                 explosion.Type = ExplosionType.Red;
                 explosion.Power += 6;
-                projectile.Destroy();   
-                return;
+                projectile.Destroy();  
+                return; 
             }
         }
         if (RayCast.IsColliding())
@@ -111,4 +111,4 @@ public partial class FireBullet : GalatimeAbility
             AddChild(Explosion);
         }
     }
-}
+}   

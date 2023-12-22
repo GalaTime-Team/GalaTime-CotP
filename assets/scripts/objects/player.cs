@@ -174,32 +174,7 @@ namespace Galatime
                 PlayerGui.AddAbility(ability, i);
             }
         }
-
-        // public override AbilityData AddAbility(AbilityData ab, int i)
-        // {
-        //     var ability = base.AddAbility(ab, i);
-        //     PlayerGui.AddAbility(ability, i);
-        //     return ability;
-        // }
-
-        // public override bool UseAbility(int i)
-        // {
-        //     var result = base.UseAbility(i);
-        //     if (!result)
-        //     {
-        //         PlayerGui.GetAbilityContainer(i).No();
-        //         return result;
-        //     }
-        //     return result;
-        // }
-
-        // public override void _OnAbilityReload(int i)
-        // {
-        //     var ability = Abilities[i];
-        //     var abilityContainer = PlayerGui.GetAbilityContainer(i);
-        //     abilityContainer.StartReload(ability.Charges);
-        // }
-
+        
         public void OnAbilityAddedForCharacter(AbilityData ab, int i)
         {
             GD.Print("OnAbilityAddedForCharacter: AbilityData: ", ab.ToString(), " Index: ", i);
@@ -305,7 +280,7 @@ namespace Galatime
 
         public override void _UnhandledInput(InputEvent @event)
         {
-            if (@event.IsActionPressed("game_attack")) Weapon.Attack(this);
+            if (@event.IsActionPressed("game_attack")) CurrentCharacter?.Weapon.Attack(CurrentCharacter);
             if (@event.IsActionPressed("game_dodge"))
             {
                 CurrentCharacter?.Dodge();
