@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://c4qhhi03craxs"]
+[gd_scene load_steps=6 format=3 uid="uid://c4qhhi03craxs"]
 
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="1_ioeut"]
 [ext_resource type="Script" path="res://assets/scripts/gui/SaveContainer.cs" id="1_sv68w"]
 [ext_resource type="FontFile" uid="uid://u855kgb0y3mw" path="res://assets/fonts/m5x7.tres" id="2_l8pys"]
 [ext_resource type="PackedScene" uid="uid://dra0o6uwyaspw" path="res://assets/objects/gui/elements/LabelButton.tscn" id="4_e50m1"]
+[ext_resource type="AudioStream" uid="uid://jrsuouvekni1" path="res://assets/audios/sounds/button_sfx_accept.mp3" id="5_n0fbg"]
 
 [node name="SaveContainer" type="HBoxContainer"]
 offset_right = 300.0
@@ -36,34 +37,19 @@ autowrap_mode = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.7
-text = ""
-Speed = 0.1
+AudioStreamPressed = ExtResource("5_n0fbg")
 
 [node name="Label" parent="PlayButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -14.0
-offset_top = -11.5
-offset_right = 14.0
-offset_bottom = 11.5
-grow_horizontal = 2
 text = "PLAY"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="DeleteButton" parent="." groups=["buttons"] instance=ExtResource("4_e50m1")]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.5
-text = ""
-HoverColor = Color(1, 0, 0, 1)
-Speed = 0.1
+size_flags_stretch_ratio = 0.7
+AudioStreamPressed = ExtResource("5_n0fbg")
 
 [node name="Label" parent="DeleteButton" index="0"]
 text = "DELETE"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [editable path="PlayButton"]
 [editable path="DeleteButton"]

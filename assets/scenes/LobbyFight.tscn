@@ -125,14 +125,14 @@ preprocess = 10.0
 visibility_rect = Rect2(-2000, -1000, 4000, 2000)
 
 [node name="Player" parent="." instance=ExtResource("4_mp3x6")]
-position = Vector2(-1119, 832)
+position = Vector2(-1280, 768)
 
 [node name="NavigationRegion" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_nr850")
 metadata/_edit_lock_ = true
 
 [node name="Roomwrap" parent="." instance=ExtResource("8_rru7k")]
-position = Vector2(-1344, 768)
+position = Vector2(-1440, 768)
 Scene = "res://assets/scenes/Lobby.tscn"
 
 [node name="TriggerArea" parent="Roomwrap" index="0"]

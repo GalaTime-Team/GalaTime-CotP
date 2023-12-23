@@ -42,6 +42,8 @@ namespace Galatime
 
             // Get Nodes
             Body = this;
+
+            // Humanoid components
             Weapon = GetNode<Hand>("Hand");
             Sprite = GetNode<Sprite2D>("Sprite2D");
             TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
@@ -49,12 +51,12 @@ namespace Galatime
             DrinkingAudioPlayer = GetNode<AudioStreamPlayer2D>("DrinkingAudioPlayer");
 
             Camera = GetNode<Camera2D>("Camera");
+            PlayerGui = GetNode<PlayerGui>("CanvasLayer/PlayerGui");
 
-            PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            // Player variables
+            PlayerVariables = PlayerVariables.Instance;
             PlayerVariables.OnItemsChanged += OnItemsChanged;
             PlayerVariables.OnAbilitiesChanged += OnAbilitiesChangedForCharacter;
-
-            PlayerGui = GetNode<PlayerGui>("CanvasLayer/PlayerGui");
 
             // Start
             Stamina.Value = Stats[EntityStatType.Stamina].Value;
@@ -64,12 +66,11 @@ namespace Galatime
             CameraOffset = Vector2.Zero;
             Body.GlobalPosition = GlobalPosition;
 
-            // Stats.OnStatsChanged += OnStatsChanged;
-            // OnStatsChanged(Stats);
+            // PlayerVariables.SetPlayerInstance(this);
 
-            // PlayerVariables.OnAlliesChanged += LoadCharacters;
-
-            PlayerVariables.SetPlayerInstance(this);
+            PlayerVariables.LoadVariables(this);
+            // Load Arthur
+            LoadCharactersFirst();
         }
 
         public override void _ExitTree()
@@ -79,7 +80,6 @@ namespace Galatime
             Stats.OnStatsChanged -= OnStatsChanged;
             PlayerVariables.OnItemsChanged -= OnItemsChanged;
             PlayerVariables.OnAbilitiesChanged -= OnAbilitiesChangedForCharacter;
-            PlayerVariables.OnAlliesChanged -= LoadCharacters;
             Array.ForEach(PlayerVariables.Allies, x => x.Instance = null);
 
             CurrentCharacter = null;
@@ -174,7 +174,7 @@ namespace Galatime
                 PlayerGui.AddAbility(ability, i);
             }
         }
-        
+
         public void OnAbilityAddedForCharacter(AbilityData ab, int i)
         {
             GD.Print("OnAbilityAddedForCharacter: AbilityData: ", ab.ToString(), " Index: ", i);
@@ -205,11 +205,7 @@ namespace Galatime
             var abilityContainer = PlayerGui.GetAbilityContainer(i);
             abilityContainer.StartReload(ability.Charges, (float)previousTime);
         }
-
-        // public void RemoveAbilityForCharacter(int i)
-        // {
-        //     PlayerGui.RemoveAbility(i);
-        // }
+\
 
         private void OnItemsChanged()
         {
@@ -219,21 +215,30 @@ namespace Galatime
             Weapon.TakeItem(obj);
         }
 
+        /// <summary> Loads characters and switches to the Arthur. </summary>
+        public void LoadCharactersFirst() => CallDeferred(nameof(LoadCharacters), "arthur"); // For some reason, it should be called in idle frame even if it's called in _Ready.
+
         /// <summary> Loads characters for the game and spawns them in the scene. </summary>
-        public void LoadCharacters()
+        public void LoadCharacters(string characterToSwitchId = "")
         {
             foreach (var character in PlayerVariables.Allies)
             {
                 // Checking if the character is not empty and no instance.
-                if (!character.IsEmpty && character.Instance == null)
+                if (character != null && !character.IsEmpty && character.Instance == null)
                 {
                     var hc = character.Scene.Instantiate<HumanoidCharacter>();
-                    // Top level so they don't be affected by the Player transform.
-                    hc.TopLevel = true;
-                    hc.GlobalPosition = GlobalPosition;
                     GetParent().AddChild(hc);
                     character.Instance = hc;
+
+                    hc.GlobalPosition = GlobalPosition;
                 }
+            }
+            // Switch character if needed right after loading characters.
+            if (characterToSwitchId != "") 
+            {
+                // Find specified character.
+                var ally = PlayerVariables.Allies.FirstOrDefault(x => x.ID == characterToSwitchId);
+                if (ally != default) SwitchCharacter(ally);
             }
         }
 
@@ -278,20 +283,16 @@ namespace Galatime
             OnAbilitiesChangedForCharacter();
         }
 
+        // All input handling for the player goes here.
         public override void _UnhandledInput(InputEvent @event)
         {
             if (@event.IsActionPressed("game_attack")) CurrentCharacter?.Weapon.Attack(CurrentCharacter);
-            if (@event.IsActionPressed("game_dodge"))
-            {
-                CurrentCharacter?.Dodge();
-            }
-
+            if (@event.IsActionPressed("game_dodge")) CurrentCharacter?.Dodge();
             if (@event.IsActionPressed("game_inventory"))
             {
                 PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;
                 CanMove = !PlayerGui.InventoryOpen;
             }
-
             if (@event.IsActionPressed("game_potion_wheel")) PlayerGui.CallConsumableWheel();
             if (@event.IsActionPressed("game_character_wheel")) PlayerGui.CallCharacterWheel();
 

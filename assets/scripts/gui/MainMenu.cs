@@ -295,8 +295,7 @@ public partial class MainMenu : Control
 
     public void PlayButtonPressed(int id)
     {
-        AnimationPlayer.Play("start");
-        AudioButtonAccept.Play();
+        AnimationPlayer.Play("start");  
 
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
         PlayerVariables.CurrentSave = id - 1;

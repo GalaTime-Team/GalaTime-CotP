@@ -92,7 +92,7 @@ public partial class FireBullet : GalatimeAbility
         foreach (var body in bodies)
         {
             if (body is Entity entity)
-                entity.TakeDamage(40, Caster.Stats[EntityStatType.MagicalAttack].Value, Data.Element, DamageType.Magical);
+                entity.TakeDamage(65, Caster.Stats[EntityStatType.MagicalAttack].Value, Data.Element, DamageType.Magical);
             if (body is Projectile projectile && projectile.Moving && RayCast.IsColliding())
             {
                 PlayerVariables.Player.PlayerGui.ParryEffect(projectile.GlobalPosition);
@@ -100,13 +100,14 @@ public partial class FireBullet : GalatimeAbility
                 explosion.Type = ExplosionType.Red;
                 explosion.Power += 6;
                 projectile.Destroy();  
-                return; 
+                return;
             }
         }
         if (RayCast.IsColliding())
         {
             var position = RayCast.GetCollisionPoint(); // Get the position of the collision point in global coordinates.
             GD.Print(RayCast.GlobalPosition.DistanceTo(position) / 4);
+            Explosion.TopLevel = true; // I don't know why is needed tbh, but required for it to work.
             Explosion.GlobalPosition = position;
             AddChild(Explosion);
         }

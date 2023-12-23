@@ -191,7 +191,6 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody2D" groups=["ally"]]
-visible = false
 y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("10")
@@ -209,6 +208,7 @@ process_material = SubResource("17")
 lifetime = 0.3
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
 y_sort_enabled = true
 scale = Vector2(4, 4)
 texture = ExtResource("15_q7q18")
@@ -221,6 +221,7 @@ AnimationPlayerPath = NodePath("../Animation")
 [node name="Collision" type="CollisionShape2D" parent="."]
 position = Vector2(0, 30)
 shape = SubResource("CircleShape2D_lxnla")
+disabled = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

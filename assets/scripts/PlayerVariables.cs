@@ -72,6 +72,8 @@ public partial class PlayerVariables : Node
         Array.Fill(Inventory, new());
         Array.Fill(Abilities, new());
         Array.Fill(Allies, new());
+        LearnedAbilities.Clear();
+        // for (int i = 0; i < AbilitySlots; i++) Abilities.Add(new());
     }
 
     public override void _Ready()
@@ -84,16 +86,15 @@ public partial class PlayerVariables : Node
         OnItemsChanged?.Invoke();
         OnAbilitiesChanged?.Invoke();
 
-        OnPlayerIsReady += LoadSave;
+        // OnPlayerIsReady += LoadSave;
     }
 
-    public void LoadSave(Player instance)
+    public void LoadVariables(Player instance)
     {
+        Player = instance;
         try
         {
             ResetValues();
-            // for (int i = 0; i < AbilitySlots; i++) Abilities.Add(new());
-            LearnedAbilities.Clear();
 
             var saveData = GalatimeGlobals.LoadSave(CurrentSave);
 

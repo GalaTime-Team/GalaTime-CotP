@@ -208,9 +208,17 @@ public partial class HumanoidCharacter : Entity
             abilityInstance.Data = ability;
 
             // Check if the character has enough stamina and mana, if not, return false.
-            if (Stamina.Value - abilityInstance.Data.Costs.Stamina < 0) return false;
+            if (Stamina.Value - abilityInstance.Data.Costs.Stamina < 0) 
+            {
+                OnAbilityUsed?.Invoke(i, false);
+                return false;
+            }
             if (abilityInstance.Data.Costs.Stamina > 0) Stamina.Value -= abilityInstance.Data.Costs.Stamina;
-            if (Mana.Value - abilityInstance.Data.Costs.Mana < 0) return false;
+            if (Mana.Value - abilityInstance.Data.Costs.Mana < 0) 
+            {
+                OnAbilityUsed?.Invoke(i, false);
+                return false;
+            }       
             if (abilityInstance.Data.Costs.Mana > 0) Mana.Value -= abilityInstance.Data.Costs.Mana;
 
             // Add the ability and execute it.

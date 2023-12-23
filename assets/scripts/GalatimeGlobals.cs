@@ -205,7 +205,7 @@ public sealed partial class GalatimeGlobals : Node
         for (int i = 0; i < PlayerVariables.Allies.Length; i++) 
         {
             var ally = PlayerVariables.Allies[i];
-            allies.Add(ally.ID);
+            if (!ally.IsEmpty) allies.Add(ally.ID);
         }
         saveData.Add("allies", allies);
         if (PlayerVariables.Player is not null) saveData.Add("xp", PlayerVariables.Player.Xp);
