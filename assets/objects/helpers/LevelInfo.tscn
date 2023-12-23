@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dt5h73awssdsx"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/helpers/LevelInfo.cs" id="1_gv3me"]
+
+[node name="LevelInfo" type="Node"]
+script = ExtResource("1_gv3me")

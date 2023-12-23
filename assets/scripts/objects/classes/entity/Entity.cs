@@ -262,12 +262,12 @@ namespace Galatime
         public void DropXp()
         {
             var xpOrb = XpOrbScene.Instantiate<ExperienceOrb>();
-            xpOrb.Quantity = DroppedXp;
-            xpOrb.GlobalPosition = Body.GlobalPosition;
-            CallDeferred(nameof(AddChildDeferred), xpOrb);
+            Callable.From(() => {
+                xpOrb.Quantity = DroppedXp;
+                GetParent().AddChild(xpOrb);
+                xpOrb.GlobalPosition = Body.GlobalPosition;
+            }).CallDeferred();
         }
-
-        public void AddChildDeferred(Node node) => AddChild(node);
 
         public void Heal(float amount, int timeToHeal = 0)
         {

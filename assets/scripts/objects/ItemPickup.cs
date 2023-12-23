@@ -1,4 +1,5 @@
 using Godot;
+using NodeExtensionMethods;
 
 namespace Galatime
 {
@@ -46,7 +47,7 @@ namespace Galatime
 
         public void _onEntered(Node2D node)
         {
-            if (node is Player)
+            if (node.IsPossessed())
             {
                 GetNode<PlayerVariables>("/root/PlayerVariables").AddItem(Item, Quantity);
                 QueueFree();

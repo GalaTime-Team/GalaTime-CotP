@@ -84,6 +84,7 @@ public partial class PauseMenu : Control
         // Buttons
         ResumeButton = ButtonsContainer.GetNode<Button>("ResumeButton");
         SaveButton = ButtonsContainer.GetNode<Button>("SaveButton");
+        ReloadButton = ButtonsContainer.GetNode<Button>("ReloadButton");
         ExitButton = ButtonsContainer.GetNode<Button>("ExitButton");
         SettingsButton = ButtonsContainer.GetNode<Button>("SettingsButton");
         #endregion
@@ -99,6 +100,11 @@ public partial class PauseMenu : Control
         {
             Paused = false;
             globals.Save(PlayerVariables.CurrentSave, this);
+        };
+        ReloadButton.Pressed += () => 
+        {
+            Paused = false;
+            LevelManager.Instance.ReloadLevel();
         };
         ExitButton.Pressed += () =>
         {

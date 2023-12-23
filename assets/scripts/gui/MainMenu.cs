@@ -146,7 +146,6 @@ public partial class MainMenu : Control
         GalatimeGlobals.CheckSaves();
 
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
-        GetTree().Root.Title = "GalaTime - Main Menu";
     }
 
     private void InitializeMainMenuButtons()

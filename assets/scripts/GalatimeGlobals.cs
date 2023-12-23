@@ -8,6 +8,8 @@ using Newtonsoft.Json.Linq;
 
 public sealed partial class GalatimeGlobals : Node
 {
+    public static GalatimeGlobals Instance { get; private set; }
+
     /// <summary> List of every single item data that is registered in the game. </summary>
     public static List<Item> ItemList = new();
     /// <summary> List of every single ability data that is registered in the game. </summary>
@@ -63,6 +65,8 @@ public sealed partial class GalatimeGlobals : Node
 
     public override void _Ready()
     {
+        Instance = this;
+
         PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
 
         LoadingScene = ResourceLoader.Load<PackedScene>("res://assets/scenes/Loading.tscn");
@@ -79,12 +83,12 @@ public sealed partial class GalatimeGlobals : Node
         GetItemById("heal_potion", false).OnUse += () =>
         {
             Player.CurrentCharacter?.PlayDrinkingSound();
-            GetTree().CreateTimer(1f).Timeout += () => Player.CurrentCharacter?.Heal(PlayerVariables.Player.Stats[EntityStatType.Health].Value * 0.5f);
+            GetTree().CreateTimer(1f).Timeout += () => Player.CurrentCharacter?.Heal(Player.CurrentCharacter.Stats[EntityStatType.Health].Value * 0.5f);
         };
         GetItemById("mana_potion", false).OnUse += () =>
         {
             Player.CurrentCharacter?.PlayDrinkingSound();
-            GetTree().CreateTimer(1f).Timeout += () => { if (Player.CurrentCharacter != null) Player.CurrentCharacter.Mana.Value += PlayerVariables.Player.Stats[EntityStatType.Mana].Value * 0.5f; };
+            GetTree().CreateTimer(1f).Timeout += () => { if (Player.CurrentCharacter != null) Player.CurrentCharacter.Mana.Value += Player.CurrentCharacter.Stats[EntityStatType.Mana].Value * 0.5f; };
         };
         // TODO: Move this to another file that handling the behavior of items.
     }

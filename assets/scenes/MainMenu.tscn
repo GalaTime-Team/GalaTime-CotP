@@ -1,8 +1,9 @@
-[gd_scene load_steps=24 format=3 uid="uid://dno0k3g6k4twv"]
+[gd_scene load_steps=25 format=3 uid="uid://dno0k3g6k4twv"]
 
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="1_5fg5f"]
 [ext_resource type="Script" path="res://assets/scripts/gui/MainMenu.cs" id="1_ibgb5"]
 [ext_resource type="Texture2D" uid="uid://cn4e5ux0ytoqy" path="res://sprites/gui/galatime_logo.png" id="1_xvngr"]
+[ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="2_lfnra"]
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="2_nxd72"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="3_7prpa"]
 [ext_resource type="PackedScene" uid="uid://dqivtp6qvx0xk" path="res://assets/objects/gui/Settings.tscn" id="3_fcpqw"]
@@ -218,6 +219,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_ibgb5")
+
+[node name="LevelInfo" parent="." instance=ExtResource("2_lfnra")]
+LevelName = "Main Menu"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../StartMenuContainer")

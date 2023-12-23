@@ -1,5 +1,6 @@
-[gd_scene load_steps=20 format=3 uid="uid://cblmuql6moq62"]
+[gd_scene load_steps=21 format=3 uid="uid://cblmuql6moq62"]
 
+[ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="1_egyl8"]
 [ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://sprites/tilesets/dreamworld-floor.png" id="1_fvkei"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://sprites/particles/dream_world_particles.png" id="2_b24jw"]
 [ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="4_mp3x6"]
@@ -107,6 +108,10 @@ size = Vector2(512, 64)
 [node name="LobbyFight" type="Node2D"]
 y_sort_enabled = true
 metadata/_edit_vertical_guides_ = [-563.0]
+
+[node name="LevelInfo" parent="." instance=ExtResource("1_egyl8")]
+LevelName = "Fighting Area"
+Day = 1
 
 [node name="TileMap" type="TileMap" parent="."]
 z_index = -2

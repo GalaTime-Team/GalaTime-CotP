@@ -1,4 +1,5 @@
 using Galatime;
+using Galatime.Global;
 using Godot;
 using System.Collections.Generic;
 
@@ -39,12 +40,34 @@ public partial class LevelManager : Node
         }
     }
 
+    private LevelInfo levelInfo;
+    public LevelInfo LevelInfo 
+    {
+        get => levelInfo;
+        set
+        {
+            levelInfo = value;
+
+            // Set the titles for the game.
+            DiscordController.Instance.CurrentRichPresence.Details = levelInfo.LevelName;
+            if (levelInfo.Day > 0) DiscordController.Instance.CurrentRichPresence.State = $"Day {levelInfo.Day} - Playing";
+            else DiscordController.Instance.CurrentRichPresence.State = null;
+
+            GetTree().Root.Title = $"GalaTime - {levelInfo.LevelName}";
+        }
+    }
+
     public override void _Ready()
     {
         Instance = this;
 
         // Initialize audio players by creating them and adding them to the scene.
         InitializeAudioPlayers();
+    }
+
+    public void ReloadLevel() 
+    {
+        GalatimeGlobals.Instance.LoadScene(LevelInfo.LevelInstance.SceneFilePath);
     }
 
     public override void _Input(InputEvent @event)

@@ -7,6 +7,8 @@ namespace Galatime.Global;
 /// <summary> A singleton that handles the Discord Rich Presence integration for the game. Use <see cref="Client"/> to interact with Discord RPC. </summary>
 public partial class DiscordController : Node
 {
+    public static DiscordController Instance { get; private set; }
+
     /// <summary> The Discord RPC client instance. </summary>
     public DiscordRpcClient Client;
     private RichPresence currentRichPresence;
@@ -24,6 +26,8 @@ public partial class DiscordController : Node
 
     public override void _Ready()
     {
+        Instance = this;
+
         // Creating a new Discord client with the given ID and setting auto events to false to able to sync with Main Loop.
         Client = new DiscordRpcClient(GalatimeConstants.DISCORD_ID, autoEvents: false);
 
@@ -47,8 +51,8 @@ public partial class DiscordController : Node
             {
                 LargeImageKey = "default",
                 LargeImageText = $"GalaTime {GalatimeConstants.Version}",
-                SmallImageKey = "day_1",
-                SmallImageText = "Day 1"
+                // SmallImageKey = "day_1",
+                // SmallImageText = "Day 1"
             }
         };
     }

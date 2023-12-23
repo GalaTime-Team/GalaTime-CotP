@@ -1,10 +1,11 @@
-[gd_scene load_steps=38 format=3 uid="uid://bybqhr0y3qgmy"]
+[gd_scene load_steps=40 format=3 uid="uid://bybqhr0y3qgmy"]
 
 [ext_resource type="Texture2D" uid="uid://cn4dyjlfja0qu" path="res://sprites/abilities/fireball/2.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://bayxi1ryv0i57" path="res://sprites/abilities/fireball/26.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://sprites/particles/fire/fire.png" id="2_dxy86"]
 [ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="2_t52am"]
 [ext_resource type="Texture2D" uid="uid://cji3ks3g1hi8r" path="res://sprites/abilities/fireball/0.png" id="3"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_agg21"]
 [ext_resource type="Texture2D" uid="uid://bsa4fpwfxje4r" path="res://sprites/abilities/fireball/13.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://c04qb7gbxe0nb" path="res://sprites/abilities/fireball/4.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://bnmk4fp7y4k8j" path="res://sprites/abilities/fireball/17.png" id="6"]
@@ -30,6 +31,10 @@
 [ext_resource type="Texture2D" uid="uid://jjowb0np2qbn" path="res://sprites/abilities/fireball/11.png" id="27"]
 [ext_resource type="Texture2D" uid="uid://c0iqum84tirlq" path="res://sprites/abilities/fireball/5.png" id="28"]
 [ext_resource type="Texture2D" uid="uid://6gkcrim0ckcl" path="res://sprites/abilities/fireball/10.png" id="29"]
+
+[sub_resource type="Resource" id="Resource_qm5l1"]
+script = ExtResource("3_agg21")
+InitializerElement = "Ignis"
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_crpnl"]
 particles_animation = true
@@ -238,6 +243,7 @@ one_shot = true
 collision_layer = 8
 Speed = 600.0
 Power = 40
+Element = SubResource("Resource_qm5l1")
 Accuracy = 0.0
 Explosive = true
 ExplosionPower = 8

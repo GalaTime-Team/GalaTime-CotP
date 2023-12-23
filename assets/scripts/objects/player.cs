@@ -205,7 +205,6 @@ namespace Galatime
             var abilityContainer = PlayerGui.GetAbilityContainer(i);
             abilityContainer.StartReload(ability.Charges, (float)previousTime);
         }
-\
 
         private void OnItemsChanged()
         {

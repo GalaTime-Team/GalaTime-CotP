@@ -1,7 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://txwr2a75w6yq"]
+[gd_scene load_steps=15 format=3 uid="uid://txwr2a75w6yq"]
 
 [ext_resource type="Script" path="res://assets/scripts/scenes/LLobby.cs" id="1_34ayc"]
 [ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://sprites/tilesets/dreamworld-floor.png" id="1_fcynh"]
+[ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="2_2sbvd"]
 [ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="2_plqd3"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://sprites/particles/dream_world_particles.png" id="3_fwky3"]
 [ext_resource type="Texture2D" uid="uid://c8e7kphd2pqjt" path="res://sprites/levels/dream_world/portal.png" id="4_xfx06"]
@@ -85,6 +86,10 @@ hue_variation_max = 0.08
 y_sort_enabled = true
 script = ExtResource("1_34ayc")
 metadata/_edit_vertical_guides_ = [-563.0]
+
+[node name="LevelInfo" parent="." instance=ExtResource("2_2sbvd")]
+LevelName = "Dream World"
+Day = 1
 
 [node name="TileMap" type="TileMap" parent="."]
 z_index = -2
