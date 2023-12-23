@@ -162,7 +162,7 @@ namespace Galatime
             for (int i = 0; i < abilityList.Count; i++)
             {
                 var ability = abilityList[i];
-                if (CurrentAlly.ID == "arthur" && !justUpdate)
+                if (!justUpdate)
                 {
                     // Print current ability information
                     GD.PrintRich($"[color=purple]ABILITIES CHANGED FOR PLAYER[/color]: Is empty: {ability.IsEmpty}. Name: {ability.Name}. Index: {i}");
@@ -203,6 +203,7 @@ namespace Galatime
 
             var ability = CurrentCharacter?.Abilities[i];
             var abilityContainer = PlayerGui.GetAbilityContainer(i);
+            GD.Print($"Start reloading: {ability.Charges}, {previousTime}");
             abilityContainer.StartReload(ability.Charges, (float)previousTime);
         }
 
@@ -210,7 +211,7 @@ namespace Galatime
         {
             var obj = PlayerVariables.Inventory[0];
             if (obj == Weapon.ItemData) return;
-            if (obj.IsEmpty) Weapon.RemoveItem();
+            if (obj.IsEmpty && CurrentAlly.ID == "arthur") CurrentCharacter?.Weapon.RemoveItem();
             Weapon.TakeItem(obj);
         }
 

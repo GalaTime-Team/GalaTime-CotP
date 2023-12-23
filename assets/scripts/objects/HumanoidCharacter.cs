@@ -119,17 +119,11 @@ public partial class HumanoidCharacter : Entity
     {
         bool isValid(Node i) => i != null && IsInstanceValid(i);
 
-        double previousTime = 0;
-        if (isValid(Abilities[i].CooldownTimer))
-        {
-            previousTime = Abilities[i].CooldownTimer.TimeLeft;
-        }
-
         Abilities[i] = ab;
         if (ab.Reload > 0)
         {
             ref Timer cooldownTimer = ref Abilities[i].CooldownTimer;
-            
+                
             // Deleting previous timer if it exists to avoid memory leaks.
             if (isValid(cooldownTimer))
             {
@@ -152,10 +146,10 @@ public partial class HumanoidCharacter : Entity
             if (Abilities[i].Charges < Abilities[i].MaxCharges)
             {
                 cooldownTimer.Start();
-                OnAbilityReload?.Invoke(i, previousTime);
             }
         }
         OnAbilityAdded?.Invoke(Abilities[i], i);
+
         return Abilities[i];
     }
 
@@ -208,17 +202,17 @@ public partial class HumanoidCharacter : Entity
             abilityInstance.Data = ability;
 
             // Check if the character has enough stamina and mana, if not, return false.
-            if (Stamina.Value - abilityInstance.Data.Costs.Stamina < 0) 
+            if (Stamina.Value - abilityInstance.Data.Costs.Stamina < 0)
             {
                 OnAbilityUsed?.Invoke(i, false);
                 return false;
             }
             if (abilityInstance.Data.Costs.Stamina > 0) Stamina.Value -= abilityInstance.Data.Costs.Stamina;
-            if (Mana.Value - abilityInstance.Data.Costs.Mana < 0) 
+            if (Mana.Value - abilityInstance.Data.Costs.Mana < 0)
             {
                 OnAbilityUsed?.Invoke(i, false);
                 return false;
-            }       
+            }
             if (abilityInstance.Data.Costs.Mana > 0) Mana.Value -= abilityInstance.Data.Costs.Mana;
 
             // Add the ability and execute it.

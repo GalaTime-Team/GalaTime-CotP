@@ -87,10 +87,10 @@ namespace Galatime
             MaxCharges = data.MaxCharges;
             Charges = data.Charges;
 
-            // if (!data.IsFullyReloaded) 
-            // {
-            //     StartReload(data.Charges, (float)data.CooldownTimer.TimeLeft);
-            // }
+            if (!data.IsFullyReloaded) 
+            {
+                StartReload(data.Charges, 0);
+            }
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Galatime
             // Don't reload if max charges is reached
             if (Charges >= AbilityData.MaxCharges) return;
 
-            if (reloadTime <= 0) 
+            if (reloadTime == 0)
             {
                 // Setting the clock timer to the reload time
                 Delay = ReloadTime / 100;
