@@ -37,8 +37,9 @@ public partial class FireBullet : GalatimeAbility
 
         ExplosionScene = ResourceLoader.Load<PackedScene>("res://assets/objects/damage/Explosion.tscn");
         Explosion = ExplosionScene.Instantiate<Explosion>();
-        Explosion.Power = 8;
+        Explosion.Power = 6;
         Explosion.Type = ExplosionType.Red;
+        Explosion.Element = GalatimeElement.Ignis;
 
         PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
     }
@@ -107,9 +108,8 @@ public partial class FireBullet : GalatimeAbility
         {
             var position = RayCast.GetCollisionPoint(); // Get the position of the collision point in global coordinates.
             GD.Print(RayCast.GlobalPosition.DistanceTo(position) / 4);
-            Explosion.TopLevel = true; // I don't know why is needed tbh, but required for it to work.
+            GetParent().AddChild(Explosion);
             Explosion.GlobalPosition = position;
-            AddChild(Explosion);
         }
     }
 }   
