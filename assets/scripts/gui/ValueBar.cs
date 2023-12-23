@@ -51,30 +51,41 @@ public partial class ValueBar : Control
         get => value; set
         {
             this.value = value;
-
-            ShakeAll(); // Apply shake effect to all shake controls.
-
-            // Delay the progress bar based on the transient value.
-            // This creates a smooth effect of changing the progress bar and shows difference between the current value and changed value.
-
-            if (TransientValue > this.value)
-            { // When value is smaller.
-                ProgressBar.Value = this.value;
-                CurrentTransientProgressBar = TransientProgressBar;
-            }
-            else // When value is bigger.
-            {
-                StartTransientColor();
-                TransientProgressBar.Value = this.value;
-                CurrentTransientProgressBar = ProgressBar;
-            }
-
-            // Start the transient timer, which will delay change progress bar.
-            TransientTimer.Start();
-
-            Label.Text = $"{this.value} {ValueText}";
+            SetValue(value);
         }
     }
+
+    /// <summary> Sets the value of the progress bar and updates the display. </summary>
+    /// <param name="forceUpdate"> If set to true, the shake effect will not be applied to all shake controls before updating the progress bar. </param>
+    public void SetValue(float value)
+    {
+        ShakeAll(); // Apply shake effect to all shake controls.
+
+        // Delay the progress bar based on the transient value.
+        // This creates a smooth effect of changing the progress bar and shows difference between the current value and changed value.
+
+        if (TransientValue > value)
+        { // When value is smaller.
+            ProgressBar.Value = value;
+            CurrentTransientProgressBar = TransientProgressBar;
+        }
+        else // When value is bigger.
+        {
+            StartTransientColor();
+            TransientProgressBar.Value = value;
+            CurrentTransientProgressBar = ProgressBar;
+        }
+
+        TransientTimer.Stop();
+        TweenTransientProgressBar?.Kill();
+        TweenTransientProgressBar = null;
+
+        // Start the transient timer, which will delay change progress bar.
+        TransientTimer.Start();
+
+        Label.Text = $"{value} {ValueText}";
+    }
+
     private float maxValue = 100f;
     /// <summary> The maximum value of the value bar. When changed it will set the maximum value of the progress bar. </summary>
     public float MaxValue
