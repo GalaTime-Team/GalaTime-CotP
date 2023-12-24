@@ -138,11 +138,15 @@ public partial class Projectile : CharacterBody2D
 
     public void Destroy() {
         if (!Moving) return;
+
+        // Explosion behavior
         if (Explosive) {
-            // Explosion.TopLevel = true; 
-            // Explosion.GlobalPosition = GlobalPosition;
-            CallDeferred("AddChildDeferred", Explosion);
+            Callable.From(() => {
+                Explosion.Element = Element;
+                AddChild(Explosion);
+            }).CallDeferred();
         }
+        
         Moving = false;
         // DurationTimer.Stop();
         TimeoutTimer.Start();
@@ -150,9 +154,5 @@ public partial class Projectile : CharacterBody2D
 
         // For some reason, we need to wait for the explosion to finish. This prevent the projectile from colliding with the other objects.
         GetTree().CreateTimer(0.5f).Timeout += () => Collision.Disabled = true;
-    }
-
-    public void AddChildDeferred(Node2D node) {
-        AddChild(node);
     }
 }

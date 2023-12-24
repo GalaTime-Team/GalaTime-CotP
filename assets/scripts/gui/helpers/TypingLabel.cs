@@ -60,9 +60,11 @@ public partial class TypingLabel : RichTextLabel
     {
         if (TypeTimer is not null) return;
 
-        TypeTimer = new Timer() { 
+        TypeTimer = new Timer()
+        { 
             WaitTime = TypingSpeed,
-            Name = Engine.IsEditorHint() ? "DebugTypeTimer" : "TypeTimer"
+            Name = Engine.IsEditorHint() ? "DebugTypeTimer" : "TypeTimer",
+            Autostart = false
         };
         TypeTimer.Timeout += AppendLetter;
         AddChild(TypeTimer);

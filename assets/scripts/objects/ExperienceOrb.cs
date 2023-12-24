@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using NodeExtensionMethods;
 
 namespace Galatime
 {
@@ -45,8 +46,7 @@ namespace Galatime
 
             HUEanimationPlayer.Play("loop");
 
-            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            Player = playerVariables.Player;
+            Player = PlayerVariables.Instance.Player;
 
             PickupArea.BodyEntered += (Node2D node) => OnEntered(node);
 
@@ -67,9 +67,9 @@ namespace Galatime
 
         public void OnEntered(Node2D node)
         {
-            if (node is Player p)
+            if (node.IsPossessed())
             {
-                p.Xp += Quantity;
+                Player.Xp += Quantity;
                 AnimationPlayer.Play("outro");
             }
         }
@@ -77,8 +77,8 @@ namespace Galatime
         public override void _PhysicsProcess(double delta)
         {
             Vector2 vector = Vector2.Right;
-            float rotation = GlobalPosition.AngleToPoint(Player.Body.GlobalPosition);
-            float distance = GlobalPosition.DistanceTo(Player.Body.GlobalPosition);
+            float rotation = GlobalPosition.AngleToPoint(Player.CurrentCharacter.Body.GlobalPosition);
+            float distance = GlobalPosition.DistanceTo(Player.CurrentCharacter.Body.GlobalPosition);
             vector = vector.Rotated(rotation) * Mathf.Clamp(200 - distance, 20, 200);
             if (distance >= 5)
             {

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://s184ap1aunq3"]
+[gd_scene load_steps=24 format=3 uid="uid://s184ap1aunq3"]
 
 [ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
@@ -12,12 +12,10 @@
 [ext_resource type="PackedScene" uid="uid://c5r33n1tcj86s" path="res://assets/objects/gui/DialogBox.tscn" id="12_3rd2x"]
 [ext_resource type="PackedScene" uid="uid://c1u2weprncgn6" path="res://assets/objects/gui/PauseContainer.tscn" id="13_co182"]
 [ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://sprites/gui/status/mana_progress.png" id="14"]
-[ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="15_bhhfw"]
 [ext_resource type="PackedScene" uid="uid://bqkuonmirsqx1" path="res://assets/objects/gui/PauseMenu.tscn" id="16_mf8j7"]
 [ext_resource type="Shader" path="res://assets/shaders/NTSC.gdshader" id="17_glk77"]
 [ext_resource type="PackedScene" uid="uid://dfp7cajwd17tw" path="res://assets/objects/gui/SelectWheel.tscn" id="18_uvxe6"]
 [ext_resource type="AudioStream" uid="uid://dfwi2r7vfy2p5" path="res://assets/audios/sounds/parry.wav" id="27_4kcld"]
-[ext_resource type="Script" path="res://assets/scripts/gui/LeaveLabel.cs" id="27_i8qxk"]
 
 [sub_resource type="Animation" id="1"]
 length = 0.001
@@ -348,19 +346,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
-
-[node name="LeaveLabel" type="Label" parent="."]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 69.0
-offset_bottom = 41.0
-scale = Vector2(3, 3)
-theme_override_fonts/font = ExtResource("15_bhhfw")
-text = "Leaving"
-script = ExtResource("27_i8qxk")
-metadata/_edit_lock_ = true
 
 [node name="ParrySound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("27_4kcld")

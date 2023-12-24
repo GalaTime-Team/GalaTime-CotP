@@ -281,7 +281,7 @@ namespace Galatime
 
             SpawnDamageEffect(amount, DamageDifferenceType.heal);
 
-            if (HealAudioPlayer is not null) HealAudioPlayer.Play();
+            HealAudioPlayer?.Play();
 
             // Adding health to the entity.
             Health += amount;

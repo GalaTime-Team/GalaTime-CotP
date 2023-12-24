@@ -1,4 +1,5 @@
 using Godot;
+using NodeExtensionMethods;
 using System;
 using System.Linq;
 
@@ -29,8 +30,6 @@ public partial class InteractiveTrigger : Node2D
     private Area2D TriggerArea;
     private ShaderMaterial OutlineShader;
 
-    private Player Player;
-
     public override void _Ready()
     {
         TriggerArea = GetNode<Area2D>("CollisionArea");
@@ -39,7 +38,6 @@ public partial class InteractiveTrigger : Node2D
 
         OutlineShader = GD.Load<ShaderMaterial>("res://assets/shaders/outline.tres").Duplicate() as ShaderMaterial;
         var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-        Player = playerVariables.Player;
 
         VisualNode = GetNode<Node2D>(VisualNodePath);
         ExecuteNode = GetNode<Node>(ExecuteNodePath);
@@ -48,10 +46,9 @@ public partial class InteractiveTrigger : Node2D
     /// <summary> Called when a player enters a node. </summary>
     public void OnEntered(Node node)
     {
-        if (node is Player player)
+        if (node.IsPossessed())
         {
             PlayerIsHovering = true;
-            Player = player;
 
             GD.PrintRich("INTERACTIVE TRIGGER: [color=green]Player entered[/color]");
             InterpolateOutline(0.02f, 0.1f);
@@ -61,10 +58,9 @@ public partial class InteractiveTrigger : Node2D
     /// <summary> Called when a player exits a node. </summary>
     public void OnExit(Node node)
     {
-        if (CanInteract && node is Player)
+        if (CanInteract && node.IsPossessed())
         {
             PlayerIsHovering = false;
-            Player = null;
 
             GD.PrintRich("INTERACTIVE TRIGGER: [color=aqua]Player exited[/color]");
             InterpolateOutline(0, 0.1f);
@@ -84,7 +80,9 @@ public partial class InteractiveTrigger : Node2D
     {
         if (CanInteract && ExecuteNode.HasMethod(Method))
         {
-            var args = new Variant[Args.Length]; Array.Copy(Args, args, Args.Length);
+            var args = new Variant[Args.Length];
+            for (int i = 0; i < Args.Length; i++) args[i] = Args[i];
+            
             if (args.Length > 0)
             {
                 ExecuteNode.Call(Method, args);

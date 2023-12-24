@@ -25,7 +25,7 @@ public partial class DialogBox : NinePatchRect
         get => currentPhrase;
         set
         {
-            if (CanSkip) currentPhrase = value; else return;
+            if (CanSkip && IsDialog) currentPhrase = value; else return;
 
             if (value < 0) return;
 
@@ -38,6 +38,8 @@ public partial class DialogBox : NinePatchRect
 
             // Move to the next phrase.
             NextPhrase(value);
+
+            GD.Print("Current phrase: ", currentPhrase);
         }
     }
 
@@ -48,6 +50,8 @@ public partial class DialogBox : NinePatchRect
     private DialogData CurrentDialog;
     /// <summary> Indicates whether skipping dialog line is allowed. </summary>
     public bool CanSkip = false;
+    /// <summary> Indicates whether the dialog is ended. </summary>
+    public bool IsDialog = false;
 
     private AudioStreamPlayer DialogAudio;
     public override void _Ready()
@@ -62,6 +66,7 @@ public partial class DialogBox : NinePatchRect
 
         TypingLabel.OnType += AppendLetter;
         TypingLabel.OnTypingFinished += StopAndPlaySkipAnimation;
+        TypingLabel.TypeTimer.Stop();
     }
 
     /// <summary> Start a dialog by registered dialog id in the game. </summary>
@@ -101,6 +106,7 @@ public partial class DialogBox : NinePatchRect
         TypingLabel.Text = "";
         Visible = true;
         CanSkip = true;
+        IsDialog = true;
 
         CurrentPhrase++;
     }
@@ -109,6 +115,7 @@ public partial class DialogBox : NinePatchRect
     {
         Visible = false;
         CanSkip = false;
+        IsDialog = false;
         ResetValues();
     }
 
@@ -144,7 +151,7 @@ public partial class DialogBox : NinePatchRect
         var character = GalatimeGlobals.GetCharacterById(phrase.CharacterID);
 
         // Set the character portrait and name, but only if the character is not N/A, because it's means that the character is not exist.
-        Size = character.ID == "na" ? NASize : DefaultSize;
+        TypingLabel.Size = character.ID == "na" ? NASize : DefaultSize;
         CharacterNameLabel.Text = character.ID == "na" ? "" : character.Name;
 
         TypingLabel.VisibleCharacters = 0;
@@ -180,8 +187,9 @@ public partial class DialogBox : NinePatchRect
         TypingLabel.Text = "";
         TypingLabel.VisibleCharacters = -1;
 
-        CurrentPhrase = 0;
+        CurrentDialog = null;
         CanSkip = false;
+        currentPhrase = -1;
     }
 
     public override void _UnhandledInput(InputEvent @event)

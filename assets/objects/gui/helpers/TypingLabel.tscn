@@ -7,8 +7,8 @@ offset_right = 384.0
 offset_bottom = 128.0
 bbcode_enabled = true
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-visible_characters = 69
-visible_ratio = 0.560976
+visible_characters = 106
+visible_ratio = 0.861789
 script = ExtResource("1_2enlv")
 
 [node name="DebugTypeTimer" type="Timer" parent="."]
