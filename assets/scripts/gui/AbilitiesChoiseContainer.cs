@@ -5,17 +5,18 @@ namespace Galatime
 {
     public partial class AbilitiesChoiseContainer : VBoxContainer
     {
-        private PlayerVariables _playerVariables;
-        private HBoxContainer _abilitiesContainer;
-        private List<AbilityContainer> abilityContainers = new();
-        private PlayerVariables playerVariables;
+        private HBoxContainer AbilitiesContainer;
+        private List<AbilityContainer> AbilityContainers = new();
+        private PlayerVariables PlayerVariables;
 
         public string ChoiceId = "unknown";
 
         public override void _Ready()
         {
-            _abilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
-            playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+            AbilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
+            PlayerVariables = PlayerVariables.Instance;
+            
+            PlayerVariables.OnAbilitiesChanged += LoadAbilities;
 
             var abilityContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/AbilityContainer.tscn");
             // Adding ability containers
@@ -23,41 +24,39 @@ namespace Galatime
             {
                 // Instantiate ability container and add it to the abilities container
                 var instance = abilityContainerScene.Instantiate<AbilityContainer>();
-                _abilitiesContainer.AddChild(instance);
-                var id = i;
-                instance.GuiInput += (InputEvent @event) => _abilityInput(@event, id);
-                abilityContainers.Add(instance);
+                AbilitiesContainer.AddChild(instance);
+                var id = i; // DON'T REMOVE THIS
+                instance.GuiInput += (InputEvent @event) => AbilityInput(@event, id);
+                AbilityContainers.Add(instance);
             }
-
-            _playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            _playerVariables.OnAbilitiesChanged += _onAbilitiesChanged;
+            LoadAbilities();
         }
 
         public override void _ExitTree()
         {
-            _playerVariables.OnAbilitiesChanged -= _onAbilitiesChanged;
+            PlayerVariables.OnAbilitiesChanged -= LoadAbilities;
         }
 
-        private void _onAbilitiesChanged()
+        public void LoadAbilities()
         {
             int i = 0;
-            foreach (var ability in playerVariables.Abilities)
+            foreach (var ability in PlayerVariables.Abilities)
             {
                 if (!ability.IsEmpty)
                 {
-                    var ab = abilityContainers[i];
+                    var ab = AbilityContainers[i];
                     ab.Load(ability);
                 }
                 else
                 {
-                    var ab = abilityContainers[i];
+                    var ab = AbilityContainers[i];
                     ab.Unload();
                 }
                 i++;
             }
         }
 
-        private void _abilityInput(InputEvent @event, int id)
+        private void AbilityInput(InputEvent @event, int id)
         {
             // Check if the event is a mouse button
             if (@event is InputEventMouseButton @mouseEvent)
@@ -66,35 +65,32 @@ namespace Galatime
                 if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
                 {
                     // Get the ability container.
-                    var abilityContainer = abilityContainers[id];
-                    for (int i = 0; i < playerVariables.Abilities.Length; i++)
+                    var abilityContainer = AbilityContainers[id];
+                    for (int i = 0; i < PlayerVariables.Abilities.Length; i++)
                     {
-                        var ability = playerVariables.Abilities[i];
-                        var choiceAbility = playerVariables.Abilities[id];
+                        var ability = PlayerVariables.Abilities[i];
+                        var choiceAbility = PlayerVariables.Abilities[id];
                         GD.Print(" reloaded? " + ability.IsEmpty + " " + choiceAbility.IsEmpty);
-                        if (!ability.IsEmpty)
+                        if (!ability.IsEmpty && ability.ID == ChoiceId)
                         {
-                            if (ability.ID == ChoiceId)
+                            if (ability.IsFullyReloaded && choiceAbility.IsFullyReloaded)
                             {
-                                if (ability.IsFullyReloaded && choiceAbility.IsFullyReloaded)
-                                {
-                                    var previous = playerVariables.Abilities[id];
-                                    _playerVariables.SetAbility(GalatimeGlobals.GetAbilityById(ChoiceId), id);
-                                    _playerVariables.SetAbility(previous, i);
-                                    abilityContainer.Click();
-                                    return;
-                                }
-                                else
-                                {
-                                    abilityContainer.No();
-                                    return;
-                                }
+                                var previous = PlayerVariables.Abilities[id];
+                                PlayerVariables.SetAbility(GalatimeGlobals.GetAbilityById(ChoiceId), id);
+                                PlayerVariables.SetAbility(previous, i);
+                                abilityContainer.Click();
+                                return;
+                            }
+                            else
+                            {
+                                abilityContainer.No();
+                                return;
                             }
                         }
                     }
-                    if (playerVariables.Abilities[id].IsReloaded)
+                    if (PlayerVariables.Abilities[id].IsReloaded)
                     {
-                        _playerVariables.SetAbility(GalatimeGlobals.GetAbilityById(ChoiceId), id);
+                        PlayerVariables.SetAbility(GalatimeGlobals.GetAbilityById(ChoiceId), id);
                         abilityContainer.Click();
                     }
                     else

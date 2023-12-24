@@ -31,9 +31,12 @@ namespace Galatime
             AbilityChoiseContainer = GetNode<AbilitiesChoiseContainer>("Panel/AbilitiesChoiseContainer");
             AbilityLearnContainer = GetNode<AbilityLearnContainer>("Panel/AbilityLearnContainer");
 
-            var tempChildren = GetNode("Panel").GetChildren();
-            foreach (var child in tempChildren) if (child is AbilityContainerItem tc) AbilityContainerItems.Add(tc);
+            foreach (var child in GetNode("Panel").GetChildren()) 
+                if (child is AbilityContainerItem tc) 
+                    AbilityContainerItems.Add(tc);
+            
             InstantiateAbilities();
+            OnLearnedAbilitiesUpdated();
 
             PlayerVariables.OnAbilityLearned += OnLearnedAbilitiesUpdated;
             AbilityLearnContainer.OnLearned += OnAbilityLearned;
@@ -105,32 +108,31 @@ namespace Galatime
 
         public void GuiItemInput(InputEvent @event, AbilityContainerItem item)
         {
-            if (@event is InputEventMouseButton @mouseEvent)
+            if (@event is InputEventMouseButton @mouseEvent && @mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
             {
-                if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
-                {
-                    item.AnimationPlayer.Advance(999);
-                    
-                    if (!PlayerVariables.AbilityIsLearned(item.AbilityName))
-                    {
-                        CurrentAbilityItemContainer = item;
-                        
-                        AbilityLearnContainer.abilityData = item.AbilityData;
-                        MoveChoise(AbilityLearnContainer, item, !AbilityLearnContainer.visible);
-                        AbilityChoiseContainer.Visible = false;
-                        FadeColor(AbilityChoiseContainer, true);
-                        AbilityLearnContainer.visible = true;
-                    }
-                    else
-                    {
-                        CurrentAbilityItemContainer = null;
+                item.AnimationPlayer.Advance(999);
 
-                        AbilityChoiseContainer.ChoiceId = item.AbilityName;
-                        MoveChoise(AbilityChoiseContainer, item, !AbilityChoiseContainer.Visible);
-                        AbilityLearnContainer.visible = false;
-                        FadeColor(AbilityLearnContainer, true);
-                        AbilityChoiseContainer.Visible = true;
-                    }
+                if (!PlayerVariables.AbilityIsLearned(item.AbilityName))
+                {
+                    CurrentAbilityItemContainer = item;
+
+                    AbilityLearnContainer.abilityData = item.AbilityData;
+                    MoveChoise(AbilityLearnContainer, item, !AbilityLearnContainer.visible);
+                    AbilityChoiseContainer.Visible = false;
+                    FadeColor(AbilityChoiseContainer, true);
+                    AbilityLearnContainer.visible = true;
+                }
+                else
+                {
+                    CurrentAbilityItemContainer = null;
+
+                    AbilityChoiseContainer.LoadAbilities();
+
+                    AbilityChoiseContainer.ChoiceId = item.AbilityName;
+                    MoveChoise(AbilityChoiseContainer, item, !AbilityChoiseContainer.Visible);
+                    AbilityLearnContainer.visible = false;
+                    FadeColor(AbilityLearnContainer, true);
+                    AbilityChoiseContainer.Visible = true;
                 }
             }
         }

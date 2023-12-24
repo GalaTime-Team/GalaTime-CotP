@@ -7,16 +7,7 @@ namespace Galatime
         private Tooltip Tooltip;
         public AnimationPlayer AnimationPlayer;
 
-        private string abilityName = "Unknown";
-        [Export] public string AbilityName {
-            get => abilityName;
-            set {
-                abilityName = value;
-                
-                AbilityData = GalatimeGlobals.GetAbilityById(value);
-                Texture = AbilityData.Icon;
-            }
-        }
+        [Export] public string AbilityName = "Unknown";
 
         public AbilityData AbilityData;
 
@@ -55,6 +46,13 @@ namespace Galatime
             LockedTexture.Material.Set("shader_parameter/whitening", 0);
             AnimationPlayer.Play("idle");
 
+            LoadAbility(AbilityName);
+        }
+
+        public void LoadAbility(string name)
+        {
+            AbilityData = GalatimeGlobals.GetAbilityById(name);
+            Texture = AbilityData.Icon;
         }
 
         public void OnMouseEntered() => Tooltip.Display(AbilityData);

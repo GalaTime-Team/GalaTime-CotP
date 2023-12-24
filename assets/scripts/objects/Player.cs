@@ -211,7 +211,7 @@ namespace Galatime
         {
             var obj = PlayerVariables.Inventory[0];
             if (obj == Weapon.ItemData) return;
-            if (obj.IsEmpty && CurrentAlly.ID == "arthur") CurrentCharacter?.Weapon.RemoveItem();
+            if (obj.IsEmpty && CurrentAlly?.ID == "arthur") CurrentCharacter?.Weapon.RemoveItem();
             Weapon.TakeItem(obj);
         }
 
