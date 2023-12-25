@@ -11,15 +11,17 @@ namespace Galatime
         private Panel AbilitiesPanel;
         private AbilitiesChoiseContainer AbilityChoiseContainer;
         private AbilityLearnContainer AbilityLearnContainer;
-
         private AbilityContainerItem CurrentAbilityItemContainer;
 
         private List<AbilityContainerItem> AbilityContainerItems = new();
 
         private const float MoveDuration = 0.3f;
+        private Tween Tween;
 
         private PlayerVariables PlayerVariables;
 
+
+        public void SetTween() => Tween = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel();
 
         public override void _Ready()
         {
@@ -67,6 +69,7 @@ namespace Galatime
 
                 for (int i = 0; i < required.Length; i++)
                 {
+                    GD.Print($"Required: {required[i]}");
                     var targetItem = FindItemByAbilityId(required[i]);
                     if (targetItem is null) continue;
                     var points = new Vector2[2];
@@ -98,7 +101,7 @@ namespace Galatime
                 TextureMode = Line2D.LineTextureMode.Stretch,
                 Gradient = new Gradient(),
                 Width = 8,
-                ZIndex = 0
+                ZIndex = 0,
             };
 
             return line;
@@ -139,7 +142,6 @@ namespace Galatime
 
         void MoveChoise(Control container, Control item, bool instant)
         {
-            var tween = GetTree().CreateTween().SetTrans(Tween.TransitionType.Sine);
             var initialPosition = container.GlobalPosition;
 
             // Getting position of item.
@@ -150,18 +152,24 @@ namespace Galatime
             position.Y -= container.Size.Y * 2f + 8f;
 
             // This needed for non-sequential appearance.
-            if (!instant) tween.TweenMethod(Callable.From<Vector2>(x => container.GlobalPosition = x), initialPosition, position, MoveDuration).SetDelay(0.05);
-            else {
+            if (!instant) 
+            { 
+                SetTween();
+                Tween.TweenMethod(Callable.From<Vector2>(x => container.GlobalPosition = x), initialPosition, position, MoveDuration).SetDelay(0.05);
+            }
+            else 
+            {
                 container.GlobalPosition = position;
                 FadeColor(container, false);
             }
         }
 
-        private void FadeColor(Control container, bool bit) {
-            var tween = GetTree().CreateTween();
+        private void FadeColor(Control container, bool bit) 
+        {
             var tc = new Color(1, 1, 1, 0);
             var oc = new Color(1, 1, 1, 1);
-            tween.TweenMethod(Callable.From<Color>(x => container.Modulate = x), bit ? oc : tc, bit ? tc : oc, MoveDuration);
+            SetTween();
+            Tween.TweenMethod(Callable.From<Color>(x => container.Modulate = x), bit ? oc : tc, bit ? tc : oc, MoveDuration);
         }
     }
 }

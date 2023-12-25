@@ -103,6 +103,7 @@ namespace Galatime
             }
         }
 
+        [JsonProperty("required")]
         /// <summary> The required abilities of the unlocking the ability. </summary>
         public string[] RequiredIDs = new string[0];
 
