@@ -4,9 +4,9 @@ namespace Galatime
     public static class GalatimeConstants
     {
         /// <summary> The version of the game. </summary>
-        public const string Version = "0.7.0";
+        public const string Version = "0.8.0";
         /// <summary> The short summary of the version. </summary>
-        public const string VersionDescription = "B7\nPREVIEW BUILD";
+        public const string VersionDescription = "B8\nPREVIEW BUILD";
         /// <summary> The path to the saves folder. </summary>
         public const string SavesPath = "user://saves/";
         /// <summary> The path to the settings file. </summary>

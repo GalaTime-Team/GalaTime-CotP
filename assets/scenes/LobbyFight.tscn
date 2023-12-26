@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cblmuql6moq62"]
+[gd_scene load_steps=22 format=3 uid="uid://cblmuql6moq62"]
 
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="1_egyl8"]
 [ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://sprites/tilesets/dreamworld-floor.png" id="1_fvkei"]
@@ -90,6 +90,9 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(-1280, 576, -1280, 960,
 source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 30.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s7lnq"]
+size = Vector2(128, 256)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ygmfr"]
 size = Vector2(16, 16)
 
@@ -145,10 +148,11 @@ metadata/_edit_lock_ = true
 
 [node name="Collision" parent="Roomwrap/TriggerArea" index="0"]
 position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_s7lnq")
 metadata/_edit_lock_ = true
 
 [node name="Roomwrap2" parent="." instance=ExtResource("8_rru7k")]
-position = Vector2(1408, -288)
+position = Vector2(1472, -288)
 Scene = "res://assets/scenes/Lobby.tscn"
 
 [node name="TriggerArea" parent="Roomwrap2" index="0"]
@@ -171,20 +175,8 @@ shape = SubResource("RectangleShape2D_ygmfr")
 visible = false
 position = Vector2(116, 412)
 
-[node name="EnemySpawnPosition1" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-428, 284)
-SpawningEnemyId = "shootingbuddy"
-
-[node name="EnemySpawnPosition4" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-300, 316)
-SpawningEnemyId = "slime"
-
-[node name="EnemySpawnPosition5" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-108, 316)
-SpawningEnemyId = "slime"
-
 [node name="EnemySpawnPosition8" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(20, 284)
+position = Vector2(20, 412)
 SpawningEnemyId = "shootingbuddy"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom"]
@@ -194,7 +186,7 @@ collision_mask = 2
 metadata/_edit_lock_ = true
 
 [node name="Collision" type="CollisionShape2D" parent="EnemyRoom/TriggerArea"]
-position = Vector2(-158, -8)
+position = Vector2(-40, -8)
 shape = SubResource("RectangleShape2D_1skem")
 metadata/_edit_lock_ = true
 

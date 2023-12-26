@@ -13,12 +13,15 @@ namespace Galatime
         private AnimationPlayer _animationPlayer;
         private CharacterBody2D _kinematicBody;
         private Area2D _damageArea;
+        private GpuParticles2D Particles;
 
         public override void _Ready()
         {
             _animationPlayer = GetNode<AnimationPlayer>("CharacterBody3D/AnimationPlayer");
             _kinematicBody = GetNode<CharacterBody2D>("CharacterBody3D");
             _damageArea = GetNode<Area2D>("CharacterBody3D/DamageArea");
+
+            Particles = GetNode<GpuParticles2D>("CharacterBody3D/Particles");
         }
 
         public void _bodyEntered(Node2D body, float physicalAttack, float magicalAttack)
@@ -39,6 +42,8 @@ namespace Galatime
             _velocity.X += 1.3f;
             _animationPlayer.Play("intro");
             _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, physicalAttack, magicalAttack);
+
+            Particles.Emitting = true;
 
             await ToSignal(GetTree().CreateTimer(0.3f + (float)rand.NextDouble() / 10), "timeout");
             destroy();

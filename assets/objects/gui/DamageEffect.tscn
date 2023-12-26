@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://2hnt3i6s3hx7"]
 
 [ext_resource type="Script" path="res://assets/scripts/gui/DamageEffect.cs" id="2"]
-[ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="2_lgtu8"]
+[ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="2_kosxw"]
 [ext_resource type="Texture2D" uid="uid://cbdyh0wxvj1yc" path="res://sprites/particles/heal_particles.png" id="3"]
 
 [sub_resource type="Animation" id="2"]
@@ -92,15 +92,15 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 287.0
-offset_bottom = 21.0
+offset_right = 292.0
+offset_bottom = 17.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(2, 2)
+scale = Vector2(3, 3)
 theme_override_colors/font_color = Color(0.784314, 0.784314, 0.784314, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("2_lgtu8")
+theme_override_fonts/font = ExtResource("2_kosxw")
 text = "92"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
