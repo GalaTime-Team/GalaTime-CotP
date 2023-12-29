@@ -536,16 +536,15 @@ AnimationPlayerPath = NodePath("../Animation")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 y_sort_enabled = true
+position = Vector2(0, -30)
 scale = Vector2(4, 4)
 texture = ExtResource("4_85udj")
 hframes = 8
 
 [node name="Hand" type="Marker2D" parent="."]
-position = Vector2(0, 30)
 script = ExtResource("5_12jl1")
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, 30)
 shape = SubResource("CircleShape2D_r02rj")
 
 [node name="Timer" type="Timer" parent="."]

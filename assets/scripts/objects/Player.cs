@@ -210,9 +210,9 @@ namespace Galatime
         private void OnItemsChanged()
         {
             var obj = PlayerVariables.Inventory[0];
-            if (obj == Weapon.ItemData) return;
+            if (obj == CurrentCharacter?.Weapon.ItemData) return;
             if (obj.IsEmpty && CurrentAlly?.ID == "arthur") CurrentCharacter?.Weapon.RemoveItem();
-            Weapon.TakeItem(obj);
+            CurrentCharacter?.Weapon.TakeItem(obj);
         }
 
         /// <summary> Loads characters and switches to the Arthur. </summary>
@@ -281,6 +281,7 @@ namespace Galatime
             // Again, update the UI.
             OnStatsChanged(CurrentCharacter.Stats);
             OnAbilitiesChangedForCharacter();
+            OnItemsChanged();
         }
 
         // All input handling for the player goes here.
@@ -299,7 +300,7 @@ namespace Galatime
 
             // Checking for input for abilities.
             for (int i = 0; i < PlayerVariables.Abilities.Length; i++) if (@event.IsActionPressed($"game_ability_{i + 1}")) CurrentCharacter?.UseAbility(i);
-        }
+        }   
 
         public void StartDialog(string id) => PlayerGui.DialogBox.StartDialog(id);
     }

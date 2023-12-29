@@ -22,9 +22,18 @@ public partial class TestCharacter : HumanoidCharacter
 
     public Player Player;
 
+    private bool possessed = false;
     /// <summary> True if the character is currently being possessed. That means the player is controlling it. </summary>
-    public bool Possessed = false;
-
+    public bool Possessed
+    {
+        get => possessed;
+        set 
+        {
+            possessed = value;
+            // Stop the attack timer, because no need to attack automatically.
+            if (value) AttackTimer.Stop();
+        }
+    }
 
     public override void _Ready()
     {
