@@ -38,7 +38,9 @@ offset_top = -8.5
 offset_right = 42.0
 offset_bottom = 8.5
 grow_vertical = 2
+pivot_offset = Vector2(21, 8.5)
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.875, 0.875, 0.875, 1)
 theme_override_fonts/font = ExtResource("1_ix5nb")
 text = "BUTTON"
 

@@ -2,6 +2,7 @@ using Godot;
 
 namespace Galatime.UI;
 
+[Tool]
 public partial class LabelButton : Button
 {
     #region Exports
@@ -10,6 +11,16 @@ public partial class LabelButton : Button
     [Export] public Color PressedColor = new(0.49f, 0.49f, 0.49f);
     [Export] public Color DisabledColor = new(0.4f, 0.4f, 0.4f);
     [Export] public float Speed = 0.2f;
+    private string buttonText = "BUTTON";
+    [Export(PropertyHint.MultilineText)] public string ButtonText 
+    {
+        get => buttonText;
+        set 
+        {
+            buttonText = value;
+            if (Label != null) Label.Text = buttonText;
+        }
+    }
     #endregion
 
     #region Variables

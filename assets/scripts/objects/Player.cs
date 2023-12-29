@@ -77,7 +77,6 @@ namespace Galatime
         {
             base._ExitTree();
 
-            Stats.OnStatsChanged -= OnStatsChanged;
             PlayerVariables.OnItemsChanged -= OnItemsChanged;
             PlayerVariables.OnAbilitiesChanged -= OnAbilitiesChangedForCharacter;
             Array.ForEach(PlayerVariables.Allies, x => x.Instance = null);

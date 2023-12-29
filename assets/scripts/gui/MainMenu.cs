@@ -1,4 +1,5 @@
 using Galatime.Global;
+using Galatime.UI.Helpers;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -56,6 +57,8 @@ public partial class MainMenu : Control
     /// <summary> The current direction of the swipe. </summary>
     private SwipeDirection CurrentSwipeDirection;
 
+    public AcceptWindow AcceptWindow;
+
     #region Audio
     private AudioStreamPlayer AudioButtonHover;
     private AudioStreamPlayer AudioButtonAccept;
@@ -77,22 +80,12 @@ public partial class MainMenu : Control
     private Dictionary<string, Control> Menus = new();
 
     private Label VersionLabel;
-    private Control AcceptContainer;
     private PackedScene SaveContainerScene;
-
-    private Label AcceptName;
-    private LabelButton AcceptYesButton;
-    private LabelButton AcceptNoButton;
 
     private LabelButton ViewSavesButton;
     private VBoxContainer MainMenuControlButtons;
 
     private Timer DelayInteract;
-
-    public delegate void OnAccept(bool result);
-    public static OnAccept onAccept;
-    public Action whenPressedYes = () => onAccept(true);
-    public Action whenPressedNo = () => onAccept(false);
 
     public override void _Ready()
     {
@@ -129,12 +122,7 @@ public partial class MainMenu : Control
         MainMenuControlButtons = GetNode<VBoxContainer>("MainMenuContainer/VBoxContainer");
         VersionLabel = GetNode<Label>("VersionLabel");
 
-        AcceptContainer = GetNode<Control>("AcceptContainer");
-        AcceptYesButton = GetNode<LabelButton>("AcceptContainer/VBoxContainer/HBoxContainer/Yes");
-        AcceptNoButton = GetNode<LabelButton>("AcceptContainer/VBoxContainer/HBoxContainer/No");
-        AcceptYesButton.PivotOffset = new Vector2(10, 6);
-        AcceptNoButton.PivotOffset = new Vector2(7, 6);
-        AcceptName = GetNode<Label>("AcceptContainer/VBoxContainer/Name");
+        Callable.From(() => AcceptWindow ??= AcceptWindow.CreateInstance()).CallDeferred();
         #endregion
 
         StartOpacityTransition();
@@ -186,75 +174,6 @@ public partial class MainMenu : Control
         if (control != null) CurrentFocus = control;
     }
 
-    public bool AcceptIsVisible() => AcceptContainer.Modulate.A != 0;
-
-    /// <summary>
-    /// Displays an accept dialog with the specified reason.
-    /// </summary>
-    /// <param name="reason">The reason for the dialog.</param>
-    /// <param name="callback">The callback function to call when the dialog is accepted or dismissed.</param>
-    /// <param name="invertedColors">Whether to use inverted colors for the dialog.</param>
-
-    // TODO: Make accept dialog with another soultion of the Godot API.
-    public void appearAccept(string reason, OnAccept callback, bool invertedColors = false)
-    {
-        if (invertedColors)
-        {
-            AcceptYesButton.SetMeta("ColorHoverOverride", new Color(1f, 0f, 0f));
-            AcceptNoButton.SetMeta("ColorHoverOverride", new Color(1, 1, 0));
-        }
-        else
-        {
-            AcceptYesButton.SetMeta("ColorHoverOverride", new Color(1, 1, 0));
-            AcceptNoButton.SetMeta("ColorHoverOverride", new Color(1f, 0f, 0f));
-        }
-
-
-        BeforePopupFocus = CurrentFocus;
-        AcceptNoButton.GrabFocus();
-
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-
-        AcceptName.Text = reason;
-
-        tween.TweenProperty(AcceptContainer, "modulate", new Color(1, 1, 1, 1), 0.3f);
-
-        AcceptContainer.MouseFilter = MouseFilterEnum.Stop;
-        AcceptYesButton.MouseFilter = MouseFilterEnum.Stop;
-        AcceptNoButton.MouseFilter = MouseFilterEnum.Stop;
-
-        AcceptYesButton.Pressed -= whenPressedYes;
-        AcceptNoButton.Pressed -= whenPressedNo;
-
-        AcceptYesButton.Pressed += whenPressedYes;
-        AcceptNoButton.Pressed += whenPressedNo;
-
-        onAccept = callback;
-    }
-
-    /// <summary>
-    /// Hides the accept dialog.
-    /// </summary>
-    public void disappearAccept()
-    {
-        BeforePopupFocus.GrabFocus();
-
-        AcceptYesButton.ReleaseFocus();
-        AcceptNoButton.ReleaseFocus();
-
-        var tween = GetTree().CreateTween();
-        tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut).SetParallel(true);
-
-        tween.TweenProperty(AcceptContainer, "modulate", new Color(1, 1, 1, 0), 0.3f);
-
-        AcceptContainer.MouseFilter = MouseFilterEnum.Ignore;
-        AcceptYesButton.MouseFilter = MouseFilterEnum.Ignore;
-        AcceptNoButton.MouseFilter = MouseFilterEnum.Ignore;
-
-        onAccept = null;
-    }
-
     public void UpdateSaves()
     {
         var saves = GalatimeGlobals.GetSaves();
@@ -281,8 +200,7 @@ public partial class MainMenu : Control
             ViewSavesButton.FocusNext = playButton.GetPath();
             ViewSavesButton.FocusPrevious = playButton.GetPath();
 
-            // var save = saves[i];
-            // deleteButton.Pressed += () => DeleteSaveButtonInput((int)save["id"]);
+            deleteButton.Pressed += () => DeleteSaveButtonInput(deleteButton);
     
             instance.id = i + 1;
             if (i < saves.Count) instance.LoadData(saves[i]);
@@ -308,22 +226,15 @@ public partial class MainMenu : Control
         globals.LoadScene("res://assets/scenes/Lobby.tscn");
     }
 
-    public void DeleteSaveButtonInput(int saveId)
+    public void DeleteSaveButtonInput(Control button)
     {
-        appearAccept("Do you really want to delete the save?", (bool result) =>
+        AcceptWindow.CallAccept((bool result) =>
         {
-            if (result)
+            if (result) 
             {
-                GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Deleting save {saveId}[/color]");
                 UpdateSaves();
-                disappearAccept();
             }
-            else
-            {
-                disappearAccept();
-            }
-        }
-        , true);
+        }, "Do you really want to delete the save?", cancelColor: new Color(1, 0, 0), focus: button);
     }
 
     /// <summary> Handles event of main menu buttons being pressed </summary>
@@ -431,24 +342,23 @@ public partial class MainMenu : Control
 
     public void ToMainMenu()
     {
-        GD.PrintRich($"[color=purple]MAIN MENU[/color]: Condition checking: [color=cyan]isMainMenu? - {IsMainMenu}, acceptIsVisible? - {AcceptIsVisible()}[/color]");
+        // GD.PrintRich($"[color=purple]MAIN MENU[/color]: Condition checking: [color=cyan]isMainMenu? - {IsMainMenu}, acceptIsVisible? - {AcceptIsVisible()}[/color]");
         if (DelayInteract.TimeLeft > 0) return;
-        if (AcceptIsVisible()) return;
-        if (IsMainMenu && !AcceptIsVisible())
+        if (IsMainMenu && !AcceptWindow.Shown)
         {
-            appearAccept("Are you sure do you want to quit a game?", (bool result) =>
-                {
-                    if (result) GetTree().Quit();
-                    else disappearAccept();
-                }, true);
+            AcceptWindow.CallAccept((bool result) => {
+                if (result) GetTree().Quit();
+            }, "Are you sure do you want to quit a game?", cancelColor: new Color(1, 0, 0), focus: (Control)MenuButtons[0]);
             IsMainMenu = true;
             return;
         }
-        if (IsMainMenu && AcceptIsVisible())
+        if (IsMainMenu && AcceptWindow.Shown)
         {
-            disappearAccept();
+            AcceptWindow.Shown = false;
             return;
         };
+
+        AcceptWindow.Shown = false;
 
         DisableMenuButtons(false);
 
