@@ -13,12 +13,11 @@ public partial class TestCharacter : HumanoidCharacter
     public RayCast2D RayCast;
     public AnimationPlayer AnimationPlayer;
 
+    public bool StrafeDirection = true;
+
     public TargetController TargetController;
 
-    public Timer RetreatDelayTimer;
-    public Timer MoveDelayTimer;
-    public Timer EnemySwitchDelayTimer;
-    public Timer AttackTimer;
+    public Timer RetreatDelayTimer, MoveDelayTimer, StrafeTimer, EnemySwitchDelayTimer, AttackTimer;
 
     public Player Player;
 
@@ -27,7 +26,7 @@ public partial class TestCharacter : HumanoidCharacter
     public bool Possessed
     {
         get => possessed;
-        set 
+        set
         {
             possessed = value;
             // Stop the attack timer, because no need to attack automatically.
@@ -43,7 +42,7 @@ public partial class TestCharacter : HumanoidCharacter
         HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
         TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
         DrinkingAudioPlayer = GetNode<AudioStreamPlayer2D>("DrinkingAudioPlayer");
-        
+
         Body = this;
 
         AnimationPlayer = GetNode<AnimationPlayer>("Animation");
@@ -77,6 +76,14 @@ public partial class TestCharacter : HumanoidCharacter
         };
         AddChild(MoveDelayTimer);
 
+        StrafeTimer = new()
+        {
+            WaitTime = 1f
+        };
+        AddChild(StrafeTimer);
+        StrafeTimer.Timeout += ChangeStrafeDirection;
+        StrafeTimer.Start();
+
         AttackTimer = new()
         {
             WaitTime = 0.25f
@@ -101,6 +108,8 @@ public partial class TestCharacter : HumanoidCharacter
 
     private async void CombatMovement()
     {
+        if (AttackTimer.IsStopped()) AttackTimer.Start();
+
         Vector2 vectorPath;
 
         // Take a sword if not equipped.
@@ -125,6 +134,12 @@ public partial class TestCharacter : HumanoidCharacter
         if (RetreatDelayTimer.TimeLeft > 0) vectorPath = Vector2.Right.Rotated(enemyRotation + MathF.PI);
         if (distance <= 150 && RetreatDelayTimer.TimeLeft == 0) RetreatDelayTimer.Start();
 
+        // Strafe up and down if the enemy is in range.
+        if (IsEnemy())
+        {
+            vectorPath += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(enemyRotation) / 4; // Divided by 2 because to strafe slowly.
+        }
+
         // Check if any enemies are too close.
         var swordColliders = Weapon.GetOverlappingBodies();
         if (swordColliders.Count >= 1)
@@ -138,28 +153,35 @@ public partial class TestCharacter : HumanoidCharacter
         Body.MoveAndSlide();
     }
 
+    public bool IsEnemy() => RayCast.GetCollider() is Entity e && e.IsInGroup("enemy") && !e.DeathState;
     public void Attack()
     {
         var obj = RayCast.GetCollider();
         // Check if enemy is enemy and not dead.
-        if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState)
+        if (IsEnemy())
         {
-            // Use all abilities by order.
-            for (int i = 0; i < Abilities.Count; i++)
+            // Use all abilities randomly.
+            var reloadedAbilities = Abilities.FindAll(x => x.IsReloaded);
+
+            var rnd = new Random();
+            var i = rnd.Next(0, reloadedAbilities.Count);
+            if (reloadedAbilities[i].IsReloaded)
             {
-                var ability = Abilities[i];
-                if (ability.IsReloaded)
-                {
-                    UseAbility(i);
-                    break;
-                }
+                UseAbility(i);
             }
         }
     }
 
+    public void ChangeStrafeDirection()
+    {
+        var rnd = new Random();
+        var i = rnd.Next(0, 2);
+        StrafeDirection = i == 0;
+    }
+
     /// <summary> Process of normal movement of the character. </summary>
     private async void NormalMovement()
-    {   
+    {
         Weapon.Rotation = PathRotation;
 
         // var allies = GetTree().GetNodesInGroup("ally");

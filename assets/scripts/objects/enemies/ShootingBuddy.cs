@@ -28,7 +28,6 @@ public partial class ShootingBuddy : Entity
         Body = this;
 
         ShootingTimer.Timeout += OnShootingTimerTimeout;
-        ShootingTimer.Start();
 
         Projectile.TimeoutTimer.WaitTime = 999f;
     }

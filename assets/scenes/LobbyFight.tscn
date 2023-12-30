@@ -176,7 +176,7 @@ visible = false
 position = Vector2(116, 412)
 
 [node name="EnemySpawnPosition8" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(20, 412)
+position = Vector2(-206, 412)
 SpawningEnemyId = "shootingbuddy"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom"]
