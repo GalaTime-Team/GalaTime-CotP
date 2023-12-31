@@ -234,7 +234,7 @@ public partial class MainMenu : Control
             {
                 UpdateSaves();
             }
-        }, "Do you really want to delete the save?", cancelColor: new Color(1, 0, 0), focus: button);
+        }, "Do you really want to delete the save?", acceptColor: new Color(1, 0, 0), focus: button);
     }
 
     /// <summary> Handles event of main menu buttons being pressed </summary>
@@ -348,7 +348,7 @@ public partial class MainMenu : Control
         {
             AcceptWindow.CallAccept((bool result) => {
                 if (result) GetTree().Quit();
-            }, "Are you sure do you want to quit a game?", cancelColor: new Color(1, 0, 0), focus: (Control)MenuButtons[0]);
+            }, "Are you sure do you want to quit a game?", acceptColor: new Color(1, 0, 0), focus: (Control)MenuButtons[0]);
             IsMainMenu = true;
             return;
         }

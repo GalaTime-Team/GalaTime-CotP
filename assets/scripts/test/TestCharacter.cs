@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Galatime;
 using Galatime.Helpers;
 
@@ -137,7 +138,7 @@ public partial class TestCharacter : HumanoidCharacter
         // Strafe up and down if the enemy is in range.
         if (IsEnemy())
         {
-            vectorPath += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(enemyRotation) / 4; // Divided by 2 because to strafe slowly.
+            vectorPath += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(enemyRotation) / 10; // Divided by 2 because to strafe slowly.
         }
 
         // Check if any enemies are too close.
@@ -160,15 +161,11 @@ public partial class TestCharacter : HumanoidCharacter
         // Check if enemy is enemy and not dead.
         if (IsEnemy())
         {
-            // Use all abilities randomly.
-            var reloadedAbilities = Abilities.FindAll(x => x.IsReloaded);
+            var reloadedAbilities = Abilities.FindAll(x => CanUseAbility(x));
 
             var rnd = new Random();
             var i = rnd.Next(0, reloadedAbilities.Count);
-            if (reloadedAbilities[i].IsReloaded)
-            {
-                UseAbility(i);
-            }
+            UseAbility(i);
         }
     }
 

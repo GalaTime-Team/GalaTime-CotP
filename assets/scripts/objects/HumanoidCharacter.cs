@@ -103,7 +103,7 @@ public partial class HumanoidCharacter : Entity
 
         AbilityCountdownTimer = new Timer
         {
-            WaitTime = 1f,
+            WaitTime = .5f,
             OneShot = true,
             Name = "AbilityCountdown"
         };
@@ -123,7 +123,7 @@ public partial class HumanoidCharacter : Entity
         if (ab.Reload > 0)
         {
             ref Timer cooldownTimer = ref Abilities[i].CooldownTimer;
-                
+
             // Deleting previous timer if it exists to avoid memory leaks.
             if (isValid(cooldownTimer))
             {
@@ -191,35 +191,24 @@ public partial class HumanoidCharacter : Entity
     public virtual bool UseAbility(int i)
     {
         var ability = Abilities[i];
-        if (!ability.IsEmpty && ability.IsReloaded)
+        if (CanUseAbility(ability))
         {
-            // Start the cooldown
+            // Consume mana and stamina if needed.
+            if (ability.Costs.Stamina > 0) Stamina.Value -= ability.Costs.Stamina;
+            if (ability.Costs.Mana > 0) Mana.Value -= ability.Costs.Mana;
+
             AbilityCountdownTimer.Start();
 
-            // Getting instance of ability and add data from json to ability
+            // Getting instance of ability and add data from json to ability.
             var abilityScene = ResourceLoader.Load<PackedScene>(ability.ScenePath);
             var abilityInstance = abilityScene.Instantiate<GalatimeAbility>();
             abilityInstance.Data = ability;
-
-            // Check if the character has enough stamina and mana, if not, return false.
-            if (Stamina.Value - abilityInstance.Data.Costs.Stamina < 0)
-            {
-                OnAbilityUsed?.Invoke(i, false);
-                return false;
-            }
-            if (abilityInstance.Data.Costs.Stamina > 0) Stamina.Value -= abilityInstance.Data.Costs.Stamina;
-            if (Mana.Value - abilityInstance.Data.Costs.Mana < 0)
-            {
-                OnAbilityUsed?.Invoke(i, false);
-                return false;
-            }
-            if (abilityInstance.Data.Costs.Mana > 0) Mana.Value -= abilityInstance.Data.Costs.Mana;
 
             // Add the ability and execute it.
             GetParent().AddChild(abilityInstance);
             abilityInstance.Execute(this);
 
-            // Start the cooldown
+            // Start the cooldown.
             ability.CooldownTimer.Stop();
             ability.CooldownTimer.Start();
 
@@ -236,6 +225,12 @@ public partial class HumanoidCharacter : Entity
         OnAbilityUsed?.Invoke(i, true);
         return true;
     }
+
+    /// <summary> Checks if ability can be used if you have enough currency and not on cooldown. </summary>
+    /// <param name="i"> The index of the ability to check. </param>
+    public bool CanUseAbility(AbilityData i) => 
+        !i.IsEmpty && i.IsReloaded && AbilityCountdownTimer.TimeLeft <= 0 &&
+        Stamina.Value - i.Costs.Stamina >= 0 && Mana.Value - i.Costs.Mana >= 0;
 
     public async void Dodge()
     {

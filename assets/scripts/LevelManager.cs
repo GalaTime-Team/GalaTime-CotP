@@ -11,8 +11,8 @@ public partial class LevelManager : Node
     /// <summary> The audio pack, which contains the audios for the level, contains the both calm and combat versions. </summary>
     public Dictionary<string, AudioPack> AudioPacks = new() {
             {"classicalbreak", new AudioPack(
-                "res://assets/audios/soundtracks/enemies_test_level/classicalbreak.wav",
-                "res://assets/audios/soundtracks/enemies_test_level/classicalbreakcalm.wav"
+                "res://assets/audios/soundtracks/dream_world.mp3",
+                "res://assets/audios/soundtracks/dream_world.mp3"
             )}
         };
 
