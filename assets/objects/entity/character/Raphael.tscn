@@ -519,6 +519,7 @@ _data = {
 y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("1_tr0ur")
+DefaultAbilities = Array[String](["flamethrower", "flamethrower", "flamethrower", "flamethrower"])
 Stats = SubResource("Resource_y04wb")
 Element = SubResource("Resource_eg1xe")
 
@@ -538,7 +539,7 @@ AnimationPlayerPath = NodePath("../Animation")
 y_sort_enabled = true
 position = Vector2(0, -30)
 scale = Vector2(4, 4)
-texture = ExtResource("4_85udj")
+texture = ExtResource("6_55y0g")
 hframes = 8
 
 [node name="Hand" type="Marker2D" parent="."]

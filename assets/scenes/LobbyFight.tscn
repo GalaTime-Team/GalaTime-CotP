@@ -172,11 +172,19 @@ position = Vector2(-524, 412)
 shape = SubResource("RectangleShape2D_ygmfr")
 
 [node name="Doorblock2" parent="EnemyRoom" instance=ExtResource("6_x3ocx")]
-visible = false
-position = Vector2(116, 412)
+position = Vector2(948, 412)
+
+[node name="Sprite" parent="EnemyRoom/Doorblock2" index="0"]
+metadata/_edit_lock_ = true
+
+[node name="Collision" parent="EnemyRoom/Doorblock2" index="1"]
+metadata/_edit_lock_ = true
+
+[node name="AudioStreamPlayer" parent="EnemyRoom/Doorblock2" index="2"]
+metadata/_edit_lock_ = true
 
 [node name="EnemySpawnPosition8" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(-206, 412)
+position = Vector2(852, 412)
 SpawningEnemyId = "shootingbuddy"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom"]

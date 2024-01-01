@@ -29,7 +29,7 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0, 0.1),
 "transitions": PackedFloat32Array(1, 1),
 "values": [{
-"args": [500.0],
+"args": [100.0],
 "method": &"StepForwardAnimation"
 }, {
 "args": [],

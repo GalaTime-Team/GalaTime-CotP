@@ -1,20 +1,19 @@
 using System;
-using System.Linq;
 using Galatime;
 using Galatime.Helpers;
-
 using Godot;
-using Vector2 = Godot.Vector2;
 
 public partial class TestCharacter : HumanoidCharacter
 {
     [Export] public int FollowOrder;
+    [Export] public Godot.Collections.Array<string> DefaultAbilities;
 
     public NavigationAgent2D Navigation;
     public RayCast2D RayCast;
     public AnimationPlayer AnimationPlayer;
 
     public bool StrafeDirection = true;
+    public bool MeleeMode = false;
 
     public TargetController TargetController;
 
@@ -56,9 +55,7 @@ public partial class TestCharacter : HumanoidCharacter
 
         InitializeTimers();
 
-        AddAbility(GalatimeGlobals.GetAbilityById("flamethrower"), 0);
-        AddAbility(GalatimeGlobals.GetAbilityById("fireball"), 1);
-        AddAbility(GalatimeGlobals.GetAbilityById("firewave"), 2);
+        for (var i = 0; i < (DefaultAbilities != null ? DefaultAbilities.Count : 0); i++) { AddAbility(GalatimeGlobals.GetAbilityById(DefaultAbilities[i]), i); }
     }
 
     private void InitializeTimers()
@@ -79,7 +76,7 @@ public partial class TestCharacter : HumanoidCharacter
 
         StrafeTimer = new()
         {
-            WaitTime = 1f
+            WaitTime = 0.5f
         };
         AddChild(StrafeTimer);
         StrafeTimer.Timeout += ChangeStrafeDirection;
@@ -121,25 +118,28 @@ public partial class TestCharacter : HumanoidCharacter
         Navigation.TargetPosition = TargetController.CurrentTarget.GlobalPosition;
 
         // Vector from the target.
+        var pathRotation = Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());
         await ToSignal(GetTree(), "physics_frame"); // Wait one physics frame
-        vectorPath = Vector2.Right.Rotated(Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition())) * Speed;
+        vectorPath = Vector2.Right.Rotated(pathRotation);
 
         // Rotation to the enemy.
+        if (TargetController.CurrentTarget == null) return; // Make sure there is an enemy.
         var enemyRotation = Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
         Weapon.Rotation = enemyRotation;
 
-        // Moving behavior based on distance.
-        var distance = Body.GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition);
-        if (distance >= 200 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
-        vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
-        if (RetreatDelayTimer.TimeLeft > 0) vectorPath = Vector2.Right.Rotated(enemyRotation + MathF.PI);
-        if (distance <= 150 && RetreatDelayTimer.TimeLeft == 0) RetreatDelayTimer.Start();
-
-        // Strafe up and down if the enemy is in range.
-        if (IsEnemy())
+        // Check if is in melee mode. Melee mode is when ally only uses sword. No need to use abilities when in melee mode.
+        if (!MeleeMode)
         {
-            vectorPath += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(enemyRotation) / 10; // Divided by 2 because to strafe slowly.
+            // Moving behavior based on distance.
+            var distance = Body.GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition);
+            if (distance >= 200 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
+            vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
+            if (RetreatDelayTimer.TimeLeft > 0) vectorPath = Vector2.Right.Rotated(enemyRotation + MathF.PI);
+            if (distance <= 150 && RetreatDelayTimer.TimeLeft == 0) RetreatDelayTimer.Start();
         }
+
+        // Strafe up and down if the enemy.
+        vectorPath += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(pathRotation);
 
         // Check if any enemies are too close.
         var swordColliders = Weapon.GetOverlappingBodies();
@@ -157,12 +157,21 @@ public partial class TestCharacter : HumanoidCharacter
     public bool IsEnemy() => RayCast.GetCollider() is Entity e && e.IsInGroup("enemy") && !e.DeathState;
     public void Attack()
     {
+        var reloadedAbilities = Abilities.FindAll(x => CanUseAbility(x));
+
+        // If there are no abilities that can be used, use sword.
+        GD.Print($"Melee mode: {MeleeMode}. Reloaded abilities: {reloadedAbilities.Count}");
+        if (reloadedAbilities.Count == 0)
+        {
+            MeleeMode = true;
+            return;
+        }
+        else MeleeMode = false;
+
         var obj = RayCast.GetCollider();
         // Check if enemy is enemy and not dead.
         if (IsEnemy())
         {
-            var reloadedAbilities = Abilities.FindAll(x => CanUseAbility(x));
-
             var rnd = new Random();
             var i = rnd.Next(0, reloadedAbilities.Count);
             UseAbility(i);
