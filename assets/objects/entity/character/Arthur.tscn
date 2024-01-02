@@ -199,12 +199,13 @@ _data = {
 "WalkUp": ExtResource("63_kor26")
 }
 
-[node name="Arthur" type="CharacterBody2D" groups=["ally"]]
+[node name="Arthur" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["ally"]]
 y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("1_bupbm")
 Stats = SubResource("Resource_76knt")
 Element = SubResource("Resource_53up3")
+Body = NodePath(".")
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
 emitting = false

@@ -1,6 +1,5 @@
 using Godot;
-using System;
-using Galatime;
+using Galatime.Global;
 
 public partial class LLobby : Node2D
 {   

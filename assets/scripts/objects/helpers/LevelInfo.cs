@@ -1,4 +1,7 @@
 using Godot;
+using Galatime.Global;
+
+namespace Galatime.Helpers;
 
 /// <summary> Stores level information. When it added to the scene, it will be used in <see cref="LevelManager"/> </summary>
 public partial class LevelInfo : Node

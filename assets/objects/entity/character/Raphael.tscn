@@ -515,13 +515,14 @@ _data = {
 "WalkUp": SubResource("Animation_6t8jl")
 }
 
-[node name="Raphael" type="CharacterBody2D" groups=["ally"]]
+[node name="Raphael" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["ally"]]
 y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("1_tr0ur")
 DefaultAbilities = Array[String](["flamethrower", "flamethrower", "flamethrower", "flamethrower"])
 Stats = SubResource("Resource_y04wb")
 Element = SubResource("Resource_eg1xe")
+Body = NodePath(".")
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
 emitting = false

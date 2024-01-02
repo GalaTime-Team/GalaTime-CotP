@@ -1,0 +1,44 @@
+[gd_scene load_steps=2 format=3 uid="uid://haadmaesap8v"]
+
+[ext_resource type="Script" path="res://assets/scripts/gui/CheatsMenu.cs" id="1_t1ur3"]
+
+[node name="CheatsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_t1ur3")
+
+[node name="ListContainer" type="VBoxContainer" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 16.0
+offset_right = -8.0
+offset_bottom = 192.0
+grow_horizontal = 0
+
+[node name="Button" type="Button" parent="."]
+visible = false
+custom_minimum_size = Vector2(0, 24)
+offset_right = 320.0
+offset_bottom = 24.0
+
+[node name="CheatLabel" type="RichTextLabel" parent="Button"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+bbcode_enabled = true
+text = "[center][color=green]Cheats is active :)[/color][/center]"
+autowrap_mode = 1

@@ -190,12 +190,13 @@ _data = {
 "WalkUp": ExtResource("5")
 }
 
-[node name="Player" type="CharacterBody2D" groups=["ally"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["ally"]]
 y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("10")
 Stats = SubResource("Resource_u2rbo")
 Element = SubResource("Resource_81bvf")
+Body = NodePath(".")
 
 [node name="Hand" type="Marker2D" parent="."]
 position = Vector2(0, 30)

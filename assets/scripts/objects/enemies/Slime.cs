@@ -25,20 +25,6 @@ public partial class Slime : Entity
     /// <summary> Character speed. </summary>
     #endregion
 
-    // public Slime() : base(new EntityStats(new()
-    // {
-    //     [EntityStatType.Health] = 50,
-    //     [EntityStatType.Mana] = 50,
-    //     [EntityStatType.Stamina] = 50,
-    //     [EntityStatType.PhysicalAttack] = 50,
-    //     [EntityStatType.PhysicalDefense] = 50,
-    //     [EntityStatType.MagicalAttack] = 50,
-    //     [EntityStatType.MagicalDefense] = 50,
-    //     [EntityStatType.Agility] = 50,
-    // }))
-    // { }
-
-
     public override void _Ready()
     {
         base._Ready();
@@ -81,7 +67,7 @@ public partial class Slime : Entity
         AnimationPlayer.Play("walk");
     }
 
-    public override void _MoveProcess()
+    public override void _AIProcess(double delta)
     {
         if (!DeathState) Move(); else Body.Velocity = Vector2.Zero;
     }

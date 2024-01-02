@@ -93,7 +93,7 @@ public partial class TestCharacter : HumanoidCharacter
 
     float PathRotation => Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());
 
-    public override void _MoveProcess()
+    public override void _AIProcess(double delta)
     {
         base._MoveProcess();
 
@@ -160,7 +160,6 @@ public partial class TestCharacter : HumanoidCharacter
         var reloadedAbilities = Abilities.FindAll(x => CanUseAbility(x));
 
         // If there are no abilities that can be used, use sword.
-        GD.Print($"Melee mode: {MeleeMode}. Reloaded abilities: {reloadedAbilities.Count}");
         if (reloadedAbilities.Count == 0)
         {
             MeleeMode = true;

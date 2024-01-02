@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/dream_world.mp3-d5eec5fd4c146774041beebb712b6
 [params]
 
 loop=true
-loop_offset=0
+loop_offset=329.311
 bpm=0
 beat_count=0
 bar_beats=4

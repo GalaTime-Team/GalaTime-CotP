@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Godot;
 using Galatime.Helpers;
 using Galatime;
+using Galatime.Global;
 using NodeExtensionMethods;
 
 /// <summary> Node, which controls the enemy room. Spawns enemies and controls doors. </summary>

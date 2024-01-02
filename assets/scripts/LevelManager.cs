@@ -1,7 +1,9 @@
-using Galatime;
-using Galatime.Global;
 using Godot;
+using Galatime.Helpers;
 using System.Collections.Generic;
+using System.Linq;
+
+namespace Galatime.Global;
 
 /// <summary> Manages the level. Contains the audios for the level and managing the time scale. </summary>
 public partial class LevelManager : Node
@@ -26,6 +28,7 @@ public partial class LevelManager : Node
 
     /// <summary> The time, in seconds, which determines the duration of the end of the combat audios. </summary>
     const float AUDIO_ENDING_DURATION = 3f;
+    public const string CHEAT_MENU_SCENE_PATH = "res://assets/objects/gui/CheatsMenu.tscn";
 
     public bool AudioCombatIsPlaying => AudioPlayerCombat.Playing && AudioPlayerCombatCalm.Playing;
     private bool isCombat = false;
@@ -41,7 +44,7 @@ public partial class LevelManager : Node
     }
 
     private LevelInfo levelInfo;
-    public LevelInfo LevelInfo 
+    public LevelInfo LevelInfo
     {
         get => levelInfo;
         set
@@ -57,27 +60,88 @@ public partial class LevelManager : Node
         }
     }
 
+    /// <summary> The entities in the current level. </summary>
+    public List<Entity> Entities = new();
+    public CheatsMenu CheatsMenu;
+    /// <summary> The canvas layer. Used to add global independent UI elements. </summary>
+    public CanvasLayer CanvasLayer;
+
     public override void _Ready()
     {
         Instance = this;
 
+        CanvasLayer = new CanvasLayer() { Layer = 10 }; // Layer 10, to make sure it's on top of the other UI elements.
+        AddChild(CanvasLayer);
+        var cheatsMenuScene = GD.Load<PackedScene>(CHEAT_MENU_SCENE_PATH);
+        CheatsMenu = cheatsMenuScene.Instantiate<CheatsMenu>();
+        CanvasLayer.AddChild(CheatsMenu);
+
         // Initialize audio players by creating them and adding them to the scene.
         InitializeAudioPlayers();
+
+        CheatsMenu.RegisterCheat(
+            new Cheat("disable_ai", "Disable entities AI", "cheat_disable_ai", (bool active) => Entities.ForEach(entity => entity.DisableAI = active)),
+            new Cheat("kill_all_entities", "Kill all entities", "cheat_kill_all", (_) => Entities.ForEach(entity => entity.TakeDamage(99999, 99999, new GalatimeElement())), Cheat.CheatType.Button),
+            new Cheat("reload_all", "Remove all ability cooldowns", "cheat_reload_all", (_) =>
+            {
+                var player = Player.CurrentCharacter;
+                var playerAbilities = player.Abilities;
+
+                playerAbilities.ForEach(ability =>
+                {
+                    ability.Charges = ability.MaxCharges;
+                    player.OnAbilityReload?.Invoke(playerAbilities.IndexOf(ability), 0);
+                });
+            }, Cheat.CheatType.Button),
+            new Cheat("restore_all", "Restore all resources", "cheat_restore_all", (_) =>
+            {
+                var player = Player.CurrentCharacter;
+
+                player.Health = player.Stats[EntityStatType.Health].Value;
+                player.Mana.Value = player.Stats[EntityStatType.Mana].Value;
+                player.Stamina.Value = player.Stats[EntityStatType.Stamina].Value;
+            }, Cheat.CheatType.Button),
+            new Cheat("add_allies", "Add all allies", "cheat_add_allies", (bool active) =>
+            {
+                var pv = PlayerVariables.Instance;
+                for (int i = 0; i < GalatimeGlobals.AlliesList.Count; i++)
+                {
+                    pv.Allies[i] = GalatimeGlobals.AlliesList[i];
+                }
+                pv.Player.LoadCharacters("arthur");
+            }, Cheat.CheatType.Button)
+        );
     }
 
-    public void ReloadLevel() 
+    public override void _Process(double delta)
+    {
+        RemoveInvalidEntities();
+    }
+
+    private void RemoveInvalidEntities()
+    {
+        var entitiesToRemove = new List<Entity>();
+
+        foreach (var entity in Entities)
+        {
+            if (!IsInstanceValid(entity) || entity == null)
+            {
+                // Add the entity to the removal list.
+                entitiesToRemove.Add(entity);
+            }
+        }
+
+        // Remove the entities from the main list.
+        foreach (var entity in entitiesToRemove)
+        {
+            Entities.Remove(entity);
+        }
+    }
+
+
+    public void ReloadLevel()
     {
         GalatimeGlobals.Instance.LoadScene(LevelInfo.LevelInstance.SceneFilePath);
-    }
-
-    public override void _Input(InputEvent @event)
-    {
-        if (@event is InputEventKey keyEvent && keyEvent.IsPressed())
-        {
-            // This is for debugging purposes.
-            if (keyEvent.Keycode == Key.F9) IsCombat = !IsCombat;
-            if (keyEvent.Keycode == Key.F10) EndAudioCombat();
-        }
     }
 
     private void InitializeAudioPlayers()
@@ -141,5 +205,15 @@ public partial class LevelManager : Node
                 secondaryPlayer.Stop();
             }
         };
+    }
+
+    /// <summary> Registers an entity to the level. </summary>
+    public void RegisterEntity(Entity entity)
+    {
+        Entities.Add(entity);
+
+        // Disable the AI if the cheat is active.
+        var disableAiCheat = CheatsMenu.GetCheat("disable_ai");
+        entity.DisableAI = disableAiCheat != null && disableAiCheat.Active;
     }
 }
