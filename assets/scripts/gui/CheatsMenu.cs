@@ -92,7 +92,7 @@ public partial class CheatsMenu : Control
         }
     }
 
-    public RichTextLabel CreateCheatLabel(string text, Cheat cheat = null, bool interactable = false) 
+    public RichTextLabel CreateCheatLabel(string text, Cheat cheat = null, bool interactable = true) 
     {
         var cheatButton = CheatButton.Duplicate() as Button;
         var cheatLabel = cheatButton.GetChild(0) as RichTextLabel;
@@ -109,7 +109,8 @@ public partial class CheatsMenu : Control
         }
         else
         {
-            cheatButton.Pressed += () => {
+            cheatButton.Pressed += () => 
+            {
                 cheat?.ActivateCheat();
                 UpdateCheatList();
             };
@@ -124,10 +125,9 @@ public partial class CheatsMenu : Control
         CheatsControls.ForEach(cheat => cheat.QueueFree());
         CheatsControls.Clear();
 
-        CreateCheatLabel(CHEATS_HEADER_STRING);
-        CreateCheatLabel("");
-        Cheats.ForEach(cheat => { 
-            CreateCheatLabel(CheatString(cheat), cheat, true);
+        Cheats.ForEach(cheat => 
+        { 
+            CreateCheatLabel(CheatString(cheat), cheat);
         });
     }
 }

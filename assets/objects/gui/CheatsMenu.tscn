@@ -19,18 +19,34 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -320.0
-offset_top = 16.0
-offset_right = -8.0
+offset_top = 56.0
+offset_right = -16.0
 offset_bottom = 192.0
 grow_horizontal = 0
+
+[node name="CheatLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 40.0
+grow_horizontal = 0
+mouse_filter = 1
+bbcode_enabled = true
+text = "[center][color=green]Cheats is active :)[/color][/center]"
+autowrap_mode = 1
 
 [node name="Button" type="Button" parent="."]
 visible = false
 custom_minimum_size = Vector2(0, 24)
+layout_mode = 0
 offset_right = 320.0
 offset_bottom = 24.0
 
-[node name="CheatLabel" type="RichTextLabel" parent="Button"]
+[node name="Label" type="RichTextLabel" parent="Button"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
