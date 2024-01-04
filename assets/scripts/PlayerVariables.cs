@@ -26,7 +26,7 @@ public partial class PlayerVariables : Node
     /// <summary> Shows last changed inventory item index. </summary>
     public static int CurrentInventoryItem = -1;
     /// <summary> Current save to load. </summary>
-    public static int CurrentSave = 1;
+    public static int CurrentSave = 0;
 
     /// <summary> If the save is loaded. </summary>
     public bool IsLoaded { get; private set; }

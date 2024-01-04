@@ -2,6 +2,7 @@ using Godot;
 using Galatime.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Galatime.Global;
 
@@ -80,11 +81,82 @@ public partial class LevelManager : Node
         InitializeAudioPlayers();
 
         CheatsMenu.RegisterCheat(
-            new Cheat("disable_ai", "Disable entities AI", "cheat_disable_ai", (bool active) => Entities.ForEach(entity => entity.DisableAI = active)),
-            new Cheat("kill_all_entities", "Kill all entities", "cheat_kill_all", (_) => Entities.ForEach(entity => entity.TakeDamage(99999, 99999, new GalatimeElement())), Cheat.CheatType.Button),
-            new Cheat("reload_all", "Remove all ability cooldowns", "cheat_reload_all", (_) =>
+            new Cheat(name: "[color=yellow]Game cheats[/color]", type: Cheat.CheatType.Separator),
+            new Cheat(name: "Global data", type: Cheat.CheatType.Separator),
+            new Cheat("list_items", "Print list of all items", "", "cheat_list_items", (bool active, string input) => {
+                var items = GalatimeGlobals.ItemList;
+                var str = new StringBuilder();
+                    
+                for (var i = 0; i < items.Count; i++) str.Append($"{items[i].ID}{(i < items.Count - 1 ? ", " : "")}");
+
+                CheatsMenu.Log(str.ToString(), CheatsMenu.LogLevel.Result);
+            }),
+            new Cheat("abilities_list", "Print list of all abilities", "", "cheat_abilities_list", (bool active, string input) => {
+                var abilities = GalatimeGlobals.AbilitiesList;
+                var str = new StringBuilder();
+
+                for (var i = 0; i < abilities.Count; i++) str.Append($"{abilities[i].ID}{(i < abilities.Count - 1 ? ", " : "")}");
+
+                CheatsMenu.Log(str.ToString(), CheatsMenu.LogLevel.Result);
+            }),
+            new Cheat(name: "Gameplay cheats", type: Cheat.CheatType.Separator),
+            new Cheat("add_allies", "Add all allies", "Add all possible allies to the player and load them in the scene.", "cheat_add_allies", (bool active, string input) =>
             {
-                var player = Player.CurrentCharacter;
+                var pv = PlayerVariables.Instance;
+                var player = CheatsMenu.GetPlayer();
+                if (player == null) return;
+
+                for (int i = 0; i < GalatimeGlobals.AlliesList.Count; i++)
+                {
+                    pv.Allies[i] = GalatimeGlobals.AlliesList[i];
+                }
+                player.LoadCharacters("arthur");
+
+                CheatsMenu.Log($"Added all allies", CheatsMenu.LogLevel.Result);
+            }),
+            new Cheat("give_xp", "Give XP", "Give an amount of XP to the player. Arguments: amount.", "", (bool active, string input) =>
+            {
+                var inputArguments = CheatsMenu.ParseCheatArguments(input, 1);
+
+                var args = inputArguments.args;
+                if (!inputArguments.result) return;
+
+                var player = CheatsMenu.GetPlayer();
+                if (player == null) return;
+
+                var xp = int.Parse(args[0]);
+                PlayerVariables.Instance.Player.Xp += xp;
+
+                CheatsMenu.Log($"Gave {xp} XP", CheatsMenu.LogLevel.Result);
+            }, Cheat.CheatType.Input),
+            new Cheat("give_item", "Give item", "Give an item to the player by specifying the item ID and quantity. Arguments: item_id quantity.", "cheat_give_item", (bool active, string input) =>
+            {
+                var inputArguments = CheatsMenu.ParseCheatArguments(input, 2);
+                var args = inputArguments.args;
+                if (!inputArguments.result) return;
+
+                var player = CheatsMenu.GetPlayer();
+                if (player == null) return;
+
+                var itemName = args[0];
+                var itemQuantity = int.Parse(args[1]);
+                var item = GalatimeGlobals.GetItemById(itemName);
+
+                if (item == new Item())
+                {
+                    CheatsMenu.Log($"Item not found: {itemName}", CheatsMenu.LogLevel.Error);
+                    return;
+                }
+
+                PlayerVariables.Instance.AddItem(item, itemQuantity);
+
+                CheatsMenu.Log($"Gave {itemQuantity}x {item.Name}", CheatsMenu.LogLevel.Result);
+            }, Cheat.CheatType.Input),
+            new Cheat("reload_all", "Remove all ability cooldowns", "Removes all ability cooldowns and charges.", "cheat_reload_all", (_, _) =>
+            {
+                var player = CheatsMenu.GetPlayer();
+                if (player == null) return;
+
                 var playerAbilities = player.Abilities;
 
                 playerAbilities.ForEach(ability =>
@@ -92,24 +164,30 @@ public partial class LevelManager : Node
                     ability.Charges = ability.MaxCharges;
                     player.OnAbilityReload?.Invoke(playerAbilities.IndexOf(ability), 0);
                 });
-            }, Cheat.CheatType.Button),
-            new Cheat("restore_all", "Restore all resources", "cheat_restore_all", (_) =>
+            }),
+            new Cheat("restore_all", "Restore all resources", "Restores all health, mana, and stamina.", "cheat_restore_all", (_, _) =>
             {
-                var player = Player.CurrentCharacter;
+                var player = CheatsMenu.GetPlayer();
+                if (player == null) return;
 
-                player.Health = player.Stats[EntityStatType.Health].Value;
-                player.Mana.Value = player.Stats[EntityStatType.Mana].Value;
-                player.Stamina.Value = player.Stats[EntityStatType.Stamina].Value;
-            }, Cheat.CheatType.Button),
-            new Cheat("add_allies", "Add all allies", "cheat_add_allies", (bool active) =>
-            {
-                var pv = PlayerVariables.Instance;
-                for (int i = 0; i < GalatimeGlobals.AlliesList.Count; i++)
+                var ally = Player.CurrentCharacter;
+
+                ally.Health = ally.Stats[EntityStatType.Health].Value;
+                ally.Mana.Value = ally.Stats[EntityStatType.Mana].Value;
+                ally.Stamina.Value = ally.Stats[EntityStatType.Stamina].Value;
+            }),
+            new Cheat(name: "Entities cheats", type: Cheat.CheatType.Separator),
+            new Cheat("disable_ai", "Disable entities AI", "Disables AI for all entities, meaning that they will not perform any actions.", "cheat_disable_ai", (bool active, string input) => Entities.ForEach(entity => entity.DisableAI = active), Cheat.CheatType.Toggle),
+            new Cheat("kill_all_enemies", "Kill all enemies", "", "cheat_kill_all", (_, _) => {
+                var enemies = Entities.Where(entity => !(entity is TestCharacter || entity is Player) && !entity.DeathState).ToList();
+                if (enemies.Count() == 0) 
                 {
-                    pv.Allies[i] = GalatimeGlobals.AlliesList[i];
+                    CheatsMenu.Log("There's no enemies to kill", CheatsMenu.LogLevel.Warning);
+                    return;
                 }
-                pv.Player.LoadCharacters("arthur");
-            }, Cheat.CheatType.Button)
+                enemies.ForEach(entity => entity.TakeDamage(99999, 99999, new GalatimeElement()));
+                CheatsMenu.Log($"Successfully killed all {enemies.Count()} enemies", CheatsMenu.LogLevel.Result);
+            })
         );
     }
 

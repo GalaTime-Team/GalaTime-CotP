@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://assets/scripts/gui/CheatsMenu.cs" id="1_t1ur3"]
 
 [node name="CheatsMenu" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,41 +13,75 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_t1ur3")
 
-[node name="ListContainer" type="VBoxContainer" parent="."]
-clip_contents = true
+[node name="Window" type="Control" parent="."]
+visible = false
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
+anchors_preset = 15
 anchor_right = 1.0
-offset_left = -320.0
-offset_top = 56.0
-offset_right = -16.0
-offset_bottom = 192.0
-grow_horizontal = 0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
 
-[node name="CheatLabel" type="RichTextLabel" parent="."]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -320.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 40.0
+[node name="InputText" type="LineEdit" parent="Window"]
+layout_mode = 2
+offset_left = 824.0
+offset_top = 64.0
+offset_right = 1136.0
+offset_bottom = 95.0
 grow_horizontal = 0
 mouse_filter = 1
-bbcode_enabled = true
-text = "[center][color=green]Cheats is active :)[/color][/center]"
-autowrap_mode = 1
+placeholder_text = "Input for input cheat"
 
-[node name="Button" type="Button" parent="."]
+[node name="VSplitContainer" type="VSplitContainer" parent="Window"]
+layout_mode = 2
+offset_left = 824.0
+offset_top = 112.0
+offset_right = 1136.0
+offset_bottom = 632.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Window/VSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+horizontal_scroll_mode = 0
+
+[node name="ListContainer" type="VBoxContainer" parent="Window/VSplitContainer/ScrollContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+metadata/_edit_lock_ = true
+
+[node name="LogLabel" type="RichTextLabel" parent="Window/VSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+mouse_filter = 1
+bbcode_enabled = true
+autowrap_mode = 2
+selection_enabled = true
+
+[node name="Background" type="ColorRect" parent="Window"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 800.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.203922)
+metadata/_edit_lock_ = true
+
+[node name="Button" type="Button" parent="Window"]
 visible = false
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 0
 offset_right = 320.0
 offset_bottom = 24.0
 
-[node name="Label" type="RichTextLabel" parent="Button"]
+[node name="Label" type="RichTextLabel" parent="Window/Button"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -57,4 +92,35 @@ mouse_filter = 1
 mouse_default_cursor_shape = 2
 bbcode_enabled = true
 text = "[center][color=green]Cheats is active :)[/color][/center]"
+autowrap_mode = 1
+
+[node name="MinimizeButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -368.0
+offset_top = 8.0
+offset_right = -336.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+text = ":)"
+
+[node name="CheatLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -328.0
+offset_top = 8.0
+offset_right = -24.0
+offset_bottom = 54.0
+grow_horizontal = 0
+mouse_filter = 1
+bbcode_enabled = true
+text = "[center][color=green]Cheats is active :)[/color]
+[color=dark_slate_gray]Use [color=green]:)[/color] button to toggle this window
+"
+fit_content = true
 autowrap_mode = 1
