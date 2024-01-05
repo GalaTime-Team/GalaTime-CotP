@@ -150,6 +150,9 @@ public partial class PauseMenu : Control
 
     public override void _Input(InputEvent @event)
     {
-        if (Input.IsActionJustPressed("ui_cancel")) Paused = !Paused;
+        if (Input.IsActionJustPressed("ui_cancel")) 
+        {
+            if (WindowManager.Instance.OpenWindow("pause_menu", () => { Paused = false; })) Paused = !Paused;
+        }
     }
 }

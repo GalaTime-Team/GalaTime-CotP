@@ -19,8 +19,6 @@ public partial class HumanoidCharacter : Entity
     protected bool CanDodge = true;
     /// <summary> The current rotation of the character. </summary>
     protected Vector2 VectorRotation;
-    /// <summary> If the character is able to move. </summary>
-    public bool CanMove = true;
 
     public HumanoidStates State = HumanoidStates.Idle;
     public bool IsWalk => State == HumanoidStates.Idle || State == HumanoidStates.Walk;

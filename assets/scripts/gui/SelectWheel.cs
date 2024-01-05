@@ -1,3 +1,4 @@
+using Galatime.Global;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -134,6 +135,8 @@ public void Rebuild()
     /// <param name="callback"> The callback to be called when the wheel is closed. </param>
     public void CallWheel(string id, int size, Control[] placeholders, string[] names, Action<int> callback)
     {
+        if (!WindowManager.Instance.OpenWindow("wheel", () => CloseWheel())) return;
+
         ItemCount = size;
         if (CheckSize(placeholders, names)) return;
         // If the wheel is already opened, close it.

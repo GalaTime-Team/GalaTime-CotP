@@ -26,6 +26,7 @@ LevelManager="*res://assets/scripts/LevelManager.cs"
 EnemiesList="*res://assets/scripts/objects/enemies/controllers/EnemiesList.cs"
 SettingsGlobals="*res://assets/scripts/SettingsGlobals.cs"
 DiscordController="*res://assets/scripts/DiscordController.cs"
+WindowManager="*res://assets/scripts/WindowManager.cs"
 
 [display]
 

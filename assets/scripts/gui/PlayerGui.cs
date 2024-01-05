@@ -1,3 +1,4 @@
+using Galatime.Global;
 using Galatime.UI;
 using Godot;
 using System;
@@ -46,8 +47,12 @@ namespace Galatime
             get => InventoryPanel.Visible;
             set
             {
+                // Don't open inventory if another window is open.
+                if (!WindowManager.Instance.OpenWindow("inventory", () => InventoryOpen = false)) return;
                 inventoryOpen = value;
                 InventoryPanel.Visible = value;
+
+                Player.CurrentCharacter.CanMove = !value;
             }
         }
 

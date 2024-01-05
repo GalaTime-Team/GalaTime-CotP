@@ -142,7 +142,7 @@ public partial class LevelManager : Node
                 var itemQuantity = int.Parse(args[1]);
                 var item = GalatimeGlobals.GetItemById(itemName);
 
-                if (item == new Item())
+                if (item.IsEmpty)
                 {
                     CheatsMenu.Log($"Item not found: {itemName}", CheatsMenu.LogLevel.Error);
                     return;
@@ -164,6 +164,8 @@ public partial class LevelManager : Node
                     ability.Charges = ability.MaxCharges;
                     player.OnAbilityReload?.Invoke(playerAbilities.IndexOf(ability), 0);
                 });
+
+                CheatsMenu.Log($"Reloaded all abilities", CheatsMenu.LogLevel.Result);
             }),
             new Cheat("restore_all", "Restore all resources", "Restores all health, mana, and stamina.", "cheat_restore_all", (_, _) =>
             {
@@ -175,6 +177,8 @@ public partial class LevelManager : Node
                 ally.Health = ally.Stats[EntityStatType.Health].Value;
                 ally.Mana.Value = ally.Stats[EntityStatType.Mana].Value;
                 ally.Stamina.Value = ally.Stats[EntityStatType.Stamina].Value;
+
+                CheatsMenu.Log($"Restored all resources for player", CheatsMenu.LogLevel.Result);
             }),
             new Cheat(name: "Entities cheats", type: Cheat.CheatType.Separator),
             new Cheat("disable_ai", "Disable entities AI", "Disables AI for all entities, meaning that they will not perform any actions.", "cheat_disable_ai", (bool active, string input) => Entities.ForEach(entity => entity.DisableAI = active), Cheat.CheatType.Toggle),

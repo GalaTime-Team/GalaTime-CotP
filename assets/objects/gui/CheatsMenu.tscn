@@ -21,6 +21,19 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
+
+[node name="Background" type="ColorRect" parent="Window"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 800.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.203922)
 metadata/_edit_lock_ = true
 
 [node name="InputText" type="LineEdit" parent="Window"]
@@ -59,20 +72,7 @@ size_flags_vertical = 3
 focus_mode = 2
 mouse_filter = 1
 bbcode_enabled = true
-autowrap_mode = 2
 selection_enabled = true
-
-[node name="Background" type="ColorRect" parent="Window"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 800.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0, 0, 0, 0.203922)
-metadata/_edit_lock_ = true
 
 [node name="Button" type="Button" parent="Window"]
 visible = false
