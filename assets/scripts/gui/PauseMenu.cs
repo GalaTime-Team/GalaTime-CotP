@@ -32,6 +32,7 @@ public partial class PauseMenu : Control
         get => paused;
         set
         {
+            if (!WindowManager.Instance.ToggleWindow("pause", Paused, () => Paused = false, canOverlay: true)) return;
             // Don't pause a game when an animation is playing.
             if (Tw?.IsRunning() == true) return;
             if (CurrentWindow != null)
@@ -89,7 +90,6 @@ public partial class PauseMenu : Control
         SettingsButton = ButtonsContainer.GetNode<Button>("SettingsButton");
         #endregion
         InitializeButtons();
-
     }
 
     private void InitializeButtons()
@@ -101,7 +101,7 @@ public partial class PauseMenu : Control
             Paused = false;
             globals.Save(PlayerVariables.CurrentSave, this);
         };
-        ReloadButton.Pressed += () => 
+        ReloadButton.Pressed += () =>
         {
             Paused = false;
             LevelManager.Instance.ReloadLevel();
@@ -150,9 +150,9 @@ public partial class PauseMenu : Control
 
     public override void _Input(InputEvent @event)
     {
-        if (Input.IsActionJustPressed("ui_cancel")) 
+        if (Input.IsActionJustPressed("ui_cancel"))
         {
-            if (WindowManager.Instance.OpenWindow("pause_menu", () => { Paused = false; })) Paused = !Paused;
+            Paused = !Paused;
         }
     }
 }

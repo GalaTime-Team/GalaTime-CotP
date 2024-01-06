@@ -44,15 +44,15 @@ namespace Galatime
         private bool inventoryOpen;
         public bool InventoryOpen
         {
-            get => InventoryPanel.Visible;
+            get => inventoryOpen;
             set
             {
                 // Don't open inventory if another window is open.
-                if (!WindowManager.Instance.OpenWindow("inventory", () => InventoryOpen = false)) return;
+                if (!WindowManager.Instance.ToggleWindow("inventory", InventoryOpen, () => InventoryOpen = false)) return;
                 inventoryOpen = value;
-                InventoryPanel.Visible = value;
 
-                Player.CurrentCharacter.CanMove = !value;
+                InventoryPanel.Visible = inventoryOpen;
+                PlayerVariables.Player.CanMove = !inventoryOpen;
             }
         }
 

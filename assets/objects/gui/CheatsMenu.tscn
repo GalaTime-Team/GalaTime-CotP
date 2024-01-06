@@ -52,11 +52,13 @@ offset_left = 824.0
 offset_top = 112.0
 offset_right = 1136.0
 offset_bottom = 632.0
+focus_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Window/VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
+follow_focus = true
 horizontal_scroll_mode = 0
 
 [node name="ListContainer" type="VBoxContainer" parent="Window/VSplitContainer/ScrollContainer"]

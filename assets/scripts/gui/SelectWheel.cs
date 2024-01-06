@@ -54,70 +54,72 @@ public partial class SelectWheel : Control
 
     public void TweenSegmentNameColor(Color from, Color to) => Tween.TweenMethod(Callable.From<Color>(x => SegmentName.Modulate = x), from, to, .1f);
 
-/// <summary> Rebuilds the wheel by instantiating and adding the wheel segments. </summary>
-public void Rebuild()
-{
-    // Remove all the old wheel segments.
-    foreach (var segment in WheelSegments)
+    /// <summary> Rebuilds the wheel by instantiating and adding the wheel segments. </summary>
+    public void Rebuild()
     {
-        RemoveChild(segment);
-        segment.QueueFree();
-    }
-    WheelSegments.Clear();
-
-    GD.Print($"Rebuilding wheel with {ItemCount} items. Names count: {Names.Length}, placeholders count: {Placeholders.Length}");
-
-    WheelSegmentScene = GD.Load<PackedScene>("res://assets/objects/gui/WheelSegment.tscn");
-    for (var i = 0; i < ItemCount; i++)
-    {
-        var segment = WheelSegmentScene.Instantiate<WheelSegment>();
-
-        var rotation = i * (360 / ItemCount);
-        // Adding the segment to the wheel by rotating it.
-        segment.RotationDegrees = rotation;
-
-        // Adding the segment to the list.
-
-        // Setting the index of the segment.
-        segment.Index = i;
-
-        // Adding pressed event to the segment.
-        segment.Pressed += () =>
+        // Remove all the old wheel segments.
+        foreach (var segment in WheelSegments)
         {
-            Selected = segment.Index;
-            // Call the callback with the selected index.
-            SelectedCallback?.Invoke(Selected);
+            RemoveChild(segment);
+            segment.QueueFree();
+        }
+        WheelSegments.Clear();
 
-            // Close the wheel, because the user can't select anything else.
-            CloseWheel();
-        };
-        // Set the name of the segment when segment hovered.
-        segment.Hover += (bool entered) => SetName(segment.SegmentName, entered);
+        GD.Print($"Rebuilding wheel with {ItemCount} items. Names count: {Names.Length}, placeholders count: {Placeholders.Length}");
 
-        // Adding the segment to the list and to the wheel.
-        AddChild(segment);
-        WheelSegments.Add(segment);
+        WheelSegmentScene = GD.Load<PackedScene>("res://assets/objects/gui/WheelSegment.tscn");
+        for (var i = 0; i < ItemCount; i++)
+        {
+            var segment = WheelSegmentScene.Instantiate<WheelSegment>();
 
-        // Play the animation of appearing.
-        segment.Shown = true;
+            var rotation = i * (360 / ItemCount);
+            // Adding the segment to the wheel by rotating it.
+            segment.RotationDegrees = rotation;
 
-        // Logging statement for debugging.
-        GD.Print("Segment added: " + segment.SegmentName);
+            // Adding the segment to the list.
 
-        // Add the placeholders and names to the segments.
-        var s = WheelSegments[i];
-        segment.SegmentName = Names[i];
+            // Setting the index of the segment.
+            segment.Index = i;
 
-        var placeholder = Placeholders[i];
-        placeholder.PivotOffset = placeholder.Size / 2;
-        placeholder.RotationDegrees = -rotation;
+            // Adding pressed event to the segment.
+            segment.Pressed += () =>
+            {
+                Selected = segment.Index;
+                // Call the callback with the selected index.
+                SelectedCallback?.Invoke(Selected);
 
-        segment.AddChild(Placeholders[i]);
+                // Close the wheel, because the user can't select anything else.
+                CloseWheel();
+            };
+            // Set the name of the segment when segment hovered.
+            segment.Hover += (bool entered) => SetName(segment.SegmentName, entered);
+
+            // Adding the segment to the list and to the wheel.
+            AddChild(segment);
+            WheelSegments.Add(segment);
+
+            // Play the animation of appearing.
+            segment.Shown = true;
+
+            // Logging statement for debugging.
+            GD.Print("Segment added: " + segment.SegmentName);
+
+            // Add the placeholders and names to the segments.
+            var s = WheelSegments[i];
+            segment.SegmentName = Names[i];
+
+            var placeholder = Placeholders[i];
+            placeholder.PivotOffset = placeholder.Size / 2;
+            placeholder.RotationDegrees = -rotation;
+
+            segment.AddChild(Placeholders[i]);
+        }
     }
-}
 
     private void CloseWheel()
     {
+        WindowManager.Instance.ToggleWindow("wheel", false);
+
         SelectedCallback = null;
         CurrentWheelId = "";
         WheelSegments.ForEach(x => x.Shown = false);
@@ -135,23 +137,23 @@ public void Rebuild()
     /// <param name="callback"> The callback to be called when the wheel is closed. </param>
     public void CallWheel(string id, int size, Control[] placeholders, string[] names, Action<int> callback)
     {
-        if (!WindowManager.Instance.OpenWindow("wheel", () => CloseWheel())) return;
-
         ItemCount = size;
         if (CheckSize(placeholders, names)) return;
         // If the wheel is already opened, close it.
-        if (CurrentWheelId == id) 
+        if (CurrentWheelId == id)
         {
             GD.PushWarning($"Wheel {id} is already opened, closing...");
             CloseWheel();
             return;
         }
         // Don't allow opening the wheel if it's already opened by another wheel.
-        if (CurrentWheelId != "") 
+        if (CurrentWheelId != "")
         {
             GD.PushWarning($"Wheel {CurrentWheelId} is already opened.");
             return;
         }
+
+        if (!WindowManager.Instance.ToggleWindow("wheel", false, () => CloseWheel())) return;
 
         // Set the callback to be called when the wheel is closed.
         SelectedCallback = callback;
@@ -171,15 +173,17 @@ public void Rebuild()
     }
 
     // Check if the number of elements is less than the number of wheel items to prevent errors.
-    private bool CheckSize(params object[][] a) 
+    private bool CheckSize(params object[][] a)
     {
-        foreach (var array in a) {
-            if (array.Length < ItemCount) {
+        foreach (var array in a)
+        {
+            if (array.Length < ItemCount)
+            {
                 GD.PushWarning($"Can't call wheel, because number of placeholders ({a.Length}) is less than number of items ({ItemCount})");
                 return true;
             }
         }
-        
+
         return false;
     }
 

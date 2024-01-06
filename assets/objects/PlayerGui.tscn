@@ -350,10 +350,6 @@ color = Color(0, 0, 0, 1)
 [node name="ParrySound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("27_4kcld")
 
-[node name="PauseMenu" parent="." instance=ExtResource("16_mf8j7")]
-visible = false
-layout_mode = 1
-
 [node name="InventoryContainer" parent="." instance=ExtResource("13_co182")]
 visible = false
 layout_mode = 1
@@ -374,4 +370,9 @@ mouse_filter = 2
 
 [node name="SelectWheel" parent="." instance=ExtResource("18_uvxe6")]
 visible = false
+layout_mode = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("16_mf8j7")]
+visible = false
+z_index = 10
 layout_mode = 1

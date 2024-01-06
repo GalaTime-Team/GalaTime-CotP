@@ -1,9 +1,10 @@
-using ExtensionMethods;
-using Galatime;
+using Galatime.Global;
 using Godot;
 using System;
 using System.Collections.Generic;
 using System.Text;
+
+namespace Galatime;
 
 /// <summary> Represents a cheat in the cheats menu. </summary>
 /// <remarks> If cheat type is button, this cheat will always inactive. See <see cref="CheatType"/> and <see cref="Active"/>. </remarks>
@@ -21,16 +22,16 @@ public class Cheat
         Separator
     }
 
-    public string Id { get; private set; }
-    public string Name { get; private set; }
-    public string Description { get; private set; }
+    public string Id { get; }
+    public string Name { get; }
+    public string Description { get; }
     /// <summary> If the cheat is active. It will be always inactive if cheat type is button. </summary>
     public bool Active { get; private set; }
     /// <summary> The action input to activate the cheat. </summary>
-    public string ActivationAction { get; private set; }
+    public string ActivationAction { get; }
     /// <summary> When the cheat is activated. Returns if the cheat is active. </summary>
-    public Action<bool, string> CheatAction { get; private set; }
-    public CheatType Type { get; private set; } = CheatType.Button;
+    public Action<bool, string> CheatAction { get; }
+    public CheatType Type { get; } = CheatType.Button;
 
     /// <summary> Activates the cheat. If cheat type is toggle, it will be toggled. Button just calls action. </summary>
     public void ActivateCheat(string inputText = "")
@@ -40,14 +41,13 @@ public class Cheat
         CheatAction?.Invoke(Active, inputText);
     }
 
-    public Cheat(string id = null, string name = null, string description = null, string activationAction = null, Action<bool, string> cheatAction = null, CheatType type = CheatType.Button) 
+    public Cheat(string id = null, string name = null, string description = null, string activationAction = null, Action<bool, string> cheatAction = null, CheatType type = CheatType.Button, bool active = false)
     {
-        (Id, Name, Description, ActivationAction, CheatAction, Type) = (id, name, description, activationAction, cheatAction, type);
+        (Id, Name, Description, ActivationAction, CheatAction, Type, Active) = (id, name, description, activationAction, cheatAction, type, active);
         if (Type == CheatType.Separator) Name = $"[center][color=gray]-- {Name} --[/color][/center]";
-        if (Description == "") Description = "This cheat has no description.";
+        if (Description?.Length == 0) Description = "This cheat has no description.";
     }
-}   
-
+}
 
 /// <summary> Represents the cheats menu in the game. Used for debugging and testing. Also, it can be activated by the player. </summary>
 public partial class CheatsMenu : Control
@@ -58,8 +58,6 @@ public partial class CheatsMenu : Control
         Warning,
         Error
     }
-
-    private const string CHEATS_HEADER_STRING = "[center][color=green]Cheats is active :)[/color][/center]";
 
     #region Nodes
     public Button CheatButton;
@@ -77,10 +75,31 @@ public partial class CheatsMenu : Control
 
     private int SameLogsCount = 0;
     private string PreviousLogText = "";
+    private int PreviousFocusIndex = 0;
+
+    private bool shown;
+    /// <summary> If cheats menu is shown. </summary>
+    public bool Shown
+    {
+        get => shown;
+        set
+        {
+            if (!WindowManager.Instance.ToggleWindow("cheats", Shown, () => { Shown = false; }, canOverlay: true)) return;
+
+            shown = value;
+            Window.Visible = shown;
+
+            // Pause only when this cheat is active.
+            GetTree().Paused = shown && GetCheat("pause_when_cheats_active").Active;
+
+            // Focus on the first cheat.
+            CheatsControls[0].GrabFocus();
+        }
+    }
     #endregion
 
     /// <summary> Returns the string representation of the given cheat. </summary>
-    public string CheatString(Cheat cheat)
+    public static string CheatString(Cheat cheat)
     {
         var actionKey = GetActionKey(cheat.ActivationAction);
         var activationAction = actionKey != "N/A" ? $"[[color=cyan]{actionKey}[/color]] " : "";
@@ -91,7 +110,7 @@ public partial class CheatsMenu : Control
         return $"{activationAction}{cheat.Name} {toggle}{input}";
     }
     /// <summary> Returns the key of the given action. </summary>
-    public string GetActionKey(string action) => InputMap.ActionGetEvents(action).Count > 0 ? InputMap.ActionGetEvents(action)[0].AsText().Replace(" (Physical)", "") : "N/A";
+    public static string GetActionKey(string action) => InputMap.ActionGetEvents(action).Count > 0 ? InputMap.ActionGetEvents(action)[0].AsText().Replace(" (Physical)", "") : "N/A";
 
     public override void _Ready()
     {
@@ -104,36 +123,52 @@ public partial class CheatsMenu : Control
         Window = GetNode<Control>("Window");
         #endregion
 
-        MinimizeButton.Pressed += () => Window.Visible = !Window.Visible;
+        MinimizeButton.Pressed += () => Shown = !Shown;
 
         // Register basic cheats.
         RegisterCheat(
             new Cheat(name: "[color=yellow]Cheats menu cheats[/color]", type: Cheat.CheatType.Separator),
-            new Cheat("clear_logs", "Clear logs", "Resets the log.", "", (_, _) => LogLabel.Clear()),
-            new Cheat("show_cheats", "Show cheats", "Show help for cheats.", "", (_, _) => {
+            new Cheat("pause_when_cheats_active", "Pause when cheats are active", "Pauses the game when cheats menu are shown.", "", (active, _) =>
+            {
+                GetTree().Paused = Shown && active;
+            }, Cheat.CheatType.Toggle, true),
+            new Cheat("show_cheats", "Show cheats", "Show help for cheats.", "", (_, _) =>
+            {
                 var cheats = Cheats;
                 var str = new StringBuilder();
 
                 str.Append("\n\n[center][color=yellow]Help for cheats[/color][/center]\nIf cheat has in his name \"[color=gray](Input)[/color]\", it means that it can be used to input textbox.\n\n");
-                for (var i = 0; i < cheats.Count; i++) 
+                for (var i = 0; i < cheats.Count; i++)
                 {
                     var cheat = cheats[i];
                     // No need to show separators.
                     if (cheat.Type == Cheat.CheatType.Separator) continue;
 
                     // Add name and description.
-                    str.AppendLine($"[color=white]{cheat.Name} ({cheat.Id})");
-                    str.AppendLine($"[color=dark_slate_gray]{cheat.Description} [color=dark_gray]Bind: {GetActionKey(cheat.ActivationAction)}\n");
+                    str.Append("[color=white]").Append(cheat.Name).Append(" (").Append(cheat.Id).AppendLine(")");
+                    str.Append("[color=dark_slate_gray]").Append(cheat.Description).Append(" [color=dark_gray]Bind: ").Append(GetActionKey(cheat.ActivationAction)).AppendLine("\n");
                 }
                 // Remove the last three lines to make it look nice.
                 str.Remove(str.Length - 3, 3);
 
                 // Show the cheats in the log.
                 Log(str.ToString(), LogLevel.Result);
-            })
+            }),
+            new Cheat("clear_logs", "Clear logs", "Resets the log.", "", (_, _) => LogLabel.Clear())
         );
+    }
 
-        UpdateCheatList();
+    public override void _Process(double delta)
+    {
+        // Show/hide the cheats menu by pressing the key.
+        if (Input.IsActionJustPressed("cheats_menu")) Shown = !Shown;
+
+        // Toggles the cheats by pressing the activation action.
+        foreach (var cheat in Cheats)
+        {
+            if (InputMap.HasAction(cheat.ActivationAction) && Input.IsActionJustPressed(cheat.ActivationAction))
+                ActivateCheat(cheat);
+        }
     }
 
     /// <summary> Registers multiple cheats to the list. </summary>
@@ -175,26 +210,16 @@ public partial class CheatsMenu : Control
         return cheat;
     }
 
-    public override void _Process(double delta)
+    public Button CreateCheatLabel(string text, Cheat cheat = null, bool interactable = true)
     {
-        // Toggles the cheats by pressing the activation action.
-        foreach (var cheat in Cheats)
-        {
-            if (InputMap.HasAction(cheat.ActivationAction) && Input.IsActionJustPressed(cheat.ActivationAction)) ActivateCheat(cheat);
-        }
-    }
+        if (string.IsNullOrEmpty(text)) throw new ArgumentException($"'{nameof(text)}' cannot be null or empty.", nameof(text));
 
-    public RichTextLabel CreateCheatLabel(string text, Cheat cheat = null, bool interactable = true)
-    {
         // Duplicating base button.
         var cheatButton = CheatButton.Duplicate() as Button;
-        // Getting the label.
-        var cheatLabel = cheatButton.GetChild(0) as RichTextLabel;
 
         ListContainer.AddChild(cheatButton);
         CheatsControls.Add(cheatButton);
-        cheatLabel.Clear();
-        cheatLabel.AppendText(text);
+
         cheatButton.Visible = true;
 
         if (!interactable)
@@ -207,7 +232,17 @@ public partial class CheatsMenu : Control
             cheatButton.Pressed += () => ActivateCheat(cheat);
         }
 
-        return cheatLabel;
+        return cheatButton;
+    }
+
+    public void UpdateCheatLabel(int index, string text)
+    {
+        var cheatButton = CheatsControls[index];
+
+        // Getting the label.
+        var cheatLabel = cheatButton.GetChild(0) as RichTextLabel;
+        cheatLabel.Clear();
+        cheatLabel.AppendText(text);
     }
 
     private void ActivateCheat(Cheat cheat)
@@ -221,14 +256,15 @@ public partial class CheatsMenu : Control
         UpdateCheatList();
     }
 
-    /// <summary> Updates the list of cheats in the UI. </summary>
     public void UpdateCheatList()
     {
-        CheatsControls.ForEach(cheat => cheat.QueueFree());
-        CheatsControls.Clear();
+        for (int i = 0; i < Cheats.Count; i++)
+        {
+            var cheat = Cheats[i];
+            if (CheatsControls.Count <= i) CreateCheatLabel(CheatString(cheat), cheat, cheat.Type != Cheat.CheatType.Separator);
+            UpdateCheatLabel(i, CheatString(cheat));
+        }
 
-        // Add cheats to the list. Disable interaction with separators.
-        Cheats.ForEach(cheat => CreateCheatLabel(CheatString(cheat), cheat, cheat.Type != Cheat.CheatType.Separator));
     }
 
     /// <summary> Parse cheat arguments. If failed it shows an error in cheats menu log. </summary>
@@ -236,16 +272,16 @@ public partial class CheatsMenu : Control
     /// <returns> The parsed arguments and a boolean indicating if the parsing was successful. </returns>
     public (string[] args, bool result) ParseCheatArguments(string args, int requiredArgs = 0)
     {
-        if (args == "")
+        if (args?.Length == 0)
         {
             Log("No arguments", LogLevel.Error);
-            return (new string[0], false);
+            return (Array.Empty<string>(), false);
         }
         var inputArguments = args.Split(' ');
         if (inputArguments.Length != requiredArgs)
         {
-            Log($"Invalid number of arguments", LogLevel.Error);
-            return (new string[0], false);
+            Log("Invalid number of arguments", LogLevel.Error);
+            return (Array.Empty<string>(), false);
         }
         return (inputArguments, true);
     }
@@ -258,10 +294,11 @@ public partial class CheatsMenu : Control
 
         if (player == null || !IsInstanceValid(player))
         {
-            Log($"Player is invalid", LogLevel.Error);
+            Log("Player is invalid", LogLevel.Error);
             return null;
         }
 
         return player;
     }
+
 }

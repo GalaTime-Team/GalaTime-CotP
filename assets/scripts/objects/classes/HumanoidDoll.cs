@@ -79,7 +79,8 @@ public partial class HumanoidDoll : Node2D
         // if (state == HumanoidStates.Idle) AnimationPlayerReference.Stop();
 
         // Setting current animation time to sync the 4 axes animation.
-        if (state != CurrentState) { 
+        if (state != CurrentState)
+        {
             CurrentState = state;
             CurrentAnimationTime = 0;
         }

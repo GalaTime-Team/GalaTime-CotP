@@ -1,7 +1,6 @@
 using Galatime.Helpers;
 using Godot;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Galatime
@@ -233,7 +232,7 @@ namespace Galatime
                 }
             }
             // Switch character if needed right after loading characters.
-            if (characterToSwitchId != "") 
+            if (characterToSwitchId != "")
             {
                 // Find specified character.
                 var ally = PlayerVariables.Allies.FirstOrDefault(x => x.ID == characterToSwitchId);
@@ -288,18 +287,14 @@ namespace Galatime
         {
             if (@event.IsActionPressed("game_attack")) CurrentCharacter?.Weapon.Attack(CurrentCharacter);
             if (@event.IsActionPressed("game_dodge")) CurrentCharacter?.Dodge();
-            if (@event.IsActionPressed("game_inventory"))
-            {
-                PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;
-                CanMove = !PlayerGui.InventoryOpen;
-            }
+            if (@event.IsActionPressed("game_inventory")) PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;
             if (@event.IsActionPressed("game_potion_wheel")) PlayerGui.CallConsumableWheel();
             if (@event.IsActionPressed("game_character_wheel")) PlayerGui.CallCharacterWheel();
 
 
             // Checking for input for abilities.
             for (int i = 0; i < PlayerVariables.Abilities.Length; i++) if (@event.IsActionPressed($"game_ability_{i + 1}")) CurrentCharacter?.UseAbility(i);
-        }   
+        }
 
         public void StartDialog(string id) => PlayerGui.DialogBox.StartDialog(id);
     }
