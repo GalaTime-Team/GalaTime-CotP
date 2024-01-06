@@ -83,9 +83,9 @@ scale_curve = SubResource("CurveTexture_xhcs6")
 hue_variation_max = 0.08
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_yqumt"]
-vertices = PackedVector2Array(1296, -336, 1296, 912, 1072, 912, 1072, 512, -1232, -336, 432, 336, 432, 512, -1136, 336, -1232, 912, -1136, 912)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 0, 3, 5), PackedInt32Array(3, 6, 5), PackedInt32Array(4, 5, 7), PackedInt32Array(8, 4, 7, 9)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-1280, -384, 1344, -384, 1344, 960, 1024, 960, 1024, 560, 384, 560, 384, 384, -1088, 384, -1088, 960, -1280, 960, -1280, 384)])
+vertices = PackedVector2Array(1296, -336, 1296, 912, 1072, 912, 1072, 608, 432, 608, 432, 336, -1232, -336, -1136, 336, -1232, 912, -1136, 912)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(3, 4, 5, 0), PackedInt32Array(6, 0, 5, 7), PackedInt32Array(8, 6, 7, 9)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-1280, -384, 1344, -384, 1344, 960, 1024, 960, 1024, 656, 384, 656, 384, 384, -1088, 384, -1088, 960, -1280, 960, -1280, 384)])
 source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 48.0
 

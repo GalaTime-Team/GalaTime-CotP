@@ -2,6 +2,7 @@ using Galatime.Global;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Galatime;
@@ -41,7 +42,7 @@ public class Cheat
         CheatAction?.Invoke(Active, inputText);
     }
 
-    public Cheat(string id = null, string name = null, string description = null, string activationAction = null, Action<bool, string> cheatAction = null, CheatType type = CheatType.Button, bool active = false)
+    public Cheat(string id = "", string name = null, string description = null, string activationAction = null, Action<bool, string> cheatAction = null, CheatType type = CheatType.Button, bool active = false)
     {
         (Id, Name, Description, ActivationAction, CheatAction, Type, Active) = (id, name, description, activationAction, cheatAction, type, active);
         if (Type == CheatType.Separator) Name = $"[center][color=gray]-- {Name} --[/color][/center]";
@@ -63,6 +64,7 @@ public partial class CheatsMenu : Control
     public Button CheatButton;
     public VBoxContainer ListContainer;
     public LineEdit InputText;
+    public LineEdit InputSearch;
     public RichTextLabel LogLabel;
     public Button MinimizeButton;
     public Control Window;
@@ -71,7 +73,7 @@ public partial class CheatsMenu : Control
     #region Variables
     /// <summary> The list of cheats that registered. </summary>
     public List<Cheat> Cheats { get; private set; } = new();
-    public List<Control> CheatsControls { get; private set; } = new();
+    public List<Control> CheatButtons { get; private set; } = new();
 
     private int SameLogsCount = 0;
     private string PreviousLogText = "";
@@ -92,8 +94,9 @@ public partial class CheatsMenu : Control
             // Pause only when this cheat is active.
             GetTree().Paused = shown && GetCheat("pause_when_cheats_active").Active;
 
+            InputSearch.Clear(); // To clear previous search results.
             // Focus on the first cheat.
-            CheatsControls[0].GrabFocus();
+            CheatButtons[0].GrabFocus();
         }
     }
     #endregion
@@ -118,12 +121,14 @@ public partial class CheatsMenu : Control
         CheatButton = GetNode<Button>("Window/Button");
         ListContainer = GetNode<VBoxContainer>("Window/VSplitContainer/ScrollContainer/ListContainer");
         InputText = GetNode<LineEdit>("Window/InputText");
+        InputSearch = GetNode<LineEdit>("Window/InputSearch");
         LogLabel = GetNode<RichTextLabel>("Window/VSplitContainer/LogLabel");
         MinimizeButton = GetNode<Button>("MinimizeButton");
         Window = GetNode<Control>("Window");
         #endregion
 
         MinimizeButton.Pressed += () => Shown = !Shown;
+        InputSearch.TextChanged += (string s) => CheatSearchUpdate(s);
 
         // Register basic cheats.
         RegisterCheat(
@@ -218,7 +223,7 @@ public partial class CheatsMenu : Control
         var cheatButton = CheatButton.Duplicate() as Button;
 
         ListContainer.AddChild(cheatButton);
-        CheatsControls.Add(cheatButton);
+        CheatButtons.Add(cheatButton);
 
         cheatButton.Visible = true;
 
@@ -237,7 +242,7 @@ public partial class CheatsMenu : Control
 
     public void UpdateCheatLabel(int index, string text)
     {
-        var cheatButton = CheatsControls[index];
+        var cheatButton = CheatButtons[index];
 
         // Getting the label.
         var cheatLabel = cheatButton.GetChild(0) as RichTextLabel;
@@ -261,10 +266,45 @@ public partial class CheatsMenu : Control
         for (int i = 0; i < Cheats.Count; i++)
         {
             var cheat = Cheats[i];
-            if (CheatsControls.Count <= i) CreateCheatLabel(CheatString(cheat), cheat, cheat.Type != Cheat.CheatType.Separator);
+            if (CheatButtons.Count <= i) CreateCheatLabel(CheatString(cheat), cheat, cheat.Type != Cheat.CheatType.Separator);
             UpdateCheatLabel(i, CheatString(cheat));
         }
+    }
 
+    /// <summary> Performs a cheat search update based on the specified keyword. </summary>
+    /// <param name="keyword"> The keyword to search for. </param>
+    public void CheatSearchUpdate(string keyword)
+    {
+        // Counting the number of matches.
+        var listOfMatches = new List<string>();
+
+        for (int i = 0; i < Cheats.Count; i++)
+        {
+            // Since these lists have the same length, we can use the same index for both.
+            var cheat = Cheats[i];
+            var button = CheatButtons[i];
+
+            button.Visible = true;
+
+            // Search for the keyword by checking if it contains all characters of the id.
+            var normalizedKeyword = keyword.Replace(" ", "").ToLower();
+            var containsAllCharacters = normalizedKeyword.All(c => cheat.Id.ToLower().Contains(c));
+
+            // Hide button if it doesn't match with the requirements.
+            if (!containsAllCharacters) button.Visible = false;
+            else listOfMatches.Add(cheat.Id);
+        }
+
+        listOfMatches.RemoveAll(x => string.IsNullOrWhiteSpace(x)); // Remove empty strings.
+
+        // No matches found case.
+        if (listOfMatches.Count == 0)
+        {
+            Log("No matches found", LogLevel.Warning);
+            return;
+        }
+
+        Log($"Cheat search: {string.Join(", ", listOfMatches)}", LogLevel.Result);
     }
 
     /// <summary> Parse cheat arguments. If failed it shows an error in cheats menu log. </summary>

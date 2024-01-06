@@ -14,7 +14,6 @@ mouse_filter = 2
 script = ExtResource("1_t1ur3")
 
 [node name="Window" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -46,10 +45,20 @@ grow_horizontal = 0
 mouse_filter = 1
 placeholder_text = "Input for input cheat"
 
+[node name="InputSearch" type="LineEdit" parent="Window"]
+layout_mode = 2
+offset_left = 824.0
+offset_top = 104.0
+offset_right = 1136.0
+offset_bottom = 135.0
+grow_horizontal = 0
+mouse_filter = 1
+placeholder_text = "Search for cheat"
+
 [node name="VSplitContainer" type="VSplitContainer" parent="Window"]
 layout_mode = 2
 offset_left = 824.0
-offset_top = 112.0
+offset_top = 144.0
 offset_right = 1136.0
 offset_bottom = 632.0
 focus_mode = 2
@@ -121,7 +130,7 @@ offset_bottom = 54.0
 grow_horizontal = 0
 mouse_filter = 1
 bbcode_enabled = true
-text = "[center][color=green]Cheats is active :)[/color]
+text = "[center][color=green]Cheats are active :)[/color]
 [color=dark_slate_gray]Use [color=green]:)[/color] button to toggle this window
 "
 fit_content = true
