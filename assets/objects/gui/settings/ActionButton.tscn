@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2fxh5bfrh6wv"]
+
+[ext_resource type="Script" path="res://assets/scripts/gui/settings/ActionButton.cs" id="1_g6jqh"]
+
+[node name="ActionButton" type="Button"]
+offset_right = 112.0
+offset_bottom = 16.0
+toggle_mode = true
+text = "NO BIND"
+script = ExtResource("1_g6jqh")
+ActionName = "cheats_menu"

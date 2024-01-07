@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="1_egyl8"]
 [ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://sprites/tilesets/dreamworld-floor.png" id="1_fvkei"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://sprites/particles/dream_world_particles.png" id="2_b24jw"]
-[ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="4_mp3x6"]
+[ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/player.tscn" id="4_mp3x6"]
 [ext_resource type="PackedScene" uid="uid://d4ati88xcg8y4" path="res://assets/objects/helpers/EnemySpawnPosition.tscn" id="4_wqiaw"]
 [ext_resource type="PackedScene" uid="uid://dddgyou1d5du5" path="res://assets/objects/EnemyRoom.tscn" id="5_pbbsp"]
 [ext_resource type="PackedScene" uid="uid://dig3jdhxm6cmi" path="res://assets/objects/DoorBlock.tscn" id="6_x3ocx"]

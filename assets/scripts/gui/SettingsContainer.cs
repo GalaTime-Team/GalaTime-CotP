@@ -9,7 +9,9 @@ namespace Galatime.UI;
 
 public partial class SettingsContainer : Control
 {
-    public VBoxContainer SettingsListContainer;
+    public const string ActionButtonScenePath = "res://assets/objects/gui/settings/ActionButton.tscn";
+
+    public ScrollContainer SettingsListContainer;
     private SettingsGlobals SettingsGlobals;
 
     /// <summary> The first control when UI is builded. </summary>
@@ -17,6 +19,7 @@ public partial class SettingsContainer : Control
 
     public VBoxContainer CategoriesList;
     public LabelButton CategoryButton;
+    public PackedScene ActionButtonScene;
 
     public List<Control> CategoryControls = new();
     public List<LabelButton> CategoryButtons = new();
@@ -25,8 +28,9 @@ public partial class SettingsContainer : Control
 
     public override void _Ready()
     {
-        SettingsListContainer = GetNode<VBoxContainer>("SettingsListContainer");
+        SettingsListContainer = GetNode<ScrollContainer>("ScrollContainer");
         SettingsGlobals = GetNode<SettingsGlobals>("/root/SettingsGlobals");
+        ActionButtonScene = GD.Load<PackedScene>(ActionButtonScenePath);
 
         CategoriesList = GetNode<VBoxContainer>("CategoriesList");
         CategoryButton = GetNode<LabelButton>("CategoriesList/CategoryButton");
@@ -86,20 +90,23 @@ public partial class SettingsContainer : Control
         {
             var field = fields[i];
             var settingAttribute = (SettingPropertyAttribute)Attribute.GetCustomAttribute(field, typeof(SettingPropertyAttribute));
-            var convertedName = settingAttribute != null ? settingAttribute.Name : field.Name;
 
-            BuildSetting(listControl, convertedName, obj, field.GetValue(obj), field.FieldType, field);
+            BuildSetting(listControl, settingAttribute, obj, field.GetValue(obj), field.FieldType, field);
         }
     }
 
-    public void BuildSetting(Control listControl, string name, object obj, object value, Type type, FieldInfo field)
+    public Attribute GetAttribute(FieldInfo field)
     {
-        // Create a label node to display the name of the field.
-        var label = new Label { Text = name };
+        return Attribute.GetCustomAttribute(field, typeof(SettingPropertyAttribute));
+    }
 
-        // Create a VBoxContainer node to hold the UI setting nodes.
-        var container = new HBoxContainer();
-        container.AddChild(label);
+    public void BuildSetting(Control listControl, SettingPropertyAttribute attribute, object obj, object value, Type type, FieldInfo field)
+    {
+        var convertedName = attribute != null ? attribute.Name : field.Name;
+
+        // Create a label node to display the name of the field.
+        var label = new Label { Text = convertedName, VerticalAlignment = VerticalAlignment.Bottom, CustomMinimumSize = new(0, 50) };
+        listControl.GetChild(0).AddChild(label);
 
         // Check the type of the field and create a corresponding UI node.
         if (type == typeof(double))
@@ -116,23 +123,36 @@ public partial class SettingsContainer : Control
             };
             slider.Value = (double)value;
             slider.ValueChanged += (value) => ValueChanged(value, obj, field);
-            container.AddChild(slider);
+            listControl.GetChild(0).AddChild(slider);
         }
         else if (type == typeof(bool))
         {
             var checkBox = new CheckButton() { ButtonPressed = (bool)value };
             checkBox.Toggled += (value) => ValueChanged(value, obj, field);
-            container.AddChild(checkBox);
+            listControl.GetChild(0).AddChild(checkBox);
             GD.Print($"CheckBox value: {checkBox.ButtonPressed}");
         }
+        else if (type == typeof(long))
+        {
+            var keybindAttribute = (KeybindSettingAttribute)Attribute.GetCustomAttribute(field, typeof(KeybindSettingAttribute));
+            if (keybindAttribute != null)
+            {
+                var actionButton = ActionButtonScene.Instantiate<ActionButton>();
 
-        // Add the container node to the scene tree as a child of this node.
-        listControl.AddChild(container);
+                actionButton.ActionName = keybindAttribute.ActionName;
+                actionButton.Key = (long)value;
+                actionButton.OnBound += (long key) => ValueChanged(key, obj, field);
+
+                // Add the container node to the scene tree as a child of this node.
+                listControl.GetChild(0).AddChild(actionButton);
+            }
+        }
     }
 
     // This function is called when any UI value is changed
     private void ValueChanged<T>(T value, object obj, FieldInfo field)
     {
+        GD.Print($"Value is changed {value}");
         field.SetValue(obj, value);
         SettingsGlobals.UpdateSettings();
     }
