@@ -1,8 +1,5 @@
-using Galatime;
-using Galatime.Global;
 using Galatime.Settings;
 using Godot;
-using System;
 using YamlDotNet.Serialization;
 
 namespace Galatime.Global;
@@ -60,12 +57,12 @@ public partial class SettingsGlobals : Node
     public void UpdateSettings()
     {
         // Audio volume
-        AudioServer.SetBusVolumeDb(0, (float)Settings.MasterVolume);
-        AudioServer.SetBusVolumeDb(1, (float)Settings.MusicVolume);
+        AudioServer.SetBusVolumeDb(0, (float)Settings.Audio.MasterVolume);
+        AudioServer.SetBusVolumeDb(1, (float)Settings.Audio.MusicVolume);
 
         // Discord RPC
         var DiscordController = GetNode<DiscordController>("/root/DiscordController");
-        if (Settings.DiscordActivityDisabled) DiscordController.Client.ClearPresence();
+        if (Settings.Misc.DiscordActivityDisabled) DiscordController.Client.ClearPresence();
         // Restoring the previous presence when not Discord RPC is not disabled.
         else DiscordController.CurrentRichPresence = DiscordController.CurrentRichPresence;
     }

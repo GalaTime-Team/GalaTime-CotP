@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dqivtp6qvx0xk"]
+[gd_scene load_steps=4 format=3 uid="uid://dqivtp6qvx0xk"]
 
 [ext_resource type="Script" path="res://assets/scripts/gui/SettingsContainer.cs" id="1_ks0k2"]
+[ext_resource type="PackedScene" uid="uid://dra0o6uwyaspw" path="res://assets/objects/gui/elements/LabelButton.tscn" id="2_exbrd"]
+[ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="3_at6gk"]
 
 [node name="SettingsContainer" type="Control"]
 layout_mode = 3
@@ -11,15 +13,39 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ks0k2")
 
-[node name="SettingsListContainer" type="VBoxContainer" parent="."]
+[node name="CategoriesList" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 21.0
+offset_bottom = -432.0
+grow_vertical = 2
+scale = Vector2(3, 3)
+
+[node name="CategoryButton" parent="CategoriesList" instance=ExtResource("2_exbrd")]
+visible = false
+custom_minimum_size = Vector2(36, 13)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_at6gk")
+Font = ExtResource("3_at6gk")
+
+[node name="Label" parent="CategoriesList/CategoryButton" index="0"]
+offset_left = -2.5
+offset_top = -6.5
+offset_right = 2.5
+offset_bottom = 6.5
+pivot_offset = Vector2(18, 6.5)
+theme_override_fonts/font = ExtResource("3_at6gk")
+
+[node name="SettingsListContainer" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 64.0
-offset_top = -520.0
-offset_right = -64.0
+offset_left = 128.0
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
 theme_override_constants/separation = 0
+
+[editable path="CategoriesList/CategoryButton"]

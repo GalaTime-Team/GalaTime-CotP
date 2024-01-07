@@ -11,11 +11,12 @@ public partial class LabelButton : Button
     [Export] public Color PressedColor = new(0.49f, 0.49f, 0.49f);
     [Export] public Color DisabledColor = new(0.4f, 0.4f, 0.4f);
     [Export] public float Speed = 0.2f;
+    [Export] public FontFile Font;
     private string buttonText = "BUTTON";
-    [Export(PropertyHint.MultilineText)] public string ButtonText 
+    [Export(PropertyHint.MultilineText)] public string ButtonText
     {
         get => buttonText;
-        set 
+        set
         {
             buttonText = value;
             if (Label != null) Label.Text = buttonText;
@@ -43,7 +44,6 @@ public partial class LabelButton : Button
     public override void _Ready()
     {
         Label = GetNode<Label>("Label");
-        Label.PivotOffset = Label.Size / 2;
 
         InitializeDefaults();
         InitializeAudios();
@@ -54,7 +54,22 @@ public partial class LabelButton : Button
     public override void _Draw()
     {
         Label?.AddThemeColorOverride("font_color", Disabled ? DisabledColor : DefaultColor);
-        if (Disabled && Label is not null) Label.Scale = DefaultScale;
+    }
+
+    public override void _Process(double delta)
+    {
+        if (Label != null)
+        {
+            if (Disabled) Label.Scale = DefaultScale;
+            Label.PivotOffset = Label.Size / 2;
+
+            CustomMinimumSize = Label.Size;
+            if (Font != null && GetThemeFont("font").GetFontName() != Font.GetFontName())
+            {
+                Label.AddThemeFontOverride("font", Font);
+                AddThemeFontOverride("font", Font);
+            }
+        }
     }
 
     private void InitializeDefaults()

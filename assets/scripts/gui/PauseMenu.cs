@@ -14,6 +14,7 @@ public partial class PauseMenu : Control
 
     // Windows
     public SettingsContainer SettingsContainer;
+    public Control SettingsContainerControl;
 
     // Buttons
     public Button ResumeButton;
@@ -80,7 +81,8 @@ public partial class PauseMenu : Control
         MusicPlayer = GetNode<AudioStreamPlayer>("MusicPlayer");
 
         // Windows
-        SettingsContainer = GetNode<SettingsContainer>("SettingsContainer");
+        SettingsContainerControl = GetNode<Control>("SettingsContainer");
+        SettingsContainer = GetNode<SettingsContainer>("SettingsContainer/SettingsContainer");
 
         // Buttons
         ResumeButton = ButtonsContainer.GetNode<Button>("ResumeButton");
@@ -113,7 +115,7 @@ public partial class PauseMenu : Control
             var levelManager = GetNode<LevelManager>("/root/LevelManager");
             levelManager.EndAudioCombat();
         };
-        SettingsButton.Pressed += () => OpenWindow(SettingsContainer, SettingsContainer.FirstControl);
+        SettingsButton.Pressed += () => OpenWindow(SettingsContainerControl, SettingsContainer.FirstControl);
     }
 
     public void OpenWindow(Control window, Control focusTo = null)

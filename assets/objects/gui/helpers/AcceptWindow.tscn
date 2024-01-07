@@ -57,37 +57,29 @@ theme_override_constants/separation = 56
 metadata/_edit_lock_ = true
 
 [node name="Yes" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_xlkhw")]
-custom_minimum_size = Vector2(64, 0)
+custom_minimum_size = Vector2(21, 14)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_0qgh5")
+Font = ExtResource("2_0qgh5")
 ButtonText = "YES"
 
 [node name="Label" parent="VBoxContainer/HBoxContainer/Yes" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
 offset_left = -10.5
-offset_top = -11.5
 offset_right = 10.5
-offset_bottom = 11.5
-grow_horizontal = 2
-pivot_offset = Vector2(10.5, 11.5)
+pivot_offset = Vector2(10.5, 7)
 text = "YES"
 
 [node name="No" parent="VBoxContainer/HBoxContainer" instance=ExtResource("3_xlkhw")]
-custom_minimum_size = Vector2(64, 0)
+custom_minimum_size = Vector2(14, 14)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_0qgh5")
+Font = ExtResource("2_0qgh5")
 ButtonText = "NO"
 
 [node name="Label" parent="VBoxContainer/HBoxContainer/No" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
 offset_left = -7.0
-offset_top = -11.5
 offset_right = 7.0
-offset_bottom = 11.5
-grow_horizontal = 2
-pivot_offset = Vector2(7, 11.5)
+pivot_offset = Vector2(7, 7)
 text = "NO"
 
 [node name="AcceptContainer" type="Control" parent="."]

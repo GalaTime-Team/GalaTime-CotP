@@ -20,7 +20,7 @@ public partial class DiscordController : Node
             currentRichPresence = value;
 
             var SettingsGlobals = GetNode<SettingsGlobals>("/root/SettingsGlobals");
-            if (!SettingsGlobals.Settings.DiscordActivityDisabled) Client.SetPresence(currentRichPresence);
+            if (!SettingsGlobals.Settings.Misc.DiscordActivityDisabled) Client.SetPresence(currentRichPresence);
         }
     }
 

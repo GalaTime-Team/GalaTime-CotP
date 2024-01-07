@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bqkuonmirsqx1"]
+[gd_scene load_steps=7 format=3 uid="uid://bqkuonmirsqx1"]
 
 [ext_resource type="PackedScene" uid="uid://dra0o6uwyaspw" path="res://assets/objects/gui/elements/LabelButton.tscn" id="1_a054u"]
 [ext_resource type="Script" path="res://assets/scripts/gui/PauseMenu.cs" id="1_a821v"]
+[ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="4_47f50"]
 [ext_resource type="PackedScene" uid="uid://dqivtp6qvx0xk" path="res://assets/objects/gui/Settings.tscn" id="4_wiy5c"]
 [ext_resource type="AudioStream" uid="uid://dkoptcipakjv0" path="res://assets/audios/soundtracks/galatime_settings.mp3" id="4_yqdgo"]
 
@@ -29,10 +30,17 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
 
-[node name="SettingsContainer" parent="." instance=ExtResource("4_wiy5c")]
+[node name="SettingsContainer" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -488.0
+offset_bottom = 648.0
+
+[node name="SettingsContainer" parent="SettingsContainer" instance=ExtResource("4_wiy5c")]
 layout_mode = 1
-offset_left = -328.0
-offset_right = -1152.0
+offset_left = 40.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
 mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="."]
@@ -43,86 +51,89 @@ offset_left = -256.0
 grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_8gdcs")
+metadata/_edit_lock_ = true
 
 [node name="ButtonsContainer" type="VBoxContainer" parent="Panel"]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -112.0
-offset_top = 64.0
-offset_bottom = 128.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 40.0
+offset_right = -128.0
+offset_bottom = -304.0
 grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(2, 2)
+theme_override_constants/separation = 8
 
 [node name="ResumeButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+custom_minimum_size = Vector2(44, 14)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_47f50")
+Font = ExtResource("4_47f50")
 
 [node name="Label" parent="Panel/ButtonsContainer/ResumeButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -21.0
-offset_top = -11.5
-offset_right = 21.0
-offset_bottom = 11.5
-grow_horizontal = 2
+offset_left = -22.0
+offset_top = -11.0
+offset_right = 22.0
+offset_bottom = 3.0
+pivot_offset = Vector2(22, 7)
 text = "Resume"
 
 [node name="SaveButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+custom_minimum_size = Vector2(28, 14)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_47f50")
+Font = ExtResource("4_47f50")
 
 [node name="Label" parent="Panel/ButtonsContainer/SaveButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
 offset_left = -14.0
-offset_top = -11.5
+offset_top = -11.0
 offset_right = 14.0
-offset_bottom = 11.5
-grow_horizontal = 2
+offset_bottom = 3.0
+pivot_offset = Vector2(14, 7)
 text = "Save"
 
 [node name="ReloadButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+custom_minimum_size = Vector2(70, 14)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_47f50")
+Font = ExtResource("4_47f50")
 
 [node name="Label" parent="Panel/ButtonsContainer/ReloadButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -14.0
-offset_top = -11.5
-offset_right = 14.0
-offset_bottom = 11.5
-grow_horizontal = 2
+offset_left = -35.0
+offset_top = -11.0
+offset_right = 35.0
+offset_bottom = 3.0
+pivot_offset = Vector2(35, 7)
 text = "Reload level"
 
 [node name="SettingsButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+custom_minimum_size = Vector2(52, 14)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_47f50")
+Font = ExtResource("4_47f50")
 
 [node name="Label" parent="Panel/ButtonsContainer/SettingsButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -14.0
-offset_top = -11.5
-offset_right = 14.0
-offset_bottom = 11.5
-grow_horizontal = 2
+offset_left = -26.0
+offset_top = -11.0
+offset_right = 26.0
+offset_bottom = 3.0
+pivot_offset = Vector2(26, 7)
 text = "Settings"
 
 [node name="ExitButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
+custom_minimum_size = Vector2(25, 14)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_47f50")
+Font = ExtResource("4_47f50")
 
 [node name="Label" parent="Panel/ButtonsContainer/ExitButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -12.5
-offset_top = -11.5
-offset_right = 12.5
-offset_bottom = 11.5
-grow_horizontal = 2
+offset_left = -12.0
+offset_top = -11.0
+offset_right = 13.0
+offset_bottom = 3.0
+pivot_offset = Vector2(12.5, 7)
 text = "Exit"
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]

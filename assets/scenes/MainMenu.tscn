@@ -244,6 +244,10 @@ mouse_filter = 2
 
 [node name="Settings" parent="SettingsMenuContainer" instance=ExtResource("3_fcpqw")]
 layout_mode = 1
+offset_left = 64.0
+offset_top = 88.0
+offset_right = -64.0
+offset_bottom = -64.0
 
 [node name="Label2" type="Label" parent="SettingsMenuContainer"]
 layout_mode = 1
@@ -313,6 +317,7 @@ focus_mode = 2
 theme_override_constants/separation = 10
 
 [node name="ViewSavesFolder" parent="StartMenuContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
+custom_minimum_size = Vector2(117, 23)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -328,14 +333,8 @@ grow_vertical = 0
 scale = Vector2(2, 2)
 
 [node name="Label" parent="StartMenuContainer/ViewSavesFolder" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -21.0
 offset_top = -11.5
-offset_right = 21.0
 offset_bottom = 11.5
-grow_horizontal = 2
 pivot_offset = Vector2(58.5, 11.5)
 text = "VIEW SAVES FOLDER"
 
@@ -389,88 +388,80 @@ layout_mode = 2
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 48.0
-offset_top = -28.0
+offset_top = -36.0
 offset_right = 204.0
-offset_bottom = 28.0
+offset_bottom = 11.0
 grow_vertical = 2
 scale = Vector2(2, 2)
+theme_override_constants/separation = 6
 
 [node name="StartButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(21, 13)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
 text = ""
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
+Font = ExtResource("2_nxd72")
 metadata/page = "start"
+metadata/_edit_lock_ = true
 
 [node name="Label" parent="MainMenuContainer/VBoxContainer/StartButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -10.5
-offset_top = -11.5
-offset_right = 10.5
-offset_bottom = 11.5
-grow_horizontal = 2
-pivot_offset = Vector2(10.5, 11.5)
+offset_left = -10.0
+offset_top = -6.5
+offset_right = 11.0
+offset_bottom = 6.5
+pivot_offset = Vector2(10.5, 6.5)
 theme_override_fonts/font = ExtResource("2_nxd72")
 text = "Play"
-horizontal_alignment = 1
 
 [node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/StartButton" index="1"]
 stream = ExtResource("6_8xiqm")
 
 [node name="SettingsButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(43, 13)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
 text = ""
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
+Font = ExtResource("2_nxd72")
 metadata/page = "settings"
+metadata/_edit_lock_ = true
 
 [node name="Label" parent="MainMenuContainer/VBoxContainer/SettingsButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
 offset_left = -21.5
-offset_top = -11.5
+offset_top = -6.5
 offset_right = 21.5
-offset_bottom = 11.5
-grow_horizontal = 2
-pivot_offset = Vector2(21.5, 11.5)
+offset_bottom = 6.5
+pivot_offset = Vector2(21.5, 6.5)
 theme_override_fonts/font = ExtResource("2_nxd72")
 text = "Settings"
-horizontal_alignment = 1
 
 [node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/SettingsButton" index="1"]
 stream = ExtResource("6_8xiqm")
 
 [node name="CreditsButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(37, 13)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
+Font = ExtResource("2_nxd72")
 metadata/page = "credits"
+metadata/_edit_lock_ = true
 
 [node name="Label" parent="MainMenuContainer/VBoxContainer/CreditsButton" index="0"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
 offset_left = -18.5
-offset_top = -11.5
+offset_top = -6.5
 offset_right = 18.5
-offset_bottom = 11.5
-grow_horizontal = 2
-pivot_offset = Vector2(18.5, 11.5)
+offset_bottom = 6.5
+pivot_offset = Vector2(18.5, 6.5)
 theme_override_fonts/font = ExtResource("2_nxd72")
 text = "Credits"
-horizontal_alignment = 1
 
 [node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/CreditsButton" index="1"]
 stream = ExtResource("6_8xiqm")
