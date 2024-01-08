@@ -54,7 +54,7 @@ public class BindsSettingsData
     public long Pause = (long)Godot.Key.B;
 
     [YamlMember(Alias = "character_wheel"), SettingProperty("Character wheel"), KeybindSetting("game_character_wheel")]
-    public long Jump = (long)Godot.Key.F;
+    public long CharacterWheel = (long)Godot.Key.F;
 
     [YamlMember(Alias = "potion_wheel"), SettingProperty("Potion wheel"), KeybindSetting("game_potion_wheel")]
     public long PotionWheel = (long)Godot.Key.G;

@@ -1,7 +1,6 @@
 using Galatime.Global;
 using Galatime.UI.Helpers;
 using Godot;
-using System;
 using System.Collections.Generic;
 
 namespace Galatime.UI;
@@ -89,8 +88,6 @@ public partial class MainMenu : Control
 
     public override void _Ready()
     {
-        ParseCMDLineArgs();
-
         #region Get nodes
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
@@ -130,9 +127,7 @@ public partial class MainMenu : Control
         InitializeMainMenuButtons();
         UpdateSaves();
 
-        GetViewport().GuiFocusChanged += guiFocusChanged;
         GalatimeGlobals.CheckSaves();
-
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
     }
 
@@ -154,24 +149,6 @@ public partial class MainMenu : Control
         SaveContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/SaveContainer.tscn");
         ViewSavesButton = GetNode<LabelButton>("StartMenuContainer/ViewSavesFolder");
         ViewSavesButton.Pressed += () => OS.ShellOpen(ProjectSettings.GlobalizePath(GalatimeConstants.SavesPath));
-    }
-
-    public void ParseCMDLineArgs()
-    {
-        if (GalatimeGlobals.CMDArgs.ContainsKey("save"))
-        {
-            PlayerVariables.CurrentSave = int.Parse(GalatimeGlobals.CMDArgs["save"]);
-
-            var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
-            globals.LoadScene("res://assets/scenes/Lobby.tscn");
-
-            return;
-        }
-    }
-
-    public void guiFocusChanged(Control control)
-    {
-        if (control != null) CurrentFocus = control;
     }
 
     public void UpdateSaves()
@@ -201,7 +178,7 @@ public partial class MainMenu : Control
             ViewSavesButton.FocusPrevious = playButton.GetPath();
 
             deleteButton.Pressed += () => DeleteSaveButtonInput(deleteButton);
-    
+
             instance.id = i + 1;
             if (i < saves.Count) instance.LoadData(saves[i]);
             else instance.LoadData(new());
@@ -212,7 +189,7 @@ public partial class MainMenu : Control
 
     public void PlayButtonPressed(int id)
     {
-        AnimationPlayer.Play("start");  
+        AnimationPlayer.Play("start");
 
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
         PlayerVariables.CurrentSave = id - 1;
@@ -230,17 +207,11 @@ public partial class MainMenu : Control
     {
         AcceptWindow.CallAccept((bool result) =>
         {
-            if (result) 
+            if (result)
             {
                 UpdateSaves();
             }
         }, "Do you really want to delete the save?", acceptColor: new Color(1, 0, 0), focus: button);
-    }
-
-    /// <summary> Handles event of main menu buttons being pressed </summary>
-    public void MainMenuButtonsPressed(string page)
-    {
-        SwitchPage(page);
     }
 
     public Tween GetTween() => GetTree().CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel(true);
@@ -346,7 +317,8 @@ public partial class MainMenu : Control
         if (DelayInteract.TimeLeft > 0) return;
         if (IsMainMenu && !AcceptWindow.Shown)
         {
-            AcceptWindow.CallAccept((bool result) => {
+            AcceptWindow.CallAccept((bool result) =>
+            {
                 if (result) GetTree().Quit();
             }, "Are you sure do you want to quit a game?", acceptColor: new Color(1, 0, 0), focus: (Control)MenuButtons[0]);
             IsMainMenu = true;

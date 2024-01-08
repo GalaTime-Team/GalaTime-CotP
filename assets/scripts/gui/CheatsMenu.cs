@@ -68,6 +68,7 @@ public partial class CheatsMenu : Control
     public RichTextLabel LogLabel;
     public Button MinimizeButton;
     public Control Window;
+    public Label FPSCounterLabel;
     #endregion
 
     #region Variables
@@ -86,6 +87,7 @@ public partial class CheatsMenu : Control
         get => shown;
         set
         {
+            if (!Activated) return; // Don't show cheats menu if cheats menu is not even activated.
             if (!WindowManager.Instance.ToggleWindow("cheats", Shown, () => { Shown = false; }, canOverlay: true)) return;
 
             shown = value;
@@ -97,6 +99,20 @@ public partial class CheatsMenu : Control
             InputSearch.Clear(); // To clear previous search results.
             // Focus on the first cheat.
             CheatButtons[0].GrabFocus();
+        }
+    }
+
+    private bool activated;
+    /// <summary> If the cheats menu is activated. Don't be confused with <see cref="Shown"/>, because activated means that cheats menu is functional and can be enabled. </summary>
+    public bool Activated
+    {
+        get => activated;
+        set
+        {
+            var enabled = GalatimeGlobals.CMDArgs.ContainsKey("cheats"); // Activate cheats only if cheats are defined in the command line.
+            activated = value && enabled;
+
+            Visible = activated;
         }
     }
     #endregion
@@ -125,7 +141,10 @@ public partial class CheatsMenu : Control
         LogLabel = GetNode<RichTextLabel>("Window/VSplitContainer/LogLabel");
         MinimizeButton = GetNode<Button>("MinimizeButton");
         Window = GetNode<Control>("Window");
+        FPSCounterLabel = GetNode<Label>("FPSCounterLabel");
         #endregion
+
+        Activated = true; // Try to activate cheats.
 
         MinimizeButton.Pressed += () => Shown = !Shown;
         InputSearch.TextChanged += (string s) => CheatSearchUpdate(s);
@@ -165,13 +184,15 @@ public partial class CheatsMenu : Control
 
     public override void _Process(double delta)
     {
+        FPSCounterLabel.Text = $"{Engine.GetFramesPerSecond()} FPS";
+
         // Show/hide the cheats menu by pressing the key.
         if (Input.IsActionJustPressed("cheats_menu")) Shown = !Shown;
 
         // Toggles the cheats by pressing the activation action.
         foreach (var cheat in Cheats)
         {
-            if (InputMap.HasAction(cheat.ActivationAction) && Input.IsActionJustPressed(cheat.ActivationAction))
+            if (InputMap.HasAction(cheat.ActivationAction) && Input.IsActionJustPressed(cheat.ActivationAction) && Activated)
                 ActivateCheat(cheat);
         }
     }

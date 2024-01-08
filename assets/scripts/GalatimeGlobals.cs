@@ -1,10 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
 using Galatime;
+using Galatime.Dialogue;
 using Godot;
 using Newtonsoft.Json;
-using Galatime.Dialogue;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 public sealed partial class GalatimeGlobals : Node
 {
@@ -43,20 +43,26 @@ public sealed partial class GalatimeGlobals : Node
         get
         {
             var arguments = new Dictionary<string, string>();
-            foreach (var argument in OS.GetCmdlineArgs())
+            var args = OS.GetCmdlineArgs();
+            for (var i = 0; i < args.Length; i++)
             {
-
-                if (argument.Find("=") > -1)
+                var argument = args[i];
+                // Skip the first argument, assuming it's the scene path.
+                if (i == 0) continue;
+                // Check if the argument starts with "--" indicating a named argument.
+                if (argument.StartsWith("--"))
                 {
-                    string[] keyValue = argument.Split("=");
-                    arguments[keyValue[0].TrimPrefix("--")] = keyValue[1];
-                }
-                else
-                {
-                    string[] keyValue = argument.Split("=");
-                    // Options without an argument will be present in the dictionary,
-                    // with the value set to an empty string.
-                    arguments[keyValue[0].TrimPrefix("--")] = "";
+                    var argName = argument[2..];
+                    // Check if there is a value provided for the named argument.
+                    if (i + 1 < args.Length && !args[i + 1].StartsWith("--"))
+                    {
+                        arguments[argName] = args[i + 1];
+                        i++; // Skip the next argument since it has been used as the value for the named argument.
+                    }
+                    else
+                    {
+                        arguments[argName] = ""; // If no value provided, set it to an empty string.
+                    }
                 }
             }
             return arguments;
@@ -206,7 +212,7 @@ public sealed partial class GalatimeGlobals : Node
         saveData.Add("equipped_abilities", abilities);
         // Allies
         var allies = new Godot.Collections.Array();
-        for (int i = 0; i < PlayerVariables.Allies.Length; i++) 
+        for (int i = 0; i < PlayerVariables.Allies.Length; i++)
         {
             var ally = PlayerVariables.Allies[i];
             if (!ally.IsEmpty) allies.Add(ally.ID);
