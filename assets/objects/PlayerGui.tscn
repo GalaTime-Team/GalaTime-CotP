@@ -57,6 +57,12 @@ _data = {
 "out": SubResource("3")
 }
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4rru6"]
+shader = ExtResource("17_glk77")
+shader_parameter/blur_amount = 3.0
+shader_parameter/signal_quality = 0.0
+shader_parameter/bottom_strenth = 3.0
+
 [sub_resource type="Shader" id="5"]
 code = "/*
     å‰²ã‚ŒãŸã‚¬ãƒ©ã‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ by ã‚ã‚‹ã‚‹ï¼ˆãã®ã‚‚ã¨ çµè¡£ï¼‰
@@ -114,12 +120,6 @@ shader = SubResource("5")
 shader_parameter/scale = 20.0
 shader_parameter/shift = 0.05
 shader_parameter/seed = 0.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4rru6"]
-shader = ExtResource("17_glk77")
-shader_parameter/blur_amount = 3.0
-shader_parameter/signal_quality = 0.0
-shader_parameter/bottom_strenth = 3.0
 
 [node name="PlayerGui" type="Control"]
 layout_mode = 3
@@ -294,17 +294,6 @@ alignment = 2
 visible = false
 layout_mode = 1
 
-[node name="Shader" type="ColorRect" parent="."]
-visible = false
-material = SubResource("6")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
 [node name="Version" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 3
@@ -376,3 +365,13 @@ layout_mode = 1
 visible = false
 z_index = 10
 layout_mode = 1
+
+[node name="Shader" type="ColorRect" parent="."]
+material = SubResource("6")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

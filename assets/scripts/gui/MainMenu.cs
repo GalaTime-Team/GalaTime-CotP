@@ -139,7 +139,7 @@ public partial class MainMenu : Control
             if (MenuButtons[i] is not LabelButton b) continue;
             if (i == 0) b.GrabFocus();
             var page = (string)b.GetMeta("page");
-            b.Pressed += () => MainMenuButtonsPressed(page);
+            b.Pressed += () => SwitchPage(page);
         }
     }
 
