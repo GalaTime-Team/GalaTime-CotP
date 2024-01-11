@@ -38,8 +38,6 @@ public partial class DialogBox : NinePatchRect
 
             // Move to the next phrase.
             NextPhrase(value);
-
-            GD.Print("Current phrase: ", currentPhrase);
         }
     }
 
@@ -77,7 +75,6 @@ public partial class DialogBox : NinePatchRect
         if (dialog is not null) StartDialog(dialog);
         else
         {
-            GD.PrintErr("DIALOG: dialog " + id + " is not exist");
             EndDialog();
         }
     }

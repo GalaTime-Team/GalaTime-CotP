@@ -1,4 +1,4 @@
-[gd_scene load_steps=85 format=3 uid="uid://sghow503dc62"]
+[gd_scene load_steps=86 format=3 uid="uid://sghow503dc62"]
 
 [ext_resource type="Script" path="res://assets/scripts/test/TestCharacter.cs" id="1_tr0ur"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_lttlj"]
@@ -66,31 +66,37 @@
 [sub_resource type="Resource" id="Resource_y04wb"]
 script = ExtResource("2_lttlj")
 StatsNames = [1, 2, 3, 5, 6, 7, 8]
-StatsValues = [50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
+StatsValues = [1.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
 
 [sub_resource type="Resource" id="Resource_eg1xe"]
 script = ExtResource("3_r3t0n")
 InitializerElement = "Aqua"
 
-[sub_resource type="Gradient" id="Gradient_o86cb"]
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_k3r00"]
+particles_animation = true
+particles_anim_h_frames = 8
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_gu840"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_sklvs"]
-gradient = SubResource("Gradient_o86cb")
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_tt8d5"]
+gradient = SubResource("Gradient_gu840")
 
-[sub_resource type="Curve" id="Curve_kuvvv"]
+[sub_resource type="Curve" id="Curve_8ss0j"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_t2hhc"]
-curve = SubResource("Curve_kuvvv")
+[sub_resource type="CurveTexture" id="CurveTexture_p463s"]
+curve = SubResource("Curve_8ss0j")
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_i5or6"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ciwof"]
 gravity = Vector3(0, 0, 0)
-scale_min = 32.0
-scale_max = 32.0
-scale_curve = SubResource("CurveTexture_t2hhc")
-color_ramp = SubResource("GradientTexture2D_sklvs")
+scale_min = 4.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_p463s")
+color_ramp = SubResource("GradientTexture2D_tt8d5")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_r02rj"]
 radius = 30.0
@@ -525,8 +531,11 @@ Element = SubResource("Resource_eg1xe")
 Body = NodePath(".")
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_k3r00")
+position = Vector2(0, -30)
 emitting = false
-process_material = SubResource("ParticleProcessMaterial_i5or6")
+process_material = SubResource("ParticleProcessMaterial_ciwof")
+texture = ExtResource("4_85udj")
 lifetime = 0.3
 
 [node name="TargetController" parent="." instance=ExtResource("2_n0wm3")]
@@ -540,7 +549,7 @@ AnimationPlayerPath = NodePath("../Animation")
 y_sort_enabled = true
 position = Vector2(0, -30)
 scale = Vector2(4, 4)
-texture = ExtResource("6_55y0g")
+texture = ExtResource("4_85udj")
 hframes = 8
 
 [node name="Hand" type="Marker2D" parent="."]

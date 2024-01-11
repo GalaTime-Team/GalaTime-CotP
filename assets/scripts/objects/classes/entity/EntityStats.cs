@@ -100,13 +100,6 @@ public partial class EntityStats : Resource, IEnumerable<EntityStat>
             EntityStatType statType = StatsNames[i];
             Stats[statType] = new EntityStat(statType, (int)StatsValues[i]);
         }
-        
-        // GD.Print("Stats: ", StatsNames, StatsValues);
-        // var s = new StringBuilder();
-        // foreach(var stat in Stats) {
-        //     s.Append("Stat: " + stat.Key + " Value: " + stat.Value.Value + "\n");
-        // }
-        // GD.Print(s.ToString());
     }
 
     private void OnStatChanged(EntityStat stat) => OnStatsChanged?.Invoke(this);

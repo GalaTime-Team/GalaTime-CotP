@@ -33,6 +33,7 @@ public partial class PauseMenu : Control
         get => paused;
         set
         {
+            if (WindowManager.Instance.IsOpened("death")) return;
             if (!WindowManager.Instance.ToggleWindow("pause", Paused, () => Paused = false, canOverlay: true)) return;
             // Don't pause a game when an animation is playing.
             if (Tw?.IsRunning() == true) return;

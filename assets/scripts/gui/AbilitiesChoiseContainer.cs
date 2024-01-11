@@ -70,7 +70,6 @@ namespace Galatime
                     {
                         var ability = PlayerVariables.Abilities[i];
                         var choiceAbility = PlayerVariables.Abilities[id];
-                        GD.Print(" reloaded? " + ability.IsEmpty + " " + choiceAbility.IsEmpty);
                         if (!ability.IsEmpty && ability.ID == ChoiceId)
                         {
                             if (ability.IsFullyReloaded && choiceAbility.IsFullyReloaded)

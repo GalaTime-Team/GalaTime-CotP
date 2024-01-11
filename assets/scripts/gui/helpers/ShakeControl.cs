@@ -11,6 +11,8 @@ public partial class ShakeControl : Control
     /// <summary> The duration of the shake effect in seconds. </summary>
     [Export] public float Duration = 0.5f;
 
+    [Export] public Tween.TweenPauseMode pauseMode = Tween.TweenPauseMode.Bound;
+
     private Vector2 OriginalPosition;
     private Random Random;
 
@@ -25,7 +27,7 @@ public partial class ShakeControl : Control
     /// <summary> Start the one-time shake effect. Configured by Amount and Duration. </summary>
     public void Shake()
     {
-        var tween = GetTree().CreateTween();
+        var tween = GetTree().CreateTween().SetPauseMode(Tween.TweenPauseMode.Process);
 
         // Reset the position of the control
         Position = OriginalPosition;

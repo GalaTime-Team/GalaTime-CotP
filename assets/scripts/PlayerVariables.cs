@@ -250,7 +250,7 @@ public partial class PlayerVariables : Node
 
         var itm = item.Clone();
 
-        GD.Print($"ADD ITEM: {quantity}. {itm.Name}");
+        // GD.Print($"ADD ITEM: {quantity}. {itm.Name}");
 
         for (var i = 0; i < Inventory.Length; i++)
         {
@@ -262,7 +262,7 @@ public partial class PlayerVariables : Node
                 !existedItem.StackIsFull
             )
             {
-                GD.Print($"STACKABLE ITEM FOUND IN SLOT {i} ({existedItem.Name}). Adding {quantity}");
+                // GD.Print($"STACKABLE ITEM FOUND IN SLOT {i} ({existedItem.Name}). Adding {quantity}");
                 // Add quantity if find a similar item  
                 existedItem.Quantity += quantity;
                 if (quantity > item.StackSize) AddItem(itm, quantity - item.StackSize);
@@ -270,7 +270,7 @@ public partial class PlayerVariables : Node
             }
         }
 
-        GD.Print($"THIS'S NOT A STACKABLE OR ITEM DOESN'T EXIST ITEM. ADDING TO EMPTY SLOT");
+        // GD.Print($"THIS'S NOT A STACKABLE OR ITEM DOESN'T EXIST ITEM. ADDING TO EMPTY SLOT");
 
         // If there is no stackable item, then add it to any free slot
         for (int i = 0; i < Inventory.Length; i++)
@@ -293,7 +293,7 @@ public partial class PlayerVariables : Node
                     if (quantity > itm.StackSize) AddItem(itm, quantity - itm.StackSize);
                 }
 
-                GD.Print($"ADDING ITEM TO SLOT {i} ({existedItem.Name}). Adding {quantity}");
+                // GD.Print($"ADDING ITEM TO SLOT {i} ({existedItem.Name}). Adding {quantity}");
 
                 return;
             }

@@ -6,9 +6,14 @@ namespace Galatime.Global;
 
 public partial class SettingsGlobals : Node
 {
+    public static SettingsGlobals Instance { get; private set; }
     public static SettingsData Settings = new();
 
-    public override void _Ready() => LoadSettings();
+    public override void _Ready()
+    {
+        Instance = this;
+        LoadSettings();
+    }
 
     /// <summary> Loads the settings from the settings.yml file. </summary>
     /// <returns> As option, returns loaded settings, otherwise use static type to get settings. </returns>

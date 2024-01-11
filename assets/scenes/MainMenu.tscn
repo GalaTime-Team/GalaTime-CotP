@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dno0k3g6k4twv"]
+[gd_scene load_steps=29 format=3 uid="uid://dno0k3g6k4twv"]
 
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="1_5fg5f"]
 [ext_resource type="Script" path="res://assets/scripts/gui/MainMenu.cs" id="1_ibgb5"]
@@ -174,19 +174,19 @@ _data = {
 "start": SubResource("Animation_xdh61")
 }
 
-[sub_resource type="Gradient" id="Gradient_lokjq"]
+[sub_resource type="Gradient" id="Gradient_4ypj7"]
 offsets = PackedFloat32Array(0, 0.179487, 1)
 colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_ggaop"]
-gradient = SubResource("Gradient_lokjq")
+gradient = SubResource("Gradient_4ypj7")
 
-[sub_resource type="Curve" id="Curve_devbq"]
+[sub_resource type="Curve" id="Curve_p4ref"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.241935, 1), 0.0, 0.0, 0, 0, Vector2(0.854839, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="CurveTexture" id="CurveTexture_nicso"]
-curve = SubResource("Curve_devbq")
+curve = SubResource("Curve_p4ref")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ym4fn"]
 particle_flag_disable_z = true
@@ -200,6 +200,20 @@ color = Color(0.823529, 0.6, 1, 1)
 color_ramp = SubResource("GradientTexture1D_ggaop")
 hue_variation_max = 0.07
 
+[sub_resource type="Gradient" id="Gradient_lokjq"]
+offsets = PackedFloat32Array(0, 0.179487, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_vbadq"]
+gradient = SubResource("Gradient_lokjq")
+
+[sub_resource type="Curve" id="Curve_devbq"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.241935, 1), 0.0, 0.0, 0, 0, Vector2(0.854839, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_5gm2n"]
+curve = SubResource("Curve_devbq")
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_abecs"]
 particle_flag_disable_z = true
 emission_shape = 3
@@ -207,8 +221,8 @@ emission_box_extents = Vector3(1500, 1500, 0)
 gravity = Vector3(0, 10, 0)
 scale_min = 4.0
 scale_max = 4.0
-scale_curve = SubResource("CurveTexture_nicso")
-color_ramp = SubResource("GradientTexture1D_ggaop")
+scale_curve = SubResource("CurveTexture_5gm2n")
+color_ramp = SubResource("GradientTexture1D_vbadq")
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -317,7 +331,7 @@ focus_mode = 2
 theme_override_constants/separation = 10
 
 [node name="ViewSavesFolder" parent="StartMenuContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(117, 23)
+custom_minimum_size = Vector2(84, 14)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -331,12 +345,7 @@ offset_bottom = -43.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(2, 2)
-
-[node name="Label" parent="StartMenuContainer/ViewSavesFolder" index="0"]
-offset_top = -11.5
-offset_bottom = 11.5
-pivot_offset = Vector2(58.5, 11.5)
-text = "VIEW SAVES FOLDER"
+ButtonText = "View save file"
 
 [node name="CameraTransition" type="Camera2D" parent="StartMenuContainer"]
 position = Vector2(580, -632)
@@ -396,7 +405,7 @@ scale = Vector2(2, 2)
 theme_override_constants/separation = 6
 
 [node name="StartButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(21, 13)
+custom_minimum_size = Vector2(27, 13)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
@@ -404,17 +413,18 @@ text = ""
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
 Font = ExtResource("2_nxd72")
+ButtonText = "Start"
 metadata/page = "start"
 metadata/_edit_lock_ = true
 
 [node name="Label" parent="MainMenuContainer/VBoxContainer/StartButton" index="0"]
-offset_left = -10.0
+offset_left = -13.5
 offset_top = -6.5
-offset_right = 11.0
+offset_right = 13.5
 offset_bottom = 6.5
-pivot_offset = Vector2(10.5, 6.5)
+pivot_offset = Vector2(13.5, 6.5)
 theme_override_fonts/font = ExtResource("2_nxd72")
-text = "Play"
+text = "Start"
 
 [node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/StartButton" index="1"]
 stream = ExtResource("6_8xiqm")
@@ -428,6 +438,7 @@ text = ""
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
 Font = ExtResource("2_nxd72")
+ButtonText = "Settings"
 metadata/page = "settings"
 metadata/_edit_lock_ = true
 
@@ -451,6 +462,7 @@ theme_override_fonts/font = ExtResource("2_nxd72")
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
 Font = ExtResource("2_nxd72")
+ButtonText = "Credits"
 metadata/page = "credits"
 metadata/_edit_lock_ = true
 
@@ -635,7 +647,6 @@ stream = ExtResource("6_p1ru6")
 [node name="AudioStreamPlayerWhoosh" type="AudioStreamPlayer" parent="."]
 autoplay = true
 
-[editable path="StartMenuContainer/ViewSavesFolder"]
 [editable path="MainMenuContainer/VBoxContainer/StartButton"]
 [editable path="MainMenuContainer/VBoxContainer/SettingsButton"]
 [editable path="MainMenuContainer/VBoxContainer/CreditsButton"]

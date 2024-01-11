@@ -19,8 +19,8 @@ public partial class SelectWheel : Control
     public Tween Tween;
 
     public Control[] Placeholders;
-
     public string[] Names;
+    public bool[] Disabled;
     #endregion
 
     #region Variables
@@ -65,7 +65,7 @@ public partial class SelectWheel : Control
         }
         WheelSegments.Clear();
 
-        GD.Print($"Rebuilding wheel with {ItemCount} items. Names count: {Names.Length}, placeholders count: {Placeholders.Length}");
+        // GD.Print($"Rebuilding wheel with {ItemCount} items. Names count: {Names.Length}, placeholders count: {Placeholders.Length}");
 
         WheelSegmentScene = GD.Load<PackedScene>("res://assets/objects/gui/WheelSegment.tscn");
         for (var i = 0; i < ItemCount; i++)
@@ -94,15 +94,15 @@ public partial class SelectWheel : Control
             // Set the name of the segment when segment hovered.
             segment.Hover += (bool entered) => SetName(segment.SegmentName, entered);
 
+            var disabled = Disabled[i];
+            if (disabled) segment.Disabled = true;
+
             // Adding the segment to the list and to the wheel.
             AddChild(segment);
             WheelSegments.Add(segment);
 
             // Play the animation of appearing.
             segment.Shown = true;
-
-            // Logging statement for debugging.
-            GD.Print("Segment added: " + segment.SegmentName);
 
             // Add the placeholders and names to the segments.
             var s = WheelSegments[i];
@@ -135,7 +135,8 @@ public partial class SelectWheel : Control
     /// <param name="placeholders"> The control placeholders of the items in the wheel. It must be in the same order as the names. </param>
     /// <param name="names"> The names of the items in the wheel. </param>
     /// <param name="callback"> The callback to be called when the wheel is closed. </param>
-    public void CallWheel(string id, int size, Control[] placeholders, string[] names, Action<int> callback)
+    /// <param name="disabled"></param>
+    public void CallWheel(string id, int size, Control[] placeholders, string[] names, Action<int> callback, bool[] disabled)
     {
         ItemCount = size;
         if (CheckSize(placeholders, names)) return;
@@ -160,6 +161,7 @@ public partial class SelectWheel : Control
 
         Placeholders = placeholders;
         Names = names;
+        Disabled = disabled;
         CurrentWheelId = id;
 
         // Rebuild the wheel segments.

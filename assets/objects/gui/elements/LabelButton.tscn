@@ -15,6 +15,7 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ycqrr"]
 
 [node name="LabelButton" type="Button"]
+custom_minimum_size = Vector2(42, 14)
 offset_right = 75.0
 offset_bottom = 23.0
 mouse_filter = 1
@@ -42,7 +43,7 @@ offset_right = 21.0
 offset_bottom = 7.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(37.5, 11.5)
+pivot_offset = Vector2(21, 7)
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.875, 0.875, 0.875, 1)
 theme_override_fonts/font = ExtResource("1_ix5nb")

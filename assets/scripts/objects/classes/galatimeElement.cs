@@ -57,12 +57,6 @@ public partial class GalatimeElement : Resource
                 Name = e.Name;
                 Description = e.Description;
                 DamageMultipliers = e.DamageMultipliers;
-
-                GD.Print($"Name: {Name}, Description: {Description}");
-            }
-            else
-            {
-                GD.Print("Element is not out.");
             }
         }
     }
@@ -86,7 +80,6 @@ public partial class GalatimeElement : Resource
         // Use the standard multiplier if no element against this element is found.
         if (!DamageMultipliers.ContainsKey(e.Name))
         {
-            GD.Print("No element is found, the standard multiplier will be used (1x)");
             result.Damage = amount;
             return result;
         }

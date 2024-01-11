@@ -1,0 +1,409 @@
+[gd_scene load_steps=19 format=3 uid="uid://dv75frnqnpr4b"]
+
+[ext_resource type="Script" path="res://assets/scripts/gui/DeathScreenContainer.cs" id="1_u1e2m"]
+[ext_resource type="PackedScene" uid="uid://n5k4by4v4dnf" path="res://assets/objects/gui/helpers/TypingLabel.tscn" id="2_cfoaf"]
+[ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="3_bqjxg"]
+[ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="3_lpba1"]
+[ext_resource type="PackedScene" uid="uid://bn3iju7bii6tj" path="res://assets/objects/gui/helpers/ShakeControl.tscn" id="3_q3jay"]
+[ext_resource type="PackedScene" uid="uid://dra0o6uwyaspw" path="res://assets/objects/gui/elements/LabelButton.tscn" id="7_vsvb4"]
+[ext_resource type="AudioStream" uid="uid://dxot4p46ppxl4" path="res://assets/audios/sounds/glass_shatter.mp3" id="8_0rw0v"]
+[ext_resource type="AudioStream" uid="uid://bhx27ssjujvi8" path="res://assets/audios/soundtracks/death.mp3" id="9_cchu8"]
+
+[sub_resource type="Animation" id="Animation_5yj56"]
+resource_name = "death"
+length = 20.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Background:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(2, 3, 6, 15),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 0.498039), Color(0, 0, 0, 0.498039), Color(0, 0, 0, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AudioStreamPlayer:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.1),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MusicAudio:playing")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(-0.1, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ShakeControl")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"Shake"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DeathText")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [""],
+"method": &"StartTyping"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Label:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(2, 4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Particles:emitting")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Particles:emitting")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 1,
+"values": []
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("ShakeControl:visible")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_pgyce"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Particles:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Background:color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Label:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ShakeControl:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1cxex"]
+_data = {
+"RESET": SubResource("Animation_pgyce"),
+"death": SubResource("Animation_5yj56")
+}
+
+[sub_resource type="Shader" id="5"]
+code = "/*
+    å‰²ã‚ŒãŸã‚¬ãƒ©ã‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ by ã‚ã‚‹ã‚‹ï¼ˆãã®ã‚‚ã¨ çµè¡£ï¼‰
+    Broken Glass Effect Shader by @arlez80
+
+    MIT License
+*/
+shader_type canvas_item;
+render_mode unshaded;
+
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+
+uniform float scale = 20.0;
+uniform float shift = 0.05;
+uniform float seed = 0.0;
+
+vec2 random( vec2 pos )
+{ 
+    return fract(
+        sin(
+            vec2(
+                dot(pos, vec2(12.9898,78.233))
+            ,    dot(pos, vec2(-148.998,-65.233))
+            )
+        ) * 43758.5453
+    );
+}
+
+void fragment( )
+{
+    vec2 v = UV * scale + vec2( seed, seed );
+    vec2 v_floor = floor( v );
+    vec2 v_fract = fract( v );
+
+    vec2 min_p = vec2( 0.0, 0.0 );
+    float min_dist = 2.0;
+
+    for( int y = -1; y <= 1; y ++ ) {
+        for( int x = -1; x <= 1; x ++ ) {
+            vec2 n = vec2( float( x ), float( y ) );
+            vec2 p = random( v_floor + n );
+            float d = distance( v_fract, p + n );
+
+            min_p = mix( min_p, p, float( d < min_dist ) );
+            min_dist = min( min_dist, d );
+        }
+    }
+
+    // thanks advice to reddit user u/e344fde6bf
+    COLOR = textureLod( SCREEN_TEXTURE, SCREEN_UV + min_p * shift, 0.0 );
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y2abj"]
+shader = SubResource("5")
+shader_parameter/scale = 20.0
+shader_parameter/shift = 0.05
+shader_parameter/seed = 0.0
+
+[sub_resource type="Gradient" id="Gradient_4ypj7"]
+offsets = PackedFloat32Array(0, 0.179487, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ggaop"]
+gradient = SubResource("Gradient_4ypj7")
+
+[sub_resource type="Curve" id="Curve_p4ref"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.241935, 1), 0.0, 0.0, 0, 0, Vector2(0.854839, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_nicso"]
+curve = SubResource("Curve_p4ref")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rl6pf"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1500, 1500, 0)
+gravity = Vector3(0, 10, 0)
+scale_min = 4.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_nicso")
+color_ramp = SubResource("GradientTexture1D_ggaop")
+
+[node name="DeathScreenContainer" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_u1e2m")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_1cxex")
+}
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="ShakeControl" parent="." instance=ExtResource("3_q3jay")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+Amount = 20.0
+Duration = 2.0
+pauseMode = 2
+
+[node name="ShatterShader" type="ColorRect" parent="ShakeControl"]
+material = SubResource("ShaderMaterial_y2abj")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -192.0
+offset_top = -192.0
+offset_right = 256.0
+offset_bottom = 184.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Particles" type="GPUParticles2D" parent="."]
+modulate = Color(0.392157, 0, 0, 1)
+position = Vector2(632, 448)
+emitting = false
+amount = 2000
+process_material = SubResource("ParticleProcessMaterial_rl6pf")
+lifetime = 10.0
+visibility_rect = Rect2(-5000, -5000, 10000, 10000)
+local_coords = true
+
+[node name="DeathText" parent="." instance=ExtResource("2_cfoaf")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -108.0
+offset_right = -107.0
+offset_bottom = 137.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(3, 3)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("3_lpba1")
+text = "[center]The heart is fragile, just like your life."
+scroll_active = false
+autowrap_mode = 2
+visible_characters = 0
+visible_ratio = 0.0
+TypingSpeed = 0.06
+PunctuationDelay = 0.3
+
+[node name="ChoiceButtonsContainer" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -296.0
+offset_top = 108.0
+offset_right = -99.0
+offset_bottom = 122.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(3, 3)
+
+[node name="YesButton" parent="ChoiceButtonsContainer" instance=ExtResource("7_vsvb4")]
+custom_minimum_size = Vector2(52, 14)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_bqjxg")
+HoverScale = Vector2(1.2, 1.2)
+Font = ExtResource("3_bqjxg")
+ButtonText = "Continue"
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="ChoiceButtonsContainer/YesButton" index="0"]
+offset_left = -26.0
+offset_right = 26.0
+pivot_offset = Vector2(26, 7)
+text = "Continue"
+
+[node name="Label" type="Label" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -96.0
+offset_top = -156.0
+offset_right = -33.0
+offset_bottom = -142.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(3, 3)
+theme_override_fonts/font = ExtResource("3_bqjxg")
+text = "GAME OVER"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_0rw0v")
+
+[node name="MusicAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_cchu8")
+
+[editable path="ChoiceButtonsContainer/YesButton"]

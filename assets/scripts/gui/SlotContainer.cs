@@ -83,7 +83,7 @@ public partial class SlotContainer : GridContainer
             if (@mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
             {
                 dragItem(slot);
-                GD.Print("get input");
+                // GD.Print("get input");
             }
         }
     }
@@ -92,7 +92,7 @@ public partial class SlotContainer : GridContainer
         var inventoryItem = PlayerVariables.Inventory[slot];
         var draggedItem = dragPreview.DraggedItem;
         tooltip.Hide();
-        GD.Print($"CURRENT PRESSED INDEX: {slot}. Dragged item is empty: {draggedItem.IsEmpty}, Inventory item is empty: {inventoryItem.IsEmpty} (Quantity: {inventoryItem.Quantity}, ID: {inventoryItem.ID})");
+        // GD.Print($"CURRENT PRESSED INDEX: {slot}. Dragged item is empty: {draggedItem.IsEmpty}, Inventory item is empty: {inventoryItem.IsEmpty} (Quantity: {inventoryItem.Quantity}, ID: {inventoryItem.ID})");
         if (draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {
             dragPreview.DraggedItem = PlayerVariables.RemoveItem(slot);

@@ -38,6 +38,25 @@ public partial class WheelSegment : TextureRect
         }
     }
 
+    private bool shown;
+    /// <summary> If the wheel segment is shown. Changing the shown property will also play the animation. </summary>
+    public bool Shown
+    {
+        get => shown;
+        set
+        {
+            shown = value;
+            SetTween();
+
+            if (!shown) Button.Disabled = true;
+            TweenOffset(shown ? FromOffset : InitialOffset, shown ? InitialOffset : FromOffset);
+            TweenColor(shown ? TransparentColor : Disabled ? DisabledColor : SelectedColor, shown ? Disabled ? DisabledColor : UnselectedColor : TransparentColor).Finished += () => {
+                if (shown) Button.Disabled = false;
+            };
+        }
+    }
+    public bool Disabled;
+
     private Tween Tween;
     #endregion
 
@@ -53,6 +72,7 @@ public partial class WheelSegment : TextureRect
     public Color SelectedColor = new(1f, 1f, 1f, 1f);
     public Color UnselectedColor = new(1f, 1f, 1f, 0.5f);
     public Color TransparentColor = new(1f, 1f, 1f, 0f);
+    public Color DisabledColor = new(1, 0, 0, 0.5f);
     #endregion
 
     public override void _Ready()
@@ -71,37 +91,24 @@ public partial class WheelSegment : TextureRect
         Button.FocusEntered += () => MouseAction();
         Button.MouseExited += () => MouseAction(false);
         Button.FocusExited += () => MouseAction(false);
-        Button.Pressed += () => Pressed?.Invoke();
+        Button.Pressed += () =>
+        {
+            if (Disabled) return;
+            Pressed?.Invoke();
+        };
     }
 
 
     public void MouseAction(bool entered = true)
     {
+        if (Disabled) return;
+
         Hover?.Invoke(entered);
         if (Button.Disabled) return;
         SetTween();
         TweenOffset(entered ? InitialOffset : FinalOffset, entered ? FinalOffset : InitialOffset);
         TweenColor(entered ? UnselectedColor : SelectedColor, entered ? SelectedColor : UnselectedColor);
         if (entered) Sound.Play();
-    }
-
-    private bool shown = false;
-    /// <summary> If the wheel segment is shown. Changing the shown property will also play the animation. </summary>
-    public bool Shown
-    {
-        get => shown;
-        set
-        {
-            shown = value;
-            SetTween();
-
-            if (!shown) Button.Disabled = true;
-
-            TweenOffset(shown ? FromOffset : InitialOffset, shown ? InitialOffset : FromOffset);
-            TweenColor(shown ? TransparentColor : UnselectedColor, shown ? UnselectedColor : TransparentColor).Finished += () => {
-                if (shown) Button.Disabled = false;
-            };
-        }
     }
 
     public MethodTweener TweenOffset(float from, float to) => Tween.TweenMethod(Callable.From<float>(x => Offset = x), from, to, TransitionDuration);

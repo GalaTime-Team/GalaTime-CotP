@@ -1,4 +1,4 @@
-[gd_scene load_steps=83 format=3 uid="uid://b3swrkwv16hh8"]
+[gd_scene load_steps=82 format=3 uid="uid://b3swrkwv16hh8"]
 
 [ext_resource type="Script" path="res://assets/scripts/test/TestCharacter.cs" id="1_bupbm"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ansg2"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://dc61rj5d7csf6" path="res://assets/objects/HumanoidDoll.tscn" id="3_njik4"]
 [ext_resource type="Texture2D" uid="uid://cix3e7gxy5gsx" path="res://sprites/characters/arthur/attacking/left_combo1.png" id="4_4ipih"]
 [ext_resource type="Script" path="res://assets/scripts/objects/Hand.cs" id="5_fet1m"]
-[ext_resource type="Texture2D" uid="uid://5syk67gdgwia" path="res://sprites/characters/arthur/walking/arthur_left1.png" id="6_08mln"]
 [ext_resource type="Texture2D" uid="uid://dcqfpyclso664" path="res://sprites/characters/arthur/attacking/down_combo1.png" id="6_epprk"]
 [ext_resource type="Texture2D" uid="uid://bjokfsc7q3ven" path="res://sprites/characters/arthur/attacking/down_combo2.png" id="7_ck8yy"]
 [ext_resource type="Texture2D" uid="uid://cxx3mtncmpw7u" path="res://sprites/characters/arthur/attacking/down_combo3.png" id="8_04m00"]
@@ -71,7 +70,7 @@
 [sub_resource type="Resource" id="Resource_76knt"]
 script = ExtResource("2_ansg2")
 StatsNames = [1, 2, 3, 5, 6, 7, 8]
-StatsValues = [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+StatsValues = [2.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
 
 [sub_resource type="Resource" id="Resource_53up3"]
 script = ExtResource("3_mapt0")
@@ -80,22 +79,22 @@ InitializerElement = "Ignis + Chaos"
 [sub_resource type="Gradient" id="Gradient_mvm2k"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_tt8d5"]
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_cnqak"]
 gradient = SubResource("Gradient_mvm2k")
 
 [sub_resource type="Curve" id="Curve_v15w3"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_p463s"]
+[sub_resource type="CurveTexture" id="CurveTexture_nmcr7"]
 curve = SubResource("Curve_v15w3")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rj76l"]
 gravity = Vector3(0, 0, 0)
-scale_min = 32.0
-scale_max = 32.0
-scale_curve = SubResource("CurveTexture_p463s")
-color_ramp = SubResource("GradientTexture2D_tt8d5")
+scale_min = 4.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_nmcr7")
+color_ramp = SubResource("GradientTexture2D_cnqak")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_r02rj"]
 radius = 30.0
@@ -208,6 +207,7 @@ Element = SubResource("Resource_53up3")
 Body = NodePath(".")
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
+position = Vector2(0, -30)
 emitting = false
 process_material = SubResource("ParticleProcessMaterial_rj76l")
 lifetime = 0.3
@@ -223,7 +223,7 @@ AnimationPlayerPath = NodePath("../Animation")
 y_sort_enabled = true
 position = Vector2(0, -30)
 scale = Vector2(4, 4)
-texture = ExtResource("6_08mln")
+texture = ExtResource("6_epprk")
 
 [node name="Hand" type="Marker2D" parent="."]
 script = ExtResource("5_fet1m")

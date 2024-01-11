@@ -109,8 +109,6 @@ namespace Galatime
         /// </summary>
         public void StartReload(int charges, float reloadTime = 0)
         {
-            GD.Print($"Starting reload with {charges} charges, {reloadTime} reload time");
-
             Charges = charges;
             // Don't reload if max charges is reached
             if (Charges >= AbilityData.MaxCharges) return;

@@ -43,7 +43,7 @@ public partial class HumanoidCharacter : Entity
     public Action<int, bool> OnAbilityUsed;
     public Action<int, double> OnAbilityReload;
 
-    public override void _MoveProcess()
+    public override void _MoveProcess(double delta)
     {
         // Required for the rotate character animation.
         SetDirectionByWeapon();
@@ -76,6 +76,19 @@ public partial class HumanoidCharacter : Entity
 
         InitializeValues();
         InitializeTimers();
+
+        OnDeath += OnCharacterDeath;
+        OnRevived += OnCharacterRevived;
+    }
+
+    private void OnCharacterRevived()
+    {
+        Sprite.SelfModulate = new Color(1, 1, 1, 1);
+    }
+
+    private void OnCharacterDeath()
+    {
+        Sprite.SelfModulate = Sprite.SelfModulate with { A = 0.5f }; // TODO: Replace with death animation. This is just for testing.
     }
 
     public void InitializeValues()
@@ -176,6 +189,9 @@ public partial class HumanoidCharacter : Entity
             ab.CooldownTimer.QueueFree();
             ab.CooldownTimer = null;
         }
+
+        OnDeath -= OnCharacterDeath;
+        OnRevived -= OnCharacterRevived;
     }
 
     public virtual void RemoveAbility(int i)

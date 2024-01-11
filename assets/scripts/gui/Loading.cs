@@ -32,6 +32,7 @@ namespace Galatime
             {
                 var instance = (PackedScene)ResourceLoader.LoadThreadedGet(sceneName);
                 GetTree().ChangeSceneToPacked(instance);
+                GetTree().Paused = false;
                 QueueFree();
                 // GetTree().Root.AddChild(instance);
                 // GetTree().CurrentScene = instance;

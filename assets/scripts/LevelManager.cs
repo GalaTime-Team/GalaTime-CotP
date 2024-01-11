@@ -3,6 +3,7 @@ using Galatime.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System;
 
 namespace Galatime.Global;
 
@@ -40,6 +41,14 @@ public partial class LevelManager : Node
         set
         {
             isCombat = value;
+            if (!isCombat)
+            {
+                GetTree().CreateTimer(2).Timeout += () =>
+                {
+                    Array.ForEach(PlayerVariables.Instance.Allies, e => e.Instance?.Revive());
+                };
+            }
+            // PlayerVariables.Instance.Allies
             SwitchAudio(isCombat);
         }
     }

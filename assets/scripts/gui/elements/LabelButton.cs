@@ -45,6 +45,8 @@ public partial class LabelButton : Button
     {
         Label = GetNode<Label>("Label");
 
+        ButtonText = ButtonText; // Initialize text.
+
         InitializeDefaults();
         InitializeAudios();
 
@@ -69,6 +71,16 @@ public partial class LabelButton : Button
                 Label.AddThemeFontOverride("font", Font);
                 AddThemeFontOverride("font", Font);
             }
+
+            Label.Size = Vector2.Zero;
+
+            /// Calculates and sets the position of the label within the container.
+            /// The label will be centered horizontally and vertically.
+            Label.Position = new Vector2()
+            {
+                X = (Size.X - Label.Size.X) / 2,
+                Y = (Size.Y - Label.Size.Y) / 2
+            };
         }
     }
 

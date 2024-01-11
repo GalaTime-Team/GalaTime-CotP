@@ -62,7 +62,6 @@ public class Item
             iconPath = value;
             if (iconPath != "")
             {
-                GD.Print($"LOADING ITEM ICON: {iconPath}");
                 Icon = GD.Load<Texture2D>(iconPath);
             }
         }
@@ -79,7 +78,6 @@ public class Item
             scenePath = value;
             if (scenePath != "")
             {
-                GD.Print($"LOADING ITEM SCENE: {scenePath}");
                 ItemScene = GD.Load<PackedScene>(scenePath);
             }
         }

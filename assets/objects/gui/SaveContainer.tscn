@@ -34,37 +34,20 @@ text = "Chapter 1 - Philip's House - 0:10"
 autowrap_mode = 1
 
 [node name="PlayButton" parent="." groups=["buttons"] instance=ExtResource("4_e50m1")]
-custom_minimum_size = Vector2(28, 14)
+custom_minimum_size = Vector2(24, 14)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("1_ioeut")
 Font = ExtResource("1_ioeut")
+ButtonText = "Play"
 AudioStreamPressed = ExtResource("5_n0fbg")
 
-[node name="Label" parent="PlayButton" index="0"]
-offset_left = -14.0
-offset_right = 14.0
-pivot_offset = Vector2(14, 7)
-text = "PLAY"
-
-[node name="AudioPressed" parent="PlayButton" index="1"]
-stream = ExtResource("5_n0fbg")
-
 [node name="DeleteButton" parent="." groups=["buttons"] instance=ExtResource("4_e50m1")]
-custom_minimum_size = Vector2(42, 14)
+custom_minimum_size = Vector2(38, 14)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("1_ioeut")
 HoverColor = Color(1, 0, 0, 1)
 Font = ExtResource("1_ioeut")
+ButtonText = "Delete"
 AudioStreamPressed = ExtResource("5_n0fbg")
-
-[node name="Label" parent="DeleteButton" index="0"]
-pivot_offset = Vector2(21, 7)
-text = "DELETE"
-
-[node name="AudioPressed" parent="DeleteButton" index="1"]
-stream = ExtResource("5_n0fbg")
-
-[editable path="PlayButton"]
-[editable path="DeleteButton"]

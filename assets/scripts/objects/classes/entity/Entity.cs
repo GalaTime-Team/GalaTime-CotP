@@ -1,6 +1,6 @@
+using Galatime.Global;
 using Godot;
 using System;
-using Galatime.Global;
 
 namespace Galatime;
 
@@ -18,7 +18,7 @@ public partial class Entity : CharacterBody2D
     private Vector2 KnockbackVelocity = Vector2.Zero;
     public bool CanMove = true;
     /// <summary> If entity can do AI. It means it will be processed by <see cref="_AIProcess"/> </summary>
-    public bool DisableAI = false;
+    public bool DisableAI;
     #endregion
 
     #region Scenes
@@ -54,7 +54,7 @@ public partial class Entity : CharacterBody2D
         set
         {
             health = value;
-            health = Math.Min(Stats[EntityStatType.Health].Value, health);
+            health = Math.Clamp(health, 0, Stats[EntityStatType.Health].Value);
             health = (float)Math.Round(health, 2);
             HealthChangedEvent(health);
             OnHealthChanged?.Invoke(health);
@@ -64,6 +64,7 @@ public partial class Entity : CharacterBody2D
 
     #region Events
     public Action OnDeath;
+    public Action OnRevived;
     public Action<float> OnHealthChanged;
     #endregion
 
@@ -158,6 +159,20 @@ public partial class Entity : CharacterBody2D
         if (Health <= 0) _DeathEvent(damageRotation);
     }
 
+    /// <summary>
+    /// Restores an entity to life with full health. Used when the entity should be brought back from death.
+    /// Triggers an OnRevived event to allow other systems to respond to the revival.
+    /// </summary>
+    public void Revive()
+    {
+        if (!DeathState) return;
+
+        DeathState = false;
+        Heal(Stats[EntityStatType.Health].Value); // Restores the entity's health to full.
+
+        OnRevived?.Invoke(); // Notify any listeners that the entity has been revived.
+    }
+
     /// <summary> Instantiates all nodes of the entity if they don't exist. </summary>
     private void InstantiateFirstTime()
     {
@@ -203,17 +218,22 @@ public partial class Entity : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
-        _MoveProcess();
+        if (!CanMove || DeathState)
+        {
+            Body.Velocity = Vector2.Zero;
+        }
+
+        _MoveProcess(delta);
         // AI
         if (!DisableAI) _AIProcess(delta);
-            
+
         KnockbackVelocity = KnockbackVelocity.Lerp(Vector2.Zero, 0.05f);
         if (Body is not null)
         {
             Body.Velocity += KnockbackVelocity;
             Body.MoveAndSlide();
         }
-    }        
+    }
 
     /// <summary> AI process for entity's, called by <see cref="_PhysicsProcess"/>. It not called if <see cref="DisableAI"/> is true. </summary>
     public virtual void _AIProcess(double delta)
@@ -221,9 +241,8 @@ public partial class Entity : CharacterBody2D
     }
 
     /// <summary> Physics process for entity's </summary>
-    public virtual void _MoveProcess()
+    public virtual void _MoveProcess(double delta)
     {
-        if (Body is not null) Body.Velocity = Vector2.Zero;
     }
 
     /// <summary> If entity dies event </summary>
@@ -275,7 +294,8 @@ public partial class Entity : CharacterBody2D
     public void DropXp()
     {
         var xpOrb = XpOrbScene.Instantiate<ExperienceOrb>();
-        Callable.From(() => {
+        Callable.From(() =>
+        {
             xpOrb.Quantity = DroppedXp;
             GetParent().AddChild(xpOrb);
             xpOrb.GlobalPosition = Body.GlobalPosition;

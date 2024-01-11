@@ -107,7 +107,6 @@ public partial class FireBullet : GalatimeAbility
         if (RayCast.IsColliding())
         {
             var position = RayCast.GetCollisionPoint(); // Get the position of the collision point in global coordinates.
-            GD.Print(RayCast.GlobalPosition.DistanceTo(position) / 4);
             GetParent().AddChild(Explosion);
             Explosion.GlobalPosition = position;
         }

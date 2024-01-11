@@ -96,7 +96,6 @@ namespace Galatime
                 scenePath = value;
                 if (scenePath != "")
                 {
-                    GD.Print($"Loading scene from ability: {scenePath}");
                     Scene = GD.Load<PackedScene>(scenePath);
                     Instance = Scene.Instantiate<GalatimeAbility>();
                 }
@@ -118,7 +117,6 @@ namespace Galatime
                 _iconPath = value;
                 if (_iconPath != "")
                 {
-                    GD.Print($"Loading icon from ability: {_iconPath}");
                     Icon = GD.Load<Texture2D>(_iconPath);
                 }
             }

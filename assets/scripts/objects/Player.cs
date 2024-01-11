@@ -34,6 +34,13 @@ namespace Galatime
         public static HumanoidCharacter CurrentCharacter { get; private set; }
         /// <summary> The player's current possessed ally. The same as CurrentCharacter, but CurrentCharacter is a HumanoidCharacter. This object contains all character data. </summary>
         public static AllyData CurrentAlly { get; private set; }
+        /// <summary> The identifier for the main character. </summary>
+        public string MainCharacterId = "arthur";
+        /// <summary> Provides convenient access to the main character object that is identified by the MainCharacterId. </summary>
+        public TestCharacter MainCharacter
+        {
+            get => Array.Find(PlayerVariables.Allies, x => x.ID == MainCharacterId).Instance as TestCharacter;
+        }
 
         public override void _Ready()
         {
@@ -68,7 +75,7 @@ namespace Galatime
             // PlayerVariables.SetPlayerInstance(this);
 
             PlayerVariables.LoadVariables(this);
-            // Load Arthur
+            // Load Main character
             LoadCharactersFirst();
         }
 
@@ -112,9 +119,9 @@ namespace Galatime
             Camera.GlobalPosition = Camera.GlobalPosition.Lerp(cpos + ((GetGlobalMousePosition() - c.Weapon.GlobalPosition) / 5 + CameraOffset), 0.05f);
         }
 
-        public override void _MoveProcess()
+        public override void _MoveProcess(double delta)
         {
-            base._MoveProcess();
+            base._MoveProcess(delta);
 
             // Don't move if the player is not event exist.
             if (CurrentCharacter == null || !IsInstanceValid(CurrentCharacter)) return;
@@ -130,7 +137,7 @@ namespace Galatime
 
             CameraShakeAmount = Mathf.Lerp(CameraShakeAmount, 0, 0.05f);
         }
-
+            
         public new void HealthChangedEvent(float health)
         {
             PlayerGui?.OnHealthChanged(health);
@@ -151,11 +158,15 @@ namespace Galatime
         /// <summary> Event for when character's abilities changed. </summary>
         public void OnAbilitiesChangedForCharacter(bool justUpdate = true)
         {
+            // Retrieve the current character and terminate if not present.
             var c = CurrentCharacter;
             if (c == null) return;
-            var abilityList = c.Abilities;
-            if (CurrentAlly.ID == "arthur") abilityList = PlayerVariables.Abilities.ToList();
 
+            var abilityList = c.Abilities;
+            // If the current ally is the main character, use the main character's abilities instead.
+            if (CurrentAlly.ID == MainCharacterId) abilityList = PlayerVariables.Abilities.ToList();
+
+            // Terminate if there are no abilities to process.
             if (abilityList is null) return;
             for (int i = 0; i < abilityList.Count; i++)
             {
@@ -163,25 +174,29 @@ namespace Galatime
                 if (!justUpdate)
                 {
                     // Print current ability information
-                    GD.PrintRich($"[color=purple]ABILITIES CHANGED FOR PLAYER[/color]: Is empty: {ability.IsEmpty}. Name: {ability.Name}. Index: {i}");
+                    // GD.PrintRich($"[color=purple]ABILITIES CHANGED FOR PLAYER[/color]: Is empty: {ability.IsEmpty}. Name: {ability.Name}. Index: {i}");
                     var existAbility = c.Abilities[i];
-                    GD.PrintRich($"[color=green]EXIST ABILITY[/color]: Is empty: {existAbility.IsEmpty}. Name: {existAbility.Name}. Index: {i}");
+                    // GD.PrintRich($"[color=green]EXIST ABILITY[/color]: Is empty: {existAbility.IsEmpty}. Name: {existAbility.Name}. Index: {i}");
                     if (ability != existAbility) c.AddAbility(ability, i);
+
+                    // Regardless of the comparison result, add ability at the specified index.
                     else c.AddAbility(ability, i);
                 }
+
+                // Update the GUI with the ability
                 PlayerGui.AddAbility(ability, i);
             }
         }
 
         public void OnAbilityAddedForCharacter(AbilityData ab, int i)
         {
-            GD.Print("OnAbilityAddedForCharacter: AbilityData: ", ab.ToString(), " Index: ", i);
+            // GD.Print("OnAbilityAddedForCharacter: AbilityData: ", ab.ToString(), " Index: ", i);
             PlayerGui.AddAbility(ab, i);
         }
 
         public void OnAbilityUsedForCharacter(int i, bool result)
         {
-            GD.Print("OnAbilityUsedForCharacter: Index: ", i, " Result: ", result);
+            // GD.Print("OnAbilityUsedForCharacter: Index: ", i, " Result: ", result);
 
             // If result is false, then failed to use the ability.
             if (!result)
@@ -197,24 +212,36 @@ namespace Galatime
 
         public void OnAbilityReloadForCharacter(int i, double previousTime)
         {
-            GD.Print("OnAbilityReloadForCharacter: Index: ", i);
+            // GD.Print("OnAbilityReloadForCharacter: Index: ", i);
 
             var ability = CurrentCharacter?.Abilities[i];
             var abilityContainer = PlayerGui.GetAbilityContainer(i);
-            GD.Print($"Start reloading: {ability.Charges}, {previousTime}");
+            // GD.Print($"Start reloading: {ability.Charges}, {previousTime}");
             abilityContainer.StartReload(ability.Charges, (float)previousTime);
         }
 
         private void OnItemsChanged()
         {
             var obj = PlayerVariables.Inventory[0];
-            if (obj == CurrentCharacter?.Weapon.ItemData) return;
-            if (obj.IsEmpty && CurrentAlly?.ID == "arthur") CurrentCharacter?.Weapon.RemoveItem();
-            CurrentCharacter?.Weapon.TakeItem(obj);
+            if (obj == MainCharacter?.Weapon.ItemData) return;
+            if (obj.IsEmpty) MainCharacter?.Weapon.RemoveItem();
+            MainCharacter?.Weapon.TakeItem(obj);
         }
 
-        /// <summary> Loads characters and switches to the Arthur. </summary>
-        public void LoadCharactersFirst() => CallDeferred(nameof(LoadCharacters), "arthur"); // For some reason, it should be called in idle frame even if it's called in _Ready.
+        /// If the current character is possessed, attempts to switch control to a living ally character.
+        public void OnDeathCharacter()
+        {
+            var characters = Array.FindAll(PlayerVariables.Allies, x => x.Instance != null && !x.Instance.DeathState);
+            if ((CurrentCharacter as TestCharacter).Possessed && characters.Length > 0)
+            {
+                // If a living ally character is found, switch control to that character.
+                var character = characters[0];
+                SwitchCharacter(character);
+            }
+        }
+
+        /// <summary> Loads characters and switches to the main character. </summary>
+        public void LoadCharactersFirst() => CallDeferred(nameof(LoadCharacters), MainCharacterId); // For some reason, it should be called in idle frame even if it's called in _Ready.
 
         /// <summary> Loads characters for the game and spawns them in the scene. </summary>
         public void LoadCharacters(string characterToSwitchId = "")
@@ -229,8 +256,22 @@ namespace Galatime
                     character.Instance = hc;
 
                     hc.GlobalPosition = GlobalPosition;
+
+                    hc.OnDeath += OnDeathCharacter;
                 }
             }
+
+            // Ensure main character is properly loaded.
+            var mainCharacter = MainCharacter;
+            if (mainCharacter != null)
+            {
+                // Remove any previous death event bindings to prevent duplicate triggers.
+                mainCharacter.OnDeath -= PlayerGui.DeathScreenContainer.CallDeath;
+
+                // Bind main character's death event to the game's UI, to display the death screen when main character dies.
+                mainCharacter.OnDeath += PlayerGui.DeathScreenContainer.CallDeath;
+            }
+
             // Switch character if needed right after loading characters.
             if (characterToSwitchId != "")
             {
@@ -242,6 +283,8 @@ namespace Galatime
 
         public void SwitchCharacter(AllyData data)
         {
+            if (data.Instance is not null && data.Instance.DeathState) return; // Don't let to switch character if it's dead.
+
             // Make sure that all characters are loaded.
             LoadCharacters();
 

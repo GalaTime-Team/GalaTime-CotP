@@ -49,8 +49,6 @@ public partial class InteractiveTrigger : Node2D
         if (node.IsPossessed())
         {
             PlayerIsHovering = true;
-
-            GD.PrintRich("INTERACTIVE TRIGGER: [color=green]Player entered[/color]");
             InterpolateOutline(0.02f, 0.1f);
         }
     }
@@ -61,8 +59,6 @@ public partial class InteractiveTrigger : Node2D
         if (CanInteract && node.IsPossessed())
         {
             PlayerIsHovering = false;
-
-            GD.PrintRich("INTERACTIVE TRIGGER: [color=aqua]Player exited[/color]");
             InterpolateOutline(0, 0.1f);
         }
         if (ChangeState) CanInteract = true;
@@ -86,19 +82,16 @@ public partial class InteractiveTrigger : Node2D
             if (args.Length > 0)
             {
                 ExecuteNode.Call(Method, args);
-                GD.PrintRich("INTERACTIVE TRIGGER: [color=aqua]Called method with multiple args[/color]");
             }
             else
             {
                 ExecuteNode.Call(Method);
-                GD.PrintRich("INTERACTIVE TRIGGER: [color=aqua]Called method without args[/color]");
             }
             if (ChangeState)
             {
                 CanInteract = false;
                 InterpolateOutline(0, 0.1f);
             }
-            GD.PrintRich("INTERACTIVE TRIGGER: [color=green]Interacted successful![/color]");
         }
     }
 

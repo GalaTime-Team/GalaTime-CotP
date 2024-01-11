@@ -13,7 +13,7 @@ public partial class TestCharacter : HumanoidCharacter
     public AnimationPlayer AnimationPlayer;
 
     public bool StrafeDirection = true;
-    public bool MeleeMode = false;
+    public bool MeleeMode;
 
     public TargetController TargetController;
 
@@ -21,7 +21,7 @@ public partial class TestCharacter : HumanoidCharacter
 
     public Player Player;
 
-    private bool possessed = false;
+    private bool possessed;
     /// <summary> True if the character is currently being possessed. That means the player is controlling it. </summary>
     public bool Possessed
     {
@@ -42,6 +42,7 @@ public partial class TestCharacter : HumanoidCharacter
         HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
         TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
         DrinkingAudioPlayer = GetNode<AudioStreamPlayer2D>("DrinkingAudioPlayer");
+        Sprite = GetNode<Sprite2D>("Sprite2D");
 
         Body = this;
 
@@ -95,10 +96,7 @@ public partial class TestCharacter : HumanoidCharacter
 
     public override void _AIProcess(double delta)
     {
-        base._MoveProcess();
-
-        if (Possessed) return;
-
+        if (Possessed || DeathState) return;
         if (TargetController.CurrentTarget != null) CombatMovement();
         // Moving normally when there is no enemies.
         else NormalMovement();

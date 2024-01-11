@@ -69,7 +69,6 @@ namespace Galatime
 
                 for (int i = 0; i < required.Length; i++)
                 {
-                    GD.Print($"Required: {required[i]}");
                     var targetItem = FindItemByAbilityId(required[i]);
                     if (targetItem is null) continue;
                     var points = new Vector2[2];

@@ -130,7 +130,6 @@ public partial class SettingsContainer : Control
             var checkBox = new CheckButton() { ButtonPressed = (bool)value };
             checkBox.Toggled += (value) => ValueChanged(value, obj, field);
             listControl.GetChild(0).AddChild(checkBox);
-            GD.Print($"CheckBox value: {checkBox.ButtonPressed}");
         }
         else if (type == typeof(long))
         {
@@ -152,7 +151,7 @@ public partial class SettingsContainer : Control
     // This function is called when any UI value is changed
     private void ValueChanged<T>(T value, object obj, FieldInfo field)
     {
-        GD.Print($"Value is changed {value}");
+        // GD.Print($"Value is changed {value}");
         field.SetValue(obj, value);
         SettingsGlobals.UpdateSettings();
     }

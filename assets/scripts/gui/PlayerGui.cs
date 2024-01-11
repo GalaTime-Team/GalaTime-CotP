@@ -12,6 +12,7 @@ namespace Galatime
         #region Nodes
         public ColorRect FadeScreen;
         public PauseMenu PauseMenu;
+        public DeathScreenContainer DeathScreenContainer;
 
         // Stats
         public ValueBar HealthValueBar;
@@ -69,6 +70,7 @@ namespace Galatime
             #region Get nodes
             FadeScreen = GetNode<ColorRect>("FadeScreen");
             PauseMenu = GetNode<PauseMenu>("PauseMenu");
+            DeathScreenContainer = GetNode<DeathScreenContainer>("DeathScreenContainer");
 
             HealthValueBar = GetNode<ValueBar>("HealthValueBar");
             StaminaValueBar = GetNode<ValueBar>("StaminaValueBar");
@@ -212,7 +214,7 @@ namespace Galatime
                 var item = items[i];
                 item.Use();
                 GD.Print($"Consumed {item.Name}, now have {item.Quantity}.");
-            });
+            }, Array.Empty<bool>());
         }
 
         public void CallCharacterWheel()
@@ -225,13 +227,14 @@ namespace Galatime
             // Needed arrays for the wheel to work.
             var placeholders = new TextureRect[max];
             var names = new string[max];
+            var disabled = new bool[max];
 
             var characters = Array.FindAll(PlayerVariables.Allies, c => !c.IsEmpty);
             for (int i = 0; i < characters.Length; i++)
             {
                 var character = characters[i];
 
-                var ic = new TextureRect
+                placeholders[i] = new TextureRect
                 {
                     // Disabling mouse filter to make sure that hover event will be triggered.
                     MouseFilter = MouseFilterEnum.Ignore,
@@ -241,17 +244,17 @@ namespace Galatime
                     PivotOffset = new Vector2(8, 8),
                     Texture = character.Icon
                 };
-                placeholders[i] = ic;
                 names[i] = character.Name;
+                disabled[i] = character.Instance.DeathState;
             }
 
             if (characters.Length == 0) return;
 
-            SelectWheel.CallWheel("character_wheel", characters.Length, placeholders, names, (int i) => 
+            SelectWheel.CallWheel("character_wheel", characters.Length, placeholders, names, (int i) =>
             {
                 GD.Print($"Selected character {i} ({PlayerVariables.Allies[i].Name}).");
                 PlayerVariables.Player.SwitchCharacter(PlayerVariables.Allies[i]);
-            });
+            }, disabled);
         }
 
         public void DisplayItem() => OnItemsChanged?.Invoke();

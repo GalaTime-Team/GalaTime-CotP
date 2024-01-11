@@ -55,7 +55,7 @@ public partial class WindowManager : Node
         if (state)
         {
             CloseWindow(id, false);
-            GD.PrintRich($"[color=orange][WM][/color] Closing window with ID {id}... List: {string.Join(", ", OpenedWindows.Select(x => x.ID))}");
+            // GD.PrintRich($"[color=orange][WM][/color] Closing window with ID {id}... List: {string.Join(", ", OpenedWindows.Select(x => x.ID))}");
             return true;
         }
 
@@ -69,7 +69,7 @@ public partial class WindowManager : Node
         // Add the window to the list of opened windows.
         OpenedWindows.Add(window);
 
-        GD.PrintRich($"[color=orange][WM][/color] Opening window with ID {id}... List: {string.Join(", ", OpenedWindows.Select(x => x.ID))}");
+        // GD.PrintRich($"[color=orange][WM][/color] Opening window with ID {id}... List: {string.Join(", ", OpenedWindows.Select(x => x.ID))}");
 
         // Success
         return true;

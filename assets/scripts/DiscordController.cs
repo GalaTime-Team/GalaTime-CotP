@@ -15,13 +15,13 @@ public partial class DiscordController : Node
     public RichPresence CurrentRichPresence
     {
         get => currentRichPresence;
-        set
-        {
-            currentRichPresence = value;
+        set => SetCurrentRichPresence(value);
+    }
 
-            var SettingsGlobals = GetNode<SettingsGlobals>("/root/SettingsGlobals");
-            if (!SettingsGlobals.Settings.Misc.DiscordActivityDisabled) Client.SetPresence(currentRichPresence);
-        }
+    public void SetCurrentRichPresence(RichPresence value, bool update = true)
+    {
+        currentRichPresence = value;
+        if (!SettingsGlobals.Settings.Misc.DiscordActivityDisabled && update) Client.SetPresence(currentRichPresence);
     }
 
     public override void _Ready()
@@ -32,16 +32,22 @@ public partial class DiscordController : Node
         Client = new DiscordRpcClient(GalatimeConstants.DISCORD_ID, autoEvents: false);
 
         // Setting up events to log.
-        Client.OnReady += (_, e) => GD.Print($"Discord RPC is ready! Hello, {e.User.Username}!");
-        Client.OnPresenceUpdate += (_, e) => GD.Print($"Discord RPC is updated. Details: {e.Presence.Details}, State: {e.Presence.State}");
+        Client.OnReady += (_, e) => GD.PrintRich($"[color=cyan]DISCORD[/color]: RPC is ready! Hello, {e.User.Username}!");
+        Client.OnPresenceUpdate += (_, e) =>
+        {
+            var stringBuilder = new System.Text.StringBuilder();
+            stringBuilder.Append("[color=cyan]DISCORD[/color]: Updated.");
+            if (!string.IsNullOrEmpty(e.Presence.Details)) stringBuilder.Append(" Details: ").Append(e.Presence.Details);
+            if (!string.IsNullOrEmpty(e.Presence.State)) stringBuilder.Append(", State: ").Append(e.Presence.State);
+            GD.PrintRich(stringBuilder.ToString());
+        };
 
         // Connecting to the Discord.
         Client.Initialize();
 
         // Setting up presence.
-        CurrentRichPresence = new RichPresence()
+        SetCurrentRichPresence(new RichPresence()
         {
-            Details = "Day 1",
             State = "Playing",
 
             // "XX:XX elapsed"
@@ -51,10 +57,8 @@ public partial class DiscordController : Node
             {
                 LargeImageKey = "default",
                 LargeImageText = $"GalaTime {GalatimeConstants.Version}",
-                // SmallImageKey = "day_1",
-                // SmallImageText = "Day 1"
             }
-        };
+        }, false);
     }
 
     // Invoke Client each frame to update presence.

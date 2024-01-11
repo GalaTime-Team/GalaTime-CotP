@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://s184ap1aunq3"]
+[gd_scene load_steps=23 format=3 uid="uid://s184ap1aunq3"]
 
 [ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://c1u2weprncgn6" path="res://assets/objects/gui/PauseContainer.tscn" id="13_co182"]
 [ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://sprites/gui/status/mana_progress.png" id="14"]
 [ext_resource type="PackedScene" uid="uid://bqkuonmirsqx1" path="res://assets/objects/gui/PauseMenu.tscn" id="16_mf8j7"]
+[ext_resource type="PackedScene" uid="uid://dv75frnqnpr4b" path="res://assets/objects/gui/DeathScreenContainer.tscn" id="17_7dc38"]
 [ext_resource type="Shader" path="res://assets/shaders/NTSC.gdshader" id="17_glk77"]
 [ext_resource type="PackedScene" uid="uid://dfp7cajwd17tw" path="res://assets/objects/gui/SelectWheel.tscn" id="18_uvxe6"]
 [ext_resource type="AudioStream" uid="uid://dfwi2r7vfy2p5" path="res://assets/audios/sounds/parry.wav" id="27_4kcld"]
@@ -62,64 +63,6 @@ shader = ExtResource("17_glk77")
 shader_parameter/blur_amount = 3.0
 shader_parameter/signal_quality = 0.0
 shader_parameter/bottom_strenth = 3.0
-
-[sub_resource type="Shader" id="5"]
-code = "/*
-    å‰²ã‚ŒãŸã‚¬ãƒ©ã‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ by ã‚ã‚‹ã‚‹ï¼ˆãã®ã‚‚ã¨ çµè¡£ï¼‰
-    Broken Glass Effect Shader by @arlez80
-
-    MIT License
-*/
-shader_type canvas_item;
-render_mode unshaded;
-
-uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
-
-uniform float scale = 20.0;
-uniform float shift = 0.05;
-uniform float seed = 0.0;
-
-vec2 random( vec2 pos )
-{ 
-    return fract(
-        sin(
-            vec2(
-                dot(pos, vec2(12.9898,78.233))
-            ,    dot(pos, vec2(-148.998,-65.233))
-            )
-        ) * 43758.5453
-    );
-}
-
-void fragment( )
-{
-    vec2 v = UV * scale + vec2( seed, seed );
-    vec2 v_floor = floor( v );
-    vec2 v_fract = fract( v );
-
-    vec2 min_p = vec2( 0.0, 0.0 );
-    float min_dist = 2.0;
-
-    for( int y = -1; y <= 1; y ++ ) {
-        for( int x = -1; x <= 1; x ++ ) {
-            vec2 n = vec2( float( x ), float( y ) );
-            vec2 p = random( v_floor + n );
-            float d = distance( v_fract, p + n );
-
-            min_p = mix( min_p, p, float( d < min_dist ) );
-            min_dist = min( min_dist, d );
-        }
-    }
-
-    // thanks advice to reddit user u/e344fde6bf
-    COLOR = textureLod( SCREEN_TEXTURE, SCREEN_UV + min_p * shift, 0.0 );
-}"
-
-[sub_resource type="ShaderMaterial" id="6"]
-shader = SubResource("5")
-shader_parameter/scale = 20.0
-shader_parameter/shift = 0.05
-shader_parameter/seed = 0.0
 
 [node name="PlayerGui" type="Control"]
 layout_mode = 3
@@ -366,12 +309,5 @@ visible = false
 z_index = 10
 layout_mode = 1
 
-[node name="Shader" type="ColorRect" parent="."]
-material = SubResource("6")
+[node name="DeathScreenContainer" parent="." instance=ExtResource("17_7dc38")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2

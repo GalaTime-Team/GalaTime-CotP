@@ -31,7 +31,6 @@ WindowManager="*res://assets/scripts/WindowManager.cs"
 [display]
 
 window/stretch/mode="viewport"
-window/vsync/vsync_mode=0
 
 [dotnet]
 

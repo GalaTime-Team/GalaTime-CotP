@@ -71,79 +71,38 @@ custom_minimum_size = Vector2(44, 14)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_47f50")
 Font = ExtResource("4_47f50")
-
-[node name="Label" parent="Panel/ButtonsContainer/ResumeButton" index="0"]
-offset_left = -22.0
-offset_top = -11.0
-offset_right = 22.0
-offset_bottom = 3.0
-pivot_offset = Vector2(22, 7)
-text = "Resume"
+ButtonText = "Resume"
 
 [node name="SaveButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
 custom_minimum_size = Vector2(28, 14)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_47f50")
 Font = ExtResource("4_47f50")
-
-[node name="Label" parent="Panel/ButtonsContainer/SaveButton" index="0"]
-offset_left = -14.0
-offset_top = -11.0
-offset_right = 14.0
-offset_bottom = 3.0
-pivot_offset = Vector2(14, 7)
-text = "Save"
+ButtonText = "Save"
 
 [node name="ReloadButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
 custom_minimum_size = Vector2(70, 14)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_47f50")
 Font = ExtResource("4_47f50")
-
-[node name="Label" parent="Panel/ButtonsContainer/ReloadButton" index="0"]
-offset_left = -35.0
-offset_top = -11.0
-offset_right = 35.0
-offset_bottom = 3.0
-pivot_offset = Vector2(35, 7)
-text = "Reload level"
+ButtonText = "Reload level"
 
 [node name="SettingsButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
 custom_minimum_size = Vector2(52, 14)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_47f50")
 Font = ExtResource("4_47f50")
-
-[node name="Label" parent="Panel/ButtonsContainer/SettingsButton" index="0"]
-offset_left = -26.0
-offset_top = -11.0
-offset_right = 26.0
-offset_bottom = 3.0
-pivot_offset = Vector2(26, 7)
-text = "Settings"
+ButtonText = "Settings"
 
 [node name="ExitButton" parent="Panel/ButtonsContainer" instance=ExtResource("1_a054u")]
 custom_minimum_size = Vector2(25, 14)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_47f50")
 Font = ExtResource("4_47f50")
-
-[node name="Label" parent="Panel/ButtonsContainer/ExitButton" index="0"]
-offset_left = -12.0
-offset_top = -11.0
-offset_right = 13.0
-offset_bottom = 3.0
-pivot_offset = Vector2(12.5, 7)
-text = "Exit"
+ButtonText = "Exit"
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_yqdgo")
 volume_db = -80.0
 autoplay = true
 bus = &"Music"
-
-[editable path="Panel/ButtonsContainer/ResumeButton"]
-[editable path="Panel/ButtonsContainer/SaveButton"]
-[editable path="Panel/ButtonsContainer/ReloadButton"]
-[editable path="Panel/ButtonsContainer/SettingsButton"]
-[editable path="Panel/ButtonsContainer/ExitButton"]
