@@ -1,13 +1,135 @@
-[gd_scene load_steps=3 format=3 uid="uid://csorfs1lu6gtn"]
+[gd_scene load_steps=11 format=3 uid="uid://csorfs1lu6gtn"]
 
 [ext_resource type="Script" path="res://assets/objects/abilities/Flamethrower.cs" id="1"]
 [ext_resource type="Texture2D" uid="uid://bc8e6m3tgr472" path="res://sprites/abilities/fireball/1.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="2_kvvvj"]
+[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://sprites/particles/fire/fire.png" id="4_sbdf5"]
+[ext_resource type="AudioStream" uid="uid://gunitv8q1hvj" path="res://assets/audios/sounds/flare_whoosh.mp3" id="5_myk5q"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_485vb"]
+particles_animation = true
+particles_anim_h_frames = 6
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sxx4k"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 8.0
+gravity = Vector3(0, 0, 0)
+scale_min = 4.0
+scale_max = 4.0
+anim_speed_min = 1.0
+anim_speed_max = 4.0
+
+[sub_resource type="Animation" id="Animation_1nx52"]
+resource_name = "launch"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "audio"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Audio")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("5_myk5q")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/1/use_blend = true
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Particles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_duvh5"]
+resource_name = "outro"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Particles:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_py7c2"]
+_data = {
+"launch": SubResource("Animation_1nx52"),
+"outro": SubResource("Animation_duvh5")
+}
 
 [node name="FlamethrowerShells" type="Node2D"]
 script = ExtResource("1")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Projectile" parent="." instance=ExtResource("2_kvvvj")]
 visible = false
-position = Vector2(22, 0)
+Speed = 800.0
+Power = 2
+PiercingTimes = 3
+Duration = 0.3
+Accuracy = 0.0
+ExplosionPower = 2
+Moving = false
+Timeout = 2.0
+
+[node name="Particles" type="GPUParticles2D" parent="Projectile"]
+material = SubResource("CanvasItemMaterial_485vb")
+emitting = false
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_sxx4k")
+texture = ExtResource("4_sbdf5")
+lifetime = 0.5
+randomness = 1.0
+
+[node name="Sprite" type="Sprite2D" parent="Projectile"]
+position = Vector2(1.13687e-13, 0)
 scale = Vector2(5, 5)
 texture = ExtResource("2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Projectile"]
+libraries = {
+"": SubResource("AnimationLibrary_py7c2")
+}
+autoplay = "launch"
+
+[node name="Audio" type="AudioStreamPlayer2D" parent="Projectile"]

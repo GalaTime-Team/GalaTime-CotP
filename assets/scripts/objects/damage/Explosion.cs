@@ -111,7 +111,11 @@ public partial class Explosion : Area2D
         GetTree().CreateTimer(disableOn).Timeout += () => {
             SmokeParticles.Emitting = true;
             Monitoring = false;
-            GetTree().CreateTimer(disableOn * 2.33).Timeout += () => SmokeParticles.Emitting = false;
+            GetTree().CreateTimer(disableOn * 2.33).Timeout += () => 
+            {
+                SmokeParticles.Emitting = false;
+                GetTree().CreateTimer(3).Timeout += QueueFree;
+            };
         };
     }
 

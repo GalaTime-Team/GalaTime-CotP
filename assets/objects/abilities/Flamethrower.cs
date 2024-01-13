@@ -1,72 +1,64 @@
+using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace Galatime
 {
     public partial class Flamethrower : GalatimeAbility
     {
-        public Timer shotTimer;
-        public PackedScene projectiveScene;
-
+        public Timer ShotTimer;
+        public Projectile Projectile;
         public HumanoidCharacter p;
-
-        public Sprite2D sprite;
-        public GpuParticles2D Particles;
 
         public override void _Ready()
         {
-            // Particles = GetNode<GpuParticles2D>("Particles");
-            sprite = GetNode<Sprite2D>("Sprite2D");
-
-            shotTimer = new Timer
+            Projectile = GetNode<Projectile>("Projectile");
+            ShotTimer = new Timer
             {
                 WaitTime = 0.015f
             };
         }
 
-        public override void _PhysicsProcess(double delta)
+        public override void Execute(HumanoidCharacter p)
         {
-            sprite.GlobalPosition = p.Weapon.GlobalPosition;
-            sprite.Rotation = p.Weapon.Rotation;
-
-            // Particles.GlobalPosition = p.Weapon.GlobalPosition;;
-            // Particles.Rotation = p.Weapon.Rotation;
-        }
-
-        public override async void Execute(HumanoidCharacter p)
-        {
-            var physicalAttack = p.Stats[EntityStatType.PhysicalAttack].Value;
-            var magicalAttack = p.Stats[EntityStatType.MagicalAttack].Value;
-
-            projectiveScene = GD.Load<PackedScene>("res://assets/objects/abilities/FlamethrowerShells.tscn");
-
             this.p = p;
 
-            var rotation = p.Weapon.Rotation;
-            var position = p.Weapon.GlobalPosition;
+            var magicalAttack = p.Stats[EntityStatType.MagicalAttack].Value;
 
-            shotTimer.Timeout += () => _onTimeoutShot(physicalAttack, magicalAttack, sprite);
-            AddChild(shotTimer);
-            shotTimer.Start();
+            ShotTimer.Timeout += () => Shot(magicalAttack);
+            AddChild(ShotTimer);
+            ShotTimer.Start();
 
-            // Particles.Emitting = true;
-
-            await ToSignal(GetTree().CreateTimer(Data.Duration), "timeout");
-
-            shotTimer.Stop();
-            // Particles.Emitting = false;
-
-            await ToSignal(GetTree().CreateTimer(2f), "timeout");
-            QueueFree();
+            GetTree().CreateTimer(Data.Duration).Timeout += () =>
+            {
+                ShotTimer.Stop();
+                GetTree().CreateTimer(10).Timeout += () => QueueFree();
+            };
         }
 
-        private void _onTimeoutShot(float physicalAttack, float magicalAttack, Sprite2D spr)
+        private void Shot(float magicalAttack)
         {
-            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-            if (playerVariables.Player is Player player) player.CameraShakeAmount += 0.2f;
-            FlamethrowerShells ability = projectiveScene.Instantiate<FlamethrowerShells>();
-            var position = spr.GlobalPosition;
-            AddChild(ability);
-            ability.execute(spr.Rotation, physicalAttack, magicalAttack, position);
+            PlayerVariables.Instance.Player.CameraShakeAmount += 0.2f;
+
+            var rnd = new Random();
+            var angle = (rnd.NextDouble() * 2 - 1) / 5;
+            
+            var prj = Projectile.Duplicate() as Projectile;
+            prj.GlobalPosition = p.Weapon.GlobalPosition;
+            prj.Rotation = p.Weapon.Rotation + (float)angle;
+            prj.AttackStat = magicalAttack;
+            prj.Visible = true;
+
+            prj.Exploded += DestroyProjectile;
+
+            AddChild(prj);
+            prj.Moving = true;
+        }
+
+        private void DestroyProjectile(Projectile prj)
+        {
+            var ap = prj.GetNode<AnimationPlayer>("AnimationPlayer");
+            ap.Play("outro");
         }
     }
 }

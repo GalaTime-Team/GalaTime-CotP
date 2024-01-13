@@ -28,8 +28,8 @@ public partial class Projectile : CharacterBody2D
     /// <summary> How many times the projectile can be pierce through the entities. </summary>
     [Export] public int PiercingTimes = 0;
 
-    /// <summary> The duration how long the projectile can be. </summary>
-    public float Duration;
+    /// <summary> The duration how long the projectile can be. 0 means infinite duration. </summary>
+    [Export] public float Duration;
 
     public int CurrentPiercingTimes { get; private set; } = 0;
 
@@ -49,6 +49,9 @@ public partial class Projectile : CharacterBody2D
 
     /// <summary> If the projectile is moving in the direction. </summary>
     [Export] public bool Moving = true;
+
+    /// <summary> The timeout in seconds, after which the projectile will be freed from the scene. </summary>
+    [Export] public float Timeout = 10f;
     #endregion
 
     #region Events
@@ -62,15 +65,14 @@ public partial class Projectile : CharacterBody2D
     public Explosion Explosion;
     /// <summary> The damage area where the projectile will deal damage. </summary>
     public Area2D DamageArea;
-    /// <summary> The timer for countdown to freed projectile from the scene when projectile is not needed. </summary>
-    public Timer TimeoutTimer;
+    public Timer TimeoutTimer, DurationTimer;
     /// <summary> The timer for duration how long the projectile can be. </summary>
     // public Timer DurationTimer;
     public CollisionShape2D Collision;
     #endregion
 
     public override void _Ready()
-    {   
+    {
         ExplosionScene = ResourceLoader.Load<PackedScene>("res://assets/objects/damage/Explosion.tscn").Duplicate() as PackedScene;
         Explosion = ExplosionScene.Instantiate<Explosion>().Duplicate() as Explosion;
 
@@ -78,10 +80,20 @@ public partial class Projectile : CharacterBody2D
         TargetController = GetNode<TargetController>("TargetController");
         DamageArea = GetNode<Area2D>("DamageArea");
         TimeoutTimer = GetNode<Timer>("TimeoutTimer");
+        DurationTimer = GetNode<Timer>("DurationTimer");
         Collision = GetNode<CollisionShape2D>("Collision");
         #endregion
-        
+
+        // If duration is not 0, start the timer. 0 means infinite duration.
+        if (Duration > 0)
+        {
+            DurationTimer.WaitTime = Duration;
+            DurationTimer.Start();
+        }
+
         TimeoutTimer.Timeout += QueueFree;
+        DurationTimer.Timeout += Destroy;
+
         DamageArea.BodyEntered += OnDamageAreaBodyEntered;
     }
 
@@ -116,18 +128,20 @@ public partial class Projectile : CharacterBody2D
 
     private void OnDamageAreaBodyEntered(Node node)
     {
-        if (node is Entity entity && !entity.DeathState && entity.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam)) && Moving) {
+        if (node is Entity entity && !entity.DeathState && entity.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam)) && Moving)
+        {
             var damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
             if (!Explosive) entity.TakeDamage(Power, AttackStat, Element, DamageType.Magical, 500, damageRotation);
 
             // Pierce the entity if the projectile can.
-            if (CurrentPiercingTimes >= PiercingTimes) {
+            if (CurrentPiercingTimes >= PiercingTimes)
+            {
                 Destroy();
                 return;
             }
 
             CurrentPiercingTimes++;
-        }   
+        }
         else
         {
             if (node is Entity entity1 && !entity1.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam))) return;
@@ -136,20 +150,26 @@ public partial class Projectile : CharacterBody2D
         }
     }
 
-    public void Destroy() {
+    public void Destroy()
+    {
         if (!Moving) return;
 
         // Explosion behavior
-        if (Explosive) {
-            Callable.From(() => {
+        if (Explosive)
+        {
+            Callable.From(() =>
+            {
                 Explosion.Element = Element;
                 AddChild(Explosion);
             }).CallDeferred();
         }
-        
+
+        DurationTimer.Stop();
         Moving = false;
-        // DurationTimer.Stop();
+
+        TimeoutTimer.WaitTime = Timeout;
         TimeoutTimer.Start();
+
         Exploded?.Invoke(this);
 
         // For some reason, we need to wait for the explosion to finish. This prevent the projectile from colliding with the other objects.

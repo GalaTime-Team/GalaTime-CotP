@@ -14,10 +14,10 @@ namespace Galatime
         public PauseMenu PauseMenu;
         public DeathScreenContainer DeathScreenContainer;
 
-        // Stats
-        public ValueBar HealthValueBar;
-        public ValueBar StaminaValueBar;
-        public ValueBar ManaValueBar;
+        /// <summary> The value bar that displays the current resources. </summary>
+        public ValueBar HealthValueBar, StaminaValueBar, ManaValueBar;
+        /// <summary> The character icon that is currently possessed. </summary>
+        public TextureRect CharacterIcon;
 
         public Label VersionText;
         public DialogBox DialogBox;
@@ -75,6 +75,7 @@ namespace Galatime
             HealthValueBar = GetNode<ValueBar>("HealthValueBar");
             StaminaValueBar = GetNode<ValueBar>("StaminaValueBar");
             ManaValueBar = GetNode<ValueBar>("ManaValueBar");
+            CharacterIcon = GetNode<TextureRect>("CharacterIcon");
 
             VersionText = GetNode<Label>("Version");
             DialogBox = GetNode<DialogBox>("DialogBox");
@@ -136,6 +137,8 @@ namespace Galatime
             tween.TweenProperty(FadeScreen, "modulate:a", type ? 1 : 0, duration);
             if (callback != null) tween.Finished += callback;
         }
+
+        public void SetCharacterIcon(AllyData ally) => CharacterIcon.Texture = ally.Icon;
 
         /// <summary> Plays a parry effect by pausing the game, showing an overlay, and playing a sound. </summary>
         /// <param name="position"> The position of the parry effect in global coordinates. </param>

@@ -185,7 +185,6 @@ shape = SubResource("5")
 
 [node name="Sprite2D" type="Sprite2D" parent="CharacterBody3D"]
 scale = Vector2(4, 4)
-texture = ExtResource("5")
 flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody3D"]

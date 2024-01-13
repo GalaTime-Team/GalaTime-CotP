@@ -2,6 +2,7 @@ using Galatime.Global;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Galatime.UI;
 
@@ -94,7 +95,8 @@ public partial class SelectWheel : Control
             // Set the name of the segment when segment hovered.
             segment.Hover += (bool entered) => SetName(segment.SegmentName, entered);
 
-            var disabled = Disabled[i];
+            var disabled = false;
+            if (Disabled != null && Disabled.Length > 0) disabled = Disabled[i];
             if (disabled) segment.Disabled = true;
 
             // Adding the segment to the list and to the wheel.

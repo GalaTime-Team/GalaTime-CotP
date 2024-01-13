@@ -137,22 +137,10 @@ namespace Galatime
 
             CameraShakeAmount = Mathf.Lerp(CameraShakeAmount, 0, 0.05f);
         }
-            
-        public new void HealthChangedEvent(float health)
-        {
-            PlayerGui?.OnHealthChanged(health);
-        }
 
-        public new void OnManaChanged(float mana)
-        {
-            PlayerGui.OnManaChanged(mana);
-        }
-
-        public new void OnStaminaChanged(float stamina)
-        {
-            PlayerGui.OnStaminaChanged(stamina);
-        }
-
+        public new void HealthChangedEvent(float health) => PlayerGui?.OnHealthChanged(health);
+        public new void OnManaChanged(float mana) => PlayerGui.OnManaChanged(mana);
+        public new void OnStaminaChanged(float stamina) => PlayerGui.OnStaminaChanged(stamina);
         public void OnAbilitiesChangedForCharacter() => OnAbilitiesChangedForCharacter(false);
 
         /// <summary> Event for when character's abilities changed. </summary>
@@ -323,6 +311,8 @@ namespace Galatime
             OnStatsChanged(CurrentCharacter.Stats);
             OnAbilitiesChangedForCharacter();
             OnItemsChanged();
+
+            PlayerGui.SetCharacterIcon(CurrentAlly);
         }
 
         // All input handling for the player goes here.
