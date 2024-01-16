@@ -1,6 +1,51 @@
 {
   "dialogs": [
     {
+      "id": "test",
+      "lines": [
+        {
+          "text": "Okay, are you ready?",
+          "character": "raphael",
+          "emotion": "neutral"  
+        },
+        {
+          "text": "Yes, I'm ready.",
+          "character": "arthur",
+          "emotion": "neutral"
+        },
+        {
+          "text": "Then, let's go!",
+          "character": "raphael",
+          "emotion": "neutral"
+        }
+      ]
+    },
+    {
+      "id": "test_01",
+      "lines": [
+        {
+          "text": "Do you liked my performance?",
+          "character": "arthur",
+          "emotion": "explaining"
+        },
+        {
+          "text": "Uhh... Arthur",
+          "character": "raphael",
+          "emotion": "sweating"
+        },
+        {
+          "text": "We should to go, not dance...",
+          "character": "raphael",
+          "emotion": "angry"
+        },
+        {
+          "text": "Fuck you!",
+          "character": "arthur",
+          "emotion": "angry"
+        }
+      ]
+    },
+    {
       "id": "test_0",
       "lines": [
         {

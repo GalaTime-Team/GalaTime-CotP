@@ -9,8 +9,8 @@
       ]
     },
     {
-      "id": "rafael",
-      "name": "Rafael",
+      "id": "raphael",
+      "name": "Raphael",
       "emotions": [
         { "id": "angry", "path": "res://sprites/gui/dialog/characters/rafael/angry/angry.tres" },
         { "id": "neutral", "path": "res://sprites/gui/dialog/characters/rafael/neutral.png" },

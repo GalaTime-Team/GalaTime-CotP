@@ -19,6 +19,8 @@ public partial class HumanoidCharacter : Entity
     protected bool CanDodge = true;
     /// <summary> The current rotation of the character. </summary>
     protected Vector2 VectorRotation;
+    /// <summary> If the humanoid doll should be disabled and not playing an animation. </summary>
+    public bool DisableHumanoidDoll;
 
     public HumanoidStates State = HumanoidStates.Idle;
     public bool IsWalk => State == HumanoidStates.Idle || State == HumanoidStates.Walk;
@@ -52,7 +54,7 @@ public partial class HumanoidCharacter : Entity
         if (IsWalk) State = Body.Velocity.Length() <= 20 ? HumanoidStates.Idle : HumanoidStates.Walk;
 
         // Set the animation based on the velocity and the state.
-        HumanoidDoll.SetAnimation(VectorRotation, State);
+        if (!DisableHumanoidDoll) HumanoidDoll.SetAnimation(VectorRotation, State);
 
         // Set the trail particles texture to the same as the sprite texture.
         TrailParticles.Texture = Sprite?.Texture;

@@ -57,10 +57,12 @@ public partial class TypingLabel : RichTextLabel
         TypeTimer.Start();
     }
 
+    public void SetTypingAudio(AudioStream audio) => TypingSoundPlayer.Stream = audio;
+
     public override void _Ready()
     {
         TypingSoundPlayer = GetNode<AudioStreamPlayer>("TypingSoundPlayer");
-        TypingSoundPlayer.Stream = TypingAudio;
+        SetTypingAudio(TypingAudio);
         InitializeTypeTimer();
     }
 

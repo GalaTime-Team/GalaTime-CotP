@@ -1,9 +1,11 @@
 using System;
 using Galatime;
+using Galatime.Global;
 using Galatime.Helpers;
+using Galatime.Interfaces;
 using Godot;
 
-public partial class TestCharacter : HumanoidCharacter
+public partial class TestCharacter : HumanoidCharacter, IDrama
 {
     [Export] public int FollowOrder;
     [Export] public Godot.Collections.Array<string> DefaultAbilities;
@@ -34,9 +36,16 @@ public partial class TestCharacter : HumanoidCharacter
         }
     }
 
+    [Export] public string DramaID { get; set; }
+    [Export] public Node2D DramaNode { get; set; }
+    public void SetDramaObject() => CutsceneManager.Instance.RegisterDramaObject(this);
+    
+
     public override void _Ready()
     {
         base._Ready();
+
+        SetDramaObject();
 
         Weapon = GetNode<Hand>("Hand");
         HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
@@ -205,5 +214,17 @@ public partial class TestCharacter : HumanoidCharacter
         // For some reason it is moving at twice the speed, so it is divided by 2.
         Body.Velocity = vectorPath.Normalized() * Speed / 2;
         Body.MoveAndSlide();
+    }
+
+    public bool PlayDramaAnimation(string animationName)
+    {
+        if (!AnimationPlayer.HasAnimation(animationName)) return false;
+        AnimationPlayer.Play(animationName);
+        return true;
+    }
+
+    public void StopDramaAnimation()
+    {
+        AnimationPlayer.Stop();
     }
 }

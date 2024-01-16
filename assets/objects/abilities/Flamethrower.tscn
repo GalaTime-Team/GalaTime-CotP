@@ -114,7 +114,6 @@ Timeout = 2.0
 
 [node name="Particles" type="GPUParticles2D" parent="Projectile"]
 material = SubResource("CanvasItemMaterial_485vb")
-emitting = false
 amount = 16
 process_material = SubResource("ParticleProcessMaterial_sxx4k")
 texture = ExtResource("4_sbdf5")

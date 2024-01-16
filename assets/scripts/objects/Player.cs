@@ -1,3 +1,4 @@
+using Galatime.Global;
 using Galatime.Helpers;
 using Godot;
 using System;
@@ -40,6 +41,21 @@ namespace Galatime
         public TestCharacter MainCharacter
         {
             get => Array.Find(PlayerVariables.Allies, x => x.ID == MainCharacterId).Instance as TestCharacter;
+        }
+
+        private bool isPlayerFrozen = false;
+        public bool IsPlayerFrozen
+        {
+            get => isPlayerFrozen;
+            set
+            {
+                isPlayerFrozen = value;
+
+                GD.Print(IsPlayerFrozen);
+
+                CurrentCharacter.DisableHumanoidDoll = isPlayerFrozen;
+                if (isPlayerFrozen) WindowManager.Instance.CloseAll();
+            }
         }
 
         public override void _Ready()
@@ -106,7 +122,7 @@ namespace Galatime
             if (Input.IsActionPressed("game_move_left")) inputVelocity.X -= 1;
             inputVelocity = inputVelocity.Normalized() * Speed;
 
-            if (CanMove && !IsDodge) CurrentCharacter.Body.Velocity = inputVelocity; else Body.Velocity = Vector2.Zero;
+            if (CanMove && !IsDodge && !IsPlayerFrozen) CurrentCharacter.Body.Velocity = inputVelocity; else Body.Velocity = Vector2.Zero;
 
             CurrentCharacter?.Weapon.LookAt(GetGlobalMousePosition());
             SetCameraPosition();
@@ -318,17 +334,19 @@ namespace Galatime
         // All input handling for the player goes here.
         public override void _UnhandledInput(InputEvent @event)
         {
+            if (IsPlayerFrozen) return;
             if (@event.IsActionPressed("game_attack")) CurrentCharacter?.Weapon.Attack(CurrentCharacter);
             if (@event.IsActionPressed("game_dodge")) CurrentCharacter?.Dodge();
             if (@event.IsActionPressed("game_inventory")) PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;
             if (@event.IsActionPressed("game_potion_wheel")) PlayerGui.CallConsumableWheel();
             if (@event.IsActionPressed("game_character_wheel")) PlayerGui.CallCharacterWheel();
 
-
             // Checking for input for abilities.
             for (int i = 0; i < PlayerVariables.Abilities.Length; i++) if (@event.IsActionPressed($"game_ability_{i + 1}")) CurrentCharacter?.UseAbility(i);
         }
 
         public void StartDialog(string id) => PlayerGui.DialogBox.StartDialog(id);
+        public void StartDialog(string id, Action dialogEndCallback) => PlayerGui.DialogBox.StartDialog(id, dialogEndCallback);
+        public void StartCutscene(string cutscene) => CutsceneManager.Instance.StartCutscene(cutscene);
     }
 }

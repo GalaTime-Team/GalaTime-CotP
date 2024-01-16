@@ -75,13 +75,16 @@ public partial class WindowManager : Node
         return true;
     }
 
-    private void CloseOthers(bool canOverlay = false)
+    /// <summary> Closes all windows, even the ones that can overlap other windows. </summary>
+    public void CloseAll() => CloseOthers(false, true);
+
+    private void CloseOthers(bool canOverlay = false, bool force = false)
     {
         if (!canOverlay)
         {
             foreach (var w in OpenedWindows.ToList())
             {
-                if (w.CanOverlay) continue;
+                if (w.CanOverlay && !force) continue;
                 CloseWindow(w);
             }
         }

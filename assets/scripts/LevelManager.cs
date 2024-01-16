@@ -200,7 +200,16 @@ public partial class LevelManager : Node
                 }
                 enemies.ForEach(entity => entity.TakeDamage(99999, 99999, new GalatimeElement()));
                 CheatsMenu.Log($"Successfully killed all {enemies.Count()} enemies", CheatsMenu.LogLevel.Result);
-            })
+            }),
+            new Cheat(name: "Drama cheats", type: Cheat.CheatType.Separator),
+            new Cheat("start_cutscene", "Start cutscene", "Starts a cutscene.", "cheat_start_cutscene", (_, input) => {
+                var inputArguments = CheatsMenu.ParseCheatArguments(input, 1);
+                var args = inputArguments.args;
+                if (!inputArguments.result) return;
+
+                var cutsceneName = args[0];
+                CutsceneManager.Instance.StartCutscene(cutsceneName);
+            }, Cheat.CheatType.Input)
         );
     }
 

@@ -38,3 +38,6 @@ autostart = true
 
 [node name="DurationTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="Line" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0)

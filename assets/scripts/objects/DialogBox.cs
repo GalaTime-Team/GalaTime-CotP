@@ -1,10 +1,12 @@
 using Galatime;
 using Galatime.Dialogue;
+using Galatime.Global;
 using Galatime.UI.Helpers;
 using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 public partial class DialogBox : NinePatchRect
 {
@@ -51,6 +53,8 @@ public partial class DialogBox : NinePatchRect
     /// <summary> Indicates whether the dialog is ended. </summary>
     public bool IsDialog = false;
 
+    public Action OnDialogEndCallback;
+
     private AudioStreamPlayer DialogAudio;
     public override void _Ready()
     {
@@ -62,17 +66,16 @@ public partial class DialogBox : NinePatchRect
         SkipAnimationPlayer = GetNode<AnimationPlayer>("SkipAnimationPlayer");
         CharacterNameLabel = GetNode<Label>("CharacterName");
 
-        TypingLabel.OnType += AppendLetter;
         TypingLabel.OnTypingFinished += StopAndPlaySkipAnimation;
         TypingLabel.TypeTimer.Stop();
     }
 
     /// <summary> Start a dialog by registered dialog id in the game. </summary>
     /// <remarks> If the dialog is not exist, the dialog will be ended. Dialogs taken from the <see cref="GalatimeGlobals.DialogsList"/> </remarks>
-    public void StartDialog(string id)
+    public void StartDialog(string id, Action dialogEndCallback = null)
     {
         var dialog = GalatimeGlobals.GetDialogById(id);
-        if (dialog is not null) StartDialog(dialog);
+        if (dialog is not null) StartDialog(dialog, dialogEndCallback);
         else
         {
             EndDialog();
@@ -96,7 +99,7 @@ public partial class DialogBox : NinePatchRect
         StartDialog(dialog);
     }
 
-    public void StartDialog(DialogData dialog)
+    public void StartDialog(DialogData dialog, Action dialogEndCallback = null)
     {
         CurrentDialog = dialog;
 
@@ -104,6 +107,8 @@ public partial class DialogBox : NinePatchRect
         Visible = true;
         CanSkip = true;
         IsDialog = true;
+
+        OnDialogEndCallback = dialogEndCallback;
 
         CurrentPhrase++;
     }
@@ -116,34 +121,30 @@ public partial class DialogBox : NinePatchRect
         ResetValues();
     }
 
-    // <summary> A method that appends a letter to the TextLabel. </summary>
-    private void AppendLetter()
-    {
-        var rnd = new Random();
-        DialogAudio.PitchScale = ((float)rnd.NextDouble() / 10) + 0.99f;
-        DialogAudio.Play();
-    }
-
     private void StopAndPlaySkipAnimation()
     {
         SkipAnimationPlayer.Play("loop");
         CanSkip = true;
+
     }
 
     public void StartTyping() => TypingLabel.StartTyping();
 
     public void NextPhrase(int phraseId)
     {
-        SkipAnimationPlayer.Play("start");
-        CanSkip = false;
-
         var phrase = CurrentDialog.Lines[phraseId];
+
+        if (phrase.Actions.Count > 0) ExecuteActions(phrase.Actions);
+
         // Check if the phrase is empty to not play empty lines.
         if (phrase.Text.Length == 0)
         {
             CurrentPhrase++;
             return;
         }
+
+        CanSkip = false;
+        SkipAnimationPlayer.Play("start");
 
         var character = GalatimeGlobals.GetCharacterById(phrase.CharacterID);
 
@@ -157,7 +158,7 @@ public partial class DialogBox : NinePatchRect
         var emotion = character.EmotionPaths.Find(x => x.Id == phrase.EmotionID);
         var voice = character.VoicePath != "" ? GD.Load<AudioStream>(character.VoicePath) : DefaultVoice;
 
-        DialogAudio.Stream = voice;
+        TypingLabel.SetTypingAudio(voice);
 
         // Determine if character is animated or not.
         Texture2D texture = GD.Load<Texture2D>(emotion.Path);
@@ -169,6 +170,23 @@ public partial class DialogBox : NinePatchRect
         else CharacterPortraitTexture.Texture = texture;
 
         StartTyping();
+    }
+
+    public void ExecuteActions(List<string> actions)
+    {
+        var str = new StringBuilder();
+        foreach (var action in actions) str.Append(action).Append(", ");
+        GD.Print(str);
+
+        foreach (var action in actions)
+        {
+            switch (action)
+            {
+                case "cutscene":
+                    CutsceneManager.Instance.StartCutscene(actions[1]);
+                    break;
+            }
+        }
     }
 
     public void SetCameraOffset(string x, string y)
@@ -187,6 +205,8 @@ public partial class DialogBox : NinePatchRect
         CurrentDialog = null;
         CanSkip = false;
         currentPhrase = -1;
+
+        OnDialogEndCallback?.Invoke();
     }
 
     public override void _UnhandledInput(InputEvent @event)
