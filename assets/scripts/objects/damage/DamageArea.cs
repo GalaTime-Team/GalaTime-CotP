@@ -1,10 +1,10 @@
 using Godot;
 using System;
-using Galatime;
 
 namespace Galatime.Damage;
 
-public enum BodyType {
+public enum BodyType
+{
     Entity,
     Projectile,
     Solid
@@ -17,7 +17,7 @@ public partial class DamageArea : Area2D
     /// <summary> The element of the damage area. </summary>
     public GalatimeElement Element = new();
     /// <summary> The type of damage of the damage area. </summary>
-    public DamageType Type = DamageType.Physical; 
+    public DamageType Type = DamageType.Physical;
     /// <summary> The attack stat (can be magical or physical) of the damage area. </summary>
     public float AttackStat = 0;
     /// <summary> The power of the damage area. </summary>
@@ -39,22 +39,26 @@ public partial class DamageArea : Area2D
         BodyEntered += OnBodyEntered;
     }
 
-    private void OnBodyEntered(Node body) {
+    private void OnBodyEntered(Node body)
+    {
         // Deal damage to the entity if someone entered the area.
         DealDamage(body);
     }
 
-    public void HitOneTime() {
+    public void HitOneTime()
+    {
         // Getting all overlapping bodies.
         var bodies = GetOverlappingBodies();
-        
+
         // Interate over the bodies and deal damage to all of them.
         foreach (var body in bodies) DealDamage(body);
     }
 
-    public void DealDamage(Node body) {
+    public void DealDamage(Node body)
+    {
         // Checking if the body is an entity and not a dead body (Just to be sure).
-        if (body is Entity e && !e.DeathState && Active) {
+        if (body is Entity e && !e.DeathState && Active)
+        {
             // Calculating the rotation to the damaged entity to push back.
             var damageRotation = GlobalPosition.AngleToPoint(e.GlobalPosition);
 
@@ -64,8 +68,9 @@ public partial class DamageArea : Area2D
             // Fire the Hit event.
             Hit?.Invoke(e, BodyType.Entity);
         }
-        if (body is Projectile p && p.Moving) { 
-            Hit?.Invoke(p, BodyType.Projectile); 
+        if (body is Projectile p && p.Moving)
+        {
+            Hit?.Invoke(p, BodyType.Projectile);
             return;
         }
         Hit?.Invoke(body as Node2D, BodyType.Solid);

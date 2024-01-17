@@ -67,6 +67,12 @@ public partial class CutsceneManager : Node
                     });
 
                 }).SetDelay(3f);
+            }),
+            new CutsceneData("test2", () => 
+            {   
+                var player = PlayerVariables.Instance.Player;
+                if (Validate(player)) return;
+                player.StartDialog("test2");
             })
         );
     }

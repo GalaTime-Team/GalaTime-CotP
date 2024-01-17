@@ -1,0 +1,118 @@
+[gd_scene load_steps=13 format=3 uid="uid://dlp02ewci0kv6"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/enemies/Firecloak.cs" id="1_0eun4"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ogpqi"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_wke3y"]
+[ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="4_n0y02"]
+[ext_resource type="PackedScene" uid="uid://blop7skk5xvn1" path="res://assets/objects/damage/bases/BaseFireball.tscn" id="4_plde0"]
+[ext_resource type="Texture2D" uid="uid://crllt0goobb8p" path="res://sprites/entity/firecloak/idle.png" id="6_pfbco"]
+
+[sub_resource type="Resource" id="Resource_57xwu"]
+script = ExtResource("2_ogpqi")
+StatsNames = [1, 5, 6, 7, 8, 9]
+StatsValues = [40.0, 100.0, 100.0, 20.0, 50.0, 500.0]
+
+[sub_resource type="Resource" id="Resource_pg41o"]
+script = ExtResource("3_wke3y")
+InitializerElement = "Ignis"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a7cev"]
+size = Vector2(40, 82)
+
+[sub_resource type="Animation" id="Animation_rml3x"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_n3oqy"]
+resource_name = "idle"
+length = 0.8
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("6_pfbco")]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5vyl2"]
+_data = {
+"RESET": SubResource("Animation_rml3x"),
+"idle": SubResource("Animation_n3oqy")
+}
+
+[node name="Firecloak" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["enemy"]]
+collision_layer = 4
+script = ExtResource("1_0eun4")
+Stats = SubResource("Resource_57xwu")
+Element = SubResource("Resource_pg41o")
+Body = NodePath(".")
+
+[node name="BaseFireball" parent="." instance=ExtResource("4_plde0")]
+
+[node name="Projectile" parent="BaseFireball" index="0"]
+TargetTeam = 0
+
+[node name="TargetController" parent="." instance=ExtResource("4_n0y02")]
+position = Vector2(0, -9.53674e-07)
+rotation = 3.14159
+scale = Vector2(0.154931, 83.6219)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -9.53674e-07)
+scale = Vector2(4, 4)
+texture = ExtResource("6_pfbco")
+hframes = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_a7cev")
+
+[node name="FireballSpawnTimer" type="Timer" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_5vyl2")
+}
+autoplay = "idle"
+
+[editable path="BaseFireball"]

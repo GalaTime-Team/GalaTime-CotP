@@ -5,52 +5,19 @@ namespace Galatime
 {
     public partial class Fireball : GalatimeAbility
     {
-        private AnimationPlayer AnimationPlayer;
-        private Projectile Projectile;
-        private Timer DurationTimer;
+        private BaseFireball BaseFireball;
 
-        private float PhysicalAttack = 0;
-        private float MagicalAttack = 0; 
-    
         public override void _Ready()
         {
-            AnimationPlayer = GetNode<AnimationPlayer>("Projectile/AnimationPlayer");
-            Projectile = GetNode<Projectile>("Projectile");
-            DurationTimer = GetNode<Timer>("DurationTimer");
-
-            AnimationPlayer.AnimationFinished += AnimationFinished;
-
-            DurationTimer.WaitTime = Data.Duration;
-        }
-
-        public void AnimationFinished(StringName name)
-        {
-            if (name == "intro") AnimationPlayer.Play("loop");
+            BaseFireball = GetNode<BaseFireball>("BaseFireball");
         }
 
         public override void Execute(HumanoidCharacter p)
         {
-            PhysicalAttack = p.Stats[EntityStatType.PhysicalAttack].Value;
-            MagicalAttack = p.Stats[EntityStatType.MagicalAttack].Value;
-            
-            var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-
-            Projectile.Rotation = p.Weapon.Rotation;
-            Projectile.GlobalPosition = p.Weapon.GlobalPosition;
-            Projectile.AttackStat = MagicalAttack;
-
-            Projectile.Duration = Data.Duration;
-            Projectile.Exploded += Destroy;
-
-            if (playerVariables.Player is Player player) player.CameraShakeAmount += 10;
-
-            AnimationPlayer.Play("intro");
-            DurationTimer.Start();
-        }
-
-        public void Destroy(Projectile projectile = null)
-        {
-            AnimationPlayer.Play("outro");
+            var magicalAttack = p.Stats[EntityStatType.MagicalAttack].Value;
+            BaseFireball.GlobalPosition = p.Weapon.GlobalPosition;
+            BaseFireball.Proj.Duration = Data.Duration;
+            BaseFireball.Launch(p.Weapon.Rotation, magicalAttack);
         }
     }
 }

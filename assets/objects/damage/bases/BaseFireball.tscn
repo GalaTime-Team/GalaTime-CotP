@@ -1,0 +1,257 @@
+[gd_scene load_steps=15 format=3 uid="uid://blop7skk5xvn1"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/damage/bases/BaseFireball.cs" id="1_0ptew"]
+[ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="1_bo7dh"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="2_5qxio"]
+[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://sprites/particles/fire/fire.png" id="3_j07w7"]
+[ext_resource type="Texture2D" uid="uid://cbyfpnvsuigqn" path="res://sprites/abilities/fireball.png" id="5_del6w"]
+[ext_resource type="AudioStream" uid="uid://bx75a101a77ss" path="res://assets/audios/sounds/firebal.mp3" id="14_b1q6f"]
+
+[sub_resource type="Resource" id="Resource_qm5l1"]
+script = ExtResource("2_5qxio")
+InitializerElement = "Ignis"
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_crpnl"]
+particles_animation = true
+particles_anim_h_frames = 6
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kw371"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 32.0
+gravity = Vector3(0, 0, 0)
+scale_min = 4.0
+scale_max = 4.0
+anim_speed_min = 1.0
+anim_speed_max = 2.0
+
+[sub_resource type="Animation" id="Animation_hd67k"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("5_del6w")]
+}
+
+[sub_resource type="Animation" id="Animation_d2rw4"]
+resource_name = "intro"
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [29]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("5_del6w")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7]
+}
+tracks/3/type = "audio"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Audio")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"clips": [{
+"end_offset": 0.4,
+"start_offset": 0.0,
+"stream": ExtResource("14_b1q6f")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/3/use_blend = true
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Particles:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("AnimationPlayer")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.4),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": ["loop", -1, 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_7w3po"]
+resource_name = "loop"
+length = 0.6
+loop_mode = 1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [8, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+}
+tracks/1/type = "audio"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Audio")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.233254,
+"stream": ExtResource("14_b1q6f")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/1/use_blend = true
+
+[sub_resource type="Animation" id="Animation_4qc7f"]
+resource_name = "outro"
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.7),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [null]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Particles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3q24d"]
+_data = {
+"RESET": SubResource("Animation_hd67k"),
+"intro": SubResource("Animation_d2rw4"),
+"loop": SubResource("Animation_7w3po"),
+"outro": SubResource("Animation_4qc7f")
+}
+
+[node name="BaseFireball" type="Node2D"]
+script = ExtResource("1_0ptew")
+
+[node name="Projectile" parent="." instance=ExtResource("1_bo7dh")]
+visible = false
+collision_layer = 8
+Speed = 600.0
+Power = 40
+Element = SubResource("Resource_qm5l1")
+Accuracy = 0.0
+Explosive = true
+ExplosionPower = 8
+Moving = false
+Timeout = 0.0
+metadata/_edit_lock_ = true
+
+[node name="Particles" type="GPUParticles2D" parent="Projectile"]
+material = SubResource("CanvasItemMaterial_crpnl")
+position = Vector2(-16, 0)
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_kw371")
+texture = ExtResource("3_j07w7")
+metadata/_edit_lock_ = true
+
+[node name="Sprite" type="Sprite2D" parent="Projectile"]
+scale = Vector2(4, 4)
+texture = ExtResource("5_del6w")
+flip_h = true
+hframes = 29
+metadata/_edit_lock_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Projectile"]
+libraries = {
+"": SubResource("AnimationLibrary_3q24d")
+}
+
+[node name="Audio" type="AudioStreamPlayer2D" parent="Projectile"]
+metadata/_edit_lock_ = true

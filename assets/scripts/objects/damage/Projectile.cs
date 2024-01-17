@@ -91,7 +91,7 @@ public partial class Projectile : CharacterBody2D
             DurationTimer.Start();
         }
 
-        TimeoutTimer.Timeout += QueueFree;
+        TimeoutTimer.Timeout += OnTimeout;
         DurationTimer.Timeout += Destroy;
 
         DamageArea.BodyEntered += OnDamageAreaBodyEntered;
@@ -100,6 +100,11 @@ public partial class Projectile : CharacterBody2D
     public override void _Process(double delta)
     {
         Explosion.Power = ExplosionPower;
+    }
+
+    public void OnTimeout()
+    {
+        if (Timeout > 0) QueueFree();
     }
 
     public override void _PhysicsProcess(double delta)
