@@ -1,4 +1,5 @@
 using Galatime.Global;
+using Galatime.Helpers;
 using Godot;
 using System;
 
@@ -11,6 +12,7 @@ public partial class Entity : CharacterBody2D
     // [Export] public EntityStats Stats = new(new());
     [Export] public EntityStats Stats { get; set; }
     [Export] public GalatimeElement Element { get; set; }
+    [Export] public Teams Team;
     /// <summary> How many XP is dropped from entity when it's died </summary>
     [Export] public int DroppedXp;
     /// <summary> Speed of the entity moving. </summary>

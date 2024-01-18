@@ -58,7 +58,7 @@ public partial class ResourceValue : Node
     /// <param name="justSet"> Whether or not to force to just set the value to not start the countdown timer and not invoke the OnValueChanged event </param>
     public void SetValue(float newValue, bool justSet = false)
     {
-        value = Mathf.Clamp(newValue, 0, MaxValue);
+        value = (float)Math.Round(Math.Clamp(newValue, 0, MaxValue), 2);
         if (!justSet) 
         {
             CountdownTimer.Start();

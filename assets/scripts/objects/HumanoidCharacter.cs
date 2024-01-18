@@ -95,8 +95,8 @@ public partial class HumanoidCharacter : Entity
 
     public void InitializeValues()
     {
-        Stamina = new("Stamina", Stats[EntityStatType.Stamina].Value, 3, 1);
-        Mana = new("Mana", Stats[EntityStatType.Mana].Value, 3, 1);
+        Stamina = new("Stamina", Stats[EntityStatType.Stamina].Value, 1, .5f);
+        Mana = new("Mana", Stats[EntityStatType.Mana].Value, 1, .5f);
 
         AddChild(Stamina);
         AddChild(Mana);
@@ -250,14 +250,14 @@ public partial class HumanoidCharacter : Entity
 
     public async void Dodge()
     {
-        if (Stamina.Value - 15 >= 0 && !IsDodge && CanMove)
+        if (Stamina.Value - 10 >= 0 && !IsDodge && CanMove)
         {
             TrailParticles.Texture = Sprite?.Texture;
             IsDodge = true;
             float direction = Weapon.Rotation;
             SetKnockback(1200, direction);
             TrailParticles.Emitting = true;
-            Stamina.Value -= 15;
+            Stamina.Value -= 10;
             await ToSignal(GetTree().CreateTimer(0.3f), "timeout");
             IsDodge = false;
             TrailParticles.Emitting = false;

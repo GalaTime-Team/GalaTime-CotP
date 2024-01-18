@@ -2,23 +2,26 @@ using Godot;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Galatime.Global;
 
 namespace Galatime.Helpers;
 
 /// <summary> Different teams. </summary>
-public enum Teams { Allies, Enemies = -1 };
+public enum Teams { Allies, Enemies, Neutral };
 /// <summary> Determines how the target controller selects a target. </summary>
 public enum TargetingMode { Closest, Weakest };
 /// <summary> Controls the target controller to select a target. </summary>
 public partial class TargetController : Node2D
 {
     /// <summary> Dictionary of teams and their strings (names). </summary>
-    public static Dictionary<Teams, string> TeamNames = new() {
+    public static Dictionary<Teams, string> TeamNames = new() 
+    {
         { Teams.Allies, "ally" },
         { Teams.Enemies, "enemy" }
     };
 
-    public static Dictionary<Teams, int> CollisionTeamLayers = new() {
+    public static Dictionary<Teams, int> CollisionTeamLayers = new() 
+    {
         { Teams.Allies, 2 },
         { Teams.Enemies, 3 }
     };
@@ -33,7 +36,7 @@ public partial class TargetController : Node2D
     public TargetingMode TargetingMode = TargetingMode.Closest;
 
     /// <summary> <see cref="TargetTeamN"/>, but as a string to get team members. </summary>
-    public string TargetTeamString => GetTeamNameByEnum(TargetTeam);
+    public string TargetTeamString => GetTeamNameByTeam(TargetTeam);
 
     /// <summary> The current target of the dependent entity. </summary>
     public Node2D CurrentTarget = null;
@@ -47,9 +50,9 @@ public partial class TargetController : Node2D
     public Node2D TargetOverride = null;
 
     /// <summary> Gets the team name by enum. </summary>
-    public string GetTeamNameByEnum(Teams team) => TeamNames[team];
+    public string GetTeamNameByTeam(Teams team) => TeamNames[team];
     /// <summary> Gets the collision layer number by enum. </summary>
-    public int GetCollisionLayerByEnum(Teams team) => CollisionTeamLayers[team];
+    public int GetCollisionLayerByTeam(Teams team) => CollisionTeamLayers[team];
     
     [Export]
     /// <summary> Represents the duration of the switching target. </summary>
@@ -71,7 +74,7 @@ public partial class TargetController : Node2D
         }
 
         // Get all enemies in the scene of the target team.
-        var enemies = GetTree().GetNodesInGroup(TargetTeamString);
+        var enemies = LevelManager.Instance.Entities.FindAll(x => x.Team == TargetTeam);
 
         // Get all enemies and convert to non-typed list.
         List<Node> NonTypedEnemies = enemies.Cast<Node>().ToList();

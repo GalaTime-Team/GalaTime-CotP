@@ -66,7 +66,7 @@
 [sub_resource type="Resource" id="Resource_y04wb"]
 script = ExtResource("2_lttlj")
 StatsNames = [1, 2, 3, 5, 6, 7, 8]
-StatsValues = [50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
+StatsValues = [86.0, 50.0, 87.0, 54.0, 67.0, 87.0, 80.0]
 
 [sub_resource type="Resource" id="Resource_eg1xe"]
 script = ExtResource("3_r3t0n")
@@ -530,6 +530,7 @@ DramaID = "raphael"
 DramaNode = NodePath(".")
 Stats = SubResource("Resource_y04wb")
 Element = SubResource("Resource_eg1xe")
+Speed = 300.0
 Body = NodePath(".")
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
@@ -541,7 +542,7 @@ texture = ExtResource("4_85udj")
 lifetime = 0.3
 
 [node name="TargetController" parent="." instance=ExtResource("2_n0wm3")]
-TargetTeam = -1
+TargetTeam = 1
 SwitchDuration = 0.5
 
 [node name="HumanoidDoll" parent="." instance=ExtResource("3_fsfpu")]

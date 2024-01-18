@@ -1,23 +1,60 @@
-[gd_scene load_steps=13 format=3 uid="uid://dlp02ewci0kv6"]
+[gd_scene load_steps=23 format=3 uid="uid://dlp02ewci0kv6"]
 
 [ext_resource type="Script" path="res://assets/scripts/objects/enemies/Firecloak.cs" id="1_0eun4"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ogpqi"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_wke3y"]
+[ext_resource type="PackedScene" uid="uid://cjlu5sfy7lowv" path="res://assets/objects/damage/DamageArea.tscn" id="4_7imr7"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="4_n0y02"]
 [ext_resource type="PackedScene" uid="uid://blop7skk5xvn1" path="res://assets/objects/damage/bases/BaseFireball.tscn" id="4_plde0"]
+[ext_resource type="PackedScene" uid="uid://c2kilqb5gaq35" path="res://assets/objects/helpers/ai/RangedHitTracker.tscn" id="4_txqf1"]
 [ext_resource type="Texture2D" uid="uid://crllt0goobb8p" path="res://sprites/entity/firecloak/idle.png" id="6_pfbco"]
+[ext_resource type="PackedScene" uid="uid://6jrbwkewkftv" path="res://assets/objects/gui/DangerNotifierEffect.tscn" id="9_mtr2w"]
 
 [sub_resource type="Resource" id="Resource_57xwu"]
 script = ExtResource("2_ogpqi")
 StatsNames = [1, 5, 6, 7, 8, 9]
-StatsValues = [40.0, 100.0, 100.0, 20.0, 50.0, 500.0]
+StatsValues = [33.0, 40.0, 56.0, 23.0, 39.0, 500.0]
 
 [sub_resource type="Resource" id="Resource_pg41o"]
 script = ExtResource("3_wke3y")
 InitializerElement = "Ignis"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_a7cev"]
-size = Vector2(40, 82)
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_qxoqp"]
+particles_animation = true
+particles_anim_h_frames = 8
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_35oqo"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_gexww"]
+curve = SubResource("Curve_35oqo")
+
+[sub_resource type="Curve" id="Curve_75f12"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_bci2v"]
+curve = SubResource("Curve_75f12")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ao5o2"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+scale_min = 4.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_bci2v")
+color = Color(1, 1, 0, 1)
+alpha_curve = SubResource("CurveTexture_gexww")
+anim_speed_min = 1.0
+anim_speed_max = 2.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tey4c"]
+size = Vector2(8, 48)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_alfla"]
+radius = 30.0
 
 [sub_resource type="Animation" id="Animation_rml3x"]
 length = 0.001
@@ -83,10 +120,34 @@ _data = {
 
 [node name="Firecloak" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["enemy"]]
 collision_layer = 4
+motion_mode = 1
 script = ExtResource("1_0eun4")
 Stats = SubResource("Resource_57xwu")
 Element = SubResource("Resource_pg41o")
+Team = 1
+Speed = 100.0
 Body = NodePath(".")
+
+[node name="TrailParticle" type="GPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_qxoqp")
+position = Vector2(0, -30)
+emitting = false
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_ao5o2")
+texture = ExtResource("6_pfbco")
+lifetime = 0.5
+
+[node name="DamageArea" parent="." instance=ExtResource("4_7imr7")]
+Power = 40.0
+Knockback = 700.0
+
+[node name="Collision" type="CollisionShape2D" parent="DamageArea"]
+position = Vector2(48, 0)
+shape = SubResource("RectangleShape2D_tey4c")
+
+[node name="RangedHitTracker" parent="." node_paths=PackedStringArray("TargetControllerReference") instance=ExtResource("4_txqf1")]
+Range = 550.0
+TargetControllerReference = NodePath("../TargetController")
 
 [node name="BaseFireball" parent="." instance=ExtResource("4_plde0")]
 
@@ -99,20 +160,36 @@ rotation = 3.14159
 scale = Vector2(0.154931, 83.6219)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -9.53674e-07)
+position = Vector2(0, -30)
 scale = Vector2(4, 4)
 texture = ExtResource("6_pfbco")
 hframes = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_a7cev")
+shape = SubResource("CircleShape2D_alfla")
 
 [node name="FireballSpawnTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="AttackCycleTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="DashPrepareTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="StrafeTimer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_5vyl2")
 }
 autoplay = "idle"
+
+[node name="Navigation" type="NavigationAgent2D" parent="."]
+
+[node name="DangerNotifierEffect" parent="." instance=ExtResource("9_mtr2w")]
+position = Vector2(0, -90)
 
 [editable path="BaseFireball"]

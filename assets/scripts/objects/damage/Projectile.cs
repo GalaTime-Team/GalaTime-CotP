@@ -133,7 +133,7 @@ public partial class Projectile : CharacterBody2D
 
     private void OnDamageAreaBodyEntered(Node node)
     {
-        if (node is Entity entity && !entity.DeathState && entity.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam)) && Moving)
+        if (node is Entity entity && !entity.DeathState && entity.Team == TargetTeam && Moving)
         {
             var damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
             if (!Explosive) entity.TakeDamage(Power, AttackStat, Element, DamageType.Magical, 500, damageRotation);
@@ -149,7 +149,7 @@ public partial class Projectile : CharacterBody2D
         }
         else
         {
-            if (node is Entity entity1 && !entity1.IsInGroup(TargetController.GetTeamNameByEnum(TargetTeam))) return;
+            if (node is Entity entity1 && entity1.Team != TargetTeam) return;
             // Destroy the projectile if it collides with an solid environment.
             Destroy();
         }

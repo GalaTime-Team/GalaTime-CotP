@@ -58,7 +58,7 @@
 			"costs": {
 				"mana": 10
 			},
-			"power": 20,
+			"power": 30,
 			"duration": 2,
 			"scene": "res://assets/objects/abilities/Firewave.tscn",
 			"icon": "res://sprites/gui/abilities/ignis/firewave.png",
@@ -89,7 +89,7 @@
 			"costs": {
 				"mana": 15
 			},
-			"power": 40,
+			"power": 30,
 			"duration": 1,
 			"scene": "res://assets/objects/abilities/FireBullet.tscn",
 			"icon": "res://sprites/gui/abilities/ignis/fire_bullet.png",
