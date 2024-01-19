@@ -41,10 +41,6 @@ public partial class TrailEffect : Line2D
         else CurrentDistance = 0f;
 
         // Remove points if length is reached or if trail is disabled.
-        if (Points.Length > Length || (Points.Length > 0 && !Enabled))
-        {
-            RemovePoint(0);
-            GD.Print("remove point");
-        }
+        if (Points.Length > Length || (Points.Length > 0 && !Enabled)) RemovePoint(0);
     }
 }
