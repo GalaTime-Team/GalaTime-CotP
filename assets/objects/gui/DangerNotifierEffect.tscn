@@ -4,6 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://bqgnlhy0go805" path="res://sprites/gui/danger.png" id="1_17c4p"]
 [ext_resource type="AudioStream" uid="uid://bxvcquaasip7c" path="res://assets/audios/sounds/danger.mp3" id="2_5vkjc"]
 
+[sub_resource type="Animation" id="Animation_532f0"]
+length = 0.001
+
 [sub_resource type="Animation" id="Animation_55pl5"]
 resource_name = "loop"
 length = 0.3
@@ -21,9 +24,6 @@ tracks/0/keys = {
 "update": 1,
 "values": [0, 1]
 }
-
-[sub_resource type="Animation" id="Animation_532f0"]
-length = 0.001
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mpubv"]
 _data = {

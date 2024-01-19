@@ -108,7 +108,7 @@ public partial class Explosion : Area2D
 
         PlayerVariables.Instance.Player.CameraShakeAmount = Power * 2;
 
-        GetTree().CreateTimer(disableOn).Timeout += () => {
+        GetTree().CreateTimer(disableOn, false).Timeout += () => {
             SmokeParticles.Emitting = true;
             Monitoring = false;
             GetTree().CreateTimer(disableOn * 2.33).Timeout += () => 

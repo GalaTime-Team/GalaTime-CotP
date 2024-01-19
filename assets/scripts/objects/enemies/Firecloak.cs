@@ -16,9 +16,10 @@ public partial class Firecloak : Entity
     public NavigationAgent2D Navigation;
     public DamageArea DamageArea;
 
+    public AnimationPlayer AnimationPlayer;
     public DangerNotifierEffect DangerDashEffect;
 
-    public GpuParticles2D TrailParticle;
+    public TrailEffect TrailEffect;
     #endregion
 
     #region Variables
@@ -76,7 +77,8 @@ public partial class Firecloak : Entity
         Navigation = GetNode<NavigationAgent2D>("Navigation");
         DamageArea = GetNode<DamageArea>("DamageArea");
 
-        TrailParticle = GetNode<GpuParticles2D>("TrailParticle");
+        AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+        TrailEffect = GetNode<TrailEffect>("TrailEffect");
         #endregion
 
         FireballSpawnTimer.Timeout += FireballAttack;
@@ -90,7 +92,7 @@ public partial class Firecloak : Entity
     #region Attack cycles
     public void FireballAttack()
     {
-        if (RangedHitTracker.GetCollisionPoint().DistanceTo(GlobalPosition) < 50) // Don't launch fireball if we are too close to the target.
+        if (RangedHitTracker.GetCollisionPoint().DistanceTo(GlobalPosition) < 100) // Don't launch fireball if we are too close to the target.
         {
             NextCycle();
             return;
@@ -121,6 +123,8 @@ public partial class Firecloak : Entity
         DangerDashEffect.Position = DangerDashEffectSpawnPosition;
         AddChild(DangerDashEffect);
         DangerDashEffect.Start();
+
+        AnimationPlayer.Play("dash_intro");
 
         DashPrepareTimer.Start(DashPrepareTime);
     }
@@ -181,19 +185,23 @@ public partial class Firecloak : Entity
 
     public void Dash()
     {
-        TrailParticle.Emitting = true;
+        TrailEffect.Enabled = true;
         DangerDashEffect.End();
         EndDashPosition = TargetController.CurrentTarget.GlobalPosition;
         IsDashing = true;
+
+        AnimationPlayer.Play("dash_loop");
     }
 
     public void EndDash()
     {
-        TrailParticle.Emitting = false;
+        TrailEffect.Enabled = false;
         IsDashing = false;
         DamageArea.AttackStat = Stats[EntityStatType.PhysicalAttack].Value;
         DamageArea.HitOneTime();
         NextCycle(true);
+
+        AnimationPlayer.Play("dash_outro");
     }
     #endregion
 

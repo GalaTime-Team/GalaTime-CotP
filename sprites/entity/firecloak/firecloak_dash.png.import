@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://crllt0goobb8p"
-path="res://.godot/imported/idle.png-5780d5d7732cfb0d746ac0598c8a159a.ctex"
+uid="uid://bjwcoycdue7kx"
+path="res://.godot/imported/firecloak_dash.png-9a2b84aff2e16cdc068a1fcfed487497.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/entity/firecloak/idle.png"
-dest_files=["res://.godot/imported/idle.png-5780d5d7732cfb0d746ac0598c8a159a.ctex"]
+source_file="res://sprites/entity/firecloak/firecloak_dash.png"
+dest_files=["res://.godot/imported/firecloak_dash.png-9a2b84aff2e16cdc068a1fcfed487497.ctex"]
 
 [params]
 

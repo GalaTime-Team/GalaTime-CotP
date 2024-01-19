@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqlhx324dwykk"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/effects/TrailEffect.cs" id="1_70xw6"]
+
+[sub_resource type="Curve" id="Curve_wtr4u"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="TrailEffect" type="Line2D"]
+top_level = true
+z_index = -1
+width_curve = SubResource("Curve_wtr4u")
+joint_mode = 2
+end_cap_mode = 2
+script = ExtResource("1_70xw6")
