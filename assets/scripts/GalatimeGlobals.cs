@@ -1,5 +1,6 @@
 using Galatime;
 using Galatime.Dialogue;
+using Galatime.Global;
 using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

@@ -120,7 +120,7 @@ namespace Galatime
             if (Input.IsActionPressed("game_move_down")) inputVelocity.Y += 1;
             if (Input.IsActionPressed("game_move_right")) inputVelocity.X += 1;
             if (Input.IsActionPressed("game_move_left")) inputVelocity.X -= 1;
-            inputVelocity = inputVelocity.Normalized() * Speed;
+            inputVelocity = inputVelocity.Normalized() * CurrentCharacter.Speed;
 
             if (CanMove && !IsDodge && !IsPlayerFrozen) CurrentCharacter.Body.Velocity = inputVelocity; else Body.Velocity = Vector2.Zero;
 

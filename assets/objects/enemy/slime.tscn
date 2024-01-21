@@ -498,7 +498,7 @@ script = ExtResource("1_ufwr7")
 Stats = SubResource("Resource_ygl1b")
 Element = SubResource("Resource_lywks")
 Team = 1
-DroppedXp = 100
+DroppedXp = 10
 Speed = 100.0
 Body = NodePath(".")
 

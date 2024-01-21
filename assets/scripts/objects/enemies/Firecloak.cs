@@ -15,14 +15,24 @@ public partial class Firecloak : Entity
     public RangedHitTracker RangedHitTracker;
     public NavigationAgent2D Navigation;
     public DamageArea DamageArea;
+    public Sprite2D Sprite2D;
+    public CollisionShape2D Collision;
 
     public AnimationPlayer AnimationPlayer;
     public DangerNotifierEffect DangerDashEffect;
 
     public TrailEffect TrailEffect;
+
+    public Explosion DeathExplosion;
     #endregion
 
     #region Variables
+    public VectorShaker DeathShake = new() 
+    {
+        ShakeAmplitude = new Vector2(20, 20),
+        Infinite = true
+    };
+
     public readonly Vector2 DangerDashEffectSpawnPosition = new(0, -90);
     public bool StrafeDirection = false;
 
@@ -79,12 +89,19 @@ public partial class Firecloak : Entity
 
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
         TrailEffect = GetNode<TrailEffect>("TrailEffect");
+        Sprite2D = GetNode<Sprite2D>("Sprite2D");
+        Collision = GetNode<CollisionShape2D>("Collision");
         #endregion
 
         FireballSpawnTimer.Timeout += FireballAttack;
         AttackCycleTimer.Timeout += StartAttack;
         StrafeTimer.Timeout += ChangeStrafeDirection;
         DashPrepareTimer.Timeout += Dash;
+
+        DeathExplosion = Explosion.GetInstance();
+        DeathExplosion.Power = 14;
+        DeathExplosion.Element = GalatimeElement.Ignis;
+        DeathExplosion.Type = ExplosionType.Red;
 
         NextCycle();
     }
@@ -118,6 +135,8 @@ public partial class Firecloak : Entity
 
     public void DashAttack()
     {
+        if (DeathState) return;
+
         // Spawn danger effect to notify the player that enemy is about to dash.
         DangerDashEffect = DangerNotifierEffect.GetInstance();
         DangerDashEffect.Position = DangerDashEffectSpawnPosition;
@@ -174,6 +193,7 @@ public partial class Firecloak : Entity
     #region Attacks
     public void SpawnFireball(float rotationOffset = 0)
     {
+        if (DeathState) return;
         var magicalAttack = Stats[EntityStatType.MagicalAttack].Value;
         var prj = BaseFireball.Duplicate() as BaseFireball;
         prj.GlobalPosition = GlobalPosition;
@@ -185,8 +205,11 @@ public partial class Firecloak : Entity
 
     public void Dash()
     {
-        TrailEffect.Enabled = true;
         DangerDashEffect.End();
+
+        if (DeathState) return;
+
+        TrailEffect.Enabled = true;
         EndDashPosition = TargetController.CurrentTarget.GlobalPosition;
         IsDashing = true;
 
@@ -199,28 +222,46 @@ public partial class Firecloak : Entity
         IsDashing = false;
         DamageArea.AttackStat = Stats[EntityStatType.PhysicalAttack].Value;
         DamageArea.HitOneTime();
-        NextCycle(true);
 
+        if (DeathState) return;
+
+        NextCycle(true);
         AnimationPlayer.Play("dash_outro");
     }
     #endregion
 
     public override void _DeathEvent(float damageRotation = 0)
     {
-        Visible = false;
-        FireballSpawnTimer.Stop();
+        DeathShake.ShakeStart(Sprite2D.Position);
+        AnimationPlayer.Play("death");
+        Callable.From(() => Collision.Disabled = true).CallDeferred();
 
         base._DeathEvent(damageRotation);
+    }
+
+    public void Explode()
+    {
+        Sprite2D.Visible = false;
+        DeathShake.ShakeStop();
+        DropXp();
+
+        AddChild(DeathExplosion);
     }
 
     public override void _AIProcess(double delta)
     {
         base._AIProcess(delta);
 
+        if (DeathState)
+        {
+            DeathShake.ShakeProcess(delta);
+            Sprite2D.Position = DeathShake.ShakenVector;
+        }
+
         Velocity = Vector2.Zero;
         if (TargetController.CurrentTarget != null)
         {
-            if (RangedHitTracker.CanHit)
+            if (RangedHitTracker.CanHit && !DeathState)
             {
                 var target = TargetController.CurrentTarget;
                 var angleTo = target.GlobalPosition.AngleToPoint(GlobalPosition);
@@ -244,10 +285,8 @@ public partial class Firecloak : Entity
                     if (GlobalPosition.DistanceTo(EndDashPosition) < 50 || IsOnWall()) EndDash();
                 }
             }
-            else
+            else if (!DeathState)
             {
-                if (IsDashing) EndDash(); // We don't need to dash if we can't hit.
-
                 // TODO: Move navigation behavior to another class.
                 // Move to target if we can't hit.
                 Vector2 vectorPath;
@@ -258,6 +297,10 @@ public partial class Firecloak : Entity
                 vectorPath = Vector2.Right.Rotated(pathRotation);
                 Velocity = vectorPath.Normalized() * Speed;
                 // TODO: Move navigation behavior to another class.
+            }
+            else
+            {
+                if (IsDashing) EndDash(); // We don't need to dash if we can't hit.
             }
         }
         MoveAndSlide();

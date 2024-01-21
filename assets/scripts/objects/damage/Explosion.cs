@@ -1,19 +1,20 @@
 using Godot;
 using System;
-using Galatime;
 using Godot.Collections;
+using Galatime.Global;
 
 namespace Galatime.Damage;
 
 /// <summary> The type of the explosion. Normal or Red (Can't be blocked and stun). </summary>
-public enum ExplosionType {
+public enum ExplosionType
+{
     Normal,
     Red
 }
 
 /// <summary> The explosion node. </summary>s
 public partial class Explosion : Area2D
-{   
+{
     #region Nodes
     // <summary> The explosion particles visual nodes. </summary>
     public GpuParticles2D Particles, WhiteParticles, HoleParticles, SmokeParticles, TrailParticles;
@@ -39,7 +40,8 @@ public partial class Explosion : Area2D
     public Dictionary<ExplosionType, Texture2D> ExplosionTextures = new();
     #endregion
 
-    public override void _Ready() {
+    public override void _Ready()
+    {
         #region Get nodes
         Particles = GetNode<GpuParticles2D>("Particles");
         WhiteParticles = GetNode<GpuParticles2D>("WhiteParticles");
@@ -57,24 +59,29 @@ public partial class Explosion : Area2D
 
         BodyEntered += OnBodyEntered;
 
-        Explode();  
+        Explode();
     }
 
-    private void OnBodyEntered(Node node) {
+    public static Explosion GetInstance() => GD.Load<PackedScene>(FilePathsConstants.ExplosionPath).Instantiate<Explosion>();
+
+    private void OnBodyEntered(Node node)
+    {
         // Deal damage to the entity.
-        if (node is Entity e) {
+        if (node is Entity e)
+        {
             float damageRotation = GlobalPosition.AngleToPoint(e.GlobalPosition);
             e.TakeDamage(3 * Power, 150, Element, DamageType.Magical, 100 * Power, damageRotation);
         }
     }
 
-    public async void Explode() {
+    public async void Explode()
+    {
         // Disable the explosion in this time (Depends on the power).
         var disableOn = Power * .05f;
         var particleSize = Power * 1.33f;
         var particleSizeDifference = (int)(particleSize * 0.2f);
 
-        var rnd = new Random().Next(-particleSizeDifference, particleSizeDifference); 
+        var rnd = new Random().Next(-particleSizeDifference, particleSizeDifference);
         particleSize += rnd;
 
         SetProcessMaterialSize(Particles, particleSize);
@@ -90,7 +97,7 @@ public partial class Explosion : Area2D
 
         Particles.Texture = ExplosionTextures[Type];
         AudioStreamPlayer.Stream = ExplosionAudios[Type];
-        
+
         // Apply to the particles as well.
         Particles.Lifetime = Power * .06f;
         WhiteParticles.Lifetime = Particles.Lifetime / 2;
@@ -108,13 +115,14 @@ public partial class Explosion : Area2D
 
         PlayerVariables.Instance.Player.CameraShakeAmount = Power * 2;
 
-        GetTree().CreateTimer(disableOn, false).Timeout += () => {
+        GetTree().CreateTimer(disableOn, false).Timeout += () =>
+        {
             SmokeParticles.Emitting = true;
             Monitoring = false;
-            GetTree().CreateTimer(disableOn * 2.33).Timeout += () => 
+            GetTree().CreateTimer(disableOn * 2.33, false).Timeout += () =>
             {
                 SmokeParticles.Emitting = false;
-                GetTree().CreateTimer(3).Timeout += QueueFree;
+                GetTree().CreateTimer(3, false).Timeout += QueueFree;
             };
         };
     }
