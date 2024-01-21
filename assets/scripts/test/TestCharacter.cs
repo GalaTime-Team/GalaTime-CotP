@@ -66,6 +66,8 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
         InitializeTimers();
 
         for (var i = 0; i < (DefaultAbilities != null ? DefaultAbilities.Count : 0); i++) { AddAbility(GalatimeGlobals.GetAbilityById(DefaultAbilities[i]), i); }
+
+        if (LevelManager.Instance.CheatsMenu.GetCheat("god_mode").Active) Invincible = true;
     }
 
     private void InitializeTimers()

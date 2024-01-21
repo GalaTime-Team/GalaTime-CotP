@@ -109,6 +109,12 @@ public partial class LevelManager : Node
                 CheatsMenu.Log(str.ToString(), CheatsMenu.LogLevel.Result);
             }),
             new Cheat(name: "Gameplay cheats", type: Cheat.CheatType.Separator),
+            new Cheat("god_mode", "God mode", "Toggles god mode, which makes the all characters invulnerable to all damage.", "cheat_god_mode", (active, _) => {
+                var pv = PlayerVariables.Instance;
+                Array.ForEach(pv.Allies, c => {
+                    if (c.Instance != null) c.Instance.Invincible = active;
+                });
+            }, Cheat.CheatType.Toggle),
             new Cheat("add_allies", "Add all allies", "Add all possible allies to the player and load them in the scene.", "cheat_add_allies", (bool active, string input) =>
             {
                 var pv = PlayerVariables.Instance;
