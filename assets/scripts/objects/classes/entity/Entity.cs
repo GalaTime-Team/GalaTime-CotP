@@ -17,6 +17,10 @@ public partial class Entity : CharacterBody2D
     [Export] public int DroppedXp;
     /// <summary> Speed of the entity moving. </summary>
     [Export] public float Speed = 200f;
+    /// <summary> How long the entity will be valid after death. </summary>
+    [Export] public float Timeout = 3f;
+    /// <summary> If the entity is invincible, meaning it won't take any damage. It can be killed if SetHealth is called with negative value. </summary>
+    [Export] public bool Invincible = false;
     private Vector2 KnockbackVelocity = Vector2.Zero;
     public bool CanMove = true;
     /// <summary> If entity can do AI. It means it will be processed by <see cref="_AIProcess"/> </summary>
@@ -40,6 +44,7 @@ public partial class Entity : CharacterBody2D
     public AudioStreamPlayer2D DamageAudioPlayer = null;
     public AudioStreamPlayer2D HealAudioPlayer = null;
     public Timer DamageDelay = null;
+    public Timer DeathTimer = null;
     #endregion
 
     #region Properties
@@ -53,13 +58,20 @@ public partial class Entity : CharacterBody2D
     public float Health
     {
         get => health;
-        set
+        set => SetHealth(value);
+    }
+    public void SetHealth(float value, float damageRotation = 0f)
+    {
+        if (Invincible && value < 0) return;
+        health = Math.Clamp((float)Math.Round(value, 2), 0, Stats[EntityStatType.Health].Value);
+        HealthChangedEvent(health);
+        OnHealthChanged?.Invoke(health);
+        if (health <= 0)
         {
-            health = value;
-            health = Math.Clamp(health, 0, Stats[EntityStatType.Health].Value);
-            health = (float)Math.Round(health, 2);
-            HealthChangedEvent(health);
-            OnHealthChanged?.Invoke(health);
+            DeathState = true;
+            _DeathEvent(damageRotation);
+            OnDeath?.Invoke();
+            DeathTimer.Start();
         }
     }
     #endregion
@@ -86,6 +98,14 @@ public partial class Entity : CharacterBody2D
             OneShot = true
         };
         AddChild(DamageDelay);
+        DeathTimer = new Timer
+        {
+            Name = "DeathTimer",
+            WaitTime = Timeout,
+            OneShot = true
+        };
+        AddChild(DeathTimer);
+        DeathTimer.Timeout += () => QueueFree();
 
         // Needed to register entity to level manager.
         LevelManager.Instance.RegisterEntity(this);
@@ -116,20 +136,20 @@ public partial class Entity : CharacterBody2D
     /// <param name="damageRotation">In radians, will knockback this way. 100 is a small knockback</param>
     public void TakeDamage(float power, float attackStat, GalatimeElement element, DamageType type = DamageType.Physical, float knockback = 0f, float damageRotation = 0f)
     {
-        // Checking if entity is delayed
-        if (DeathState || DamageDelay.TimeLeft > 0) return;
+        // Checking if entity is delayed or invincible.
+        if (DeathState || DamageDelay.TimeLeft > 0 || Invincible) return;
         DamageDelay.Start();
 
         InstantiateFirstTime();
 
-        // Calculating damage
+        // Calculating damage.
         float damageN = 0;
         var damageMultiplier = attackStat * (power / 10);
         // Calculating damage based on type.
         if (type == DamageType.Physical) damageN = damageMultiplier / Stats[EntityStatType.PhysicalDefense].Value;
         if (type == DamageType.Magical) damageN = damageMultiplier / Stats[EntityStatType.MagicalDefense].Value;
 
-        // Calculating weaknesses
+        // Calculating weaknesses.
         GalatimeElementDamageResult damageResult = new();
         if (Element == null) GD.PushWarning("Entity doesn't have a element, default multiplier (1x)");
         else
@@ -157,8 +177,7 @@ public partial class Entity : CharacterBody2D
         SetKnockback(knockback, damageRotation);
 
         // Reducing health.
-        Health -= damageN;
-        if (Health <= 0) _DeathEvent(damageRotation);
+        SetHealth(Health - damageN, damageRotation);
     }
 
     /// <summary>
@@ -250,8 +269,6 @@ public partial class Entity : CharacterBody2D
     /// <summary> If entity dies event </summary>
     public virtual void _DeathEvent(float damageRotation = 0f)
     {
-        DeathState = true;
-        OnDeath?.Invoke();
     }
 
     /// <summary> If entity changed his health </summary>

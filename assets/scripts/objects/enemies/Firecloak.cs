@@ -1,4 +1,5 @@
 using Galatime;
+using Galatime.AI;
 using Galatime.Damage;
 using Galatime.Helpers;
 using Godot;
@@ -13,7 +14,7 @@ public partial class Firecloak : Entity
     public Timer FireballSpawnTimer, AttackCycleTimer, StrafeTimer, DashPrepareTimer;
     public TargetController TargetController;
     public RangedHitTracker RangedHitTracker;
-    public NavigationAgent2D Navigation;
+    public Navigator Navigator;
     public DamageArea DamageArea;
     public Sprite2D Sprite2D;
     public CollisionShape2D Collision;
@@ -84,7 +85,7 @@ public partial class Firecloak : Entity
         DashPrepareTimer = GetNode<Timer>("DashPrepareTimer");
 
         RangedHitTracker = GetNode<RangedHitTracker>("RangedHitTracker");
-        Navigation = GetNode<NavigationAgent2D>("Navigation");
+        Navigator = GetNode<Navigator>("Navigator");
         DamageArea = GetNode<DamageArea>("DamageArea");
 
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
@@ -102,6 +103,12 @@ public partial class Firecloak : Entity
         DeathExplosion.Power = 14;
         DeathExplosion.Element = GalatimeElement.Ignis;
         DeathExplosion.Type = ExplosionType.Red;
+
+        TargetController.OnTargetChanged += () =>
+        {
+            GD.Print("Changed target");
+            Navigator.Target = TargetController.CurrentTarget;
+        };
 
         NextCycle();
     }
@@ -236,7 +243,6 @@ public partial class Firecloak : Entity
         AnimationPlayer.Play("death");
         Callable.From(() => Collision.Disabled = true).CallDeferred();
 
-        base._DeathEvent(damageRotation);
     }
 
     public void Explode()
@@ -287,16 +293,8 @@ public partial class Firecloak : Entity
             }
             else if (!DeathState)
             {
-                // TODO: Move navigation behavior to another class.
-                // Move to target if we can't hit.
-                Vector2 vectorPath;
-                // Set target position to the next enemy.
-                Navigation.TargetPosition = TargetController.CurrentTarget.GlobalPosition;
-                // Vector from the target.
-                var pathRotation = Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());
-                vectorPath = Vector2.Right.Rotated(pathRotation);
-                Velocity = vectorPath.Normalized() * Speed;
-                // TODO: Move navigation behavior to another class.
+                Navigator.Speed = Speed;
+                Velocity = Navigator.NavigatorVelocity;
             }
             else
             {

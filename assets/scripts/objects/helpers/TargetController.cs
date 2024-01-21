@@ -40,6 +40,7 @@ public partial class TargetController : Node2D
 
     /// <summary> The current target of the dependent entity. </summary>
     public Node2D CurrentTarget = null;
+    private Node2D PreviousTarget = null;
 
     /// <summary> Returns the current target rotation based on global position. </summary>
     /// <param name="globalPosition"> The current position of the dependent. </param>
@@ -58,6 +59,8 @@ public partial class TargetController : Node2D
     /// <summary> Represents the duration of the switching target. </summary>
     public float SwitchDuration = 0f;
     private float Timer = 0f;
+
+    public Action OnTargetChanged;
 
     public override void _Process(double delta)
     {
@@ -87,7 +90,10 @@ public partial class TargetController : Node2D
         // Remove all dead enemies.
         sortedEnemies.RemoveAll(x => x as Entity is not null && (x as Entity).DeathState);
 
+        PreviousTarget = CurrentTarget;
         // Find the closest enemy and set it as the current target.
         if (sortedEnemies.ToList().Count > 0) CurrentTarget = sortedEnemies[0] as Entity; else CurrentTarget = null;
+
+        if (PreviousTarget != CurrentTarget) OnTargetChanged?.Invoke();
     }
 }

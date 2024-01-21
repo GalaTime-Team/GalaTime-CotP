@@ -198,7 +198,7 @@ public partial class LevelManager : Node
                     CheatsMenu.Log("There's no enemies to kill", CheatsMenu.LogLevel.Warning);
                     return;
                 }
-                enemies.ForEach(entity => entity.TakeDamage(99999, 99999, new GalatimeElement()));
+                enemies.ForEach(entity => entity.SetHealth(-1f));
                 CheatsMenu.Log($"Successfully killed all {enemies.Count()} enemies", CheatsMenu.LogLevel.Result);
             }),
             new Cheat(name: "Drama cheats", type: Cheat.CheatType.Separator),
