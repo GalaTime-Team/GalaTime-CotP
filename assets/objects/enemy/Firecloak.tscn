@@ -1,9 +1,10 @@
-[gd_scene load_steps=25 format=3 uid="uid://dlp02ewci0kv6"]
+[gd_scene load_steps=26 format=3 uid="uid://dlp02ewci0kv6"]
 
 [ext_resource type="Script" path="res://assets/scripts/objects/enemies/Firecloak.cs" id="1_0eun4"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ogpqi"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_wke3y"]
 [ext_resource type="PackedScene" uid="uid://cjlu5sfy7lowv" path="res://assets/objects/damage/DamageArea.tscn" id="4_7imr7"]
+[ext_resource type="PackedScene" uid="uid://ch8k8il34d3f" path="res://assets/objects/helpers/ai/AttackSwitcher.tscn" id="4_aa3vr"]
 [ext_resource type="PackedScene" uid="uid://b7c0bqk25nd8k" path="res://assets/objects/helpers/ai/Navigator.tscn" id="4_aavsd"]
 [ext_resource type="PackedScene" uid="uid://bqlhx324dwykk" path="res://assets/scripts/objects/effects/TrailEffect.tscn" id="4_f8v1j"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="4_n0y02"]
@@ -231,9 +232,10 @@ Stats = SubResource("Resource_57xwu")
 Element = SubResource("Resource_pg41o")
 Team = 1
 DroppedXp = 30
-Speed = 100.0
 Timeout = 7.0
 Body = NodePath(".")
+
+[node name="AttackSwitcher" parent="." instance=ExtResource("4_aa3vr")]
 
 [node name="Navigator" parent="." node_paths=PackedStringArray("Body") instance=ExtResource("4_aavsd")]
 Body = NodePath("..")

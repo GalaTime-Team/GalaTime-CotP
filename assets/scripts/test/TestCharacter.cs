@@ -103,7 +103,7 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
         AttackTimer.Start();
     }
 
-    float PathRotation => Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());
+    float PathRotation => Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());   
 
     public override void _AIProcess(double delta)
     {
@@ -159,8 +159,7 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
             if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState) Weapon.Attack(this);
         }
         // For some reason it is moving at twice the speed, so it is divided by 2.
-        Body.Velocity = vectorPath.Normalized() * Speed / 2;
-        Body.MoveAndSlide();
+        Body.Velocity = vectorPath.Normalized() * Speed;
     }
 
     public bool IsEnemy() => RayCast.GetCollider() is Entity e && e.IsInGroup("enemy") && !e.DeathState;
@@ -214,8 +213,7 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
         if (distance >= 150 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
         vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
         // For some reason it is moving at twice the speed, so it is divided by 2.
-        Body.Velocity = vectorPath.Normalized() * Speed / 2;
-        Body.MoveAndSlide();
+        Body.Velocity = vectorPath.Normalized() * Speed;
     }
 
     public bool PlayDramaAnimation(string animationName)

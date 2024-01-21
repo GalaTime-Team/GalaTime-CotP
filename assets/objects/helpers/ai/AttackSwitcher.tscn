@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://ch8k8il34d3f"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/helpers/ai/AttackSwitcher.cs" id="1_e7dtt"]
+
+[node name="AttackSwitcher" type="Node"]
+script = ExtResource("1_e7dtt")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true

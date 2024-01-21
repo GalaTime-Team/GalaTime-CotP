@@ -11,10 +11,11 @@ public partial class Firecloak : Entity
     #region Nodes
     /// <summary> Base Fireball, which similar to player's fireball. </summary>
     public BaseFireball BaseFireball;
-    public Timer FireballSpawnTimer, AttackCycleTimer, StrafeTimer, DashPrepareTimer;
+    public Timer FireballSpawnTimer, StrafeTimer, DashPrepareTimer;
     public TargetController TargetController;
     public RangedHitTracker RangedHitTracker;
     public Navigator Navigator;
+    public AttackSwitcher AttackSwitcher;
     public DamageArea DamageArea;
     public Sprite2D Sprite2D;
     public CollisionShape2D Collision;
@@ -28,7 +29,7 @@ public partial class Firecloak : Entity
     #endregion
 
     #region Variables
-    public VectorShaker DeathShake = new() 
+    public VectorShaker DeathShake = new()
     {
         ShakeAmplitude = new Vector2(20, 20),
         Infinite = true
@@ -36,19 +37,6 @@ public partial class Firecloak : Entity
 
     public readonly Vector2 DangerDashEffectSpawnPosition = new(0, -90);
     public bool StrafeDirection = false;
-
-    public enum FirecloakAttackCycle
-    {
-        /// <summary> Shoots 3 fireballs in a row. </summary>
-        Fireball,
-        /// <summary> Dashes towards the target and deals melee damage. </summary>
-        Dash
-    }
-
-    public FirecloakAttackCycle CurrentAttackCycle;
-    public float DelayBeforeNextCycle = .5f;
-
-    public Dictionary<FirecloakAttackCycle, (Action callback, float chance)> AttackCycles = new();
 
     // Fireball attack
     public int FireballSpawnCount = 2;
@@ -59,16 +47,16 @@ public partial class Firecloak : Entity
 
     // Dash attack
     public float DashPrepareTime = .5f;
-    public float DashSpeed = 400f;
+    public float DashSpeed = 1000f;
     public bool IsDashing = false;
     public Vector2 EndDashPosition;
 
     #endregion
 
-    public Firecloak()
+    public void RegisterAttackCycles()
     {
-        AttackCycles.Add(FirecloakAttackCycle.Fireball, (FireballAttack, .75f));
-        AttackCycles.Add(FirecloakAttackCycle.Dash, (DashAttack, .25f));
+        AttackSwitcher.RegisterAttackCycles(new AttackCycle("fireball", () => FireballAttack(), null, .75f));
+        AttackSwitcher.RegisterAttackCycles(new AttackCycle("dash", () => DashAttack(), () => GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition) > 400, .25f));
     }
 
     public override void _Ready()
@@ -80,12 +68,12 @@ public partial class Firecloak : Entity
         TargetController = GetNode<TargetController>("TargetController");
 
         FireballSpawnTimer = GetNode<Timer>("FireballSpawnTimer");
-        AttackCycleTimer = GetNode<Timer>("AttackCycleTimer");
         StrafeTimer = GetNode<Timer>("StrafeTimer");
         DashPrepareTimer = GetNode<Timer>("DashPrepareTimer");
 
         RangedHitTracker = GetNode<RangedHitTracker>("RangedHitTracker");
         Navigator = GetNode<Navigator>("Navigator");
+        AttackSwitcher = GetNode<AttackSwitcher>("AttackSwitcher");
         DamageArea = GetNode<DamageArea>("DamageArea");
 
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
@@ -95,7 +83,6 @@ public partial class Firecloak : Entity
         #endregion
 
         FireballSpawnTimer.Timeout += FireballAttack;
-        AttackCycleTimer.Timeout += StartAttack;
         StrafeTimer.Timeout += ChangeStrafeDirection;
         DashPrepareTimer.Timeout += Dash;
 
@@ -110,7 +97,8 @@ public partial class Firecloak : Entity
             Navigator.Target = TargetController.CurrentTarget;
         };
 
-        NextCycle();
+        RegisterAttackCycles();
+        AttackSwitcher.NextCycle();
     }
 
     #region Attack cycles
@@ -118,7 +106,7 @@ public partial class Firecloak : Entity
     {
         if (RangedHitTracker.GetCollisionPoint().DistanceTo(GlobalPosition) < 100) // Don't launch fireball if we are too close to the target.
         {
-            NextCycle();
+            AttackSwitcher.NextCycle();
             return;
         }
         CurrentFireballSpawnCount++;
@@ -127,7 +115,7 @@ public partial class Firecloak : Entity
         if (CurrentFireballSpawnCount > FireballSpawnCount || !RangedHitTracker.CanHit) // We can't start the attack if not able to see the target.
         {
             CurrentFireballSpawnCount = 0;
-            NextCycle();
+            AttackSwitcher.NextCycle();
             LeftToRight = !LeftToRight; // Change direction of the spread of fireballs.
             return;
         }
@@ -153,47 +141,6 @@ public partial class Firecloak : Entity
         AnimationPlayer.Play("dash_intro");
 
         DashPrepareTimer.Start(DashPrepareTime);
-    }
-    #endregion
-
-    #region Attack cycles logic
-    public void StartAttack()
-    {
-        if (DeathState) return;
-        if (!RangedHitTracker.CanHit)
-        {
-            NextCycle();
-            return;
-        }
-
-        if (GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition) > 400) // Force dash if target is too far.
-        {
-            CurrentAttackCycle = FirecloakAttackCycle.Dash;
-            AttackCycles[CurrentAttackCycle].callback();
-            return;
-        }
-
-        // Select attack based on chances
-        var rnd = new Random();
-        float roll = (float)rnd.NextDouble();
-        float cumulative = 0.0f;
-
-        foreach (var attack in AttackCycles)
-        {
-            cumulative += attack.Value.chance;
-            if (roll < cumulative)
-            {
-                CurrentAttackCycle = attack.Key;
-                break;
-            }
-        }
-
-        AttackCycles[CurrentAttackCycle].callback();
-    }
-
-    public void NextCycle(bool noCooldown = false)
-    {
-        AttackCycleTimer.Start(noCooldown ? 0.01f : DelayBeforeNextCycle);
     }
     #endregion
 
@@ -232,7 +179,7 @@ public partial class Firecloak : Entity
 
         if (DeathState) return;
 
-        NextCycle(true);
+        AttackSwitcher.NextCycle();
         AnimationPlayer.Play("dash_outro");
     }
     #endregion
@@ -254,17 +201,27 @@ public partial class Firecloak : Entity
         AddChild(DeathExplosion);
     }
 
-    public override void _AIProcess(double delta)
+    public override void _MoveProcess(double delta)
     {
-        base._AIProcess(delta);
+        AttackSwitcher.Enabled = !DisableAI;
+        if (DeathState) AttackSwitcher.Enabled = false;
 
+        Velocity = Vector2.Zero;
         if (DeathState)
         {
             DeathShake.ShakeProcess(delta);
             Sprite2D.Position = DeathShake.ShakenVector;
         }
+        if (IsDashing)
+        {
+            var angleToEnd = EndDashPosition.AngleToPoint(GlobalPosition);
+            Velocity += Vector2.Left.Rotated(angleToEnd).Normalized() * DashSpeed;
+            if (GlobalPosition.DistanceTo(EndDashPosition) < 50 || IsOnWall()) EndDash();
+        }
+    }
 
-        Velocity = Vector2.Zero;
+    public override void _AIProcess(double delta)
+    {
         if (TargetController.CurrentTarget != null)
         {
             if (RangedHitTracker.CanHit && !DeathState)
@@ -274,21 +231,14 @@ public partial class Firecloak : Entity
 
                 DamageArea.Rotation = angleTo + Mathf.Pi;
 
-                if (CurrentAttackCycle != FirecloakAttackCycle.Dash) // We should do anything if dash is active, because is preparing to dash.
+                if (!AttackSwitcher.IsAttackCycleActive("dash")) // We should do anything if dash is active, because is preparing to dash.
                 {
-                    Velocity += new Vector2(0, StrafeDirection ? -1 : 1);
+                    Velocity += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(angleTo);
                     if (GlobalPosition.DistanceTo(target.GlobalPosition) > 350)
                         Velocity += Vector2.Left.Rotated(angleTo);
                     else if (GlobalPosition.DistanceTo(target.GlobalPosition) < 250)
                         Velocity += Vector2.Right.Rotated(angleTo);
                     Velocity = Velocity.Normalized() * Speed;
-                }
-                if (IsDashing) // Dash behavior.
-                {
-                    var angleToEnd = EndDashPosition.AngleToPoint(GlobalPosition);
-                    Velocity += Vector2.Left.Rotated(angleToEnd);
-                    Velocity = Velocity.Normalized() * DashSpeed;
-                    if (GlobalPosition.DistanceTo(EndDashPosition) < 50 || IsOnWall()) EndDash();
                 }
             }
             else if (!DeathState)
@@ -296,12 +246,11 @@ public partial class Firecloak : Entity
                 Navigator.Speed = Speed;
                 Velocity = Navigator.NavigatorVelocity;
             }
-            else
+            else if (IsDashing)
             {
-                if (IsDashing) EndDash(); // We don't need to dash if we can't hit.
+                EndDash(); // We don't need to dash if we can't hit.
             }
         }
-        MoveAndSlide();
     }
 
     public void ChangeStrafeDirection()

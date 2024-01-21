@@ -135,7 +135,7 @@ namespace Galatime
             Camera.GlobalPosition = Camera.GlobalPosition.Lerp(cpos + ((GetGlobalMousePosition() - c.Weapon.GlobalPosition) / 5 + CameraOffset), 0.05f);
         }
 
-        public override void _MoveProcess(double delta)
+        public override void _PhysicsProcess(double delta)
         {
             base._MoveProcess(delta);
 
