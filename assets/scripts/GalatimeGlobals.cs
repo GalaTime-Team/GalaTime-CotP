@@ -48,8 +48,6 @@ public sealed partial class GalatimeGlobals : Node
             for (var i = 0; i < args.Length; i++)
             {
                 var argument = args[i];
-                // Skip the first argument, assuming it's the scene path.
-                if (i == 0) continue;
                 // Check if the argument starts with "--" indicating a named argument.
                 if (argument.StartsWith("--"))
                 {
