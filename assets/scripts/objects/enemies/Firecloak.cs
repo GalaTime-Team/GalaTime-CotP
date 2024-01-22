@@ -104,7 +104,7 @@ public partial class Firecloak : Entity
     #region Attack cycles
     public void FireballAttack()
     {
-        if (RangedHitTracker.GetCollisionPoint().DistanceTo(GlobalPosition) < 100) // Don't launch fireball if we are too close to the target.
+        if (RangedHitTracker.GetCollisionPoint().DistanceTo(GlobalPosition) < 100 && !DeathState) // Don't launch fireball if we are too close to the target.
         {
             AttackSwitcher.NextCycle();
             return;
@@ -186,6 +186,10 @@ public partial class Firecloak : Entity
 
     public override void _DeathEvent(float damageRotation = 0)
     {
+        FireballSpawnTimer.Stop();
+        StrafeTimer.Stop();
+        DashPrepareTimer.Stop();
+
         DeathShake.ShakeStart(Sprite2D.Position);
         AnimationPlayer.Play("death");
         Callable.From(() => Collision.Disabled = true).CallDeferred();
@@ -246,9 +250,9 @@ public partial class Firecloak : Entity
                 Navigator.Speed = Speed;
                 Velocity = Navigator.NavigatorVelocity;
             }
-            else if (IsDashing)
+            else 
             {
-                EndDash(); // We don't need to dash if we can't hit.
+                if (IsDashing) EndDash(); // We don't need to dash if we can't hit.
             }
         }
     }

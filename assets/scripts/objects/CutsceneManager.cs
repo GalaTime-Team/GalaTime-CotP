@@ -17,6 +17,7 @@ public class CutsceneData
 /// <summary> Represents a manager for cutscenes, which contains methods for cutscenes. </summary>
 public partial class CutsceneManager : Node
 {
+    public GameLogger Logger { get; private set; } = new("CUTSCENES", GameLogger.ConsoleColor.Purple);
     public static CutsceneManager Instance { get; private set; }
 
     public Tween Tween { get; private set; }
@@ -97,7 +98,7 @@ public partial class CutsceneManager : Node
         // Check if any of the drama objects are null
         bool isNotValid = dramaObjects.All(drama => drama == null);
 
-        if (isNotValid) GD.PrintErr("One or more drama objects are null or invalid. Cutscene will not be played.");
+        if (isNotValid) Logger.Log("One or more drama objects are null or invalid. Cutscene will not be played.", GameLogger.LogType.Error);
         return isNotValid;
     }
 
@@ -134,7 +135,7 @@ public partial class CutsceneManager : Node
         // If the cutscene is not found, print an error message and return false.
         if (ct == null)
         {
-            GD.PrintErr($"Cutscene {cutscene} not found.");
+            Logger.Log($"Cutscene {cutscene} not found.", GameLogger.LogType.Error);
             return false;
         }
         ct.Execute?.Invoke();
@@ -153,12 +154,12 @@ public partial class CutsceneManager : Node
         var dr = dramaObject as IDrama;
         if (dr == null)
         {
-            GD.PrintErr($"Drama object {dramaObject.Name} is not a drama object. Please, implement the IDrama interface.");
+            Logger.Log($"Drama object {dramaObject.Name} is not a drama object. Please, implement the IDrama interface.", GameLogger.LogType.Error);
             return;
         }
         DramaObjects.Add(dr);
-        GD.Print("Registered drama object: ", dr.DramaID);
-        GD.Print(string.Join(", ", DramaObjects.Select(c => c.DramaID)));
+        Logger.Log($"Registered drama object: {dr.DramaID}", GameLogger.LogType.Success);
+        Logger.Log(string.Join(", ", DramaObjects.Select(c => c.DramaID)));
     }
 
     public IDrama GetDramaObject(string id)
@@ -166,7 +167,7 @@ public partial class CutsceneManager : Node
         var dro = DramaObjects.Find(d => d.DramaID == id);
         if (dro == null)
         {
-            GD.PrintErr($"Drama object {id} not found.");
+            Logger.Log($"Drama object {id} not found.", GameLogger.LogType.Error);
             return null;
         }
 

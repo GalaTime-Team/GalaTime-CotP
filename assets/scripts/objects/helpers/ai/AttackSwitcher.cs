@@ -22,6 +22,8 @@ public class AttackCycle
 /// <summary> Class for switching between attacks depending on conditions or random. </summary>
 public partial class AttackSwitcher : Node
 {
+    public GameLogger Logger = new("AttackSwitcher", GameLogger.ConsoleColor.Magenta);
+
     /// <summary> Type of attack switcher to use. </summary>
     public enum SwitchType
     {
@@ -35,7 +37,6 @@ public partial class AttackSwitcher : Node
     
 
     public Timer NextCycleTimer;
-
     /// <summary> List of attacks to switch between. </summary>
     public List<AttackCycle> AttackCycles = new();
     /// <summary> Current attack cycle index. </summary>
@@ -68,7 +69,11 @@ public partial class AttackSwitcher : Node
 
     public void StartAttack()
     {
-        if (!Enabled) return;
+        if (!Enabled)
+        {
+            NextCycleTimer.Stop();
+            return;
+        }
 
         // Select attack based on chances.
         var rnd = new Random();
@@ -90,6 +95,8 @@ public partial class AttackSwitcher : Node
                 break;
             }
         }
+
+        Logger.Log($"Switched attack to {CurrentAttackCycle.ID}");
     }
 
     private void SetAndCallCurrentCycle(AttackCycle attack)

@@ -176,7 +176,6 @@ public partial class DialogBox : NinePatchRect
     {
         var str = new StringBuilder();
         foreach (var action in actions) str.Append(action).Append(", ");
-        GD.Print(str);
 
         foreach (var action in actions)
         {

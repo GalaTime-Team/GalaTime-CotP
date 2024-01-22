@@ -51,8 +51,6 @@ namespace Galatime
             {
                 isPlayerFrozen = value;
 
-                GD.Print(IsPlayerFrozen);
-
                 CurrentCharacter.DisableHumanoidDoll = isPlayerFrozen;
                 if (isPlayerFrozen) WindowManager.Instance.CloseAll();
             }

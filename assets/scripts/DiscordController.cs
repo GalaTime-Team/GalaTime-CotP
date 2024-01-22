@@ -7,6 +7,8 @@ namespace Galatime.Global;
 /// <summary> A singleton that handles the Discord Rich Presence integration for the game. Use <see cref="Client"/> to interact with Discord RPC. </summary>
 public partial class DiscordController : Node
 {
+    public GameLogger Logger = new("DISCORD", GameLogger.ConsoleColor.Cyan);
+
     public static DiscordController Instance { get; private set; }
 
     /// <summary> The Discord RPC client instance. </summary>
@@ -32,14 +34,14 @@ public partial class DiscordController : Node
         Client = new DiscordRpcClient(GalatimeConstants.DISCORD_ID, autoEvents: false);
 
         // Setting up events to log.
-        Client.OnReady += (_, e) => GD.PrintRich($"[color=cyan]DISCORD[/color]: RPC is ready! Hello, {e.User.Username}!");
+        Client.OnReady += (_, e) => Logger.Log($"RPC is ready! Hello, {e.User.Username}!", GameLogger.LogType.Success);
         Client.OnPresenceUpdate += (_, e) =>
         {
             var stringBuilder = new System.Text.StringBuilder();
-            stringBuilder.Append("[color=cyan]DISCORD[/color]: Updated.");
+            stringBuilder.Append("Updated.");
             if (!string.IsNullOrEmpty(e.Presence.Details)) stringBuilder.Append(" Details: ").Append(e.Presence.Details);
             if (!string.IsNullOrEmpty(e.Presence.State)) stringBuilder.Append(", State: ").Append(e.Presence.State);
-            GD.PrintRich(stringBuilder.ToString());
+            Logger.Log(stringBuilder.ToString());
         };
 
         // Connecting to the Discord.
