@@ -61,6 +61,7 @@ public partial class SettingsContainer : Control
         }
 
         FirstControl = CategoryButtons[0];
+        CategoryButtonPressed(CategoryControls[0]);
     }
 
     public void BuildCategory(string name, object obj, Type type)
@@ -80,7 +81,7 @@ public partial class SettingsContainer : Control
         categoryButton.ButtonText = name;
 
         // When the category button is pressed, show the list of settings for the category.
-        categoryButton.Pressed += () => CategoryControls.ForEach(x => x.Visible = x == listControl);
+        categoryButton.Pressed += () => CategoryButtonPressed(listControl);
 
         // Iterate over the fields of the Settings class and create corresponding UI nodes.
         var settingsType = type;
@@ -93,6 +94,11 @@ public partial class SettingsContainer : Control
 
             BuildSetting(listControl, settingAttribute, obj, field.GetValue(obj), field.FieldType, field);
         }
+    }
+
+    public void CategoryButtonPressed(Control listControl)
+    {
+        CategoryControls.ForEach(x => x.Visible = x == listControl);
     }
 
     public Attribute GetAttribute(FieldInfo field)

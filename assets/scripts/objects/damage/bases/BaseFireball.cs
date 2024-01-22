@@ -24,6 +24,8 @@ public partial class BaseFireball : Node2D, IBaseProjectile
         Proj.AttackStat = attackStat;
         Proj.Timeout = 10f;
         AnimationPlayer.Play("intro");
+
+        PlayerVariables.Instance.Player.CameraShakeAmount += 5f;
     }
 }
 

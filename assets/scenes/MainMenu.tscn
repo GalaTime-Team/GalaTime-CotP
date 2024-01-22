@@ -331,7 +331,7 @@ focus_mode = 2
 theme_override_constants/separation = 10
 
 [node name="ViewSavesFolder" parent="StartMenuContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(84, 14)
+custom_minimum_size = Vector2(91, 14)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -345,7 +345,7 @@ offset_bottom = -43.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(2, 2)
-ButtonText = "View save file"
+ButtonText = "View save files"
 
 [node name="CameraTransition" type="Camera2D" parent="StartMenuContainer"]
 position = Vector2(580, -632)
