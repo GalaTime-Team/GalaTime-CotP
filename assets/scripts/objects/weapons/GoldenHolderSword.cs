@@ -29,8 +29,6 @@ public partial class GoldenHolderSword : Area2D, IWeapon
             p.State = HumanoidStates.Attack;
             p.CanMove = false;
 
-            p.Stamina.Value -= p.Stats[EntityStatType.Stamina].Value * 0.03f;
-
             // Play animation.
             AnimationPlayer.Stop();
             AnimationPlayer.Play("swing");
@@ -62,11 +60,13 @@ public partial class GoldenHolderSword : Area2D, IWeapon
         }
     }
     
-    public void Parry(Projectile projectile) {
+    public void Parry(Projectile projectile) 
+    {
         projectile.Rotation = GlobalRotation;
         projectile.Accuracy = 0f;
-        projectile.Speed *= 3f;
+        projectile.Speed *= 1.25f;
         projectile.Power = (int)(projectile.Power * 2f);
+        projectile.ExplosionPower = (int)(projectile.ExplosionPower * 1.25f);
         projectile.TargetTeam = Galatime.Helpers.Teams.Enemies;
         projectile.Explosive = true;
     }

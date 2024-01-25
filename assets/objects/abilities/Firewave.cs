@@ -50,7 +50,7 @@ namespace Galatime
             _kinematicBody.GlobalPosition = p.Weapon.GlobalPosition;
 
             _velocity.X += 1;
-            if (playerVariables.Player is Player player) player.CameraShakeAmount += 10;
+            if (playerVariables.Player is Player player) player.CameraShakeAmount += 5;
 
             _animationPlayer.Play("intro");
             _damageArea.BodyEntered += (Node2D body) => _bodyEntered(body, p.Stats[EntityStatType.PhysicalAttack].Value, p.Stats[EntityStatType.MagicalAttack].Value);

@@ -61,7 +61,7 @@ public partial class FireBullet : GalatimeAbility
         }
         if (!Shotted)
         {
-            PlayerVariables.Player.CameraShakeAmount += 0.2f;
+            PlayerVariables.Player.CameraShakeAmount += 0.15f;
 
             Projectile.GlobalPosition = Caster.Weapon.GlobalPosition;
             Projectile.Rotation = Caster.Weapon.Rotation;

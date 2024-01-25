@@ -113,7 +113,7 @@ public partial class Explosion : Area2D
         TrailParticles.Emitting = true;
         AudioStreamPlayer.Play();
 
-        PlayerVariables.Instance.Player.CameraShakeAmount = Power * 2;
+        PlayerVariables.Instance.Player.CameraShakeAmount = Power * 1.5f;
 
         GetTree().CreateTimer(disableOn, false).Timeout += () =>
         {

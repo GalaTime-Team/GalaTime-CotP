@@ -38,7 +38,7 @@ namespace Galatime
 
         private void Shot(float magicalAttack)
         {
-            PlayerVariables.Instance.Player.CameraShakeAmount += 0.2f;
+            PlayerVariables.Instance.Player.CameraShakeAmount += 0.15f;
 
             var rnd = new Random();
             var angle = (rnd.NextDouble() * 2 - 1) / 5;
