@@ -39,7 +39,7 @@ public partial class Firecloak : Entity
     public bool StrafeDirection = false;
 
     // Fireball attack
-    public int FireballSpawnCount = 1;
+    public int FireballSpawnCount = 2;
     public float FireballSpawnInterval = .1f;
     public float FireballSpreadOffset = .03f;
     public bool LeftToRight = true;
@@ -55,8 +55,8 @@ public partial class Firecloak : Entity
 
     public void RegisterAttackCycles()
     {
-        AttackSwitcher.RegisterAttackCycles(new AttackCycle("fireball", () => FireballAttack(), null, 1f));
-        // AttackSwitcher.RegisterAttackCycles(new AttackCycle("dash", () => DashAttack(), () => GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition) > 400, .25f));
+        AttackSwitcher.RegisterAttackCycles(new AttackCycle("fireball", () => FireballAttack(), null, .75f));
+        AttackSwitcher.RegisterAttackCycles(new AttackCycle("dash", () => DashAttack(), () => GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition) > 350, .25f));
     }
 
     public override void _Ready()
@@ -205,8 +205,6 @@ public partial class Firecloak : Entity
 
     public override void _MoveProcess(double delta)
     {
-        return;
-
         AttackSwitcher.Enabled = !DisableAI;
         if (DeathState) AttackSwitcher.Enabled = false;
 
@@ -221,13 +219,13 @@ public partial class Firecloak : Entity
             var angleToEnd = EndDashPosition.AngleToPoint(GlobalPosition);
             Velocity += Vector2.Left.Rotated(angleToEnd).Normalized() * DashSpeed;
             if (GlobalPosition.DistanceTo(EndDashPosition) < 50 || IsOnWall()) EndDash();
+            MoveAndSlide();
         }
     }
 
     public override void _AIProcess(double delta)
     {
         Velocity = Vector2.Zero;
-        return;
 
         if (TargetController.CurrentTarget != null)
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Godot;
 
 namespace Galatime.AI;
@@ -95,8 +96,6 @@ public partial class AttackSwitcher : Node
                 break;
             }
         }
-
-        Logger.Log($"Switched attack to {CurrentAttackCycle.ID}");
     }
 
     private void SetAndCallCurrentCycle(AttackCycle attack)
