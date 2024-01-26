@@ -49,6 +49,10 @@ public partial class MainMenu : Control
     /// <summary> The buttons of the main menu. </summary>
     private Godot.Collections.Array<Node> MenuButtons;
 
+    /// <summary> The previous page of the main menu. </summary>
+    private string PreviousPage;
+    /// <summary> The current page of the main menu. </summary>
+    private string CurrentPage;
     /// <summary> The current focus element. </summary>
     private Control CurrentFocus;
     /// <summary> The control that had focus before a popup was opened. </summary>
@@ -129,10 +133,10 @@ public partial class MainMenu : Control
         InitializeMainMenuButtons();
         UpdateSaves();
 
-        // Initialize exit buttons to quit to the main menu.
+        // Initialize back buttons to back to the main menu.
         // Since GetNodesInGroup returns an Godot.Collections.Array, it a little bit junky, but cast it to a regular array to optimize calls, because Godot arrays marshalling is slow.
-        var exitButtons = GetTree().GetNodesInGroup("exit_button").Cast<LabelButton>().ToArray(); 
-        Array.ForEach(exitButtons, x => x.Pressed += ToMainMenu);
+        var backButtons = GetTree().GetNodesInGroup("exit_button").Cast<LabelButton>().ToArray(); 
+        Array.ForEach(backButtons, x => x.Pressed += ToMainMenu);
 
         GalatimeGlobals.CheckSaves();
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
@@ -234,6 +238,9 @@ public partial class MainMenu : Control
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Switch to {page} menu[/color]");
         AudioMenuWhoosh.Play();
 
+        PreviousPage = CurrentPage;
+        CurrentPage = page;
+    
         var currentPage = Menus[page];
 
         // A dictionary to store the swipe direction and the focus button for each page
@@ -261,7 +268,7 @@ public partial class MainMenu : Control
         if (focusButton != null) GetTree().CreateTimer(TransitionTime).Timeout += () => focusButton.GrabFocus();
 
         // Adjust the audio volume for the settings page
-        if (page == "settings")
+        if (CurrentPage == "settings")
         {
             var linearTween = GetTree().CreateTween();
             linearTween.SetParallel(true);
@@ -318,7 +325,7 @@ public partial class MainMenu : Control
     }
 
 
-    public void ToMainMenu()
+    public void ToMainMenu() // It's hacky, I don't want to rewrite it
     {
         // GD.PrintRich($"[color=purple]MAIN MENU[/color]: Condition checking: [color=cyan]isMainMenu? - {IsMainMenu}, acceptIsVisible? - {AcceptIsVisible()}[/color]");
         if (DelayInteract.TimeLeft > 0) return;
@@ -336,6 +343,9 @@ public partial class MainMenu : Control
             AcceptWindow.Shown = false;
             return;
         };
+
+        PreviousPage = CurrentPage;
+        CurrentPage = "main_menu";
 
         AcceptWindow.Shown = false;
 
@@ -361,7 +371,7 @@ public partial class MainMenu : Control
         GetTree().CreateTimer(TransitionTime).Timeout += () => DisableMenus();
 
         // Save settings to file when back to main menu.
-        GetNode<SettingsGlobals>("/root/SettingsGlobals").SaveSettings();
+        if (PreviousPage == "settings") SettingsGlobals.Instance.SaveSettings();
 
         IsMainMenu = true;
     }

@@ -236,7 +236,6 @@ script = ExtResource("1_ibgb5")
 
 [node name="LevelInfo" parent="." instance=ExtResource("2_lfnra")]
 LevelName = "Main Menu"
-Day = null
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../StartMenuContainer")
@@ -295,7 +294,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ExitButton" parent="SettingsMenuContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(25, 14)
+custom_minimum_size = Vector2(28, 14)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -309,8 +308,7 @@ offset_bottom = -41.0
 grow_horizontal = 0
 grow_vertical = 0
 scale = Vector2(2, 2)
-HoverColor = Color(1, 0, 0, 1)
-ButtonText = "Exit"
+ButtonText = "Back"
 
 [node name="StartMenuContainer" type="Control" parent="."]
 visible = false
@@ -373,7 +371,7 @@ enabled = false
 [node name="CanvasModulate" type="CanvasModulate" parent="StartMenuContainer"]
 
 [node name="ExitButton" parent="StartMenuContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(25, 14)
+custom_minimum_size = Vector2(28, 14)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -387,8 +385,7 @@ offset_bottom = -41.0
 grow_horizontal = 0
 grow_vertical = 0
 scale = Vector2(2, 2)
-HoverColor = Color(1, 0, 0, 1)
-ButtonText = "Exit"
+ButtonText = "Back"
 
 [node name="MainMenuContainer" type="Control" parent="."]
 modulate = Color(1, 1, 1, 0)
@@ -644,7 +641,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("9_13qvi")
 
 [node name="ExitButton" parent="CreditsContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
-custom_minimum_size = Vector2(25, 14)
+custom_minimum_size = Vector2(28, 14)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -658,8 +655,7 @@ offset_bottom = -41.0
 grow_horizontal = 0
 grow_vertical = 0
 scale = Vector2(2, 2)
-HoverColor = Color(1, 0, 0, 1)
-ButtonText = "Exit"
+ButtonText = "Back"
 
 [node name="VersionLabel" type="Label" parent="."]
 visible = false
