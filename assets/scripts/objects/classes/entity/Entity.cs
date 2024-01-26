@@ -17,7 +17,7 @@ public partial class Entity : CharacterBody2D
     [Export] public int DroppedXp;
     /// <summary> Speed of the entity moving. </summary>
     [Export] public float Speed = 200f;
-    /// <summary> How long the entity will be valid after death. </summary>
+    /// <summary> How long the entity will be valid after death. 0 means never. </summary>
     [Export] public float Timeout = 3f;
     /// <summary> If the entity is invincible, meaning it won't take any damage. It can be killed if SetHealth is called with negative value. </summary>
     [Export] public bool Invincible = false;
@@ -71,7 +71,7 @@ public partial class Entity : CharacterBody2D
             DeathState = true;
             _DeathEvent(damageRotation);
             OnDeath?.Invoke();
-            DeathTimer.Start();
+            DeathTimer?.Start();
         }
     }
     #endregion
@@ -98,14 +98,20 @@ public partial class Entity : CharacterBody2D
             OneShot = true
         };
         AddChild(DamageDelay);
-        DeathTimer = new Timer
+
+        // If timeout is set, creates death timer to destroy the entity.
+        if (Timeout > 0)
         {
-            Name = "DeathTimer",
-            WaitTime = Timeout,
-            OneShot = true
-        };
-        AddChild(DeathTimer);
-        DeathTimer.Timeout += () => QueueFree();
+            DeathTimer = new Timer
+            {
+                Name = "DeathTimer",
+                WaitTime = Timeout,
+                OneShot = true
+            };
+            AddChild(DeathTimer);
+            DeathTimer.Timeout += () => QueueFree();
+        }
+
 
         // Needed to register entity to level manager.
         LevelManager.Instance.RegisterEntity(this);

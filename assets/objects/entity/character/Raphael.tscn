@@ -531,6 +531,7 @@ DramaNode = NodePath(".")
 Stats = SubResource("Resource_y04wb")
 Element = SubResource("Resource_eg1xe")
 Speed = 300.0
+Timeout = 0.0
 Body = NodePath(".")
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]

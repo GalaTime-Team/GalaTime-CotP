@@ -293,7 +293,7 @@ text = "Settings"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ExitButton" parent="SettingsMenuContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
+[node name="BackButton" parent="SettingsMenuContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
 custom_minimum_size = Vector2(28, 14)
 layout_mode = 1
 anchors_preset = 3
@@ -370,7 +370,7 @@ enabled = false
 
 [node name="CanvasModulate" type="CanvasModulate" parent="StartMenuContainer"]
 
-[node name="ExitButton" parent="StartMenuContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
+[node name="BackButton" parent="StartMenuContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
 custom_minimum_size = Vector2(28, 14)
 layout_mode = 1
 anchors_preset = 3
@@ -640,7 +640,7 @@ offset_bottom = 421.0
 scale = Vector2(2, 2)
 texture = ExtResource("9_13qvi")
 
-[node name="ExitButton" parent="CreditsContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
+[node name="BackButton" parent="CreditsContainer" groups=["exit_button"] instance=ExtResource("7_4ne4t")]
 custom_minimum_size = Vector2(28, 14)
 layout_mode = 1
 anchors_preset = 3

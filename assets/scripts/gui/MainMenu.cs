@@ -248,7 +248,7 @@ public partial class MainMenu : Control
         {
             {"start", (SwipeDirection.UP, ViewSavesButton)},
             {"settings", (SwipeDirection.LEFT, SettingsContainer.FirstControl)},
-            {"credits", (SwipeDirection.DOWN, GetNode<Control>("CreditsContainer/ExitButton"))} // Yes, it's a bit hacky
+            {"credits", (SwipeDirection.DOWN, GetNode<Control>("CreditsContainer/BackButton"))} // Yes, it's a bit hacky
         };
 
         // Get the swipe direction and the focus button for the page
