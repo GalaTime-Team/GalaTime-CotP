@@ -1,7 +1,9 @@
 using Galatime.Global;
 using Galatime.UI.Helpers;
 using Godot;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Galatime.UI;
 
@@ -127,6 +129,11 @@ public partial class MainMenu : Control
         InitializeMainMenuButtons();
         UpdateSaves();
 
+        // Initialize exit buttons to quit to the main menu.
+        // Since GetNodesInGroup returns an Godot.Collections.Array, it a little bit junky, but cast it to a regular array to optimize calls, because Godot arrays marshalling is slow.
+        var exitButtons = GetTree().GetNodesInGroup("exit_button").Cast<LabelButton>().ToArray(); 
+        Array.ForEach(exitButtons, x => x.Pressed += ToMainMenu);
+
         GalatimeGlobals.CheckSaves();
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
     }
@@ -234,7 +241,7 @@ public partial class MainMenu : Control
         {
             {"start", (SwipeDirection.UP, ViewSavesButton)},
             {"settings", (SwipeDirection.LEFT, SettingsContainer.FirstControl)},
-            {"credits", (SwipeDirection.DOWN, null)}
+            {"credits", (SwipeDirection.DOWN, GetNode<Control>("CreditsContainer/ExitButton"))} // Yes, it's a bit hacky
         };
 
         // Get the swipe direction and the focus button for the page
