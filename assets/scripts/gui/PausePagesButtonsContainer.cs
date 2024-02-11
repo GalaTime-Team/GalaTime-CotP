@@ -1,59 +1,74 @@
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 public partial class PausePagesButtonsContainer : HBoxContainer
 {
-    Godot.Collections.Array<Node> pagesButtons;
-    Godot.Collections.Array<Node> pagesNodes = new Godot.Collections.Array<Node>();
+    List<Node> PagesButtons = new();
+    List<Node> PagesNodes = new();
+
+    public ColorRect SelectedBlock;
+
+    public Tween Tween;
+    public Label PreviousButton;
+
+    public Tween GetTween() => GetTree().CreateTween().SetParallel().SetTrans(Tween.TransitionType.Cubic);
 
     public override void _Ready()
     {
-        pagesButtons = GetChildren();
-        for (int i = 0; i < pagesButtons.Count; i++)
+        SelectedBlock = GetNode<ColorRect>("../SelectedBlock");
+
+        PagesButtons = GetChildren().ToList();
+        for (int i = 0; i < PagesButtons.Count; i++)
         {
             var node = GetChild(i) as Control;
             var id = i;
-            node.GuiInput += (InputEvent @event) => _onButtonsGuiInput(@event, id);
+            node.GuiInput += (InputEvent @event) => OnButtonsInput(@event, id);
         }
 
-        pagesNodes.Add(GetNode("../Inventory"));
-        pagesNodes.Add(GetNode("../StatsContainer"));
-        pagesNodes.Add(GetNode("../AbilitiesContainer"));
+        PagesNodes.Add(GetNode("../Inventory"));
+        PagesNodes.Add(GetNode("../StatsContainer"));
+        PagesNodes.Add(GetNode("../AbilitiesContainer"));
     }
 
-    public void _onButtonsGuiInput(InputEvent @event, int id)
+    public void OnButtonsInput(InputEvent @event, int id)
     {
-        if (@event is InputEventMouseButton mouseEvent)
+        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
         {
-            if (mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
+            for (int i = 0; i < PagesNodes.Count; i++)
             {
-                for (int i = 0; i < pagesNodes.Count; i++)
+                if (PagesNodes[i] != null)
                 {
-                    if (pagesNodes[i] != null)
+                    ((Control)PagesNodes[i]).Visible = false;
+                    
+                    var b = PagesButtons[i] as Label;
+                    if (b != null)
                     {
-                        ((Control)pagesNodes[i]).Visible = false;
-                        var button = pagesButtons[i] as Control;
-                        button.RemoveThemeStyleboxOverride("normal");
-                        button.AddThemeColorOverride("font_color", new Color(1, 1, 1));
-                    }
-                    else
-                    {
-                        GD.Print("Can't switch page, page is null");
+                        var t = GetTween();
+                        t.TweenMethod(Callable.From<Color>(x => b.AddThemeColorOverride("font_color", x)),
+                            b.GetThemeColor("font_color"), new Color(1f, 1f, 1f), 0.5f);
                     }
                 }
-                if (pagesNodes[id] != null)
-                {
-                    var button = (Label)pagesButtons[id];
-                    var styleBox = new StyleBoxFlat().Duplicate() as StyleBoxFlat;
-                    styleBox.BorderColor = new Color(1, 1, 1);
-                    styleBox.BgColor = new Color(1, 1, 1);
-                    styleBox.BorderWidthLeft = 3;
-                    styleBox.BorderWidthTop = 3;
-                    styleBox.BorderWidthRight = 3;
-                    styleBox.BorderWidthBottom = 3;
-                    button.AddThemeColorOverride("font_color", new Color(0, 0, 0));
-                    button.AddThemeStyleboxOverride("normal", styleBox);
-                    ((Control)pagesNodes[id]).Visible = true;
-                }
+                else
+                    GD.Print("Can't switch page, page is null");
+            }
+            if (PagesNodes[id] != null)
+            {
+                var b = PagesButtons[id] as Label;
+                var margin = 24;
+
+                var calculatedSize = (b.Size * 2) with { Y = b.Size.Y * 2.22f };
+                var calculatedMargin = new Vector2(margin, margin * .22f);
+
+                Tween = GetTween();
+                Tween?.TweenMethod(Callable.From<Vector2>(x =>
+                    SelectedBlock.Size = x), SelectedBlock.Size, calculatedSize + calculatedMargin, 0.5f);
+                Tween?.TweenMethod(Callable.From<Vector2>(x =>
+                    SelectedBlock.GlobalPosition = x), SelectedBlock.GlobalPosition, b.GlobalPosition - calculatedMargin / 2, 0.5f);
+                Tween?.TweenMethod(Callable.From<Color>(x => b.AddThemeColorOverride("font_color", x)),
+                    b.GetThemeColor("font_color"), new Color(0f, 0f, 0f), 0.5f);
+
+                ((Control)PagesNodes[id]).Visible = true;
             }
         }
     }

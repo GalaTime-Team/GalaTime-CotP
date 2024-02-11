@@ -299,8 +299,6 @@ stream = ExtResource("27_4kcld")
 [node name="InventoryContainer" parent="." instance=ExtResource("13_co182")]
 visible = false
 layout_mode = 1
-grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 1
 
 [node name="NTSC" type="ColorRect" parent="."]

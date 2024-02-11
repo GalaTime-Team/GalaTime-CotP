@@ -17,11 +17,7 @@ public partial class Inventory : GridContainer
     {
         Tooltip = GetNode<Tooltip>("../Tooltip");
         DragPreview = GetNode<DragPreview>("../DragPreview");
-        PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-
-        var gui = GetNode<PlayerGui>("../../");
-        gui.OnItemsChanged += OnInventoryChanged;
-        gui.OnPause += OnPause;
+        PlayerVariables = PlayerVariables.Instance;
 
         var slotScene = GD.Load<PackedScene>("res://assets/objects/Slot.tscn");
         for (int i = 0; i < PlayerVariables.InventorySlots; i++)
@@ -36,6 +32,13 @@ public partial class Inventory : GridContainer
 
             AddChild(itemSlot);
         }
+
+        var gp = PlayerVariables.Player.PlayerGui;
+        gp.Ready += () => 
+        {   
+            gp.OnItemsChanged += OnInventoryChanged;
+            gp.OnPause += OnPause;
+        };
     }
 
     public void OnPause(bool paused)
@@ -45,7 +48,7 @@ public partial class Inventory : GridContainer
         // dragPreview.draggedItem = null;
     }
 
-    void OnInventoryChanged()
+    public void OnInventoryChanged()
     {
         for (int i = 0; i < PlayerVariables.Inventory.Length; i++)
         {

@@ -21,6 +21,8 @@ bg_color = Color(0, 0, 0, 1)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="StatsContainer" type="Control" parent="."]
 visible = false
@@ -281,8 +283,16 @@ grow_horizontal = 1
 grow_vertical = 1
 scale = Vector2(2, 2)
 
+[node name="SelectedBlock" type="ColorRect" parent="."]
+layout_mode = 2
+offset_left = 576.0
+offset_top = 640.0
+offset_right = 576.0
+offset_bottom = 640.0
+
 [node name="PausePagesButtonsContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -291,16 +301,21 @@ offset_left = -221.0
 offset_top = -68.0
 offset_right = -1.0
 offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 0
 scale = Vector2(2, 2)
 theme_override_constants/separation = 14
 script = ExtResource("13_7l0o5")
+metadata/_edit_lock_ = true
 
 [node name="0" type="Label" parent="PausePagesButtonsContainer"]
 layout_mode = 2
 mouse_filter = 1
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("1_ynmsx")
 text = "Inventory"
+metadata/_edit_lock_ = true
 
 [node name="2" type="Label" parent="PausePagesButtonsContainer"]
 layout_mode = 2
@@ -308,6 +323,7 @@ mouse_filter = 1
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("1_ynmsx")
 text = "Upgrading & Stats"
+metadata/_edit_lock_ = true
 
 [node name="3" type="Label" parent="PausePagesButtonsContainer"]
 layout_mode = 2
@@ -315,6 +331,7 @@ mouse_filter = 1
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("1_ynmsx")
 text = "Abilities"
+metadata/_edit_lock_ = true
 
 [node name="Tooltip" parent="." instance=ExtResource("12_j3tvq")]
 visible = false
