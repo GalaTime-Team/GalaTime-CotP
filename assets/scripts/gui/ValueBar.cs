@@ -12,7 +12,7 @@ public partial class ValueBar : Control
     /// <summary> Text, which is displayed and placed to the right of the bar. Like "HP" or "MANA" and so on. </summary>
     [Export] public string ValueText = "VAL";
     /// <summary> The texture path of the transient texture for transient effect. </summary>
-    [Export(PropertyHint.GlobalFile)] public string TransientTexturePath;
+    [Export(PropertyHint.File)] public string TransientTexturePath;
     [Export] public Color ChangedColor;
     [Export] public Color NormalColor;
 

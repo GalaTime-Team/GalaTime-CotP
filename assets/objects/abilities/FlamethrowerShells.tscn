@@ -1,9 +1,9 @@
 [gd_scene load_steps=13 format=3 uid="uid://c0p3og3od67ju"]
 
-[ext_resource type="Texture2D" uid="uid://cji3ks3g1hi8r" path="res://sprites/abilities/fireball/0.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://cji3ks3g1hi8r" path="res://assets/sprites/abilities/fireball/0.png" id="5"]
 [ext_resource type="Script" path="res://assets/objects/abilities/FlamethrowerShells.cs" id="11"]
 [ext_resource type="AudioStream" uid="uid://bx75a101a77ss" path="res://assets/audios/sounds/firebal.mp3" id="12"]
-[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://sprites/particles/fire/fire.png" id="30_rji1b"]
+[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://assets/sprites/particles/fire/fire.png" id="30_rji1b"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_dbpbo"]
 particles_animation = true

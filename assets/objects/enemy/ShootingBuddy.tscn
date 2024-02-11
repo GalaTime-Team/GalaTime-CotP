@@ -1,12 +1,12 @@
 [gd_scene load_steps=11 format=3 uid="uid://bxq575p6ts4n2"]
 
-[ext_resource type="Texture2D" uid="uid://cjp2ay7e3883i" path="res://sprites/slime.png" id="1_81stt"]
+[ext_resource type="Texture2D" uid="uid://cjp2ay7e3883i" path="res://assets/sprites/slime.png" id="1_81stt"]
 [ext_resource type="Script" path="res://assets/scripts/objects/enemies/ShootingBuddy.cs" id="1_jct1l"]
 [ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="1_lpxxg"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_pv08b"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_nlep8"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="3_vlaw8"]
-[ext_resource type="Texture2D" uid="uid://cji3ks3g1hi8r" path="res://sprites/abilities/fireball/0.png" id="6_cisko"]
+[ext_resource type="Texture2D" uid="uid://cji3ks3g1hi8r" path="res://assets/sprites/abilities/fireball/0.png" id="6_cisko"]
 
 [sub_resource type="Resource" id="Resource_mf5sl"]
 script = ExtResource("2_pv08b")

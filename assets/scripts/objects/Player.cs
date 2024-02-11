@@ -121,6 +121,7 @@ namespace Galatime
             inputVelocity = inputVelocity.Normalized() * CurrentCharacter.Speed;
 
             if (CanMove && !IsDodge && !IsPlayerFrozen) CurrentCharacter.Body.Velocity = inputVelocity; else Body.Velocity = Vector2.Zero;
+            if (CurrentCharacter.IsPushing) CurrentCharacter.Body.Velocity *= CurrentCharacter.PushingSpeedMultiplier;
 
             CurrentCharacter?.Weapon.LookAt(GetGlobalMousePosition());
             SetCameraPosition();

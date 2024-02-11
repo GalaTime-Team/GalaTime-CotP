@@ -96,7 +96,7 @@ namespace Galatime
         {
             var line = new Line2D
             {
-                Texture = GD.Load<Texture2D>("res://sprites/test/chain.png"),
+                Texture = GD.Load<Texture2D>("res://assets/sprites/test/chain.png"),
                 TextureMode = Line2D.LineTextureMode.Stretch,
                 Gradient = new Gradient(),
                 Width = 8,

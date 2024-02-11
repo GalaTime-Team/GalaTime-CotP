@@ -31,7 +31,7 @@ public enum EntityStatType
 }
 
 /// <summary> This class represents a collection of entity stats, such as health, mana, stamina, etc. </summary>
-[GlobalClass, Tool, Icon("res://sprites/editoricons/stats.svg")]
+[GlobalClass, Tool, Icon("res://assets/sprites/editoricons/stats.svg")]
 public partial class EntityStats : Resource, IEnumerable<EntityStat>
 {
     private Godot.Collections.Array<EntityStatType> statsNames = new();

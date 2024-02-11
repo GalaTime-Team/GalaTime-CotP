@@ -1,0 +1,44 @@
+[gd_resource type="AnimatedTexture" load_steps=14 format=3 uid="uid://bwdenb3l0ulee"]
+
+[ext_resource type="Texture2D" uid="uid://u4jxuuete7sq" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/10.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://dekh5knfmusj5" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/11.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://cm2k8ntqmardw" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/9.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://ch8lepf4ur53v" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/12.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://bhsmpyr5h80uq" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/1.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://buvwijqw4otx7" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://dhqpaqj80ngsj" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://b4w1jqiacvmww" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/2.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://do8jiv4v8yg3b" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/0.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://bfep8i8wqdmop" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/4.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://dtg6g85suibe2" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/7.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://b2d5x5jvj0o2e" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/8.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://ch1o6f0tpj5j7" path="res://assets/sprites/gui/dialog/characters/arthur/neutral/3.png" id="13"]
+
+[resource]
+frames = 13
+speed_scale = 15.0
+frame_0/texture = ExtResource("9")
+frame_1/texture = ExtResource("5")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("8")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("13")
+frame_3/duration = 1.0
+frame_4/texture = ExtResource("10")
+frame_4/duration = 1.0
+frame_5/texture = ExtResource("6")
+frame_5/duration = 1.0
+frame_6/texture = ExtResource("7")
+frame_6/duration = 1.0
+frame_7/texture = ExtResource("11")
+frame_7/duration = 1.0
+frame_8/texture = ExtResource("12")
+frame_8/duration = 1.0
+frame_9/texture = ExtResource("3")
+frame_9/duration = 1.0
+frame_10/texture = ExtResource("1")
+frame_10/duration = 1.0
+frame_11/texture = ExtResource("2")
+frame_11/duration = 1.0
+frame_12/texture = ExtResource("4")
+frame_12/duration = 1.0

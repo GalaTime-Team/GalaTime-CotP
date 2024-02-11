@@ -1,10 +1,10 @@
 [gd_scene load_steps=13 format=3 uid="uid://csorfs1lu6gtn"]
 
 [ext_resource type="Script" path="res://assets/objects/abilities/Flamethrower.cs" id="1"]
-[ext_resource type="Texture2D" uid="uid://bc8e6m3tgr472" path="res://sprites/abilities/fireball/1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bc8e6m3tgr472" path="res://assets/sprites/abilities/fireball/1.png" id="2"]
 [ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="2_kvvvj"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_2rear"]
-[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://sprites/particles/fire/fire.png" id="4_sbdf5"]
+[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://assets/sprites/particles/fire/fire.png" id="4_sbdf5"]
 [ext_resource type="AudioStream" uid="uid://gunitv8q1hvj" path="res://assets/audios/sounds/flare_whoosh.mp3" id="5_myk5q"]
 
 [sub_resource type="Resource" id="Resource_g3m42"]

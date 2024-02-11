@@ -1,7 +1,7 @@
 [gd_resource type="Animation" load_steps=3 format=3 uid="uid://dr60wkebvqw4u"]
 
-[ext_resource type="Texture2D" uid="uid://dggl2186ybsl5" path="res://sprites/particles/sword_slash/sword_slash_8.png" id="9_rfque"]
-[ext_resource type="Texture2D" uid="uid://dssuhh4w50bji" path="res://sprites/particles/sword_slash/sword_slash_9.png" id="10_lofae"]
+[ext_resource type="Texture2D" uid="uid://dggl2186ybsl5" path="res://assets/sprites/particles/sword_slash/sword_slash_8.png" id="9_rfque"]
+[ext_resource type="Texture2D" uid="uid://dssuhh4w50bji" path="res://assets/sprites/particles/sword_slash/sword_slash_9.png" id="10_lofae"]
 
 [resource]
 resource_name = "swing"

@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://assets/scripts/scenes/LLobby.cs" id="1_34ayc"]
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="2_2sbvd"]
 [ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="2_plqd3"]
-[ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://sprites/particles/dream_world_particles.png" id="3_fwky3"]
+[ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://assets/sprites/particles/dream_world_particles.png" id="3_fwky3"]
 [ext_resource type="TileSet" uid="uid://bjos0o0ign6i5" path="res://assets/data/tileset/DreamWorldTileset.tres" id="6_7hqno"]
 [ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/Roomwrap.tscn" id="8_frg3l"]
 

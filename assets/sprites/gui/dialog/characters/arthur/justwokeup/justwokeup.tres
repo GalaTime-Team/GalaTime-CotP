@@ -1,0 +1,36 @@
+[gd_resource type="AnimatedTexture" load_steps=11 format=3 uid="uid://gsknarpq8kbm"]
+
+[ext_resource type="Texture2D" uid="uid://bxi4hg7amvt2r" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/3.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://4w8sfn1hsa18" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/6.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bns8ub84bqbii" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/7.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://4f18wgkrdn1g" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/8.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://cv1lelclp545d" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/9.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://b7n821mu300hp" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/0.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://31qttd4oiap8" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/4.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://b51gmkhcvqbca" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/5.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://lcwggq283lae" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/1.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://npl8ke3kxoyl" path="res://assets/sprites/gui/dialog/characters/arthur/justwokeup/2.png" id="10"]
+
+[resource]
+frames = 10
+one_shot = true
+speed_scale = 15.0
+frame_0/texture = ExtResource("6")
+frame_1/texture = ExtResource("9")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("10")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("1")
+frame_3/duration = 1.0
+frame_4/texture = ExtResource("7")
+frame_4/duration = 1.0
+frame_5/texture = ExtResource("8")
+frame_5/duration = 1.0
+frame_6/texture = ExtResource("2")
+frame_6/duration = 1.0
+frame_7/texture = ExtResource("3")
+frame_7/duration = 1.0
+frame_8/texture = ExtResource("4")
+frame_8/duration = 1.0
+frame_9/texture = ExtResource("5")
+frame_9/duration = 1.0

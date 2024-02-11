@@ -32,7 +32,7 @@ namespace Galatime
         private AbilityData AbilityData;
         #endregion
 
-        public Texture2D defaultTexture = GD.Load<Texture2D>("res://sprites/gui/abilities/empty.png");
+        public Texture2D defaultTexture = GD.Load<Texture2D>("res://assets/sprites/gui/abilities/empty.png");
 
         public override void _Ready()
         {

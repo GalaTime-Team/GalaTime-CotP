@@ -11,9 +11,9 @@ public class VectorShaker
     /// <summary> The amplitude of the shake. For example if X set to 2 and Y set to 1, the shake will be twice as big. </summary>
     public Vector2 ShakeAmplitude = new(1f, 1f);
     /// <summary> If the shake should run infinitely. </summary>
-    public bool Infinite = false;
+    public bool Infinite = true;
     /// <summary> The initial position, used to make shake pinned to the initial position. </summary>
-    public Vector2 InitialVector { get; private set; }
+    public Vector2 InitialVector { get; private set; } = Vector2.Zero;
     public bool Enabled = false;
     /// <summary> The vector that was shaken. </summary>
     public Vector2 ShakenVector { get; private set; }
@@ -42,8 +42,8 @@ public class VectorShaker
         {
             ShakenVector = ShakenVector with
             {
-                X = InitialVector.X + (float)rnd.NextDouble() * ShakeAmplitude.X,
-                Y = InitialVector.Y + (float)rnd.NextDouble() * ShakeAmplitude.Y
+                X = (InitialVector.X + (float)rnd.NextDouble() * ShakeAmplitude.X) * (float)(Infinite ? 1 : Time / ShakeDuration), // Decrease shake over time.
+                Y = (InitialVector.Y + (float)rnd.NextDouble() * ShakeAmplitude.Y) * (float)(Infinite ? 1 : Time / ShakeDuration)
             };
         }
     }

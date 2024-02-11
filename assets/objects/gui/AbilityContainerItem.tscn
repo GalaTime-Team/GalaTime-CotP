@@ -1,8 +1,8 @@
 [gd_scene load_steps=15 format=3 uid="uid://4ivx2u2xw1y6"]
 
-[ext_resource type="Texture2D" uid="uid://bmile26uh6xa4" path="res://sprites/gui/abilities/ignis/blue fire shield.png" id="1_rcshf"]
+[ext_resource type="Texture2D" uid="uid://bmile26uh6xa4" path="res://assets/sprites/gui/abilities/ignis/blue fire shield.png" id="1_rcshf"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilityContainerItem.cs" id="2"]
-[ext_resource type="Texture2D" uid="uid://d28cscijsoyex" path="res://sprites/gui/abilities/closed.png" id="3_ofhl3"]
+[ext_resource type="Texture2D" uid="uid://d28cscijsoyex" path="res://assets/sprites/gui/abilities/closed.png" id="3_ofhl3"]
 [ext_resource type="AudioStream" uid="uid://ckw0f387dspm2" path="res://assets/audios/sounds/learned_ability.mp3" id="5_wnwfd"]
 
 [sub_resource type="Shader" id="Shader_8sqiw"]

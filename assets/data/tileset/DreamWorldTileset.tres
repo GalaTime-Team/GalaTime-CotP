@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" load_steps=5 format=3 uid="uid://bjos0o0ign6i5"]
 
-[ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://sprites/tilesets/dreamworld-floor.png" id="1_mh4vj"]
-[ext_resource type="Texture2D" uid="uid://rxs4c7ubrphq" path="res://sprites/levels/dream_world/dreamworld.png" id="2_idr53"]
+[ext_resource type="Texture2D" uid="uid://b66m7csser2oh" path="res://assets/sprites/tilesets/dreamworld-floor.png" id="1_mh4vj"]
+[ext_resource type="Texture2D" uid="uid://rxs4c7ubrphq" path="res://assets/sprites/levels/dream_world/dreamworld.png" id="2_idr53"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dyllh"]
 texture = ExtResource("1_mh4vj")

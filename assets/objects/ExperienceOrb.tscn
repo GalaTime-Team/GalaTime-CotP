@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://c7lb6tm0mdi2y"]
 
-[ext_resource type="Texture2D" uid="uid://b0l77o2lp0yy0" path="res://sprites/test/xp_orb_stage_0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://b0l77o2lp0yy0" path="res://assets/sprites/test/xp_orb_stage_0.png" id="1"]
 [ext_resource type="Script" path="res://assets/scripts/objects/ExperienceOrb.cs" id="2"]
 
 [sub_resource type="RectangleShape2D" id="41"]

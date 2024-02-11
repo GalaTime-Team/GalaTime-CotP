@@ -1,9 +1,9 @@
 [gd_scene load_steps=15 format=3 uid="uid://c1u2weprncgn6"]
 
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="1_ynmsx"]
-[ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://sprites/gui/dialog-background.png" id="2_me71h"]
-[ext_resource type="Texture2D" uid="uid://ddp232l64r5h8" path="res://sprites/test/arthur-icon.png" id="3_yluxf"]
-[ext_resource type="Texture2D" uid="uid://dxw5mvqypf6i3" path="res://sprites/test/member-icon.png" id="4_utkxg"]
+[ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://assets/sprites/gui/dialog-background.png" id="2_me71h"]
+[ext_resource type="Texture2D" uid="uid://ddp232l64r5h8" path="res://assets/sprites/test/arthur-icon.png" id="3_yluxf"]
+[ext_resource type="Texture2D" uid="uid://dxw5mvqypf6i3" path="res://assets/sprites/test/member-icon.png" id="4_utkxg"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesContainer.cs" id="5_dkern"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesChoiseContainer.cs" id="6_iy3ie"]
 [ext_resource type="PackedScene" uid="uid://4ivx2u2xw1y6" path="res://assets/objects/gui/AbilityContainerItem.tscn" id="7_o3ee3"]

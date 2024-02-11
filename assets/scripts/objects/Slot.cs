@@ -4,8 +4,8 @@ namespace Galatime
 {
     public partial class Slot : TextureRect
     {
-        Texture2D defaultTexture = GD.Load<Texture2D>("res://sprites/gui/inventory/slot.png");
-        Texture2D weaponTexture = GD.Load<Texture2D>("res://sprites/gui/inventory/slot-weapon.png");
+        Texture2D defaultTexture = GD.Load<Texture2D>("res://assets/sprites/gui/inventory/slot.png");
+        Texture2D weaponTexture = GD.Load<Texture2D>("res://assets/sprites/gui/inventory/slot-weapon.png");
 
         public Item Data = new();
         

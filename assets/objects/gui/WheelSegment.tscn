@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://dnnhsv5fbr76j"]
 
-[ext_resource type="Texture2D" uid="uid://c87vmr5yjgx1k" path="res://sprites/gui/wheel_segment.png" id="1_5t21u"]
+[ext_resource type="Texture2D" uid="uid://c87vmr5yjgx1k" path="res://assets/sprites/gui/wheel_segment.png" id="1_5t21u"]
 [ext_resource type="Script" path="res://assets/scripts/gui/WheelSegment.cs" id="2_36nrb"]
 [ext_resource type="AudioStream" uid="uid://dpqsqejx16ml8" path="res://assets/audios/sounds/spin_click.wav" id="3_r5sg6"]
 

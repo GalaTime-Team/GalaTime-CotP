@@ -1,7 +1,7 @@
-[gd_scene load_steps=20 format=3 uid="uid://cblmuql6moq62"]
+[gd_scene load_steps=21 format=3 uid="uid://cblmuql6moq62"]
 
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="1_egyl8"]
-[ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://sprites/particles/dream_world_particles.png" id="2_b24jw"]
+[ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://assets/sprites/particles/dream_world_particles.png" id="2_b24jw"]
 [ext_resource type="TileSet" uid="uid://bjos0o0ign6i5" path="res://assets/data/tileset/DreamWorldTileset.tres" id="2_qur5g"]
 [ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="4_mp3x6"]
 [ext_resource type="PackedScene" uid="uid://d4ati88xcg8y4" path="res://assets/objects/helpers/EnemySpawnPosition.tscn" id="4_wqiaw"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dig3jdhxm6cmi" path="res://assets/objects/DoorBlock.tscn" id="6_x3ocx"]
 [ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/Roomwrap.tscn" id="8_rru7k"]
 [ext_resource type="PackedScene" uid="uid://bljwt8h81gnrn" path="res://assets/objects/ItemPickup.tscn" id="9_7m3q7"]
+[ext_resource type="PackedScene" uid="uid://pbacv76llqfo" path="res://assets/objects/puzzle/DragableObject.tscn" id="10_hht8t"]
 
 [sub_resource type="Curve" id="Curve_tl2pf"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.268953, 1), 0.0, 0.0, 0, 0, Vector2(0.734657, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -211,6 +212,15 @@ Quantity = 3
 position = Vector2(-1024, 832)
 ItemId = "mana_potion"
 Quantity = 3
+
+[node name="DragableObject" parent="." instance=ExtResource("10_hht8t")]
+position = Vector2(-787, 560)
+
+[node name="DragableObject4" parent="." instance=ExtResource("10_hht8t")]
+position = Vector2(-985, 560)
+
+[node name="DragableObject5" parent="." instance=ExtResource("10_hht8t")]
+position = Vector2(-1184, 560)
 
 [editable path="Roomwrap"]
 [editable path="Roomwrap2"]

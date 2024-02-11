@@ -5,7 +5,7 @@
 			"id": "golden_holder_sword",
 			"description": "A standard sword given to all who came to this kingdom. May it be faithful to you... AUCH, that's sharp!",
 			"type": "weapon",
-			"icon": "res://sprites/weapons/swords/icon/golden_holder_sword_icon.png",
+			"icon": "res://assets/sprites/weapons/swords/icon/golden_holder_sword_icon.png",
 			"scene": "res://assets/objects/weapons/GoldenHolderSword.tscn",
 			"stats": {
 				"damage": 10,
@@ -18,7 +18,7 @@
 			"name": "Barrel",
 			"id": "barrel",
 			"description": "What do I need it for?",
-			"icon": "res://sprites/bagtest.png",
+			"icon": "res://assets/sprites/bagtest.png",
 			"stackable": true,
 			"stack_size": 16
 		},
@@ -27,7 +27,7 @@
 			"id": "heal_potion",
 			"description": "When you drink it, it heals you for 50% of your HP. Smells like mint.",
 			"type": "consumable",
-			"icon": "res://sprites/gui/heal_potion.png",
+			"icon": "res://assets/sprites/gui/heal_potion.png",
 			"stackable": true,
 			"stack_size": 16
 		},
@@ -36,7 +36,7 @@
 			"id": "mana_potion",
 			"description": "When you drink it, it will gain 50% of your Mana.",
 			"type": "consumable",
-			"icon": "res://sprites/gui/mana_potion.png",
+			"icon": "res://assets/sprites/gui/mana_potion.png",
 			"stackable": true,
 			"stack_size": 16
 		}

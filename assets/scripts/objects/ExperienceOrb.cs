@@ -20,10 +20,10 @@ namespace Galatime
 
         /// <summary> The textures paths of the orb. </summary>
         private readonly string[] TexturesPath = new string[4] { 
-            "res://sprites/test/xp_orb_stage_0.png",
-            "res://sprites/test/xp_orb_stage_1.png", 
-            "res://sprites/test/xp_orb_stage_2.png", 
-            "res://sprites/test/xp_orb_stage_3.png" 
+            "res://assets/sprites/test/xp_orb_stage_0.png",
+            "res://assets/sprites/test/xp_orb_stage_1.png", 
+            "res://assets/sprites/test/xp_orb_stage_2.png", 
+            "res://assets/sprites/test/xp_orb_stage_3.png" 
         };
 
         /// <summary> The loaded textures of the orb. </summary>

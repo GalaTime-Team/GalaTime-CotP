@@ -3,13 +3,13 @@
         {
             "id": "raphael",
             "name": "Raphael",
-            "icon": "res://sprites/gui/characters/icon/raphael_icon.png",
+            "icon": "res://assets/sprites/gui/characters/icon/raphael_icon.png",
             "scene": "res://assets/objects/entity/character/Raphael.tscn"
         },
         {
             "id": "arthur",
             "name": "Arthur",
-            "icon": "res://sprites/gui/characters/icon/arthur_icon.png",
+            "icon": "res://assets/sprites/gui/characters/icon/arthur_icon.png",
             "scene": "res://assets/objects/entity/character/Arthur.tscn"
         }
     ]

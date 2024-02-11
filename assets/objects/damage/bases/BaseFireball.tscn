@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://assets/scripts/objects/damage/bases/BaseFireball.cs" id="1_0ptew"]
 [ext_resource type="PackedScene" uid="uid://b6jcghf8rleu6" path="res://assets/objects/damage/Projectile.tscn" id="1_bo7dh"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="2_5qxio"]
-[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://sprites/particles/fire/fire.png" id="3_j07w7"]
-[ext_resource type="Texture2D" uid="uid://cbyfpnvsuigqn" path="res://sprites/abilities/fireball.png" id="5_del6w"]
+[ext_resource type="Texture2D" uid="uid://8kjh3okr87x7" path="res://assets/sprites/particles/fire/fire.png" id="3_j07w7"]
+[ext_resource type="Texture2D" uid="uid://cbyfpnvsuigqn" path="res://assets/sprites/abilities/fireball.png" id="5_del6w"]
 [ext_resource type="AudioStream" uid="uid://bx75a101a77ss" path="res://assets/audios/sounds/firebal.mp3" id="14_b1q6f"]
 
 [sub_resource type="Resource" id="Resource_qm5l1"]

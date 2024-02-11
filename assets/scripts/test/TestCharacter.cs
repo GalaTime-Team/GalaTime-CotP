@@ -158,7 +158,7 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
             // Check if enemy is enemy and not dead.
             if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState) Weapon.Attack(this);
         }
-        // For some reason it is moving at twice the speed, so it is divided by 2.
+
         Body.Velocity = vectorPath.Normalized() * Speed;
     }
 
@@ -212,8 +212,9 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
         var distance = Body.GlobalPosition.DistanceTo(followTo.GlobalPosition);
         if (distance >= 150 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
         vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
-        // For some reason it is moving at twice the speed, so it is divided by 2.
+
         Body.Velocity = vectorPath.Normalized() * Speed;
+        if (IsPushing) Body.Velocity *= PushingSpeedMultiplier;
     }
 
     public bool PlayDramaAnimation(string animationName)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://c5r33n1tcj86s"]
 
-[ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://sprites/gui/dialog-background.png" id="1_f20lw"]
+[ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://assets/sprites/gui/dialog-background.png" id="1_f20lw"]
 [ext_resource type="Script" path="res://assets/scripts/objects/DialogBox.cs" id="2_3j6jw"]
 [ext_resource type="PackedScene" uid="uid://n5k4by4v4dnf" path="res://assets/objects/gui/helpers/TypingLabel.tscn" id="3_wvheh"]
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="4_3u1ey"]

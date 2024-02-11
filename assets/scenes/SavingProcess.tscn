@@ -1,8 +1,8 @@
 [gd_scene load_steps=25 format=3 uid="uid://v416l48hkc2r"]
 
-[ext_resource type="Texture2D" uid="uid://bx13v0cs2j3a3" path="res://sprites/gui/save-icon-animation-spritesheet.png" id="1_m2nvm"]
+[ext_resource type="Texture2D" uid="uid://bx13v0cs2j3a3" path="res://assets/sprites/gui/save-icon-animation-spritesheet.png" id="1_m2nvm"]
 [ext_resource type="Script" path="res://assets/scripts/gui/SavingProcess.cs" id="1_ooq7i"]
-[ext_resource type="Texture2D" uid="uid://cspj8pq75d6db" path="res://sprites/gui/save-icon-animation-failed-spritesheet.png" id="3_uifgt"]
+[ext_resource type="Texture2D" uid="uid://cspj8pq75d6db" path="res://assets/sprites/gui/save-icon-animation-failed-spritesheet.png" id="3_uifgt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xue3g"]
 atlas = ExtResource("1_m2nvm")

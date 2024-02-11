@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://6jrbwkewkftv"]
 
 [ext_resource type="Script" path="res://assets/scripts/gui/DangerNotifierEffect.cs" id="1_6di40"]
-[ext_resource type="Texture2D" uid="uid://bqgnlhy0go805" path="res://sprites/gui/danger.png" id="1_17c4p"]
+[ext_resource type="Texture2D" uid="uid://bqgnlhy0go805" path="res://assets/sprites/gui/danger.png" id="1_17c4p"]
 [ext_resource type="AudioStream" uid="uid://bxvcquaasip7c" path="res://assets/audios/sounds/danger.mp3" id="2_5vkjc"]
 
 [sub_resource type="Animation" id="Animation_532f0"]

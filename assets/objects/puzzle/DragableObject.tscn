@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://pbacv76llqfo"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/puzzle/DragableObject.cs" id="1_turuo"]
+[ext_resource type="PackedScene" uid="uid://bxprylw0wb8gl" path="res://assets/objects/InteractiveTrigger.tscn" id="1_vsnsk"]
+[ext_resource type="AudioStream" uid="uid://dlpm5m2ucq52h" path="res://assets/audios/sounds/stone_moving.mp3" id="2_3j8al"]
+[ext_resource type="Texture2D" uid="uid://beswawhiqyy73" path="res://assets/sprites/puzzle/statue_forward.png" id="4_gw2vl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p6sxv"]
+size = Vector2(100, 140)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_om302"]
+size = Vector2(64, 60)
+
+[node name="DragableObject" type="CharacterBody2D"]
+y_sort_enabled = true
+script = ExtResource("1_turuo")
+
+[node name="InteractiveTrigger" parent="." instance=ExtResource("1_vsnsk")]
+VisualNodePath = NodePath("../Sprite")
+ChangeState = false
+InteractText = "Push"
+InteractTextPositionOffset = -50.0
+
+[node name="CollisionShape3D" parent="InteractiveTrigger/CollisionArea" index="0"]
+position = Vector2(0, 55)
+shape = SubResource("RectangleShape2D_p6sxv")
+
+[node name="Label" parent="InteractiveTrigger" index="1"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 70.0
+offset_bottom = 13.0
+scale = Vector2(2, 2)
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, 66)
+shape = SubResource("RectangleShape2D_om302")
+
+[node name="PushingAudio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_3j8al")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(4, 4)
+texture = ExtResource("4_gw2vl")
+
+[editable path="InteractiveTrigger"]

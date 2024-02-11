@@ -1,14 +1,14 @@
 [gd_scene load_steps=15 format=3 uid="uid://bjaq8u7sdqx2g"]
 
 [ext_resource type="Script" path="res://assets/objects/abilities/BlueFireVisuals.cs" id="1_06yre"]
-[ext_resource type="Texture2D" uid="uid://cg30ahtmcapen" path="res://sprites/abilities/blue_fire/0.png" id="1_rh1ak"]
-[ext_resource type="Texture2D" uid="uid://bdyf2qlif0i0p" path="res://sprites/abilities/blue_fire/1.png" id="2_xu8t6"]
-[ext_resource type="Texture2D" uid="uid://xl1d3uie8wh2" path="res://sprites/abilities/blue_fire/2.png" id="3_idxox"]
-[ext_resource type="Texture2D" uid="uid://ecmgtacuyp4f" path="res://sprites/abilities/blue_fire/4.png" id="4_asq1y"]
-[ext_resource type="Texture2D" uid="uid://d4mmqqlmx350l" path="res://sprites/abilities/blue_fire/3.png" id="5_ddqsc"]
-[ext_resource type="Texture2D" uid="uid://b5o1g8gbl3gt" path="res://sprites/abilities/blue_fire/5.png" id="6_1aajl"]
-[ext_resource type="Texture2D" uid="uid://dlngc8ewvpng2" path="res://sprites/abilities/blue_fire/6.png" id="7_edb8q"]
-[ext_resource type="Texture2D" uid="uid://d1uedyko6nyhb" path="res://sprites/abilities/blue_fire/8.png" id="8_v04us"]
+[ext_resource type="Texture2D" uid="uid://cg30ahtmcapen" path="res://assets/sprites/abilities/blue_fire/0.png" id="1_rh1ak"]
+[ext_resource type="Texture2D" uid="uid://bdyf2qlif0i0p" path="res://assets/sprites/abilities/blue_fire/1.png" id="2_xu8t6"]
+[ext_resource type="Texture2D" uid="uid://xl1d3uie8wh2" path="res://assets/sprites/abilities/blue_fire/2.png" id="3_idxox"]
+[ext_resource type="Texture2D" uid="uid://ecmgtacuyp4f" path="res://assets/sprites/abilities/blue_fire/4.png" id="4_asq1y"]
+[ext_resource type="Texture2D" uid="uid://d4mmqqlmx350l" path="res://assets/sprites/abilities/blue_fire/3.png" id="5_ddqsc"]
+[ext_resource type="Texture2D" uid="uid://b5o1g8gbl3gt" path="res://assets/sprites/abilities/blue_fire/5.png" id="6_1aajl"]
+[ext_resource type="Texture2D" uid="uid://dlngc8ewvpng2" path="res://assets/sprites/abilities/blue_fire/6.png" id="7_edb8q"]
+[ext_resource type="Texture2D" uid="uid://d1uedyko6nyhb" path="res://assets/sprites/abilities/blue_fire/8.png" id="8_v04us"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cnsio"]
 

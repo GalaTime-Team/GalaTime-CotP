@@ -1,6 +1,6 @@
 [gd_resource type="Animation" load_steps=2 format=3 uid="uid://8p6sai8frm0r"]
 
-[ext_resource type="Texture2D" uid="uid://cy8g8juxd058m" path="res://sprites/characters/arthur/walking/arthur_right1.png" id="1_smn0v"]
+[ext_resource type="Texture2D" uid="uid://cy8g8juxd058m" path="res://assets/sprites/characters/arthur/walking/arthur_right1.png" id="1_smn0v"]
 
 [resource]
 resource_name = "IdleRight"

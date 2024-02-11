@@ -1,0 +1,51 @@
+[gd_resource type="AnimatedTexture" load_steps=16 format=3 uid="uid://bl5nd53jt2rl8"]
+
+[ext_resource type="Texture2D" uid="uid://dgg2wuo6soncp" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/8.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://xire13d28dax" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/9.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bpk7p1fu7tnnn" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/6.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://b5a7ii4diw8nl" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/1.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://clxdp0vhr8fmq" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/5.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://den7sybdxevwj" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/2.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://bv1s7r7wv0omx" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/7.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://c624q3c2sc7ct" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/0.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://c4l2mh8cxku3" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/3.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://d3w3imcf37sls" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/4.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://djiurfj1ngacj" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/12.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://bgibqu3qmvjme" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/13.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://co3kjlwyprmhi" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/14.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://dutbrjb4hg1sq" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/11.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://db81ogby8gujk" path="res://assets/sprites/gui/dialog/characters/arthur/flustered/10.png" id="15"]
+
+[resource]
+frames = 15
+one_shot = true
+speed_scale = 15.0
+frame_0/texture = ExtResource("8")
+frame_1/texture = ExtResource("4")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("6")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("9")
+frame_3/duration = 1.0
+frame_4/texture = ExtResource("10")
+frame_4/duration = 1.0
+frame_5/texture = ExtResource("5")
+frame_5/duration = 1.0
+frame_6/texture = ExtResource("3")
+frame_6/duration = 1.0
+frame_7/texture = ExtResource("7")
+frame_7/duration = 1.0
+frame_8/texture = ExtResource("1")
+frame_8/duration = 1.0
+frame_9/texture = ExtResource("2")
+frame_9/duration = 1.0
+frame_10/texture = ExtResource("15")
+frame_10/duration = 1.0
+frame_11/texture = ExtResource("14")
+frame_11/duration = 1.0
+frame_12/texture = ExtResource("11")
+frame_12/duration = 1.0
+frame_13/texture = ExtResource("12")
+frame_13/duration = 1.0
+frame_14/texture = ExtResource("13")
+frame_14/duration = 1.0

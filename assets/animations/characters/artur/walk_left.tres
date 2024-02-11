@@ -1,13 +1,13 @@
 [gd_resource type="Animation" load_steps=9 format=3 uid="uid://co6srb7oraj3q"]
 
-[ext_resource type="Texture2D" uid="uid://5syk67gdgwia" path="res://sprites/characters/arthur/walking/arthur_left1.png" id="1_imv6b"]
-[ext_resource type="Texture2D" uid="uid://bmfru8wdd4udd" path="res://sprites/characters/arthur/walking/arthur_left2.png" id="2_ri0rk"]
-[ext_resource type="Texture2D" uid="uid://cmlldf6bo7wbr" path="res://sprites/characters/arthur/walking/arthur_left3.png" id="3_ghnxp"]
-[ext_resource type="Texture2D" uid="uid://wp1hdg05t8xn" path="res://sprites/characters/arthur/walking/arthur_left4.png" id="4_av8hv"]
-[ext_resource type="Texture2D" uid="uid://vyo5jsyrw2us" path="res://sprites/characters/arthur/walking/arthur_left5.png" id="5_lv6rn"]
-[ext_resource type="Texture2D" uid="uid://b3imnyog6ca2b" path="res://sprites/characters/arthur/walking/arthur_left6.png" id="6_ogrh6"]
-[ext_resource type="Texture2D" uid="uid://bxs2cbwhjusec" path="res://sprites/characters/arthur/walking/arthur_left7.png" id="7_oi1eb"]
-[ext_resource type="Texture2D" uid="uid://bxydxs3w0usr0" path="res://sprites/characters/arthur/walking/arthur_left8.png" id="8_5f6xd"]
+[ext_resource type="Texture2D" uid="uid://5syk67gdgwia" path="res://assets/sprites/characters/arthur/walking/arthur_left1.png" id="1_imv6b"]
+[ext_resource type="Texture2D" uid="uid://bmfru8wdd4udd" path="res://assets/sprites/characters/arthur/walking/arthur_left2.png" id="2_ri0rk"]
+[ext_resource type="Texture2D" uid="uid://cmlldf6bo7wbr" path="res://assets/sprites/characters/arthur/walking/arthur_left3.png" id="3_ghnxp"]
+[ext_resource type="Texture2D" uid="uid://wp1hdg05t8xn" path="res://assets/sprites/characters/arthur/walking/arthur_left4.png" id="4_av8hv"]
+[ext_resource type="Texture2D" uid="uid://vyo5jsyrw2us" path="res://assets/sprites/characters/arthur/walking/arthur_left5.png" id="5_lv6rn"]
+[ext_resource type="Texture2D" uid="uid://b3imnyog6ca2b" path="res://assets/sprites/characters/arthur/walking/arthur_left6.png" id="6_ogrh6"]
+[ext_resource type="Texture2D" uid="uid://bxs2cbwhjusec" path="res://assets/sprites/characters/arthur/walking/arthur_left7.png" id="7_oi1eb"]
+[ext_resource type="Texture2D" uid="uid://bxydxs3w0usr0" path="res://assets/sprites/characters/arthur/walking/arthur_left8.png" id="8_5f6xd"]
 
 [resource]
 resource_name = "WalkLeft"

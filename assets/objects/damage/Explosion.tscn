@@ -1,12 +1,12 @@
 [gd_scene load_steps=30 format=3 uid="uid://cnquvp1gnwkb5"]
 
 [ext_resource type="Script" path="res://assets/scripts/objects/damage/Explosion.cs" id="1_pe16a"]
-[ext_resource type="Texture2D" uid="uid://b5p7eomis5jie" path="res://sprites/damage/explosion-hole.png" id="2_a8fxu"]
-[ext_resource type="Texture2D" uid="uid://cbthe3n6m4w03" path="res://sprites/damage/explosion_old_white.png" id="3_8b2nc"]
+[ext_resource type="Texture2D" uid="uid://b5p7eomis5jie" path="res://assets/sprites/damage/explosion-hole.png" id="2_a8fxu"]
+[ext_resource type="Texture2D" uid="uid://cbthe3n6m4w03" path="res://assets/sprites/damage/explosion_old_white.png" id="3_8b2nc"]
 [ext_resource type="AudioStream" uid="uid://cic38iixu0ckp" path="res://assets/audios/sounds/damage/explosion_medium.wav" id="3_166tm"]
-[ext_resource type="Texture2D" uid="uid://64yeyht01h2p" path="res://sprites/damage/explosion_old.png" id="3_od5j8"]
-[ext_resource type="Texture2D" uid="uid://oyijns5lutuo" path="res://sprites/damage/explosion_trail.png" id="3_r22mq"]
-[ext_resource type="Texture2D" uid="uid://bdfcb5nxet2oy" path="res://sprites/particles/smoke.png" id="5_dghw5"]
+[ext_resource type="Texture2D" uid="uid://64yeyht01h2p" path="res://assets/sprites/damage/explosion_old.png" id="3_od5j8"]
+[ext_resource type="Texture2D" uid="uid://oyijns5lutuo" path="res://assets/sprites/damage/explosion_trail.png" id="3_r22mq"]
+[ext_resource type="Texture2D" uid="uid://bdfcb5nxet2oy" path="res://assets/sprites/particles/smoke.png" id="5_dghw5"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_aat50"]
 radius = 2.0

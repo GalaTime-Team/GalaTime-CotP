@@ -10,9 +10,9 @@
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="4_n0y02"]
 [ext_resource type="PackedScene" uid="uid://blop7skk5xvn1" path="res://assets/objects/damage/bases/BaseFireball.tscn" id="4_plde0"]
 [ext_resource type="PackedScene" uid="uid://c2kilqb5gaq35" path="res://assets/objects/helpers/ai/RangedHitTracker.tscn" id="4_txqf1"]
-[ext_resource type="Texture2D" uid="uid://crllt0goobb8p" path="res://sprites/entity/firecloak/firecloak_idle.png" id="6_pfbco"]
+[ext_resource type="Texture2D" uid="uid://crllt0goobb8p" path="res://assets/sprites/entity/firecloak/firecloak_idle.png" id="6_pfbco"]
 [ext_resource type="PackedScene" uid="uid://6jrbwkewkftv" path="res://assets/objects/gui/DangerNotifierEffect.tscn" id="9_mtr2w"]
-[ext_resource type="Texture2D" uid="uid://bjwcoycdue7kx" path="res://sprites/entity/firecloak/firecloak_dash.png" id="9_xjtsn"]
+[ext_resource type="Texture2D" uid="uid://bjwcoycdue7kx" path="res://assets/sprites/entity/firecloak/firecloak_dash.png" id="9_xjtsn"]
 
 [sub_resource type="Resource" id="Resource_57xwu"]
 script = ExtResource("2_ogpqi")

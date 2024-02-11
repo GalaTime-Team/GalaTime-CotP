@@ -1,6 +1,6 @@
 [gd_resource type="Animation" load_steps=2 format=3 uid="uid://bgsskthjuyooq"]
 
-[ext_resource type="Texture2D" uid="uid://cxc07130bdslt" path="res://sprites/characters/arthur/walking/arthur_up1.png" id="1_qv28c"]
+[ext_resource type="Texture2D" uid="uid://cxc07130bdslt" path="res://assets/sprites/characters/arthur/walking/arthur_up1.png" id="1_qv28c"]
 
 [resource]
 resource_name = "IdleUp"

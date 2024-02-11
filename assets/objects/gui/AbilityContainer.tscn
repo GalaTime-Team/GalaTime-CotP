@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://dgxbid7xdal5c"]
 
-[ext_resource type="Texture2D" uid="uid://dmv8le1k6gs1a" path="res://sprites/gui/abilities/reload.png" id="1"]
-[ext_resource type="Texture2D" uid="uid://c4fl8450ftk26" path="res://sprites/gui/abilities/empty.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dmv8le1k6gs1a" path="res://assets/sprites/gui/abilities/reload.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://c4fl8450ftk26" path="res://assets/sprites/gui/abilities/empty.png" id="2"]
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="2_rb068"]
 [ext_resource type="Script" path="res://assets/scripts/AbilityContainer.cs" id="4"]
 [ext_resource type="AudioStream" uid="uid://c527l6tkxg5se" path="res://assets/audios/sounds/abilityno.mp3" id="5"]

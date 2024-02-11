@@ -1,0 +1,18 @@
+[gd_resource type="AnimatedTexture" load_steps=5 format=3 uid="uid://dueuhbyb227rh"]
+
+[ext_resource type="Texture2D" uid="uid://cleck16jg4c0y" path="res://assets/sprites/gui/dialog/characters/arthur/unsure/3.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bh85o25mjyrf6" path="res://assets/sprites/gui/dialog/characters/arthur/unsure/1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://nhexq6i7robm" path="res://assets/sprites/gui/dialog/characters/arthur/unsure/2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://qawlslqm8ss0" path="res://assets/sprites/gui/dialog/characters/arthur/unsure/0.png" id="4"]
+
+[resource]
+frames = 4
+one_shot = true
+speed_scale = 15.0
+frame_0/texture = ExtResource("4")
+frame_1/texture = ExtResource("2")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("3")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("1")
+frame_3/duration = 1.0

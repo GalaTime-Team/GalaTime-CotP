@@ -1,17 +1,17 @@
 [gd_scene load_steps=23 format=3 uid="uid://s184ap1aunq3"]
 
-[ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://sprites/gui/status/stamina_progress_outline.png" id="1"]
-[ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://sprites/gui/status/mana_progress_outline.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://bus3tixdqgvjr" path="res://sprites/gui/status/hp_progress_outline.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dxvc1hyn3ew0f" path="res://assets/sprites/gui/status/stamina_progress_outline.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://rvgkh6mawrl8" path="res://assets/sprites/gui/status/mana_progress_outline.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bus3tixdqgvjr" path="res://assets/sprites/gui/status/hp_progress_outline.png" id="3"]
 [ext_resource type="PackedScene" uid="uid://cttkdqlgrme62" path="res://assets/objects/gui/ValueBar.tscn" id="3_ysutl"]
-[ext_resource type="Texture2D" uid="uid://dhtevbnd5q0i2" path="res://sprites/gui/status/stamina_progress.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://dhtevbnd5q0i2" path="res://assets/sprites/gui/status/stamina_progress.png" id="4"]
 [ext_resource type="PackedScene" uid="uid://bn3iju7bii6tj" path="res://assets/objects/gui/helpers/ShakeControl.tscn" id="4_bjh2c"]
-[ext_resource type="Texture2D" uid="uid://eenddgdqm3fn" path="res://sprites/gui/status/hp_progress.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://eenddgdqm3fn" path="res://assets/sprites/gui/status/hp_progress.png" id="5"]
 [ext_resource type="Script" path="res://assets/scripts/gui/PlayerGui.cs" id="6"]
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="9_lrd2i"]
 [ext_resource type="PackedScene" uid="uid://c5r33n1tcj86s" path="res://assets/objects/gui/DialogBox.tscn" id="12_3rd2x"]
 [ext_resource type="PackedScene" uid="uid://c1u2weprncgn6" path="res://assets/objects/gui/PauseContainer.tscn" id="13_co182"]
-[ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://sprites/gui/status/mana_progress.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://46cs7d0rkgth" path="res://assets/sprites/gui/status/mana_progress.png" id="14"]
 [ext_resource type="PackedScene" uid="uid://bqkuonmirsqx1" path="res://assets/objects/gui/PauseMenu.tscn" id="16_mf8j7"]
 [ext_resource type="PackedScene" uid="uid://dv75frnqnpr4b" path="res://assets/objects/gui/DeathScreenContainer.tscn" id="17_7dc38"]
 [ext_resource type="Shader" path="res://assets/shaders/NTSC.gdshader" id="17_glk77"]
@@ -78,7 +78,7 @@ script = ExtResource("6")
 offset_right = 0.0
 offset_bottom = 0.0
 ValueText = "HP"
-TransientTexturePath = "D:/Projects/galatime-project/sprites/gui/status/transient_progress.png"
+TransientTexturePath = "res://assets/sprites/gui/player_status_drain.png"
 ChangedColor = Color(0.403922, 1, 0.427451, 1)
 NormalColor = Color(1, 1, 1, 1)
 ProgressBarNodePath = NodePath("Progress")
@@ -126,7 +126,7 @@ texture = ExtResource("3")
 offset_right = 0.0
 offset_bottom = 0.0
 ValueText = "STAM"
-TransientTexturePath = "D:/Projects/galatime-project/sprites/gui/status/transient_progress.png"
+TransientTexturePath = "res://assets/sprites/gui/player_status_drain.png"
 ChangedColor = Color(0.764706, 0.760784, 0.74902, 1)
 NormalColor = Color(1, 1, 1, 1)
 ProgressBarNodePath = NodePath("Progress")
@@ -173,7 +173,7 @@ texture = ExtResource("1")
 offset_right = 0.0
 offset_bottom = 0.0
 ValueText = "MANA"
-TransientTexturePath = "D:/Projects/galatime-project/sprites/gui/status/transient_progress.png"
+TransientTexturePath = "res://assets/sprites/gui/player_status_drain.png"
 ChangedColor = Color(0.368627, 0.619608, 1, 1)
 NormalColor = Color(1, 1, 1, 1)
 ProgressBarNodePath = NodePath("Progress")

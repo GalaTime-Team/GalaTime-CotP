@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://assets/scripts/gui/DamageEffect.cs" id="2"]
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="2_kosxw"]
-[ext_resource type="Texture2D" uid="uid://cbdyh0wxvj1yc" path="res://sprites/particles/heal_particles.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://cbdyh0wxvj1yc" path="res://assets/sprites/particles/heal_particles.png" id="3"]
 
 [sub_resource type="Animation" id="2"]
 length = 0.001

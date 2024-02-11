@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://assets/objects/abilities/Firewave.cs" id="1_63eig"]
 [ext_resource type="AudioStream" uid="uid://bx75a101a77ss" path="res://assets/audios/sounds/firebal.mp3" id="2_pxsvg"]
-[ext_resource type="Texture2D" uid="uid://cc5ckgkkw1l7g" path="res://sprites/abilities/firewave.png" id="3_4vmuv"]
+[ext_resource type="Texture2D" uid="uid://cc5ckgkkw1l7g" path="res://assets/sprites/abilities/firewave.png" id="3_4vmuv"]
 
 [sub_resource type="RectangleShape2D" id="5"]
 size = Vector2(8, 64)

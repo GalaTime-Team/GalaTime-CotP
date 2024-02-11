@@ -12,7 +12,7 @@
 			"power": 20,
 			"duration": 2,
 			"scene": "res://assets/objects/abilities/Fireball.tscn",
-			"icon": "res://sprites/gui/abilities/ignis/fire_ball.png",
+			"icon": "res://assets/sprites/gui/abilities/ignis/fire_ball.png",
 			"cost": 150,
 			"charges": 3
 		},
@@ -29,7 +29,7 @@
 			"power": 25,
 			"duration": 2,
 			"scene": "res://assets/objects/abilities/BlueFireball.tscn",
-			"icon": "res://sprites/gui/abilities/ignis/blue_fire_ball.png",
+			"icon": "res://assets/sprites/gui/abilities/ignis/blue_fire_ball.png",
 			"required": ["bluefire"],
 			"cost": 200
 		},
@@ -45,7 +45,7 @@
 			"power": 2,
 			"duration": 2,
 			"scene": "res://assets/objects/abilities/Flamethrower.tscn",
-			"icon": "res://sprites/gui/abilities/ignis/flamethrower.png",
+			"icon": "res://assets/sprites/gui/abilities/ignis/flamethrower.png",
 			"required": ["fireball"],
 			"cost": 150
 		},
@@ -61,7 +61,7 @@
 			"power": 30,
 			"duration": 2,
 			"scene": "res://assets/objects/abilities/Firewave.tscn",
-			"icon": "res://sprites/gui/abilities/ignis/firewave.png",
+			"icon": "res://assets/sprites/gui/abilities/ignis/firewave.png",
 			"required": ["flamethrower"],
 			"cost": 150
 		},
@@ -76,7 +76,7 @@
 			},
 			"duration": 30,
 			"scene": "res://assets/objects/abilities/BlueFire.tscn",
-			"icon": "res://sprites/gui/abilities/ignis/blue_fire.png",
+			"icon": "res://assets/sprites/gui/abilities/ignis/blue_fire.png",
 			"required": ["fireball"],
 			"cost": 200
 		},
@@ -92,7 +92,7 @@
 			"power": 30,
 			"duration": 1,
 			"scene": "res://assets/objects/abilities/FireBullet.tscn",
-			"icon": "res://sprites/gui/abilities/ignis/fire_bullet.png",
+			"icon": "res://assets/sprites/gui/abilities/ignis/fire_bullet.png",
 			"cost": 200,
 			"charges": 3
 		}
