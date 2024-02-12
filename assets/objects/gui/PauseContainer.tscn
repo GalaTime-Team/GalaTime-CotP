@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c1u2weprncgn6"]
+[gd_scene load_steps=24 format=3 uid="uid://c1u2weprncgn6"]
 
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="1_ynmsx"]
 [ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://assets/sprites/gui/dialog-background.png" id="2_me71h"]
@@ -12,10 +12,45 @@
 [ext_resource type="Script" path="res://assets/scripts/gui/Inventory.cs" id="10_6jmpr"]
 [ext_resource type="PackedScene" uid="uid://m2won44lnrfe" path="res://assets/objects/DragPreview.tscn" id="11_qfayu"]
 [ext_resource type="PackedScene" uid="uid://copiga1ncueyb" path="res://assets/objects/InventoryTooltip.tscn" id="12_j3tvq"]
-[ext_resource type="Script" path="res://assets/scripts/gui/PausePagesButtonsContainer.cs" id="13_7l0o5"]
+[ext_resource type="Script" path="res://assets/scripts/gui/diary/DiaryBookContainer.cs" id="13_8hg8r"]
+[ext_resource type="AudioStream" uid="uid://bmtmqooe3ww4r" path="res://assets/audios/sounds/book/page_twist_1.mp3" id="14_kuq1u"]
+[ext_resource type="Script" path="res://assets/scripts/gui/diary/DiaryPage.cs" id="14_u7va6"]
+[ext_resource type="AudioStream" uid="uid://bhsndockej8ku" path="res://assets/audios/sounds/book/page_twist_2.mp3" id="15_7fuac"]
+[ext_resource type="AudioStream" uid="uid://nm3hfgpnmw3o" path="res://assets/audios/sounds/book/page_twist_3.mp3" id="16_7knoa"]
+[ext_resource type="AudioStream" uid="uid://cfaify2bahhx3" path="res://assets/audios/sounds/book/page_twist_4.mp3" id="17_jmusj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oxmcq"]
 bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Resource" id="Resource_bux4w"]
+script = ExtResource("14_u7va6")
+Id = "inventory"
+Control = NodePath("../Inventory")
+Button = NodePath("PagesButtonsContainer/0")
+
+[sub_resource type="Resource" id="Resource_v67o7"]
+script = ExtResource("14_u7va6")
+Id = "upgrade"
+Control = NodePath("../StatsContainer")
+Button = NodePath("PagesButtonsContainer/2")
+
+[sub_resource type="Resource" id="Resource_7sl8l"]
+script = ExtResource("14_u7va6")
+Id = "abilities"
+Control = NodePath("../AbilitiesContainer")
+Button = NodePath("PagesButtonsContainer/3")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_gu6my"]
+random_pitch = 1.1
+streams_count = 4
+stream_0/stream = ExtResource("14_kuq1u")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("15_7fuac")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("16_7knoa")
+stream_2/weight = 1.0
+stream_3/stream = ExtResource("17_jmusj")
+stream_3/weight = 1.0
 
 [node name="InventoryContainer" type="Panel"]
 anchors_preset = 15
@@ -283,32 +318,49 @@ grow_horizontal = 1
 grow_vertical = 1
 scale = Vector2(2, 2)
 
-[node name="SelectedBlock" type="ColorRect" parent="."]
+[node name="Tooltip" parent="." instance=ExtResource("12_j3tvq")]
+visible = false
+z_index = 2
+layout_mode = 0
+offset_bottom = 133.0
+scale = Vector2(2, 2)
+mouse_filter = 2
+
+[node name="DiaryBookContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("13_8hg8r")
+Pages = [SubResource("Resource_bux4w"), SubResource("Resource_v67o7"), SubResource("Resource_7sl8l")]
+
+[node name="SelectedBlock" type="ColorRect" parent="DiaryBookContainer"]
 layout_mode = 2
 offset_left = 576.0
 offset_top = 640.0
 offset_right = 576.0
 offset_bottom = 640.0
 
-[node name="PausePagesButtonsContainer" type="HBoxContainer" parent="."]
+[node name="PagesButtonsContainer" type="HBoxContainer" parent="DiaryBookContainer"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -221.0
-offset_top = -68.0
-offset_right = -1.0
-offset_bottom = -28.0
+offset_left = -216.0
+offset_top = -80.0
+offset_right = 4.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(2, 2)
 theme_override_constants/separation = 14
-script = ExtResource("13_7l0o5")
-metadata/_edit_lock_ = true
 
-[node name="0" type="Label" parent="PausePagesButtonsContainer"]
+[node name="0" type="Label" parent="DiaryBookContainer/PagesButtonsContainer"]
 layout_mode = 2
 mouse_filter = 1
 mouse_default_cursor_shape = 2
@@ -317,7 +369,7 @@ theme_override_fonts/font = ExtResource("1_ynmsx")
 text = "Inventory"
 metadata/_edit_lock_ = true
 
-[node name="2" type="Label" parent="PausePagesButtonsContainer"]
+[node name="2" type="Label" parent="DiaryBookContainer/PagesButtonsContainer"]
 layout_mode = 2
 mouse_filter = 1
 mouse_default_cursor_shape = 2
@@ -325,7 +377,7 @@ theme_override_fonts/font = ExtResource("1_ynmsx")
 text = "Upgrading & Stats"
 metadata/_edit_lock_ = true
 
-[node name="3" type="Label" parent="PausePagesButtonsContainer"]
+[node name="3" type="Label" parent="DiaryBookContainer/PagesButtonsContainer"]
 layout_mode = 2
 mouse_filter = 1
 mouse_default_cursor_shape = 2
@@ -333,10 +385,5 @@ theme_override_fonts/font = ExtResource("1_ynmsx")
 text = "Abilities"
 metadata/_edit_lock_ = true
 
-[node name="Tooltip" parent="." instance=ExtResource("12_j3tvq")]
-visible = false
-z_index = 2
-layout_mode = 0
-offset_bottom = 45.0
-scale = Vector2(2, 2)
-mouse_filter = 2
+[node name="PageTwistAudio" type="AudioStreamPlayer" parent="DiaryBookContainer"]
+stream = SubResource("AudioStreamRandomizer_gu6my")

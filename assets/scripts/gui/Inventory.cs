@@ -33,11 +33,12 @@ public partial class Inventory : GridContainer
             AddChild(itemSlot);
         }
 
-        var gp = PlayerVariables.Player.PlayerGui;
+        var gp = PlayerVariables.Player;
         gp.Ready += () => 
         {   
-            gp.OnItemsChanged += OnInventoryChanged;
-            gp.OnPause += OnPause;
+            var p = gp.PlayerGui;
+            p.OnItemsChanged += OnInventoryChanged;
+            p.OnPause += OnPause;
         };
     }
 
