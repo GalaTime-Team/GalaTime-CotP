@@ -98,7 +98,7 @@ namespace Galatime
             {
                 Texture = GD.Load<Texture2D>("res://assets/sprites/test/chain.png"),
                 TextureMode = Line2D.LineTextureMode.Stretch,
-                Gradient = new Gradient(),
+                Gradient = new Gradient() { Colors = new Color[] { new(0f, 0f, 0f, 0f), new(0f, 0f, 0f, 1f) } },
                 Width = 8,
                 ZIndex = 0,
             };
@@ -148,7 +148,7 @@ namespace Galatime
 
             // Adjusting position relative to container. This means this will be placed in middle of container and so on.
             position.X -= container.Size.X - item.Size.X;
-            position.Y -= container.Size.Y * 2f + 8f;
+            position.Y -= container.Size.Y * 2f;
 
             // This needed for non-sequential appearance.
             if (!instant) 
