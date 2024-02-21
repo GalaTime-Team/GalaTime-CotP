@@ -16,7 +16,7 @@ public class AttackCycle
     /// <summary> Called when attack is selected. </summary>
     public Action Attack;
 
-    public AttackCycle(string id, Action pAttack, Func<bool> pOverrideAttackIf = null, float pChance = 1) =>
+    public AttackCycle(string id, Action pAttack, float pChance = 1, Func<bool> pOverrideAttackIf = null) =>
         (ID, Attack, OverrideAttackIf, Chance) = (id, pAttack, pOverrideAttackIf, pChance);
 }
 

@@ -55,8 +55,8 @@ public partial class Firecloak : Entity
 
     public void RegisterAttackCycles()
     {
-        AttackSwitcher.RegisterAttackCycles(new AttackCycle("fireball", () => FireballAttack(), null, .75f));
-        AttackSwitcher.RegisterAttackCycles(new AttackCycle("dash", () => DashAttack(), () => GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition) > 350, .25f));
+        AttackSwitcher.RegisterAttackCycles(new AttackCycle("fireball", FireballAttack, .75f));
+        AttackSwitcher.RegisterAttackCycles(new AttackCycle("dash", DashAttack, .25f, () => GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition) > 350));
     }
 
     public override void _Ready()

@@ -206,10 +206,33 @@ public partial class GalatimeElement : Resource
         }
     }
 
+    public static GalatimeElement Lapis
+    {
+        get
+        {
+            GalatimeElement e = new()
+            {
+                Name = "Lapis",
+                Description = "The element that gives life. It's very strong."
+            };
+
+            e.DamageMultipliers["Aqua"] = 2f;
+            e.DamageMultipliers["Caeli"] = 0.5f;
+            e.DamageMultipliers["Chaos"] = 2;
+            e.DamageMultipliers["Ignis"] = 0.5f;
+            e.DamageMultipliers["Lux"] = 0.5f;
+            e.DamageMultipliers["Naturaela"] = 1f;
+            e.DamageMultipliers["Corporis"] = 2f;
+            e.DamageMultipliers["Tenerbis"] = 0.5f;
+            return e;
+        }
+    }
+
     public static List<GalatimeElement> Elements = new() {
         Ignis,
         Chaos,
-        Aqua
+        Aqua,
+        Lapis
     };
 
     public static GalatimeElement GetByName(string name) => Elements.Find(e => e.Name == name);

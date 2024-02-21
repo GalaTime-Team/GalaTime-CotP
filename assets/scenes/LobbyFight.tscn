@@ -131,8 +131,8 @@ metadata/_edit_lock_ = true
 metadata/_edit_lock_ = true
 
 [node name="EnemySpawnPosition8" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(533, 12)
-SpawningEnemyId = "firecloak"
+position = Vector2(500, 366)
+SpawningEnemyId = "rockant"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom"]
 position = Vector2(-206, 412)

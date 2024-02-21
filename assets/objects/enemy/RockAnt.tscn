@@ -1,0 +1,65 @@
+[gd_scene load_steps=15 format=3 uid="uid://cabtyqykhr11m"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/enemies/RockAnt.cs" id="1_t74t7"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_32ae6"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_0y6a4"]
+[ext_resource type="AudioStream" uid="uid://x2qhqmm8tmhe" path="res://assets/audios/sounds/enemies/rockant/spider_crawl.mp3" id="3_7vcng"]
+[ext_resource type="PackedScene" uid="uid://b7c0bqk25nd8k" path="res://assets/objects/helpers/ai/Navigator.tscn" id="3_oam5i"]
+[ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="4_0jq7v"]
+[ext_resource type="PackedScene" uid="uid://cjlu5sfy7lowv" path="res://assets/objects/damage/DamageArea.tscn" id="4_p0vr4"]
+[ext_resource type="PackedScene" uid="uid://ch8k8il34d3f" path="res://assets/objects/helpers/ai/AttackSwitcher.tscn" id="6_y4jaw"]
+[ext_resource type="AudioStream" uid="uid://fdjfbx43v5kg" path="res://assets/audios/sounds/enemies/rockant/dirt_moving.mp3" id="8_vcjy6"]
+
+[sub_resource type="Resource" id="Resource_jkgrs"]
+script = ExtResource("2_32ae6")
+StatsNames = [5, 6, 7, 8, 1]
+StatsValues = [34.0, 5.0, 49.0, 21.0, 34.0]
+
+[sub_resource type="Resource" id="Resource_7oh24"]
+script = ExtResource("3_0y6a4")
+InitializerElement = "Lapis"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_b4gca"]
+radius = 48.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dr2gs"]
+radius = 32.0
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_0vfes"]
+
+[node name="RockAnt" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["enemy"]]
+collision_layer = 4
+script = ExtResource("1_t74t7")
+Stats = SubResource("Resource_jkgrs")
+Element = SubResource("Resource_7oh24")
+Team = 1
+Speed = 350.0
+Body = NodePath(".")
+
+[node name="DigDamageArea" parent="." instance=ExtResource("4_p0vr4")]
+Power = 50.0
+Knockback = 100.0
+
+[node name="Collision" type="CollisionShape2D" parent="DigDamageArea"]
+shape = SubResource("CircleShape2D_b4gca")
+
+[node name="TargetController" parent="." instance=ExtResource("4_0jq7v")]
+
+[node name="Navigator" parent="." node_paths=PackedStringArray("Body") instance=ExtResource("3_oam5i")]
+Body = NodePath("..")
+
+[node name="AttackSwitcher" parent="." instance=ExtResource("6_y4jaw")]
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_dr2gs")
+
+[node name="AudioWalk" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_7vcng")
+
+[node name="AudioBurrow" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_vcjy6")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(3.8147e-06, 0)
+scale = Vector2(48.5, 48.5)
+texture = SubResource("PlaceholderTexture2D_0vfes")

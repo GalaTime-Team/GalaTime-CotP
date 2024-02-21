@@ -8,7 +8,8 @@ public partial class EnemiesList : Node
     private static readonly Dictionary<string, string> EnemyPaths = new() {
         { "slime", "res://assets/objects/enemy/Slime.tscn" },
         { "shootingbuddy", "res://assets/objects/enemy/ShootingBuddy.tscn" },
-        { "firecloak", "res://assets/objects/enemy/Firecloak.tscn" }
+        { "firecloak", "res://assets/objects/enemy/Firecloak.tscn" },
+        { "rockant", "res://assets/objects/enemy/RockAnt.tscn" }
     };
 
     /// <summary> The loaded scenes of the enemies. </summary>
