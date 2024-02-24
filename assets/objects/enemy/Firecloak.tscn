@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dlp02ewci0kv6"]
+[gd_scene load_steps=27 format=3 uid="uid://dlp02ewci0kv6"]
 
 [ext_resource type="Script" path="res://assets/scripts/objects/enemies/Firecloak.cs" id="1_0eun4"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ogpqi"]
@@ -25,6 +25,10 @@ InitializerElement = "Ignis"
 
 [sub_resource type="Gradient" id="Gradient_fd7ra"]
 colors = PackedColorArray(1, 0, 0, 0, 1, 1, 0, 1)
+
+[sub_resource type="Resource" id="Resource_cx6nu"]
+script = ExtResource("3_wke3y")
+InitializerElement = "Default"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tey4c"]
 size = Vector2(8, 48)
@@ -251,6 +255,7 @@ DistanceGap = 20.0
 Parent = NodePath("..")
 
 [node name="DamageArea" parent="." instance=ExtResource("4_7imr7")]
+Element = SubResource("Resource_cx6nu")
 Power = 40.0
 Knockback = 700.0
 

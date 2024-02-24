@@ -29,9 +29,9 @@ scale_curve = SubResource("CurveTexture_rmbel")
 hue_variation_max = 0.08
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_nr850"]
-vertices = PackedVector2Array(1314, -354, 1314, 482, 1090, 482, 862, -354, 738, 770, 738, 930, 30, 930, 30, 770, -94, 770, -94, 930, -610, 930, -610, 770, -734, 770, -734, 930, -1250, 930, -1250, 606, -734, 606, -734, 766, -610, 766, -94, 766, -610, 606, -94, 606, 30, 766, 738, 766, 30, 606, 738, 606, 1090, 770, 1086, 766, 1086, 482, 862, 482)
+vertices = PackedVector2Array(1314, -354, 1314, 482, 1090, 482, 862, -354, 738, 770, 738, 1314, 30, 1314, 30, 770, -94, 770, -94, 930, -610, 930, -610, 770, -734, 770, -734, 930, -1250, 930, -1250, 606, -734, 606, -734, 766, -610, 766, -94, 766, -610, 606, -94, 606, 30, 766, 738, 766, 30, 222, 738, 222, 1090, 770, 1086, 766, 1086, 482, 862, 482)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7), PackedInt32Array(8, 9, 10, 11), PackedInt32Array(12, 13, 14, 15), PackedInt32Array(15, 16, 17), PackedInt32Array(12, 15, 17), PackedInt32Array(11, 12, 17, 18), PackedInt32Array(8, 11, 18, 19), PackedInt32Array(18, 20, 21, 19), PackedInt32Array(7, 8, 19, 22), PackedInt32Array(4, 7, 22, 23), PackedInt32Array(22, 24, 25, 23), PackedInt32Array(26, 4, 23, 27), PackedInt32Array(2, 26, 27, 28), PackedInt32Array(3, 2, 28), PackedInt32Array(3, 28, 29)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-1280, 576, -1280, 960, -704, 960, -704, 800, -640, 800, -640, 960, -64, 960, -64, 800, 0, 800, 0, 960, 768, 960, 768, 800, 1120, 800, 1120, 736, 1120, 512, 1344, 512, 1344, -384, 832, -384, 832, 512, 1056, 512, 1056, 736, 768, 736, 768, 576, 0, 576, 0, 736, -64, 736, -64, 576, -640, 576, -640, 736, -704, 736, -704, 576)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-1280, 576, -1280, 960, -704, 960, -704, 800, -640, 800, -640, 960, -64, 960, -64, 800, 0, 800, 0, 1344, 768, 1344, 768, 800, 1120, 800, 1120, 736, 1120, 512, 1344, 512, 1344, -384, 832, -384, 832, 512, 1056, 512, 1056, 736, 768, 736, 768, 192, 0, 192, 0, 736, -64, 736, -64, 576, -640, 576, -640, 736, -704, 736, -704, 576)])
 source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 30.0
 
@@ -131,7 +131,11 @@ metadata/_edit_lock_ = true
 metadata/_edit_lock_ = true
 
 [node name="EnemySpawnPosition8" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(500, 366)
+position = Vector2(276, -36)
+SpawningEnemyId = "rockant"
+
+[node name="EnemySpawnPosition9" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
+position = Vector2(788, -36)
 SpawningEnemyId = "rockant"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom"]
@@ -175,7 +179,7 @@ SpawningEnemyId = "firecloak"
 
 [node name="EnemySpawnPosition5" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
 position = Vector2(1428, -260)
-SpawningEnemyId = "slime"
+SpawningEnemyId = "rockant"
 
 [node name="EnemySpawnPosition6" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
 position = Vector2(1428, -100)
@@ -187,7 +191,7 @@ SpawningEnemyId = "slime"
 
 [node name="EnemySpawnPosition2" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
 position = Vector2(1044, -262)
-SpawningEnemyId = "slime"
+SpawningEnemyId = "rockant"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom2"]
 position = Vector2(1236, -100)

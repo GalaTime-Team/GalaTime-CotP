@@ -13,12 +13,17 @@ public partial class RockAnt : Entity
     public CollisionShape2D Collision;
     public DamageArea DigDamageArea;
 
+    public DamageBeam SalivaBeam;
+    public AnimationPlayer SalivaBeamAnimation;
+
     public Navigator Navigator;
     public TargetController TargetController;
     public AttackSwitcher AttackSwitcher;
+    public RangedHitTracker RangedHitTracker;
 
     /// <summary> If the rock ant is currently targetting (is positioning towards a target). </summary>
-    public bool Targetting;
+    public bool DigTargetting;
+    public bool SalivaTargetting;
 
     public override void _Ready()
     {
@@ -33,6 +38,10 @@ public partial class RockAnt : Entity
         Navigator = GetNode<Navigator>("Navigator");
         TargetController = GetNode<TargetController>("TargetController");
         AttackSwitcher = GetNode<AttackSwitcher>("AttackSwitcher");
+
+        RangedHitTracker = GetNode<RangedHitTracker>("RangedHitTracker");
+        SalivaBeam = GetNode<DamageBeam>("SalivaBeam");
+        SalivaBeamAnimation = GetNode<AnimationPlayer>("SalivaBeam/AnimationPlayer");
 
         DigDamageArea = GetNode<DamageArea>("DigDamageArea");
 
@@ -52,9 +61,28 @@ public partial class RockAnt : Entity
     {
         AttackSwitcher.RegisterAttackCycles
         (
-            new AttackCycle("dig", Dig, 1f)
+            new AttackCycle("dig", Dig, 1f/3f, () => !RangedHitTracker.CanHit),
+            new AttackCycle("saliva", Saliva, 2f/3f) // 2:1 chance of saliva
         );
     }
+
+    public void Saliva()
+    {
+        if (!RangedHitTracker.CanHit) 
+        {
+            AttackSwitcher.NextCycle();
+            return;
+        }
+
+        SalivaBeamAnimation.Stop();
+        var da = SalivaBeam.DamageArea;
+        da.Element = Element;
+        da.AttackStat = Stats[EntityStatType.MagicalAttack].Value;
+        SalivaBeamAnimation.Play("shoot");
+    }
+
+    // Used in animation
+    public void SetSalivaTargetting(bool value) => SalivaTargetting = value;
 
     public void Dig()
     {
@@ -68,7 +96,7 @@ public partial class RockAnt : Entity
 
     public void EndDig()
     {
-        Targetting = true;
+        DigTargetting = true;
 
         var rnd = new Random();
         var delay = rnd.Next(1, 4);
@@ -79,7 +107,7 @@ public partial class RockAnt : Entity
             AddChild(ef);
             ef.GlobalPosition = GlobalPosition;
 
-            Targetting = false;
+            DigTargetting = false;
 
             ef.Start();
             GetTree().CreateTimer(0.35f, false).Timeout += () =>
@@ -104,7 +132,16 @@ public partial class RockAnt : Entity
         var t = TargetController.CurrentTarget;
         if (t == null) return;
 
-        if (!DeathState && !AttackSwitcher.IsAttackCycleActive("dig")) 
+        // TODO: Change target angle rotation reference to target controller
+        if (SalivaTargetting) 
+            SalivaBeam.Rotation = RangedHitTracker.TargetAngleRotation;
+
+        if (AttackSwitcher.IsAttackCycleActive("saliva"))
+            Sprite.Rotation = RangedHitTracker.TargetAngleRotation + Mathf.Pi;
+        else
+            Sprite.Rotation = 0;
+
+        if (!DeathState && !AttackSwitcher.IsAttackCycleActive("dig") && !AttackSwitcher.IsAttackCycleActive("saliva")) 
         {
             Navigator.Speed = Speed;
 
@@ -126,10 +163,10 @@ public partial class RockAnt : Entity
             if (AudioWalk.Playing) AudioWalk.Stop();
         }
 
-        if (Targetting)
+        if (DigTargetting)
         {
             GlobalPosition = t.GlobalPosition;
         }
-        if (Targetting != Collision.Disabled) Callable.From(() => Collision.Disabled = Targetting).CallDeferred();
+        if (DigTargetting != Collision.Disabled) Callable.From(() => Collision.Disabled = DigTargetting).CallDeferred();
     }
 }

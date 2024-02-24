@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cabtyqykhr11m"]
+[gd_scene load_steps=27 format=3 uid="uid://cabtyqykhr11m"]
 
 [ext_resource type="Script" path="res://assets/scripts/objects/enemies/RockAnt.cs" id="1_t74t7"]
 [ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_32ae6"]
@@ -6,9 +6,13 @@
 [ext_resource type="AudioStream" uid="uid://x2qhqmm8tmhe" path="res://assets/audios/sounds/enemies/rockant/spider_crawl.mp3" id="3_7vcng"]
 [ext_resource type="PackedScene" uid="uid://b7c0bqk25nd8k" path="res://assets/objects/helpers/ai/Navigator.tscn" id="3_oam5i"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="4_0jq7v"]
+[ext_resource type="PackedScene" uid="uid://dt47v4kvw7d43" path="res://assets/objects/damage/DamageBeam.tscn" id="4_fi01d"]
 [ext_resource type="PackedScene" uid="uid://cjlu5sfy7lowv" path="res://assets/objects/damage/DamageArea.tscn" id="4_p0vr4"]
+[ext_resource type="PackedScene" uid="uid://c2kilqb5gaq35" path="res://assets/objects/helpers/ai/RangedHitTracker.tscn" id="4_r0q4w"]
+[ext_resource type="AudioStream" uid="uid://ecfw6qjvhyvo" path="res://assets/audios/sounds/damage/toxic.mp3" id="6_eq8a6"]
 [ext_resource type="PackedScene" uid="uid://ch8k8il34d3f" path="res://assets/objects/helpers/ai/AttackSwitcher.tscn" id="6_y4jaw"]
 [ext_resource type="AudioStream" uid="uid://fdjfbx43v5kg" path="res://assets/audios/sounds/enemies/rockant/dirt_moving.mp3" id="8_vcjy6"]
+[ext_resource type="Texture2D" uid="uid://c8df0kip6hrd5" path="res://assets/sprites/entity/rockant/rockant_idlet.png" id="12_jmn8g"]
 
 [sub_resource type="Resource" id="Resource_jkgrs"]
 script = ExtResource("2_32ae6")
@@ -19,13 +23,180 @@ StatsValues = [34.0, 5.0, 49.0, 21.0, 34.0]
 script = ExtResource("3_0y6a4")
 InitializerElement = "Lapis"
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2crwg"]
+size = Vector2(700, 20)
+
+[sub_resource type="Animation" id="Animation_av60l"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Line2D:default_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 1, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Line2D:width")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [10.0]
+}
+
+[sub_resource type="Animation" id="Animation_xsnht"]
+resource_name = "shoot"
+length = 2.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Line2D:default_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 1.1, 1.7, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(0, 1, 0, 0), Color(0, 1, 0, 0.392157), Color(0, 1, 0, 1), Color(0, 1, 0, 1), Color(0, 1, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Line2D:width")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 1.1, 1.4, 1.7, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [10.0, 6.0, 15.0, 10.0, 15.0, 0.0]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(1.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"Shoot"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../AttackSwitcher")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.9),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"NextCycle"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("..")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [true],
+"method": &"SetSalivaTargetting"
+}, {
+"args": [false],
+"method": &"SetSalivaTargetting"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("AudioShoot:playing")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_q2pe1"]
+_data = {
+"RESET": SubResource("Animation_av60l"),
+"shoot": SubResource("Animation_xsnht")
+}
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_j8beb"]
+random_pitch = 1.1
+streams_count = 1
+stream_0/stream = ExtResource("6_eq8a6")
+stream_0/weight = 1.0
+
+[sub_resource type="Resource" id="Resource_cx6nu"]
+script = ExtResource("3_0y6a4")
+InitializerElement = "Default"
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_b4gca"]
 radius = 48.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_dr2gs"]
 radius = 32.0
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_0vfes"]
+[sub_resource type="Animation" id="Animation_5vvfm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_okwih"]
+resource_name = "idle"
+length = 0.9
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lnage"]
+_data = {
+"RESET": SubResource("Animation_5vvfm"),
+"idle": SubResource("Animation_okwih")
+}
 
 [node name="RockAnt" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["enemy"]]
 collision_layer = 4
@@ -36,7 +207,41 @@ Team = 1
 Speed = 350.0
 Body = NodePath(".")
 
+[node name="RangedHitTracker" parent="." node_paths=PackedStringArray("TargetControllerReference") instance=ExtResource("4_r0q4w")]
+Range = 700.0
+TargetControllerReference = NodePath("../TargetController")
+
+[node name="SalivaBeam" parent="." node_paths=PackedStringArray("Line") instance=ExtResource("4_fi01d")]
+Line = NodePath("Line2D")
+BeamWidth = 20.0
+BeamLength = 700.0
+
+[node name="DamageArea" parent="SalivaBeam" index="0"]
+Type = 1
+Power = 30.0
+Knockback = 400.0
+
+[node name="Collision" parent="SalivaBeam/DamageArea" index="0"]
+position = Vector2(350, 0)
+shape = SubResource("RectangleShape2D_2crwg")
+
+[node name="RayCast" parent="SalivaBeam" index="1"]
+target_position = Vector2(700, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="SalivaBeam"]
+libraries = {
+"": SubResource("AnimationLibrary_q2pe1")
+}
+
+[node name="Line2D" type="Line2D" parent="SalivaBeam"]
+points = PackedVector2Array(0, 0, 700, 0)
+default_color = Color(0, 1, 0, 0)
+
+[node name="AudioShoot" type="AudioStreamPlayer2D" parent="SalivaBeam"]
+stream = SubResource("AudioStreamRandomizer_j8beb")
+
 [node name="DigDamageArea" parent="." instance=ExtResource("4_p0vr4")]
+Element = SubResource("Resource_cx6nu")
 Power = 50.0
 Knockback = 100.0
 
@@ -60,6 +265,15 @@ stream = ExtResource("3_7vcng")
 stream = ExtResource("8_vcjy6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(3.8147e-06, 0)
-scale = Vector2(48.5, 48.5)
-texture = SubResource("PlaceholderTexture2D_0vfes")
+position = Vector2(0, -8)
+scale = Vector2(4, 4)
+texture = ExtResource("12_jmn8g")
+hframes = 9
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_lnage")
+}
+autoplay = "idle"
+
+[editable path="SalivaBeam"]

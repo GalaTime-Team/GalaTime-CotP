@@ -425,8 +425,7 @@ rotation = -6.28319
 position = Vector2(-64, 0)
 points = PackedVector2Array(0, 0, 528, 0)
 width = 256.0
-default_color = Color(1, 1, 1, 0)
-texture = ExtResource("37_od2ol")
+texture = ExtResource("34_xr1pd")
 texture_mode = 1
 
 [node name="RayCast" type="RayCast2D" parent="Projectile"]

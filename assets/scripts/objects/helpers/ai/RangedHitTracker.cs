@@ -20,12 +20,14 @@ public partial class RangedHitTracker : RayCast2D
         }
     }
 
+    public float TargetAngleRotation;
+
     public override void _Process(double delta)
     {
         if (TargetControllerReference == null || TargetControllerReference.CurrentTarget == null) return;
 
-        float rotation = TargetControllerReference.CurrentTarget.GlobalPosition.AngleToPoint(GlobalPosition) + Mathf.Pi;
-        TargetPosition = Vector2.Right.Rotated(rotation) * Range;
+        TargetAngleRotation = TargetControllerReference.CurrentTarget.GlobalPosition.AngleToPoint(GlobalPosition) + Mathf.Pi;
+        TargetPosition = Vector2.Right.Rotated(TargetAngleRotation) * Range;
 
         var tc = TargetControllerReference;
         var team = tc.TargetTeam;

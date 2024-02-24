@@ -4,13 +4,18 @@ using System;
 
 namespace Galatime.Damage;
 
+/// <summary> Types of collisions that fell under the damage zone. </summary>
 public enum BodyType
 {
+    /// <summary> Entity collided with. </summary>
     Entity,
+    /// <summary> Projectile collided with. </summary>
     Projectile,
+    /// <summary> Solid collided with or none. </summary>
     Solid
 }
 
+[Tool]
 /// <summary> Represents a damage area, which deals damage to entities and can knockback. </summary>
 public partial class DamageArea : Area2D
 {
@@ -47,6 +52,7 @@ public partial class DamageArea : Area2D
         if (Active) DealDamage(body);
     }
 
+    /// <summary> Deals damage to all entities in the area. Don't be confused with <see cref="Active"/>, because it doesn't affect <see cref="HitOneTime"/>, but deals damage over time. </summary>
     public void HitOneTime()
     {
         var bodies = GetOverlappingBodies();

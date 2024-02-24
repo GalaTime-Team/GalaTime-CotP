@@ -65,6 +65,7 @@ public partial class AttackSwitcher : Node
 
     public void NextCycle()
     {
+        CurrentAttackCycle = null;
         NextCycleTimer.Start(NextCycleDelay);
     }
 

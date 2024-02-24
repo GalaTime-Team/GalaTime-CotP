@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://dt47v4kvw7d43"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/damage/DamageBeam.cs" id="1_tpw2r"]
+[ext_resource type="PackedScene" uid="uid://cjlu5sfy7lowv" path="res://assets/objects/damage/DamageArea.tscn" id="2_hst8f"]
+[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_l7rcr"]
+
+[sub_resource type="Resource" id="Resource_cx6nu"]
+script = ExtResource("3_l7rcr")
+InitializerElement = "Default"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h3exj"]
+size = Vector2(100, 40)
+
+[node name="DamageBeam" type="Node2D"]
+script = ExtResource("1_tpw2r")
+BeamOffset = 0.0
+
+[node name="DamageArea" parent="." instance=ExtResource("2_hst8f")]
+Element = SubResource("Resource_cx6nu")
+
+[node name="Collision" type="CollisionShape2D" parent="DamageArea"]
+position = Vector2(50, 0)
+shape = SubResource("RectangleShape2D_h3exj")
+
+[node name="RayCast" type="RayCast2D" parent="."]
+target_position = Vector2(100, 0)
