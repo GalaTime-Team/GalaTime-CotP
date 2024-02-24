@@ -33,7 +33,7 @@ public partial class Inventory : GridContainer
             AddChild(itemSlot);
         }
 
-        var gp = PlayerVariables.Player;
+        var gp = PlayerVariables?.Player;
         gp.Ready += () => 
         {   
             var p = gp.PlayerGui;

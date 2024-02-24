@@ -115,7 +115,44 @@ public partial class LevelManager : Node
                     if (c.Instance != null) c.Instance.Invincible = active;
                 });
             }, Cheat.CheatType.Toggle),
-            new Cheat("add_allies", "Add all allies", "Add all possible allies to the player and load them in the scene.", "cheat_add_allies", (bool active, string input) =>
+            new Cheat("ai_ignore_player", "Ai ignores player", "Toggles the Ai of entities to ignore the current selected player.", "cheat_ai_ignore_player", type: Cheat.CheatType.Toggle),
+            new Cheat("add_ally", "Add ally", "Add an inputted ally to the player. To update allies, use 'cheat_add_allies'.", "cheat_add_ally", (_, input) => {
+                var inputArguments = CheatsMenu.ParseCheatArguments(input, 1);
+
+                var args = inputArguments.args;
+                if (!inputArguments.result) return;
+
+                var ally = GalatimeGlobals.GetAllyById(args[0]);
+                if (ally == null)
+                {
+                    CheatsMenu.Log($"Ally {args[0]} not found", CheatsMenu.LogLevel.Warning);
+                    return;
+                }
+
+                // Add the ally to any empty slot.
+                for (int i = 0; i < PlayerVariables.Instance.Allies.Length; i++)
+                {
+                    var a = PlayerVariables.Instance.Allies[i];
+                    if (a.IsEmpty) { PlayerVariables.Instance.Allies[i] = a; break; }
+                }
+            }, Cheat.CheatType.Input),
+            new Cheat("remove_ally", "Remove ally", "Remove an inputted ally from the player. To update allies, use 'cheat_add_allies'.", "cheat_remove_ally", (_, input) => {
+                var inputArguments = CheatsMenu.ParseCheatArguments(input, 1);
+
+                var args = inputArguments.args;
+                if (!inputArguments.result) return;
+
+                var ally = PlayerVariables.Instance.Allies.FirstOrDefault(a => a.ID == args[0]);
+                if (ally == null)
+                {
+                    CheatsMenu.Log($"Ally {args[0]} not found", CheatsMenu.LogLevel.Warning);
+                    return;
+                }
+
+                // Remove the ally from the player.
+                PlayerVariables.Instance.Allies[Array.IndexOf(PlayerVariables.Instance.Allies, ally)] = new AllyData();
+            }, Cheat.CheatType.Input),
+            new Cheat("update_allies", "Update all allies", "Updates all possible allies to the player and load them in the scene.", "cheat_update_allies", (bool active, string input) =>
             {
                 var pv = PlayerVariables.Instance;
                 var player = CheatsMenu.GetPlayer();
@@ -127,7 +164,7 @@ public partial class LevelManager : Node
                 }
                 player.LoadCharacters("arthur");
 
-                CheatsMenu.Log($"Added all allies", CheatsMenu.LogLevel.Result);
+                CheatsMenu.Log($"Updated allies", CheatsMenu.LogLevel.Result);
             }),
             new Cheat("give_xp", "Give XP", "Give an amount of XP to the player. Arguments: amount.", "", (bool active, string input) =>
             {

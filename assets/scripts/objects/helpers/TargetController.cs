@@ -90,6 +90,10 @@ public partial class TargetController : Node2D
         // Remove all dead enemies.
         sortedEnemies.RemoveAll(x => x as Entity is not null && (x as Entity).DeathState);
 
+        // Ai ignore player cheat active.
+        var aiIgnorePlayer = LevelManager.Instance.CheatsMenu.GetCheat("ai_ignore_player");
+        if (aiIgnorePlayer.Active) sortedEnemies.RemoveAll(x => x as TestCharacter is not null && (x as TestCharacter).Possessed);
+
         PreviousTarget = CurrentTarget;
         // Find the closest enemy and set it as the current target.
         if (sortedEnemies.ToList().Count > 0) CurrentTarget = sortedEnemies[0] as Entity; else CurrentTarget = null;

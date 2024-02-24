@@ -156,6 +156,22 @@ public partial class CheatsMenu : Control
             {
                 GetTree().Paused = Shown && active;
             }, Cheat.CheatType.Toggle, true),
+            new Cheat("help_cheat", "Help for cheat", "Show help for this cheat.", "", (_, input) =>
+            {
+                var inputArguments = ParseCheatArguments(input, 1);
+
+                var args = inputArguments.args;
+                if (!inputArguments.result) return;
+
+                var cheat = GetCheat(args[0]);
+                if (cheat == null)
+                {
+                    Log($"Cheat {args[0]} not found", LogLevel.Warning);
+                    return;
+                }
+
+                Log(GetCheatHelpString(cheat), LogLevel.Result);
+            }, Cheat.CheatType.Input),
             new Cheat("show_cheats", "Show cheats", "Show help for cheats.", "", (_, _) =>
             {
                 var cheats = Cheats;
@@ -169,8 +185,7 @@ public partial class CheatsMenu : Control
                     if (cheat.Type == Cheat.CheatType.Separator) continue;
 
                     // Add name and description.
-                    str.Append("[color=white]").Append(cheat.Name).Append(" (").Append(cheat.Id).AppendLine(")");
-                    str.Append("[color=dark_slate_gray]").Append(cheat.Description).Append(" [color=dark_gray]Bind: ").Append(GetActionKey(cheat.ActivationAction)).AppendLine("\n");
+                    str.AppendLine(GetCheatHelpString(cheat));
                 }
                 // Remove the last three lines to make it look nice.
                 str.Remove(str.Length - 3, 3);
@@ -181,6 +196,9 @@ public partial class CheatsMenu : Control
             new Cheat("clear_logs", "Clear logs", "Resets the log.", "", (_, _) => LogLabel.Clear())
         );
     }
+
+    /// <summary> Returns the help string for the given cheat. </summary>
+    public static string GetCheatHelpString(Cheat cheat) => $"[color=white]{cheat.Name} ({cheat.Id})\n[color=dark_slate_gray]{cheat.Description} [color=dark_gray]Bind: {GetActionKey(cheat.ActivationAction)}";
 
     public override void _Process(double delta)
     {
