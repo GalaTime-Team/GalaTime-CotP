@@ -25,6 +25,8 @@ public partial class Entity : CharacterBody2D
     public bool CanMove = true;
     /// <summary> If entity can do AI. It means it will be processed by <see cref="_AIProcess"/> </summary>
     public bool DisableAI;
+    /// <summary> If entity should be ignored by AI. </summary>
+    public bool AIIgnore;
     #endregion
 
     #region Scenes

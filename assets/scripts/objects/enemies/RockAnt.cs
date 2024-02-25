@@ -66,6 +66,19 @@ public partial class RockAnt : Entity
         );
     }
 
+    public override void _MoveProcess(double delta)
+    {
+        AttackSwitcher.Enabled = !DisableAI;
+        if (DeathState) AttackSwitcher.Enabled = false;
+
+        Velocity = Vector2.Zero;
+    }
+
+    public override void _DeathEvent(float damageRotation = 0f)
+    {
+        Sprite.Visible = false;
+    }
+
     public void Saliva()
     {
         if (!RangedHitTracker.CanHit) 
@@ -89,6 +102,7 @@ public partial class RockAnt : Entity
         AudioBurrow.Play();
         GetTree().CreateTimer(0.5f, false).Timeout += () => 
         {
+            AIIgnore = true;
             Sprite.Visible = false;
             EndDig();
         };
@@ -112,6 +126,7 @@ public partial class RockAnt : Entity
             ef.Start();
             GetTree().CreateTimer(0.35f, false).Timeout += () =>
             {
+                AIIgnore = false;
                 Sprite.Visible = true;
 
                 DigDamageArea.AttackStat = Stats[EntityStatType.PhysicalAttack].Value;

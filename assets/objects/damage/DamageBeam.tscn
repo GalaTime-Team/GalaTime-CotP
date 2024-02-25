@@ -8,7 +8,7 @@
 script = ExtResource("3_l7rcr")
 InitializerElement = "Default"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_58a7c"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fxipj"]
 size = Vector2(100, 40)
 
 [node name="DamageBeam" type="Node2D"]
@@ -20,7 +20,7 @@ Element = SubResource("Resource_cx6nu")
 
 [node name="Collision" type="CollisionShape2D" parent="DamageArea"]
 position = Vector2(50, 0)
-shape = SubResource("RectangleShape2D_58a7c")
+shape = SubResource("RectangleShape2D_fxipj")
 
 [node name="RayCast" type="RayCast2D" parent="."]
 target_position = Vector2(100, 0)

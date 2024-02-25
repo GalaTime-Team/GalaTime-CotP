@@ -87,8 +87,8 @@ public partial class TargetController : Node2D
         // Sort enemies by distance from closest to farthest.
         var sortedEnemies = NonTypedEnemies.OrderBy(x => x as Entity != null ? GlobalPosition.DistanceTo((x as Entity).GlobalPosition) : 0).ToList();
 
-        // Remove all dead enemies.
-        sortedEnemies.RemoveAll(x => x as Entity is not null && (x as Entity).DeathState);
+        // Remove all dead enemies or enemies that ignore ai.
+        sortedEnemies.RemoveAll(x => x as Entity is not null && (x as Entity).DeathState || (x as Entity).AIIgnore);
 
         // Ai ignore player cheat active.
         var aiIgnorePlayer = LevelManager.Instance.CheatsMenu.GetCheat("ai_ignore_player");
