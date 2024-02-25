@@ -264,7 +264,10 @@ position = Vector2(48, 0)
 shape = SubResource("RectangleShape2D_tey4c")
 
 [node name="RangedHitTracker" parent="." node_paths=PackedStringArray("TargetControllerReference") instance=ExtResource("4_txqf1")]
-Range = 550.0
+Range = 500.0
+Rays = 3
+RaysAngleOffset = 0.03
+RequiredToCanHit = 3
 TargetControllerReference = NodePath("../TargetController")
 
 [node name="BaseFireball" parent="." instance=ExtResource("4_plde0")]

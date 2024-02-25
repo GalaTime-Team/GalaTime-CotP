@@ -2,6 +2,5 @@
 
 [ext_resource type="Script" path="res://assets/scripts/objects/helpers/ai/RangedHitTracker.cs" id="1_hyq0a"]
 
-[node name="RangedHitTracker" type="RayCast2D"]
-target_position = Vector2(0, 0)
+[node name="RangedHitTracker" type="Node2D"]
 script = ExtResource("1_hyq0a")

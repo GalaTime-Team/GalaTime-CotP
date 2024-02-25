@@ -104,7 +104,7 @@ public partial class Firecloak : Entity
     #region Attack cycles
     public void FireballAttack()
     {
-        if (RangedHitTracker.GetCollisionPoint().DistanceTo(GlobalPosition) < 100 && !DeathState) // Don't launch fireball if we are too close to the target.
+        if (GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition) < 100 && !DeathState) // Don't launch fireball if we are too close to the target.
         {
             AttackSwitcher.NextCycle();
             return;
@@ -240,7 +240,7 @@ public partial class Firecloak : Entity
                 {
                     Velocity += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(angleTo);
                     if (GlobalPosition.DistanceTo(target.GlobalPosition) > 350)
-                        Velocity += Vector2.Left.Rotated(angleTo);
+                        Velocity += Vector2.Left.Rotated(angleTo);  
                     else if (GlobalPosition.DistanceTo(target.GlobalPosition) < 250)
                         Velocity += Vector2.Right.Rotated(angleTo);
                     Velocity = Velocity.Normalized() * Speed;
@@ -256,6 +256,8 @@ public partial class Firecloak : Entity
                 if (IsDashing) EndDash(); // We don't need to dash if we can't hit.
             }
         }
+
+        Sprite2D.Modulate = RangedHitTracker.CanHit ? new Color(1, 1, 1, 1) : new Color(1, 0, 0);
     }
 
     public void ChangeStrafeDirection()

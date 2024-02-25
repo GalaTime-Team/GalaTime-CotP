@@ -130,13 +130,9 @@ metadata/_edit_lock_ = true
 [node name="AudioStreamPlayer" parent="EnemyRoom/Doorblock2" index="2"]
 metadata/_edit_lock_ = true
 
-[node name="EnemySpawnPosition8" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
-position = Vector2(276, -36)
-SpawningEnemyId = "rockant"
-
 [node name="EnemySpawnPosition9" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
 position = Vector2(788, -36)
-SpawningEnemyId = "rockant"
+SpawningEnemyId = "firecloak"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom"]
 position = Vector2(-206, 412)
