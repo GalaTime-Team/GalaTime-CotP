@@ -265,13 +265,16 @@ offset_bottom = -64.0
 
 [node name="Label2" type="Label" parent="SettingsMenuContainer"]
 layout_mode = 1
-anchors_preset = 5
+anchors_preset = 7
 anchor_left = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
+anchor_bottom = 1.0
 offset_left = -576.0
-offset_top = 592.0
-offset_bottom = 609.0
+offset_top = -56.0
+offset_bottom = -39.0
 grow_horizontal = 2
+grow_vertical = 0
 scale = Vector2(2, 2)
 theme_override_fonts/font = ExtResource("2_nxd72")
 text = "Your settings will be saved when you exit the settings"
@@ -338,11 +341,17 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SavesContainer" type="VBoxContainer" parent="StartMenuContainer"]
-layout_mode = 0
-offset_left = 256.0
-offset_top = 88.0
-offset_right = 576.0
-offset_bottom = 320.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -228.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(2, 2)
 focus_mode = 2
 theme_override_constants/separation = 10

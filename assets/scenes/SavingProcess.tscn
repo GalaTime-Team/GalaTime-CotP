@@ -149,7 +149,7 @@ length = 3.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimationContainer/Animation:modulate")
+tracks/0/path = NodePath("AnimationContainer/AnimationControl/Animation:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -185,17 +185,30 @@ script = ExtResource("1_ooq7i")
 
 [node name="AnimationContainer" type="Control" parent="."]
 layout_mode = 3
-anchors_preset = 0
-offset_left = 1064.0
-offset_top = 560.0
-offset_right = 1096.0
-offset_bottom = 592.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AnimationControl" type="Control" parent="AnimationContainer"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -80.0
+offset_right = -48.0
+offset_bottom = -48.0
+grow_horizontal = 0
+grow_vertical = 0
 scale = Vector2(2, 2)
 
-[node name="Animation" type="AnimatedSprite2D" parent="AnimationContainer"]
+[node name="Animation" type="AnimatedSprite2D" parent="AnimationContainer/AnimationControl"]
 position = Vector2(16, 16)
 sprite_frames = SubResource("SpriteFrames_jukk0")
-frame_progress = 0.447659
 metadata/_edit_lock_ = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

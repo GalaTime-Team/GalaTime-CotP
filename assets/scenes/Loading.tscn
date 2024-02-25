@@ -89,15 +89,19 @@ grow_horizontal = 0
 grow_vertical = 0
 scale = Vector2(2, 2)
 theme_override_fonts/font = ExtResource("2_b0sud")
-text = "Loading"
+text = "Loading."
 horizontal_alignment = 2
 vertical_alignment = 2
 
 [node name="ProgressBar" type="ProgressBar" parent="Control"]
-layout_mode = 0
-offset_top = 624.0
-offset_right = 1152.0
-offset_bottom = 648.0
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -24.0
+grow_horizontal = 2
+grow_vertical = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_b0sud")
 theme_override_styles/background = SubResource("StyleBoxEmpty_qx6hw")

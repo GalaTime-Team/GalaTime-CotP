@@ -1,30 +1,27 @@
 using Godot;
 
-namespace Galatime
+namespace Galatime;
+
+/// <summary> Represents the UI that shows when the game is saving. </summary>
+public partial class SavingProcess : CanvasLayer
 {
-    public partial class SavingProcess : CanvasLayer
+    // TODO: Rework this class entirely
+
+    AnimationPlayer AnimationPlayer;
+    AnimatedSprite2D AnimatedSprite;
+
+    public override void _Ready()
     {
-        AnimationPlayer animationPlayer;
-        AnimatedSprite2D animatedSprite;
+        AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+        AnimatedSprite = GetNode<AnimatedSprite2D>("AnimationContainer/AnimationControl/Animation");
+        AnimationPlayer.Play("default");
+        AnimatedSprite.Play("default");
+    }
 
-        public override void _Ready()
-        {
-            animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
-            animatedSprite = GetNode<AnimatedSprite2D>("AnimationContainer/Animation");
-            animationPlayer.Play("default");
-            animatedSprite.Play("default");
-        }
-
-        public void PlayFailedAnimation()
-        {
-            animationPlayer.Play("default");
-            animatedSprite.Play("failed");
-        }
-
-        // Called every frame. 'delta' is the elapsed time since the previous frame.
-        public override void _Process(double delta)
-        {
-        }
+    public void PlayFailedAnimation()
+    {
+        AnimationPlayer.Play("default");
+        AnimatedSprite.Play("failed");
     }
 }
 
