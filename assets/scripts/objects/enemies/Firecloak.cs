@@ -256,8 +256,6 @@ public partial class Firecloak : Entity
                 if (IsDashing) EndDash(); // We don't need to dash if we can't hit.
             }
         }
-
-        Sprite2D.Modulate = RangedHitTracker.CanHit ? new Color(1, 1, 1, 1) : new Color(1, 0, 0);
     }
 
     public void ChangeStrafeDirection()
