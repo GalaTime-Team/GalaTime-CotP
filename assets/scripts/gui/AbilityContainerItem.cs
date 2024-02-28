@@ -37,7 +37,8 @@ namespace Galatime
             #region Get nodes
             LockedTexture = GetNode<TextureRect>("Locked");
             AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
-            Tooltip = GetNode<Tooltip>("../../../Tooltip");
+            // TODO: REWORK THIS CRAP
+            Tooltip = GetNode<Tooltip>("../../../../Tooltip");
             #endregion
 
             MouseEntered += OnMouseEntered;
@@ -56,6 +57,6 @@ namespace Galatime
         }
 
         public void OnMouseEntered() => Tooltip.Display(AbilityData);
-        public void OnMouseExited() => Tooltip.Hide();
+        public void OnMouseExited() => Tooltip.HideTooltip();
     }
 }

@@ -23,7 +23,7 @@ StatsValues = [34.0, 5.0, 49.0, 21.0, 34.0]
 script = ExtResource("3_0y6a4")
 InitializerElement = "Lapis"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_k5taj"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kwrws"]
 size = Vector2(700, 20)
 
 [sub_resource type="Animation" id="Animation_av60l"]
@@ -223,7 +223,7 @@ Knockback = 400.0
 
 [node name="Collision" parent="SalivaBeam/DamageArea" index="0"]
 position = Vector2(350, 0)
-shape = SubResource("RectangleShape2D_k5taj")
+shape = SubResource("RectangleShape2D_kwrws")
 
 [node name="RayCast" parent="SalivaBeam" index="1"]
 target_position = Vector2(700, 0)

@@ -80,7 +80,7 @@ namespace Galatime
             VersionText = GetNode<Label>("Version");
             DialogBox = GetNode<DialogBox>("DialogBox");
             AbilitiesContainer = GetNode<HBoxContainer>("AbilitiesContainer");
-            AbilitiesListContainer = GetNode<AbilitiesContainer>("InventoryContainer/AbilitiesContainer");
+            AbilitiesListContainer = GetNode<AbilitiesContainer>("InventoryContainer/AbilitiesPageContainer/AbilitiesContainer");
             InventoryPanel = GetNode<Panel>("InventoryContainer");
 
             ParrySound = GetNode<AudioStreamPlayer>("ParrySound");

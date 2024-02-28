@@ -19,6 +19,7 @@ public partial class Inventory : GridContainer
         DragPreview = GetNode<DragPreview>("../DragPreview");
         PlayerVariables = PlayerVariables.Instance;
 
+        // TODO: Get rid of hard coded path and move it.
         var slotScene = GD.Load<PackedScene>("res://assets/objects/Slot.tscn");
         for (int i = 0; i < PlayerVariables.InventorySlots; i++)
         {
@@ -26,8 +27,8 @@ public partial class Inventory : GridContainer
             itemSlot.slotType = Slot.InventorySlotType.INVENTORY;
             if (i == 0) itemSlot.slotType = Slot.InventorySlotType.WEAPON;
 
-            itemSlot.MouseEntered += () => Tooltip.Display(itemSlot);
-            itemSlot.MouseExited += () => Tooltip.Hide();
+            itemSlot.MouseEntered += () => Tooltip.Display(itemSlot.Data);
+            itemSlot.MouseExited += () => Tooltip.HideTooltip();
             itemSlot.GuiInput += (InputEvent @event) => GuiInputSlot(@event, itemSlot.GetIndex());
 
             AddChild(itemSlot);
@@ -98,7 +99,7 @@ public partial class Inventory : GridContainer
     {
         var inventoryItem = PlayerVariables.Inventory[slot];
         var draggedItem = DragPreview.DraggedItem;
-        Tooltip.Hide();
+        Tooltip.HideTooltip();
         // GD.Print($"CURRENT PRESSED INDEX: {slot}. Dragged item is empty: {draggedItem.IsEmpty}, Inventory item is empty: {inventoryItem.IsEmpty} (Quantity: {inventoryItem.Quantity}, ID: {inventoryItem.ID})");
         if (draggedItem.IsEmpty && !inventoryItem.IsEmpty)
         {

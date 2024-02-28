@@ -9,7 +9,7 @@ bg_color = Color(0, 0, 0, 0.627451)
 
 [node name="Tooltip" type="PanelContainer"]
 offset_right = 150.0
-offset_bottom = 26.0
+offset_bottom = 42.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_tvf7v")
 script = ExtResource("3")
 
