@@ -56,7 +56,7 @@ public partial class WindowManager : Node
         Instance = this;
 
         // Initialize canvas layer to add global UI elements to.
-        CanvasLayer = new CanvasLayer() { Layer = 9 }; // Layer 10, to make sure it's on top of the other UI elements.
+        CanvasLayer = new CanvasLayer() { Layer = 11 };
         AddChild(CanvasLayer);
 
         // Load global UI elements.

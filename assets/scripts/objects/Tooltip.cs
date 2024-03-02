@@ -69,6 +69,12 @@ public partial class Tooltip : PanelContainer
 
         WriteDescription(sb.ToString());
     }
+
+    public void Display(Cheat cheat)
+    {
+        NameNode.Text = cheat.Name;
+        WriteDescription(cheat.Description);
+    }
     #endregion
 
     public override void _Input(InputEvent @event)
@@ -77,6 +83,11 @@ public partial class Tooltip : PanelContainer
         if (@event is InputEventMouseMotion && Visible) // No need to move the tooltip if it's not visible.
         {
             Vector2 finalPosition = GetGlobalMousePosition();
+            
+            // Don't go outside the viewport.
+            if (finalPosition.X + Size.X * Scale.X >= GetViewportRect().Size.X)
+                finalPosition.X -= Size.X * Scale.X;
+
             finalPosition.Y += 16; // Looks nicer if the tooltip is above the mouse.
             GlobalPosition = finalPosition;
         }

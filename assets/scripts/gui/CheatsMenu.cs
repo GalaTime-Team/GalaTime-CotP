@@ -69,6 +69,8 @@ public partial class CheatsMenu : Control
     public Button MinimizeButton;
     public Control Window;
     public Label FPSCounterLabel;
+
+    public Tooltip Tooltip;
     #endregion
 
     #region Variables
@@ -142,6 +144,8 @@ public partial class CheatsMenu : Control
         MinimizeButton = GetNode<Button>("MinimizeButton");
         Window = GetNode<Control>("Window");
         FPSCounterLabel = GetNode<Label>("FPSCounterLabel");
+
+        Tooltip = WindowManager.Instance.Tooltip;
         #endregion
 
         Activated = true; // Try to activate cheats.
@@ -273,6 +277,8 @@ public partial class CheatsMenu : Control
         }
         else
         {
+            cheatButton.MouseEntered += () => Tooltip.Display(cheat);
+            cheatButton.MouseExited += () => Tooltip.Hide();
             cheatButton.Pressed += () => ActivateCheat(cheat);
         }
 
