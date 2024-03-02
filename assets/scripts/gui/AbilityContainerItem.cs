@@ -1,3 +1,4 @@
+using Galatime.Global;
 using Godot;
 
 namespace Galatime
@@ -37,8 +38,7 @@ namespace Galatime
             #region Get nodes
             LockedTexture = GetNode<TextureRect>("Locked");
             AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
-            // TODO: REWORK THIS CRAP
-            Tooltip = GetNode<Tooltip>("../../../../Tooltip");
+            Tooltip = WindowManager.Instance.Tooltip;
             #endregion
 
             MouseEntered += OnMouseEntered;

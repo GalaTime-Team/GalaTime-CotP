@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://c1u2weprncgn6"]
+[gd_scene load_steps=22 format=3 uid="uid://c1u2weprncgn6"]
 
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="1_ynmsx"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesContainer.cs" id="5_dkern"]
@@ -9,7 +9,6 @@
 [ext_resource type="FontFile" uid="uid://be20tjlgpdwpv" path="res://assets/fonts/m3x6.ttf" id="9_v3q7s"]
 [ext_resource type="Script" path="res://assets/scripts/gui/Inventory.cs" id="10_6jmpr"]
 [ext_resource type="PackedScene" uid="uid://m2won44lnrfe" path="res://assets/objects/DragPreview.tscn" id="11_qfayu"]
-[ext_resource type="PackedScene" uid="uid://copiga1ncueyb" path="res://assets/objects/InventoryTooltip.tscn" id="12_j3tvq"]
 [ext_resource type="Script" path="res://assets/scripts/gui/diary/DiaryBookContainer.cs" id="13_8hg8r"]
 [ext_resource type="AudioStream" uid="uid://bmtmqooe3ww4r" path="res://assets/audios/sounds/book/page_twist_1.mp3" id="14_kuq1u"]
 [ext_resource type="PackedScene" uid="uid://chtr33dst8cnm" path="res://assets/objects/gui/ability/AbilityDescriptionContainer.tscn" id="14_qgapf"]
@@ -333,11 +332,3 @@ offset_bottom = 0.0
 grow_horizontal = 1
 grow_vertical = 1
 scale = Vector2(2, 2)
-
-[node name="Tooltip" parent="." instance=ExtResource("12_j3tvq")]
-visible = false
-z_index = 2
-layout_mode = 0
-offset_bottom = 133.0
-scale = Vector2(2, 2)
-mouse_filter = 2

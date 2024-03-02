@@ -39,10 +39,40 @@ public partial class WindowManager : Node
     /// <summary> Returns if the window with the given id is opened. </summary>
     public bool IsOpened(string id) => OpenedWindows.Any(w => w.ID == id);
     public FoldedWindow GetWindow(string id) => OpenedWindows.Find(w => w.ID == id);
+
+    #region Global UI elements
+
+    public CanvasLayer CanvasLayer { get; private set; }
+
+    /// <summary> Global tooltip instance. </summary>
+    public Tooltip Tooltip { get; private set; }
+
+    #endregion
+
+
     public override void _Ready()
     {
         // Set the singleton instance.
         Instance = this;
+
+        // Initialize canvas layer to add global UI elements to.
+        CanvasLayer = new CanvasLayer() { Layer = 9 }; // Layer 10, to make sure it's on top of the other UI elements.
+        AddChild(CanvasLayer);
+
+        // Load global UI elements.
+        Tooltip = LoadAndAddElement<Tooltip>("res://assets/objects/Tooltip.tscn");
+        Tooltip.Scale = Vector2.One * 2f; // Scale it up a bit.
+    }
+
+    /// <summary> Loads and adds an element to the scene. </summary>
+    /// <param name="path"> Path to the element. </param>
+    /// <returns> The loaded element. </returns>
+    public T LoadAndAddElement<T>(string path) where T : Control, new() 
+    {
+        var element = ResourceLoader.Load<PackedScene>(path).Instantiate<T>();
+        CanvasLayer.AddChild(element);
+
+        return element;
     }
 
     /// <summary> Opens a new window and closes previous one. </summary>

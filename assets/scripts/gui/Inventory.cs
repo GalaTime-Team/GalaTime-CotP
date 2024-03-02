@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Galatime;
+using Galatime.Global;
 using Godot;
 
 public partial class Inventory : GridContainer
@@ -15,7 +16,7 @@ public partial class Inventory : GridContainer
 
     public override void _Ready()
     {
-        Tooltip = GetNode<Tooltip>("../Tooltip");
+        Tooltip = WindowManager.Instance.Tooltip;
         DragPreview = GetNode<DragPreview>("../DragPreview");
         PlayerVariables = PlayerVariables.Instance;
 

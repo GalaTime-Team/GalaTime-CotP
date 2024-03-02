@@ -16,6 +16,8 @@ public partial class Tooltip : PanelContainer
         NameNode = GetNode<Label>("MarginContainer/VBoxContainer/Name");
         DescriptionNode = GetNode<RichTextLabel>("MarginContainer/VBoxContainer/Description");
         #endregion
+
+        Visible = false;
     }
 
     #region Display
@@ -43,7 +45,6 @@ public partial class Tooltip : PanelContainer
         {
             NameNode.Text = item.Name;
             WriteDescription(item.Description);
-            Visible = true;
         }
         else
         {
@@ -55,7 +56,6 @@ public partial class Tooltip : PanelContainer
     public void Display(AbilityData ability)
     {
         NameNode.Text = ability.Name;
-        DescriptionNode.Clear();
 
         // Add description
         var sb = new StringBuilder();
@@ -68,14 +68,13 @@ public partial class Tooltip : PanelContainer
         sb.AppendLine(ability.Costs.Stamina > 0 ? $"[color=orangered]- Consumes {ability.Costs.Stamina} stamina[/color]" : "");
 
         WriteDescription(sb.ToString());
-        Visible = true;
     }
     #endregion
 
     public override void _Input(InputEvent @event)
     {
         // Tooltip always follows the mouse.
-        if (@event is InputEventMouseMotion)
+        if (@event is InputEventMouseMotion && Visible) // No need to move the tooltip if it's not visible.
         {
             Vector2 finalPosition = GetGlobalMousePosition();
             finalPosition.Y += 16; // Looks nicer if the tooltip is above the mouse.
@@ -85,10 +84,13 @@ public partial class Tooltip : PanelContainer
 
     public void WriteDescription(string description)
     {
+        Visible = true;
+        DescriptionNode.Clear();
+        Size = new Vector2(Size.X, 0); // Make 0 size to force the size to be calculated.
+
         // AppendText, because to parse BBCode.
         // Don't ask me why space is added at the end, it just needs to be there.
         DescriptionNode.AppendText(description + " ");
-        Size = new Vector2(Size.X, 0); // Make 0 size to force the size to be calculated.
     }
 
     public void HideTooltip()
