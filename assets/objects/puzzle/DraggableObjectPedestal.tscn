@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://cnpiuyqikoyok"]
+
+[ext_resource type="Script" path="res://assets/scripts/objects/puzzle/DraggableObjectPedestal.cs" id="1_y24dy"]
+[ext_resource type="AudioStream" uid="uid://xq063tr3esch" path="res://assets/audios/sounds/heavy_press.mp3" id="2_fahq4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0h4ri"]
+size = Vector2(64, 64)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fougm"]
+
+[node name="DraggableObjectPedestal" type="Area2D"]
+script = ExtResource("1_y24dy")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_0h4ri")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+scale = Vector2(64, 64)
+texture = SubResource("PlaceholderTexture2D_fougm")
+
+[node name="ActivateAudio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_fahq4")

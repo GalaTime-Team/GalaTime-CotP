@@ -2,6 +2,8 @@ using Galatime;
 using Galatime.Helpers;
 using Godot;
 
+namespace Galatime.Puzzle;
+
 public partial class DragableObject : CharacterBody2D
 {
     GameLogger Logger = new("DragableObject", GameLogger.ConsoleColor.Orange);
@@ -17,7 +19,8 @@ public partial class DragableObject : CharacterBody2D
         ShakeAmplitude = new(5f, 5f)
     };
     private bool isDragging = false;
-    private bool IsDragging
+    /// <summary> Returns true if the object is currently being dragged. You can set this to true to start dragging or false to stop. </summary>
+    public bool IsDragging
     {
         get => isDragging;
         set
@@ -31,9 +34,11 @@ public partial class DragableObject : CharacterBody2D
 
     public override void _Ready()
     {
+        #region Get nodes
         InteractiveTrigger = GetNode<InteractiveTrigger>("InteractiveTrigger");
         PushingAudio = GetNode<AudioStreamPlayer2D>("PushingAudio");
         Sprite = GetNode<Sprite2D>("Sprite");
+        #endregion
 
         InteractiveTrigger.OnInteract += OnInteract;
         InteractiveTrigger.OnAreaAction += OnAreaAction;
@@ -57,21 +62,25 @@ public partial class DragableObject : CharacterBody2D
     {
         if (IsDragging)
         {
+            // If the character is pushing and moving.
             if (Velocity.Length() > 0)
             {
+                // Play pushing audio
                 if (!PushingAudio.Playing)
                     PushingAudio.Play();
-
                 PushingAudio.VolumeDb = 0;
+
+                // Shake looks cool.
                 PullShake.Enabled = true;
                 PullShake.ShakeProcess(delta);
                 Sprite.Position = PullShake.ShakenVector;
             }
             else
             {
+                // Otherwise stop the audio
                 if (PushingAudio.Playing) PushingAudio.VolumeDb = -80;
             }
-            Velocity = CurrentCharacter != null ? CurrentCharacter.Velocity : Vector2.Zero;
+            Velocity = CurrentCharacter != null ? CurrentCharacter.Velocity : Vector2.Zero; 
             MoveAndSlide();
         }
         else

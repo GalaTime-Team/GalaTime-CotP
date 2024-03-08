@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cblmuql6moq62"]
+[gd_scene load_steps=26 format=3 uid="uid://cblmuql6moq62"]
 
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="1_egyl8"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://assets/sprites/particles/dream_world_particles.png" id="2_b24jw"]
@@ -7,9 +7,11 @@
 [ext_resource type="PackedScene" uid="uid://d4ati88xcg8y4" path="res://assets/objects/helpers/EnemySpawnPosition.tscn" id="4_wqiaw"]
 [ext_resource type="PackedScene" uid="uid://dddgyou1d5du5" path="res://assets/objects/EnemyRoom.tscn" id="5_pbbsp"]
 [ext_resource type="PackedScene" uid="uid://dig3jdhxm6cmi" path="res://assets/objects/DoorBlock.tscn" id="6_x3ocx"]
+[ext_resource type="PackedScene" uid="uid://d2dpt8dtmpl4e" path="res://assets/objects/puzzle/PuzzleActivator.tscn" id="8_2o237"]
 [ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/Roomwrap.tscn" id="8_rru7k"]
 [ext_resource type="PackedScene" uid="uid://bljwt8h81gnrn" path="res://assets/objects/ItemPickup.tscn" id="9_7m3q7"]
 [ext_resource type="PackedScene" uid="uid://pbacv76llqfo" path="res://assets/objects/puzzle/DragableObject.tscn" id="10_hht8t"]
+[ext_resource type="PackedScene" uid="uid://cnpiuyqikoyok" path="res://assets/objects/puzzle/DraggableObjectPedestal.tscn" id="11_upgjy"]
 
 [sub_resource type="Curve" id="Curve_tl2pf"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.268953, 1), 0.0, 0.0, 0, 0, Vector2(0.734657, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -52,6 +54,20 @@ size = Vector2(32, 8)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qkx30"]
 size = Vector2(512, 64)
+
+[sub_resource type="Gradient" id="Gradient_4k12s"]
+offsets = PackedFloat32Array(0, 0.993711)
+colors = PackedColorArray(0, 0, 0, 1, 1, 0.705882, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xf5qo"]
+gradient = SubResource("Gradient_4k12s")
+
+[sub_resource type="Environment" id="Environment_wc805"]
+background_mode = 3
+adjustment_enabled = true
+adjustment_brightness = 1.5
+adjustment_saturation = 1.2
+adjustment_color_correction = SubResource("GradientTexture1D_xf5qo")
 
 [node name="LobbyFight" type="Node2D"]
 y_sort_enabled = true
@@ -111,6 +127,25 @@ metadata/_edit_lock_ = true
 
 [node name="EnemyRoom" parent="." instance=ExtResource("5_pbbsp")]
 
+[node name="DraggableObjectPedestal" parent="EnemyRoom" node_paths=PackedStringArray("PuzzleActivator") instance=ExtResource("11_upgjy")]
+position = Vector2(-652, 540)
+PuzzleActivator = NodePath("../PuzzleActivator")
+PositionOffset = Vector2(0, -50)
+
+[node name="DraggableObjectPedestal2" parent="EnemyRoom" node_paths=PackedStringArray("PuzzleActivator") instance=ExtResource("11_upgjy")]
+position = Vector2(-844, 540)
+PuzzleActivator = NodePath("../PuzzleActivator")
+PositionOffset = Vector2(0, -50)
+
+[node name="DraggableObjectPedestal3" parent="EnemyRoom" node_paths=PackedStringArray("PuzzleActivator") instance=ExtResource("11_upgjy")]
+position = Vector2(-1036, 540)
+PuzzleActivator = NodePath("../PuzzleActivator")
+PositionOffset = Vector2(0, -50)
+
+[node name="PuzzleActivator" parent="EnemyRoom" node_paths=PackedStringArray("Activatable") instance=ExtResource("8_2o237")]
+Activatable = NodePath("../Doorblock3")
+InverseActivation = true
+
 [node name="Doorblock" parent="EnemyRoom" instance=ExtResource("6_x3ocx")]
 visible = false
 position = Vector2(-524, 412)
@@ -130,6 +165,9 @@ metadata/_edit_lock_ = true
 [node name="AudioStreamPlayer" parent="EnemyRoom/Doorblock2" index="2"]
 metadata/_edit_lock_ = true
 
+[node name="Doorblock3" parent="EnemyRoom" instance=ExtResource("6_x3ocx")]
+position = Vector2(-524, 412)
+
 [node name="EnemySpawnPosition9" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
 position = Vector2(788, -36)
 SpawningEnemyId = "rockant"
@@ -141,7 +179,6 @@ collision_mask = 2
 metadata/_edit_lock_ = true
 
 [node name="Collision" type="CollisionShape2D" parent="EnemyRoom/TriggerArea"]
-position = Vector2(-40, -8)
 shape = SubResource("RectangleShape2D_1skem")
 metadata/_edit_lock_ = true
 
@@ -221,6 +258,9 @@ position = Vector2(-985, 560)
 
 [node name="DragableObject5" parent="." instance=ExtResource("10_hht8t")]
 position = Vector2(-1184, 560)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_wc805")
 
 [editable path="Roomwrap"]
 [editable path="Roomwrap2"]
