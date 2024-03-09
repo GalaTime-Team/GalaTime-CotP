@@ -25,6 +25,7 @@ namespace Galatime
 
         public void RemoveItem()
         {
+            ItemData = null;
             if (GetChildCount() != 0)
             {
                 Item = null;

@@ -553,7 +553,7 @@ AnimationPlayerPath = NodePath("../Animation")
 y_sort_enabled = true
 position = Vector2(0, -30)
 scale = Vector2(4, 4)
-texture = ExtResource("4_85udj")
+texture = ExtResource("18_gf574")
 hframes = 8
 
 [node name="Hand" type="Marker2D" parent="."]

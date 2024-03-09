@@ -61,8 +61,10 @@ public partial class PlayerVariables : Node
     public Action<Player> OnPlayerIsReady;
     /// <summary> Instance of the player in the current scene. </summary>
     public Player Player;
+    /// <summary> If the save should be loaded. After loading, automatically set to false. </summary>
+    public bool ShouldLoadSave = true;
 
-    public PlayerVariables() 
+    public PlayerVariables()
     {
         ResetValues();
     }
@@ -85,17 +87,30 @@ public partial class PlayerVariables : Node
         // Initializing the inventory and abilities
         OnItemsChanged?.Invoke();
         OnAbilitiesChanged?.Invoke();
-
-        // OnPlayerIsReady += LoadSave;
     }
 
     public void LoadVariables(Player instance)
     {
         Player = instance;
-        try
-        {
-            ResetValues();
+        if (ShouldLoadSave) LoadSave();
 
+        // Invoke the events to initialize the player and global variables
+        OnItemsChanged?.Invoke();
+        OnAbilitiesChanged?.Invoke();
+        OnAbilityLearned?.Invoke();
+        OnAlliesChanged?.Invoke();
+
+    }
+
+    // TODO: Rework this, because Godot.Collections.Dictionary is slow because of marshalling and not serializable.
+    /// <summary> Loads the save from the save file. </summary>
+    public void LoadSave()
+    {
+        ResetValues();
+
+        try // Load the save is not critical, so exception can be ignored
+        {
+            // Get the save data
             var saveData = GalatimeGlobals.LoadSave(CurrentSave);
 
             if (saveData.ContainsKey("equipped_abilities"))
@@ -138,10 +153,10 @@ public partial class PlayerVariables : Node
                 }
             }
 
-            if (saveData.ContainsKey("allies")) 
+            if (saveData.ContainsKey("allies"))
             {
                 Godot.Collections.Array alliesDeserialized = (Godot.Collections.Array)saveData["allies"];
-                for (int i = 0; i < alliesDeserialized.Count; i++) 
+                for (int i = 0; i < alliesDeserialized.Count; i++)
                 {
                     var ally = (string)alliesDeserialized[i];
                     Allies[i] = GalatimeGlobals.GetAllyById(ally);
@@ -151,11 +166,7 @@ public partial class PlayerVariables : Node
             Player.Xp = (int)saveData.GetOrNull("xp");
             LearnedAbilities = (Godot.Collections.Array<string>)saveData["learned_abilities"];
 
-            // Invoke the events to initialize the player and global variables
-            OnItemsChanged?.Invoke();
-            OnAbilitiesChanged?.Invoke();
-            OnAbilityLearned?.Invoke();
-            OnAlliesChanged?.Invoke();
+            ShouldLoadSave = false;
         }
         catch (Exception e)
         {
@@ -163,13 +174,6 @@ public partial class PlayerVariables : Node
             GD.PrintRich("Message: " + e.Message);
             GD.PrintRich("Source: " + e.Source);
             GD.PrintRich("Stack Trace: " + e.StackTrace);
-
-            if (e.InnerException != null)
-            {
-                GD.PrintRich("Inner Exception Message: " + e.InnerException.Message);
-                GD.PrintRich("Inner Exception Source: " + e.InnerException.Source);
-                GD.PrintRich("Inner Exception Stack Trace: " + e.InnerException.StackTrace);
-            }
         }
     }
 

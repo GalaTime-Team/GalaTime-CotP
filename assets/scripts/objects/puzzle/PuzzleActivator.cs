@@ -3,6 +3,7 @@ using System;
 using Galatime.Interfaces;
 
 using System.Collections.Generic;
+using Galatime.Global;
 
 /// <summary> Represents a puzzle activator that keeps track of the puzzle and activates target object. </summary>
 public partial class PuzzleActivator : Node
@@ -26,6 +27,12 @@ public partial class PuzzleActivator : Node
 
         if (Activatable is IActivatable activatable) activatable.Active = false ^ InverseActivation;
         else Logger.Log("Activatable object is not an IActivatable", GameLogger.LogType.Error);
+
+        // For testing purposes
+        var cm = CutsceneManager.Instance;
+        cm.BlockPlayer(true);
+        cm.SimpleCameraCutscene((Activatable as Node2D).GlobalPosition, .3f, 3f).Finished += 
+            () => cm.BlockPlayer(false);
     }
 
     public override void _ExitTree()

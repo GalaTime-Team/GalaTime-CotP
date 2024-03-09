@@ -194,8 +194,6 @@ public partial class DialogBox : NinePatchRect
         Player.CameraOffset.Y = int.Parse(y);
     }
 
-    public void ToggleMove() => Player.CanMove = !Player.CanMove;
-
     private void ResetValues()
     {
         TypingLabel.Text = "";

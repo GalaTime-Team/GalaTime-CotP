@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExtensionMethods;
 using Galatime.Interfaces;
 using Godot;
 
@@ -49,12 +50,12 @@ public partial class CutsceneManager : Node
                 SetTween(parallel: true);
                 GoToPosition(arthur as Node2D, new Vector2(1248, -240));
                 GoToPosition(raphael as Node2D, new Vector2(1248, -336));
-                TweenCallback(() =>
+                Tween.CTween(() =>
                 {
                     arthur.PlayDramaAnimation("IdleRight");
                     raphael.PlayDramaAnimation("IdleRight");
                 }).SetDelay(1f);
-                TweenCallback(() =>
+                Tween.CTween(() =>
                 {
                     raphael.PlayDramaAnimation("IdleDown");
                     player.StartDialog("test", () =>
@@ -78,30 +79,6 @@ public partial class CutsceneManager : Node
         );
     }
 
-    /// <summary> Move the given node to the specified position over a given duration. </summary>
-    /// <param name="duration">In seconds</param>
-    /// <param name="node">The node to move</param>
-    public MethodTweener GoToPosition(Node2D node, Vector2 position, float duration = 1f)
-    {
-        return Tween.TweenMethod(Callable.From<Vector2>(v =>
-        {
-            if (IsInstanceValid(node)) node.GlobalPosition = v;
-        }), node.GlobalPosition, position, duration);
-    }
-
-    public CallbackTweener TweenCallback(Action action) => Tween?.TweenCallback(Callable.From(action));
-
-    /// <summary> Validates the given drama objects. </summary>
-    /// <returns> True if all drama objects are valid, false otherwise. </returns>
-    public bool Validate(params object[] dramaObjects)
-    {
-        // Check if any of the drama objects are null
-        bool isNotValid = dramaObjects.All(drama => drama == null);
-
-        if (isNotValid) Logger.Log("One or more drama objects are null or invalid. Cutscene will not be played.", GameLogger.LogType.Error);
-        return isNotValid;
-    }
-
     public override void _Process(double delta)
     {
         // Remove invalid drama objects.
@@ -123,6 +100,7 @@ public partial class CutsceneManager : Node
         return Tween;
     }
 
+    #region Cutscenes
     /// <summary> Sets the current cutscene and executes it. </summary>
     /// <returns> True if the cutscene is found and executed, false otherwise. </returns>
     public bool StartCutscene(string cutscene)
@@ -147,6 +125,19 @@ public partial class CutsceneManager : Node
     public void RegisterCutscene(params CutsceneData[] cutscenes)
     {
         foreach (var c in cutscenes) Cutscenes.Add(c);
+    }
+    #endregion
+
+    #region Drama objects
+    /// <summary> Validates the given drama objects. </summary>
+    /// <returns> True if all drama objects are valid, false otherwise. </returns>
+    public bool Validate(params object[] dramaObjects)
+    {
+        // Check if any of the drama objects are null
+        bool isNotValid = dramaObjects.All(drama => drama == null);
+
+        if (isNotValid) Logger.Log("One or more drama objects are null or invalid. Cutscene will not be played.", GameLogger.LogType.Error);
+        return isNotValid;
     }
 
     public void RegisterDramaObject(Node2D dramaObject)
@@ -173,10 +164,35 @@ public partial class CutsceneManager : Node
 
         return dro;
     }
+    #endregion
 
+    #region Cutscene actions
     public void BlockPlayer(bool block = true)
     {
         var player = PlayerVariables.Instance.Player;
         player.IsPlayerFrozen = block;
     }
+
+    /// <summary> Move the given node to the specified position over a given duration. </summary>
+    /// <param name="duration">In seconds</param>
+    /// <param name="node">The node to move</param>
+    public MethodTweener GoToPosition(Node2D node, Vector2 position, float duration = 1f)
+    {
+        return Tween.MTween<Vector2>(v =>
+        {
+            if (IsInstanceValid(node)) node.GlobalPosition = v;
+        }, node.GlobalPosition, position, duration);
+    }
+
+    /// <summary> Moves the camera to the specified position over a given duration with a simple tween. </summary>
+    public CallbackTweener SimpleCameraCutscene(Vector2 position, float duration = 1f, float delay = 1f)
+    {
+        var p = PlayerVariables.Instance.Player;
+        SetTween().MTween<Vector2>(v =>
+        {
+            p.CameraOffset = v - Player.CurrentCharacter.GlobalPosition;
+        }, Player.CurrentCharacter.GlobalPosition, position, duration);
+        return Tween.CTween(() => p.CameraOffset = Vector2.Zero).SetDelay(delay);
+    }
+    #endregion
 }

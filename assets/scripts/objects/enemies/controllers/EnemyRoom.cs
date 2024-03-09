@@ -4,21 +4,29 @@ using Galatime.Helpers;
 using Galatime;
 using Galatime.Global;
 using NodeExtensionMethods;
+using Galatime.Interfaces;
 
 /// <summary> Node, which controls the enemy room. Spawns enemies and controls doors. </summary>
-public partial class EnemyRoom : Node2D
+public partial class EnemyRoom : Node2D, IClearableLevelObject
 {
-    public Area2D TriggerArea;
+    public bool CanActivate = true;
+
+    [Export] public Area2D TriggerArea;
 
     /// <summary> The spawn positions for the enemies. </summary>
     public List<EnemySpawnPosition> SpawnPositions = new();
+
+    [Export] public Godot.Collections.Array<Doorblock> DoorBlocks = new();
     /// <summary> The door blocks that block the player. </summary>
-    public List<Doorblock> DoorBlocks = new();
+    public List<Doorblock> DoorBlocksList = new();
+
     /// <summary> The current spawned enemies in the room. </summary>
     public List<Entity> CurrentEnemies = new();
 
     public override void _Ready()
     {
+        DoorBlocksList.AddRange(DoorBlocks);
+
         // Adding the spawn positions for the children.
         foreach (var item in GetChildren())
         {
@@ -28,19 +36,16 @@ public partial class EnemyRoom : Node2D
                 case EnemySpawnPosition spawn:
                     SpawnPositions.Add(spawn);
                     break;
-                // Add door block to the list.
-                case Doorblock block:
-                    DoorBlocks.Add(block);
-                    break;
-                // Set the trigger area if it not assigned.
-                case Area2D area when TriggerArea == null:
-                    TriggerArea = area;
-                    break;
             }
         }
 
         // Subscribe to the BodyEntered event of the trigger area if it exists.
         if (TriggerArea != null) TriggerArea.BodyEntered += OnEnter;
+    }
+
+    public void ClearFromLevel()
+    {
+        CanActivate = false;
     }
 
     private void OnEnter(Node node)
@@ -59,10 +64,12 @@ public partial class EnemyRoom : Node2D
     /// </summary>
     public async void StartBattle()
     {
+        if (!CanActivate) return;
+
         LevelManager.Instance.IsCombat = true;
 
         // Close all the doors
-        foreach (var door in DoorBlocks) door.IsOpen = false;
+        foreach (var door in DoorBlocksList) door.IsOpen = false;
         // Wait for 1 second
         await ToSignal(GetTree().CreateTimer(1.0f), "timeout");
 
@@ -102,10 +109,12 @@ public partial class EnemyRoom : Node2D
         LevelManager.IsCombat = false;
 
         // Open all the doors
-        DoorBlocks.ForEach(door => door.IsOpen = true);
+        DoorBlocksList.ForEach(door => door.IsOpen = true);
 
         // Clear the CurrentEnemies list
         CurrentEnemies.Clear();
+
+        LevelManager.Instance.ChangeLevelObject(this, false);
     }
 
     private void OnEnemyDeath()

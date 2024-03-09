@@ -11,23 +11,17 @@ public partial class ValueBar : Control
     #region Exports
     /// <summary> Text, which is displayed and placed to the right of the bar. Like "HP" or "MANA" and so on. </summary>
     [Export] public string ValueText = "VAL";
-    /// <summary> The texture path of the transient texture for transient effect. </summary>
-    [Export(PropertyHint.File)] public string TransientTexturePath;
     [Export] public Color ChangedColor;
     [Export] public Color NormalColor;
 
-    [Export] public NodePath ProgressBarNodePath;
-    [Export] public NodePath LabelNodePath;
-    [Export] public NodePath TextureNodePath;
-    [Export] public Godot.Collections.Array<NodePath> ShakeControlNodePaths;
+    [Export] public TextureProgressBar ProgressBar;
+    [Export] public TextureProgressBar TransientProgressBar;
+    [Export] public Label Label;
+    [Export] public Godot.Collections.Array<ShakeControl> ShakeControls;
     #endregion
 
     #region Nodes
-    public TextureProgressBar ProgressBar;
-    public TextureProgressBar TransientProgressBar;
-    public Label Label;
-    public TextureRect Texture;
-    public List<ShakeControl> ShakeControls = new();
+    public List<ShakeControl> ShakeControlsList = new();
 
     /// <summary> Used to delay change of the current delayed progress bar. </summary>
     public Timer TransientTimer;
@@ -37,8 +31,6 @@ public partial class ValueBar : Control
     #endregion
 
     #region Variables
-    /// <summary> Currently loaded transient texture. </summary>
-    public Texture2D TransientTexture;
     /// <summary> Used when delay is over and then assigns the current delayed progress bar value. </summary>
     private float TransientValue = 0;
     /// <summary> Used to set the current delayed progress bar value. </summary>
@@ -113,12 +105,7 @@ public partial class ValueBar : Control
 
     public override void _Ready()
     {
-        #region Get nodes
-        ProgressBar = GetNode<TextureProgressBar>(ProgressBarNodePath);
-        Label = GetNode<Label>(LabelNodePath);
-        Texture = GetNode<TextureRect>(TextureNodePath);
-        foreach (NodePath shakeControlNodePath in ShakeControlNodePaths) ShakeControls.Add(GetNode<ShakeControl>(shakeControlNodePath));
-        #endregion
+        foreach (var shakeControl in ShakeControls) ShakeControls.Add(shakeControl);
 
         // Create transient timer to delay change of the progress bar.
         TransientTimer = new Timer
@@ -128,8 +115,6 @@ public partial class ValueBar : Control
         };
         TransientTimer.Timeout += StartTransientProgressBarEffect;
         AddChild(TransientTimer);
-
-        InitTransientProgressBar();
     }
 
     /// <summary> Forcefully updates the value of the value bar without any delay. </summary>
@@ -158,23 +143,6 @@ public partial class ValueBar : Control
         TweenColor?.Kill();
     }
 
-    private void InitTransientProgressBar()
-    {
-        // Load transient texture.
-        TransientTexture = ResourceLoader.Load<Texture2D>(TransientTexturePath);
-
-        // Create transient progress bar by duplicating progress bar.
-        TransientProgressBar = ProgressBar.Duplicate() as TextureProgressBar;
-
-        // Set transient progress bar texture and other properties.
-        TransientProgressBar.TextureProgress = TransientTexture;
-        TransientProgressBar.Name = "TransientProgressBar";
-        TransientProgressBar.ZIndex--;
-
-        // Add transient progress bar to the scene.
-        AddChild(TransientProgressBar);
-    }
-
     /// <summary> Applies shake effect to all shake controls. </summary>
     public void ShakeAll()
     {
@@ -200,6 +168,6 @@ public partial class ValueBar : Control
     public void StartTransientColor()
     {
         TweenColor = GetTree().CreateTween();
-        TweenColor.TweenMethod(Callable.From<Color>((x) => { if (IsInstanceValid(Label)) Label.Modulate = x; }), ChangedColor, NormalColor, TransientDuration);
+        TweenColor.TweenMethod(Callable.From<Color>((Action<Color>)((x) => { if (IsInstanceValid((GodotObject)this.Label)) this.Label.Modulate = x; })), ChangedColor, NormalColor, TransientDuration);
     }
 }

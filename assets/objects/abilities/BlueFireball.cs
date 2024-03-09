@@ -38,7 +38,7 @@ namespace Galatime
             Rotation = p.Weapon.Rotation;
             _kinematicBody.GlobalPosition = p.Weapon.GlobalPosition;
 
-            if (p is Player player) player.CameraShakeAmount += 20;
+            PlayerVariables.Instance.Player.CameraShakeAmount += 20;
             _velocity.X += 1;
 
             _animationPlayer.Play("intro");

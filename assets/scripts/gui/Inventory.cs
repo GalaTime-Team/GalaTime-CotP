@@ -35,20 +35,12 @@ public partial class Inventory : GridContainer
             AddChild(itemSlot);
         }
 
-        var gp = PlayerVariables?.Player;
-        gp.Ready += () => 
-        {   
-            var p = gp.PlayerGui;
-            p.OnItemsChanged += OnInventoryChanged;
-            p.OnPause += OnPause;
-        };
+        PlayerVariables.OnItemsChanged += OnInventoryChanged;
     }
 
-    public void OnPause(bool paused)
+    public override void _ExitTree()
     {
-        // var draggedItem = (Godot.Collections.Dictionary)dragPreview.Get("draggedItem");
-        // if (draggedItem != null) if (draggedItem.Count >= 0) playerVariables.setItem(draggedItem, _previousItemId);
-        // dragPreview.draggedItem = null;
+        PlayerVariables.OnItemsChanged -= OnInventoryChanged;
     }
 
     public void OnInventoryChanged()

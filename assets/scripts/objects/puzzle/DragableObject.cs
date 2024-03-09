@@ -62,6 +62,9 @@ public partial class DragableObject : CharacterBody2D
     {
         if (IsDragging)
         {
+            if (PlayerVariables.Instance.Player.IsPlayerFrozen && IsDragging) // Don't move if the player is frozen.
+                IsDragging = false;
+
             // If the character is pushing and moving.
             if (Velocity.Length() > 0)
             {

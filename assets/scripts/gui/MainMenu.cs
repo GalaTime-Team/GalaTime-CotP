@@ -204,6 +204,7 @@ public partial class MainMenu : Control
 
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
         PlayerVariables.CurrentSave = id - 1;
+        PlayerVariables.Instance.ShouldLoadSave = true;
 
         DelayInteract.Start();
     }

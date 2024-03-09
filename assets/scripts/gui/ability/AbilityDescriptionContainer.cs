@@ -36,6 +36,13 @@ public partial class AbilityDescriptionContainer : HBoxContainer
         if (index > 0) AbilityName.Text = $"{index}. {AbilityName.Text}";
     }
 
+    public override void _ExitTree()
+    {
+        AbilityIcon = null;
+        AbilityName = null;
+        AbilityDescription = null;
+    }
+
     public override void _Ready()
     {
         #region Get nodes

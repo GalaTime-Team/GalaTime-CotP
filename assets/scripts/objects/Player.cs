@@ -1,12 +1,11 @@
 using Galatime.Global;
-using Galatime.Helpers;
 using Godot;
 using System;
 using System.Linq;
 
 namespace Galatime
 {
-    public partial class Player : HumanoidCharacter
+    public partial class Player : Node2D
     {
         // Exports
         [Export] public bool CanInteract = true;
@@ -23,7 +22,7 @@ namespace Galatime
                 xp = value;
                 PlayerVariables.OnXpChanged?.Invoke(xp);
             }
-        }
+        }       
 
         public PlayerGui PlayerGui;
 
@@ -52,6 +51,7 @@ namespace Galatime
                 isPlayerFrozen = value;
 
                 CurrentCharacter.DisableHumanoidDoll = isPlayerFrozen;
+                CurrentCharacter.HumanoidDoll.SetAnimation(CurrentCharacter.VectorRotation, HumanoidStates.Idle);
                 if (isPlayerFrozen) WindowManager.Instance.CloseAll();
             }
         }
@@ -59,16 +59,6 @@ namespace Galatime
         public override void _Ready()
         {
             base._Ready();
-
-            // Get Nodes
-            Body = this;
-
-            // Humanoid components
-            Weapon = GetNode<Hand>("Hand");
-            Sprite = GetNode<Sprite2D>("Sprite2D");
-            TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
-            HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
-            DrinkingAudioPlayer = GetNode<AudioStreamPlayer2D>("DrinkingAudioPlayer");
 
             Camera = GetNode<Camera2D>("Camera");
             PlayerGui = GetNode<PlayerGui>("CanvasLayer/PlayerGui");
@@ -78,15 +68,7 @@ namespace Galatime
             PlayerVariables.OnItemsChanged += OnItemsChanged;
             PlayerVariables.OnAbilitiesChanged += OnAbilitiesChangedForCharacter;
 
-            // Start
-            Stamina.Value = Stats[EntityStatType.Stamina].Value;
-            Mana.Value = Stats[EntityStatType.Mana].Value;
-            Health = Stats[EntityStatType.Health].Value;
-
             CameraOffset = Vector2.Zero;
-            Body.GlobalPosition = GlobalPosition;
-
-            // PlayerVariables.SetPlayerInstance(this);
 
             PlayerVariables.LoadVariables(this);
             // Load Main character
@@ -114,17 +96,25 @@ namespace Galatime
         private void SetMove()
         {
             Vector2 inputVelocity = Vector2.Zero;
-            if (Input.IsActionPressed("game_move_up")) inputVelocity.Y -= 1;
-            if (Input.IsActionPressed("game_move_down")) inputVelocity.Y += 1;
-            if (Input.IsActionPressed("game_move_right")) inputVelocity.X += 1;
-            if (Input.IsActionPressed("game_move_left")) inputVelocity.X -= 1;
-            inputVelocity = inputVelocity.Normalized() * CurrentCharacter.Speed;
 
-            if (CanMove && !IsDodge && !IsPlayerFrozen) CurrentCharacter.Body.Velocity = inputVelocity; else Body.Velocity = Vector2.Zero;
-            if (CurrentCharacter.IsPushing) CurrentCharacter.Body.Velocity *= CurrentCharacter.PushingSpeedMultiplier;
+            // Don't move if the player is not event exist.
+            if (CurrentCharacter != null || IsInstanceValid(CurrentCharacter))
+            {
+                if (Input.IsActionPressed("game_move_up")) inputVelocity.Y -= 1;
+                if (Input.IsActionPressed("game_move_down")) inputVelocity.Y += 1;
+                if (Input.IsActionPressed("game_move_right")) inputVelocity.X += 1;
+                if (Input.IsActionPressed("game_move_left")) inputVelocity.X -= 1;
+                inputVelocity = inputVelocity.Normalized() * CurrentCharacter.Speed;
 
-            CurrentCharacter?.Weapon.LookAt(GetGlobalMousePosition());
-            SetCameraPosition();
+                if (CurrentCharacter.CanMove && !CurrentCharacter.IsDodge && !IsPlayerFrozen)
+                    CurrentCharacter.Body.Velocity = inputVelocity;
+                else CurrentCharacter.Body.Velocity = Vector2.Zero;
+
+                if (CurrentCharacter.IsPushing) CurrentCharacter.Body.Velocity *= CurrentCharacter.PushingSpeedMultiplier;
+
+                CurrentCharacter?.Weapon.LookAt(GetGlobalMousePosition());
+                SetCameraPosition();
+            }
         }
 
         private void SetCameraPosition()
@@ -136,26 +126,19 @@ namespace Galatime
 
         public override void _PhysicsProcess(double delta)
         {
-            base._MoveProcess(delta);
+            SetMove();
 
-            // Don't move if the player is not event exist.
-            if (CurrentCharacter == null || !IsInstanceValid(CurrentCharacter)) return;
-
-            if (CanMove) SetMove(); else if (CurrentCharacter?.Body != null) CurrentCharacter.Body.Velocity = Vector2.Zero;
             var shakeOffset = new Vector2();
-
             Random rnd = new();
             shakeOffset.X = rnd.Next(-1, 1) * CameraShakeAmount;
             shakeOffset.Y = rnd.Next(-1, 1) * CameraShakeAmount;
-
             Camera.Offset = shakeOffset;
-
             CameraShakeAmount = Mathf.Lerp(CameraShakeAmount, 0, 0.05f);
         }
 
-        public new void HealthChangedEvent(float health) => PlayerGui?.OnHealthChanged(health);
-        public new void OnManaChanged(float mana) => PlayerGui.OnManaChanged(mana);
-        public new void OnStaminaChanged(float stamina) => PlayerGui.OnStaminaChanged(stamina);
+        public void HealthChangedEvent(float health) => PlayerGui?.OnHealthChanged(health);
+        public void OnManaChanged(float mana) => PlayerGui.OnManaChanged(mana);
+        public void OnStaminaChanged(float stamina) => PlayerGui.OnStaminaChanged(stamina);
         public void OnAbilitiesChangedForCharacter() => OnAbilitiesChangedForCharacter(false);
 
         /// <summary> Event for when character's abilities changed. </summary>
@@ -224,9 +207,11 @@ namespace Galatime
         }
 
         private void OnItemsChanged()
-        {
+        {  
+            if (MainCharacter == null) return;
+
             var obj = PlayerVariables.Inventory[0];
-            if (obj == MainCharacter?.Weapon.ItemData) return;
+            if (obj == MainCharacter.Weapon.ItemData) return;
             if (obj.IsEmpty) MainCharacter?.Weapon.RemoveItem();
             MainCharacter?.Weapon.TakeItem(obj);
         }

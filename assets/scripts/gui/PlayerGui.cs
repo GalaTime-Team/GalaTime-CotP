@@ -53,7 +53,7 @@ namespace Galatime
                 inventoryOpen = value;
 
                 InventoryPanel.Visible = inventoryOpen;
-                PlayerVariables.Player.CanMove = !inventoryOpen;
+                Player.CurrentCharacter.CanMove = !inventoryOpen;
             }
         }
 
@@ -61,7 +61,9 @@ namespace Galatime
         #endregion
 
         #region Events
+        [Obsolete("Use PlayerVariables.OnItemsChanged instead.")]
         public Action OnItemsChanged;
+        [Obsolete]
         public Action<bool> OnPause;
         #endregion
 

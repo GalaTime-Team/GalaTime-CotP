@@ -16,7 +16,8 @@ shape = SubResource("RectangleShape2D_0h4ri")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)
-scale = Vector2(64, 64)
+position = Vector2(0, 4)
+scale = Vector2(64, 56)
 texture = SubResource("PlaceholderTexture2D_fougm")
 
 [node name="ActivateAudio" type="AudioStreamPlayer2D" parent="."]

@@ -141,8 +141,6 @@ public sealed partial class GalatimeGlobals : Node
         return results;
     }
 
-
-
     public void Save(int saveId, Node currentScene)
     {
         var saveProcessSceneInstance = SaveProcessScene.Instantiate<SavingProcess>();
@@ -165,6 +163,7 @@ public sealed partial class GalatimeGlobals : Node
         }
     }
 
+    // TODO: Rework this, because it's a mess.
     public static Godot.Collections.Dictionary LoadSave(int saveId)
     {
         string SAVE_FILE_PATH = $"{GalatimeConstants.SavesPath}save{saveId}.json";

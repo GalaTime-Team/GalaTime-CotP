@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System;
+using Galatime.Interfaces;
 
 namespace Galatime.Global;
 
 /// <summary> Manages the level. Contains the audios for the level and managing the time scale. </summary>
 public partial class LevelManager : Node
 {
+    public GameLogger Logger { get; private set; } = new("LevelManager", GameLogger.ConsoleColor.Green);
+
     public static LevelManager Instance { get; private set; }
 
     /// <summary> The audio pack, which contains the audios for the level, contains the both calm and combat versions. </summary>
@@ -61,6 +64,8 @@ public partial class LevelManager : Node
         {
             levelInfo = value;
 
+            UpdateLevelObjects();
+
             // Set the titles for the game.
             DiscordController.Instance.CurrentRichPresence.Details = levelInfo.LevelName;
             if (levelInfo.Day > 0) DiscordController.Instance.CurrentRichPresence.State = $"Day {levelInfo.Day} - Playing";
@@ -69,6 +74,11 @@ public partial class LevelManager : Node
             GetTree().Root.Title = $"GalaTime - {levelInfo.LevelName}";
         }
     }
+
+    /// <summary> List of current level objects in the current level. </summary>
+    public List<IClearableLevelObject> CurrentLevelObjects = new();
+    /// <summary> List of level objects in stored levels. Contains the state of each level object. </summary>
+    public Dictionary<string, List<(string name, bool state)>> LevelObjects = new();
 
     /// <summary> The entities in the current level. </summary>
     public List<Entity> Entities = new();
@@ -89,18 +99,21 @@ public partial class LevelManager : Node
         // Initialize audio players by creating them and adding them to the scene.
         InitializeAudioPlayers();
 
+        #region Game cheats
         CheatsMenu.RegisterCheat(
             new Cheat(name: "[color=yellow]Game cheats[/color]", type: Cheat.CheatType.Separator),
             new Cheat(name: "Global data", type: Cheat.CheatType.Separator),
-            new Cheat("list_items", "Print list of all items", "", "cheat_list_items", (bool active, string input) => {
+            new Cheat("list_items", "Print list of all items", "", "cheat_list_items", (bool active, string input) =>
+            {
                 var items = GalatimeGlobals.ItemList;
                 var str = new StringBuilder();
-                    
+
                 for (var i = 0; i < items.Count; i++) str.Append($"{items[i].ID}{(i < items.Count - 1 ? ", " : "")}");
 
                 CheatsMenu.Log(str.ToString(), CheatsMenu.LogLevel.Result);
             }),
-            new Cheat("abilities_list", "Print list of all abilities", "", "cheat_abilities_list", (bool active, string input) => {
+            new Cheat("abilities_list", "Print list of all abilities", "", "cheat_abilities_list", (bool active, string input) =>
+            {
                 var abilities = GalatimeGlobals.AbilitiesList;
                 var str = new StringBuilder();
 
@@ -109,14 +122,17 @@ public partial class LevelManager : Node
                 CheatsMenu.Log(str.ToString(), CheatsMenu.LogLevel.Result);
             }),
             new Cheat(name: "Gameplay cheats", type: Cheat.CheatType.Separator),
-            new Cheat("god_mode", "God mode", "Toggles god mode, which makes the all characters invulnerable to all damage.", "cheat_god_mode", (active, _) => {
+            new Cheat("god_mode", "God mode", "Toggles god mode, which makes the all characters invulnerable to all damage.", "cheat_god_mode", (active, _) =>
+            {
                 var pv = PlayerVariables.Instance;
-                Array.ForEach(pv.Allies, c => {
+                Array.ForEach(pv.Allies, c =>
+                {
                     if (c.Instance != null) c.Instance.Invincible = active;
                 });
             }, Cheat.CheatType.Toggle),
             new Cheat("ai_ignore_player", "Ai ignores player", "Toggles the Ai of entities to ignore the current selected player.", "cheat_ai_ignore_player", type: Cheat.CheatType.Toggle),
-            new Cheat("add_ally", "Add ally", "Add an inputted ally to the player. To update allies, use 'cheat_add_allies'.", "cheat_add_ally", (_, input) => {
+            new Cheat("add_ally", "Add ally", "Add an inputted ally to the player. To update allies, use 'cheat_add_allies'.", "cheat_add_ally", (_, input) =>
+            {
                 var inputArguments = CheatsMenu.ParseCheatArguments(input, 1);
 
                 var args = inputArguments.args;
@@ -136,7 +152,8 @@ public partial class LevelManager : Node
                     if (a.IsEmpty) { PlayerVariables.Instance.Allies[i] = a; break; }
                 }
             }, Cheat.CheatType.Input),
-            new Cheat("remove_ally", "Remove ally", "Remove an inputted ally from the player. To update allies, use 'cheat_add_allies'.", "cheat_remove_ally", (_, input) => {
+            new Cheat("remove_ally", "Remove ally", "Remove an inputted ally from the player. To update allies, use 'cheat_add_allies'.", "cheat_remove_ally", (_, input) =>
+            {
                 var inputArguments = CheatsMenu.ParseCheatArguments(input, 1);
 
                 var args = inputArguments.args;
@@ -209,12 +226,13 @@ public partial class LevelManager : Node
                 var player = CheatsMenu.GetPlayer();
                 if (player == null) return;
 
-                var playerAbilities = player.Abilities;
+                var playerAbilities = PlayerVariables.Instance.Abilities;
+                var ca = Player.CurrentCharacter;
 
-                playerAbilities.ForEach(ability =>
+                Array.ForEach(playerAbilities, ability =>
                 {
                     ability.Charges = ability.MaxCharges;
-                    player.OnAbilityReload?.Invoke(playerAbilities.IndexOf(ability), 0);
+                    ca.OnAbilityReload?.Invoke(Array.IndexOf(playerAbilities, ability), 0);
                 });
 
                 CheatsMenu.Log($"Reloaded all abilities", CheatsMenu.LogLevel.Result);
@@ -234,9 +252,10 @@ public partial class LevelManager : Node
             }),
             new Cheat(name: "Entities cheats", type: Cheat.CheatType.Separator),
             new Cheat("disable_ai", "Disable entities AI", "Disables AI for all entities, meaning that they will not perform any actions.", "cheat_disable_ai", (bool active, string input) => Entities.ForEach(entity => entity.DisableAI = active), Cheat.CheatType.Toggle),
-            new Cheat("kill_all_enemies", "Kill all enemies", "", "cheat_kill_all", (_, _) => {
-                var enemies = Entities.Where(entity => !(entity is TestCharacter || entity is Player) && !entity.DeathState).ToList();
-                if (enemies.Count() == 0) 
+            new Cheat("kill_all_enemies", "Kill all enemies", "", "cheat_kill_all", (_, _) =>
+            {
+                var enemies = Entities.Where(entity => !(entity is TestCharacter) && !entity.DeathState).ToList();
+                if (enemies.Count() == 0)
                 {
                     CheatsMenu.Log("There's no enemies to kill", CheatsMenu.LogLevel.Warning);
                     return;
@@ -245,7 +264,8 @@ public partial class LevelManager : Node
                 CheatsMenu.Log($"Successfully killed all {enemies.Count()} enemies", CheatsMenu.LogLevel.Result);
             }),
             new Cheat(name: "Drama cheats", type: Cheat.CheatType.Separator),
-            new Cheat("start_cutscene", "Start cutscene", "Starts a cutscene.", "cheat_start_cutscene", (_, input) => {
+            new Cheat("start_cutscene", "Start cutscene", "Starts a cutscene.", "cheat_start_cutscene", (_, input) =>
+            {
                 var inputArguments = CheatsMenu.ParseCheatArguments(input, 1);
                 var args = inputArguments.args;
                 if (!inputArguments.result) return;
@@ -254,13 +274,79 @@ public partial class LevelManager : Node
                 CutsceneManager.Instance.StartCutscene(cutsceneName);
             }, Cheat.CheatType.Input)
         );
+        #endregion
     }
+
+    #region Level management
+    /// <summary> Updates the level objects. This includes adding current level objects and changing state of level objects. </summary>
+    public void UpdateLevelObjects()
+    {
+        CurrentLevelObjects.Clear();
+        levelInfo.GetParent().GetChildren().ToList().ForEach(x =>
+        {
+            if (x is IClearableLevelObject obj)
+            {
+                Logger.Log($"Updated current object to level: {x.Name}", GameLogger.LogType.Info);
+                CurrentLevelObjects.Add(obj);
+            }
+        });
+        if (!LevelObjects.ContainsKey(levelInfo.LevelName))
+        {
+            LevelObjects.Add(levelInfo.LevelName, new());
+            CurrentLevelObjects.ForEach(x =>
+            {
+                if (x is not Node obj)
+                {
+                    Logger.Log($"{x.GetType()} is not an Node.", GameLogger.LogType.Warning);
+                }
+                else
+                {
+                    Logger.Log($"Added object to level: {obj.Name}", GameLogger.LogType.Info);
+                    LevelObjects[levelInfo.LevelName].Add((obj.Name, false));
+                }
+            });
+        }
+        else
+        {
+            CurrentLevelObjects.ForEach(x =>
+            {
+                if (x is not Node obj)
+                {
+                    Logger.Log($"{x.GetType()} is not an Node.", GameLogger.LogType.Warning);
+                }
+                else
+                {
+                    var (_, objState) = LevelObjects[levelInfo.LevelName].Find(x => x.name == obj.Name);
+                    Logger.Log($"Clearing object from level: {obj.Name}. State: {objState}", GameLogger.LogType.Info);
+                    if (!objState) x.ClearFromLevel();
+                }
+            });
+        }
+    }
+
+    /// <summary> Changes the state of the level object and synchronizes it with the level. </summary>
+    public void ChangeLevelObject(Node2D levelObject, bool active, Action callback = null)
+    {
+        if (LevelObjects[levelInfo.LevelName].Any(x => x.name == levelObject.Name))
+        {
+            var obj = LevelObjects[levelInfo.LevelName].First(x => x.name == levelObject.Name);
+            obj.state = active;
+
+            callback?.Invoke();
+        }
+        else
+        {
+            Logger.Log($"Level object not found: {levelObject.Name}", GameLogger.LogType.Warning);
+        }
+    }
+    #endregion
 
     public override void _Process(double delta)
     {
         RemoveInvalidEntities();
     }
 
+    #region Entity management
     private void RemoveInvalidEntities()
     {
         var entitiesToRemove = new List<Entity>();
@@ -281,12 +367,23 @@ public partial class LevelManager : Node
         }
     }
 
+    /// <summary> Registers an entity to the level. </summary>
+    public void RegisterEntity(Entity entity)
+    {
+        Entities.Add(entity);
+
+        // Disable the AI if the cheat is active.
+        var disableAiCheat = CheatsMenu.GetCheat("disable_ai");
+        entity.DisableAI = disableAiCheat != null && disableAiCheat.Active;
+    }
+    #endregion
 
     public void ReloadLevel()
     {
         GalatimeGlobals.Instance.LoadScene(LevelInfo.LevelInstance.SceneFilePath);
     }
 
+    #region Audio management
     private void InitializeAudioPlayers()
     {
         AudioPlayerCombat = new() { VolumeDb = -80 };
@@ -317,18 +414,6 @@ public partial class LevelManager : Node
         SwitchAudio(false, AUDIO_ENDING_DURATION, true);
     }
 
-    /// <summary> Smoothly fades the time scale. </summary>
-    /// <param name="duration"> The duration of the transition. </param>
-    public void TweenTimeScale(float duration = 0.5f)
-    {
-        var tween = GetTree().CreateTween().SetParallel();
-        tween.TweenMethod(Callable.From<float>(x => Engine.TimeScale = x), 0.1f, 1f, duration);
-        AudioPlayerCombat.PitchScale = 0.1f;
-        AudioPlayerCombatCalm.PitchScale = 0.1f;
-        tween.TweenProperty(AudioPlayerCombat, "pitch_scale", 1f, duration);
-        tween.TweenProperty(AudioPlayerCombatCalm, "pitch_scale", 1f, duration);
-    }
-
     private void SwitchAudio(bool isCombat, float duration = AUDIO_SWITCHING_DURATION, bool stopMusic = false)
     {
         var tween = GetTree().CreateTween().SetParallel();
@@ -349,14 +434,21 @@ public partial class LevelManager : Node
             }
         };
     }
+    #endregion
 
-    /// <summary> Registers an entity to the level. </summary>
-    public void RegisterEntity(Entity entity)
+    #region Tools
+    /// <summary> Smoothly fades the time scale. </summary>
+    /// <param name="duration"> The duration of the transition. </param>
+    public void TweenTimeScale(float duration = 0.5f)
     {
-        Entities.Add(entity);
-
-        // Disable the AI if the cheat is active.
-        var disableAiCheat = CheatsMenu.GetCheat("disable_ai");
-        entity.DisableAI = disableAiCheat != null && disableAiCheat.Active;
+        var tween = GetTree().CreateTween().SetParallel();
+        tween.TweenMethod(Callable.From<float>(x => Engine.TimeScale = x), 0.1f, 1f, duration);
+        AudioPlayerCombat.PitchScale = 0.1f;
+        AudioPlayerCombatCalm.PitchScale = 0.1f;
+        tween.TweenProperty(AudioPlayerCombat, "pitch_scale", 1f, duration);
+        tween.TweenProperty(AudioPlayerCombatCalm, "pitch_scale", 1f, duration);
     }
+    #endregion
+
+
 }

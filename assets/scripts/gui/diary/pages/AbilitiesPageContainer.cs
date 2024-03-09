@@ -26,6 +26,12 @@ public partial class AbilitiesPageContainer : Control
         OnAbilitiesChanged();
     }
 
+    public override void _ExitTree()
+    {
+        PlayerVariables.OnAbilitiesChanged -= OnAbilitiesChanged;
+        AbilityContainers.Clear();
+    }
+
     public void OnAbilitiesChanged()
     {
         for (int i = 0; i < PlayerVariables.Abilities.Length; i++)

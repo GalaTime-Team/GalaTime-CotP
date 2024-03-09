@@ -17,9 +17,9 @@ public partial class Doorblock : StaticBody2D, IActivatable
         set
         {
             isOpen = value;
-            CollisionLayer = (uint)(isOpen ? 0 : 1);
+            SetCollisionLayerValue(1, !value);
             Visible = !isOpen;
-            if (!isOpen) AudioStreamPlayer.Play();
+            if (!isOpen) AudioStreamPlayer?.Play();
         }
     }
 

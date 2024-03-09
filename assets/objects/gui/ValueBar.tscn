@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" path="res://assets/scripts/gui/ValueBar.cs" id="1_7fj42"]
 
-[node name="ValueBar" type="Control"]
+[node name="ValueBar" type="Control" node_paths=PackedStringArray("ShakeControls")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_7fj42")
+ShakeControls = []

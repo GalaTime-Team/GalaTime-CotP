@@ -16,13 +16,13 @@ public partial class HumanoidCharacter : Entity
     public float PushingSpeedMultiplier = 0.4f;
 
     /// <summary> If the character is dodging right now. </summary>
-    protected bool IsDodge = false;
+    public bool IsDodge = false;
     /// <summary> If the character is able to dodge right now. </summary>
-    protected bool CanDodge = true;
+    public bool CanDodge = true;
     /// <summary> If the character is pushing. It slows character's movement and prevent to dash. </summary>
     public bool IsPushing;
     /// <summary> The current rotation of the character. </summary>
-    protected Vector2 VectorRotation;
+    public Vector2 VectorRotation;
     /// <summary> If the humanoid doll should be disabled and not playing an animation. </summary>
     public bool DisableHumanoidDoll;
 
@@ -32,8 +32,8 @@ public partial class HumanoidCharacter : Entity
     /// <summary> The list of abilities of the character. </summary>
     public List<AbilityData> Abilities = new();
 
-    protected Timer DodgeTimer;
-    protected Timer AbilityCountdownTimer;
+    public Timer DodgeTimer;
+    public Timer AbilityCountdownTimer;
 
     // Required nodes for the character
     public HumanoidDoll HumanoidDoll;
