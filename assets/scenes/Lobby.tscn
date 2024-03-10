@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://txwr2a75w6yq"]
+[gd_scene load_steps=14 format=3 uid="uid://txwr2a75w6yq"]
 
 [ext_resource type="Script" path="res://assets/scripts/scenes/LLobby.cs" id="1_34ayc"]
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="2_2sbvd"]
+[ext_resource type="PackedScene" uid="uid://b36vtmqscr1we" path="res://assets/data/environment/DreamWorldWorldEnvironment.tscn" id="2_htnjq"]
 [ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="2_plqd3"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://assets/sprites/particles/dream_world_particles.png" id="3_fwky3"]
 [ext_resource type="TileSet" uid="uid://bjos0o0ign6i5" path="res://assets/data/tileset/DreamWorldTileset.tres" id="6_7hqno"]
@@ -46,6 +47,8 @@ y_sort_enabled = true
 script = ExtResource("1_34ayc")
 metadata/_edit_vertical_guides_ = [-563.0]
 metadata/_edit_lock_ = true
+
+[node name="DreamWorldWorldEnvironment" parent="." instance=ExtResource("2_htnjq")]
 
 [node name="LevelInfo" parent="." instance=ExtResource("2_2sbvd")]
 LevelName = "Dream World"

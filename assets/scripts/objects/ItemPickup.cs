@@ -45,8 +45,6 @@ namespace Galatime
 
             DisplayItem(ItemId);
             velocity = SpawnVelocity;
-
-            LevelManager.Instance.SaveLevelObject(this, new object[] { GlobalPosition, false });
         }
 
         public void LoadLevelObject(object[] state)

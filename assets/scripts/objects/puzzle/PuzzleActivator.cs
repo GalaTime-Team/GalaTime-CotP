@@ -29,10 +29,10 @@ public partial class PuzzleActivator : Node
         else Logger.Log("Activatable object is not an IActivatable", GameLogger.LogType.Error);
 
         // For testing purposes
-        var cm = CutsceneManager.Instance;
-        cm.BlockPlayer(true);
-        cm.SimpleCameraCutscene((Activatable as Node2D).GlobalPosition, .3f, 3f).Finished += 
-            () => cm.BlockPlayer(false);
+        // var cm = CutsceneManager.Instance;
+        // cm.BlockPlayer(true);
+        // cm.SimpleCameraCutscene((Activatable as Node2D).GlobalPosition, .3f, 3f).Finished += 
+        //     () => cm.BlockPlayer(false);
     }
 
     public override void _ExitTree()

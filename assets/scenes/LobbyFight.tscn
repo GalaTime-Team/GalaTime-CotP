@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cblmuql6moq62"]
+[gd_scene load_steps=24 format=3 uid="uid://cblmuql6moq62"]
 
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="1_egyl8"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://assets/sprites/particles/dream_world_particles.png" id="2_b24jw"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bljwt8h81gnrn" path="res://assets/objects/ItemPickup.tscn" id="9_7m3q7"]
 [ext_resource type="PackedScene" uid="uid://pbacv76llqfo" path="res://assets/objects/puzzle/DragableObject.tscn" id="10_hht8t"]
 [ext_resource type="PackedScene" uid="uid://cnpiuyqikoyok" path="res://assets/objects/puzzle/DraggableObjectPedestal.tscn" id="11_upgjy"]
+[ext_resource type="PackedScene" uid="uid://b36vtmqscr1we" path="res://assets/data/environment/DreamWorldWorldEnvironment.tscn" id="13_x0ycl"]
 
 [sub_resource type="Curve" id="Curve_tl2pf"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.268953, 1), 0.0, 0.0, 0, 0, Vector2(0.734657, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -55,32 +56,11 @@ size = Vector2(32, 8)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qkx30"]
 size = Vector2(512, 64)
 
-[sub_resource type="Gradient" id="Gradient_4k12s"]
-offsets = PackedFloat32Array(0, 0.993711)
-colors = PackedColorArray(0, 0, 0, 1, 1, 0.705882, 1, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_xf5qo"]
-gradient = SubResource("Gradient_4k12s")
-
-[sub_resource type="Gradient" id="Gradient_xqsme"]
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_r4xvl"]
-gradient = SubResource("Gradient_xqsme")
-
-[sub_resource type="Environment" id="Environment_wc805"]
-background_mode = 3
-glow_enabled = true
-glow_blend_mode = 1
-glow_hdr_threshold = 0.5
-glow_map = SubResource("GradientTexture1D_r4xvl")
-adjustment_enabled = true
-adjustment_brightness = 1.5
-adjustment_saturation = 1.2
-adjustment_color_correction = SubResource("GradientTexture1D_xf5qo")
-
 [node name="LobbyFight" type="Node2D"]
 y_sort_enabled = true
 metadata/_edit_vertical_guides_ = [-563.0]
+
+[node name="DreamWorldWorldEnvironment" parent="." instance=ExtResource("13_x0ycl")]
 
 [node name="LevelInfo" parent="." instance=ExtResource("1_egyl8")]
 LevelName = "Fighting Area"
@@ -273,9 +253,6 @@ position = Vector2(-992, 576)
 
 [node name="DragableObject5" parent="." instance=ExtResource("10_hht8t")]
 position = Vector2(-1184, 576)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_wc805")
 
 [editable path="Roomwrap"]
 [editable path="Roomwrap2"]

@@ -1,4 +1,5 @@
 using ExtensionMethods;
+using Galatime.Global;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,14 @@ public partial class PlayerVariables : Node
         // Initializing the inventory and abilities
         OnItemsChanged?.Invoke();
         OnAbilitiesChanged?.Invoke();
+    }
+
+    /// <summary> Set current save to load. </summary>
+    public void SetSave(int save)
+    {
+        CurrentSave = save;
+        ShouldLoadSave = true;
+        LevelManager.Instance.LevelObjects.Clear();
     }
 
     public void LoadVariables(Player instance)

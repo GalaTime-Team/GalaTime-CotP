@@ -140,6 +140,10 @@ public partial class MainMenu : Control
 
         GalatimeGlobals.CheckSaves();
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
+
+        // Play menu sound only when the menu is fully loaded.
+        AudioMenu.Play();
+        AudioMenuMuffled.Play();
     }
 
     private void InitializeMainMenuButtons()
@@ -203,8 +207,7 @@ public partial class MainMenu : Control
         AnimationPlayer.Play("start");
 
         GD.PrintRich($"[color=purple]MAIN MENU[/color]: [color=cyan]Selected save {id}, waiting for end of the animation[/color]");
-        PlayerVariables.CurrentSave = id - 1;
-        PlayerVariables.Instance.ShouldLoadSave = true;
+        PlayerVariables.Instance.SetSave(id - 1);
 
         DelayInteract.Start();
     }

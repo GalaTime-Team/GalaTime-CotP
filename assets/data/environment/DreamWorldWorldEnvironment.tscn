@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://b36vtmqscr1we"]
+
+[sub_resource type="Gradient" id="Gradient_4k12s"]
+offsets = PackedFloat32Array(0, 0.993711)
+colors = PackedColorArray(0, 0, 0, 1, 1, 0.705882, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xf5qo"]
+gradient = SubResource("Gradient_4k12s")
+
+[sub_resource type="Gradient" id="Gradient_xqsme"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_r4xvl"]
+gradient = SubResource("Gradient_xqsme")
+
+[sub_resource type="Environment" id="Environment_wc805"]
+background_mode = 3
+glow_enabled = true
+glow_blend_mode = 1
+glow_hdr_threshold = 0.5
+glow_map = SubResource("GradientTexture1D_r4xvl")
+adjustment_enabled = true
+adjustment_brightness = 1.5
+adjustment_saturation = 1.2
+adjustment_color_correction = SubResource("GradientTexture1D_xf5qo")
+
+[node name="DreamWorldWorldEnvironment" type="WorldEnvironment"]
+environment = SubResource("Environment_wc805")
