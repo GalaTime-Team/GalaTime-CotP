@@ -192,7 +192,7 @@ public partial class HumanoidCharacter : Entity
         // Deleting instances of ability timer from the abilities list to avoid memory leaks
         foreach (var ab in Abilities)
         {
-            ab.CooldownTimer.QueueFree();
+            ab.CooldownTimer?.QueueFree();
             ab.CooldownTimer = null;
         }
 

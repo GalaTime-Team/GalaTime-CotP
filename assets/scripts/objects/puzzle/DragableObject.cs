@@ -1,10 +1,12 @@
 using Galatime;
+using Galatime.Global;
 using Galatime.Helpers;
+using Galatime.Interfaces;
 using Godot;
 
 namespace Galatime.Puzzle;
 
-public partial class DragableObject : CharacterBody2D
+public partial class DragableObject : CharacterBody2D, ILevelObject
 {
     GameLogger Logger = new("DragableObject", GameLogger.ConsoleColor.Orange);
 
@@ -27,7 +29,11 @@ public partial class DragableObject : CharacterBody2D
         {
             isDragging = value;
             if (CurrentCharacter != null) CurrentCharacter.IsPushing = value;
-            if (!value) CurrentCharacter = null;
+            if (!value) 
+            {
+                LevelManager.Instance.SaveLevelObject(this, new object[] { GlobalPosition });
+                CurrentCharacter = null;
+            }
             InteractiveTrigger.InteractText = IsDragging ? "Stop Pushing" : "Push";
         }
     }
@@ -43,6 +49,12 @@ public partial class DragableObject : CharacterBody2D
         InteractiveTrigger.OnInteract += OnInteract;
         InteractiveTrigger.OnAreaAction += OnAreaAction;
         InteractiveTrigger.DisableIf = () => CurrentCharacter != null;
+    }
+
+    public void LoadLevelObject(object[] state)
+    {
+        var position = (Vector2)state[0];
+        GlobalPosition = position;
     }
 
     public void OnInteract(TestCharacter character)

@@ -1,9 +1,11 @@
+using Galatime.Global;
+using Galatime.Interfaces;
 using Godot;
 using NodeExtensionMethods;
 
 namespace Galatime
 {
-    public partial class ItemPickup : CharacterBody2D
+    public partial class ItemPickup : CharacterBody2D, ILevelObject
     {
         #region Exports
         /// <summary> Spawn velocity of the item pickup, which is used to move the item when spawned. </summary>
@@ -39,17 +41,29 @@ namespace Galatime
             PickupArea = GetNode<Area2D>("PickupArea");
             #endregion
 
-            PickupArea.BodyEntered += (Node2D node) => _onEntered(node);
+            PickupArea.BodyEntered += (Node2D node) => OnEntered(node);
 
             DisplayItem(ItemId);
             velocity = SpawnVelocity;
+
+            LevelManager.Instance.SaveLevelObject(this, new object[] { GlobalPosition, false });
         }
 
-        public void _onEntered(Node2D node)
+        public void LoadLevelObject(object[] state)
+        {
+            var isPickedUp = (bool)state[1];
+            if (isPickedUp) QueueFree();
+
+            var pos = (Vector2)state[0];
+            GlobalPosition = pos;
+        }
+
+        public void OnEntered(Node2D node)
         {
             if (node.IsPossessed())
             {
                 GetNode<PlayerVariables>("/root/PlayerVariables").AddItem(Item, Quantity);
+                LevelManager.Instance.SaveLevelObject(this, new object[] { GlobalPosition, true });
                 QueueFree();
             }
         }

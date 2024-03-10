@@ -7,7 +7,7 @@ using NodeExtensionMethods;
 using Galatime.Interfaces;
 
 /// <summary> Node, which controls the enemy room. Spawns enemies and controls doors. </summary>
-public partial class EnemyRoom : Node2D, IClearableLevelObject
+public partial class EnemyRoom : Node2D, ILevelObject
 {
     public bool CanActivate = true;
 
@@ -43,9 +43,10 @@ public partial class EnemyRoom : Node2D, IClearableLevelObject
         if (TriggerArea != null) TriggerArea.BodyEntered += OnEnter;
     }
 
-    public void ClearFromLevel()
+    public void LoadLevelObject(object[] data)
     {
-        CanActivate = false;
+        var isActivated = (bool)data[0];
+        CanActivate = isActivated;
     }
 
     private void OnEnter(Node node)
@@ -70,7 +71,6 @@ public partial class EnemyRoom : Node2D, IClearableLevelObject
 
         // Close all the doors
         foreach (var door in DoorBlocksList) door.IsOpen = false;
-        // Wait for 1 second
         await ToSignal(GetTree().CreateTimer(1.0f), "timeout");
 
         // Spawn enemies at each spawn position
@@ -81,7 +81,6 @@ public partial class EnemyRoom : Node2D, IClearableLevelObject
             // Set the enemy's position and add it to the scene
             enemy.GlobalPosition = spawn.GlobalPosition;
             GetParent().AddChild(enemy);
-            // Add the enemy to the list of current enemies
             CurrentEnemies.Add(enemy);
 
             // Subscribe to the OnDeath event of the enemy to track enemies.
@@ -98,23 +97,16 @@ public partial class EnemyRoom : Node2D, IClearableLevelObject
     public async void EndBattle()
     {
         var LevelManager = GetNode<LevelManager>("/root/LevelManager");
-
-        // Start the time scale tween animation
         LevelManager.TweenTimeScale();
 
-        // Wait for 1 second
         await ToSignal(GetTree().CreateTimer(1f), "timeout");
 
-        // Disable combat mode
         LevelManager.IsCombat = false;
-
-        // Open all the doors
         DoorBlocksList.ForEach(door => door.IsOpen = true);
-
-        // Clear the CurrentEnemies list
         CurrentEnemies.Clear();
 
-        LevelManager.Instance.ChangeLevelObject(this, false);
+        // Save the level object, so it can be loaded again between levels.
+        LevelManager.Instance.SaveLevelObject(this, new object[] { false });
     }
 
     private void OnEnemyDeath()

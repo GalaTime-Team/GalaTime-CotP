@@ -5,8 +5,21 @@ using System.Linq;
 using System.Text;
 using System;
 using Galatime.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Galatime.Global;
+
+/// <summary> Represents an object in the level. Contains the name of the object and the state that can be any type. </summary>
+public struct LevelObject
+{
+    public string Name = "";
+    public object[] Data;
+
+    public LevelObject(string name = "", object[] data = null) => (Name, Data) = (name, data);
+
+    public static bool operator ==(LevelObject left, LevelObject right) => left.Name == right.Name;
+    public static bool operator !=(LevelObject left, LevelObject right) => left.Name != right.Name;
+}
 
 /// <summary> Manages the level. Contains the audios for the level and managing the time scale. </summary>
 public partial class LevelManager : Node
@@ -76,9 +89,9 @@ public partial class LevelManager : Node
     }
 
     /// <summary> List of current level objects in the current level. </summary>
-    public List<IClearableLevelObject> CurrentLevelObjects = new();
+    public List<ILevelObject> CurrentLevelObjects = new();
     /// <summary> List of level objects in stored levels. Contains the state of each level object. </summary>
-    public Dictionary<string, List<(string name, bool state)>> LevelObjects = new();
+    public Dictionary<string, List<LevelObject>> LevelObjects = new();
 
     /// <summary> The entities in the current level. </summary>
     public List<Entity> Entities = new();
@@ -278,66 +291,79 @@ public partial class LevelManager : Node
     }
 
     #region Level management
+    /// <summary> Gets the level objects in current level. </summary>
+    public List<LevelObject> GetCurrentLevelObjects() => LevelObjects[levelInfo.LevelName];
+    /// <summary> Gets the level object in current level by name. </summary>
+    public LevelObject GetLevelObject(string name) => GetCurrentLevelObjects().Find(x => x.Name == name);
+    /// <summary> Gets the level object index in current level by name. </summary>
+    public int GetLevelObjectIndex(string name) => GetCurrentLevelObjects().FindIndex(x => x.Name == name);
+
     /// <summary> Updates the level objects. This includes adding current level objects and changing state of level objects. </summary>
     public void UpdateLevelObjects()
     {
+        // Getting current level objects in current level.
         CurrentLevelObjects.Clear();
         levelInfo.GetParent().GetChildren().ToList().ForEach(x =>
         {
-            if (x is IClearableLevelObject obj)
+            if (x is ILevelObject obj)
             {
                 Logger.Log($"Updated current object to level: {x.Name}", GameLogger.LogType.Info);
                 CurrentLevelObjects.Add(obj);
             }
         });
+
+        // If level object doesn't exist for the current level, add it.
         if (!LevelObjects.ContainsKey(levelInfo.LevelName))
         {
             LevelObjects.Add(levelInfo.LevelName, new());
+            // Adding level objects to the level with default data.
             CurrentLevelObjects.ForEach(x =>
             {
-                if (x is not Node obj)
-                {
-                    Logger.Log($"{x.GetType()} is not an Node.", GameLogger.LogType.Warning);
-                }
+                // It's impossible to add object to level if it's not a Node.
+                if (x is not Node obj) Logger.Log($"{x.GetType()} is not an Node.", GameLogger.LogType.Warning);
                 else
                 {
                     Logger.Log($"Added object to level: {obj.Name}", GameLogger.LogType.Info);
-                    LevelObjects[levelInfo.LevelName].Add((obj.Name, false));
+                    LevelObjects[levelInfo.LevelName].Add(new(obj.Name, Array.Empty<object>()));
                 }
             });
         }
-        else
+        else // Load level objects from the level.
         {
             CurrentLevelObjects.ForEach(x =>
             {
-                if (x is not Node obj)
-                {
-                    Logger.Log($"{x.GetType()} is not an Node.", GameLogger.LogType.Warning);
-                }
+                // It's impossible to load level object if it's not a Node.
+                if (x is not Node obj) Logger.Log($"{x.GetType()} is not an Node.", GameLogger.LogType.Warning);
                 else
                 {
-                    var (_, objState) = LevelObjects[levelInfo.LevelName].Find(x => x.name == obj.Name);
-                    Logger.Log($"Clearing object from level: {obj.Name}. State: {objState}", GameLogger.LogType.Info);
-                    if (!objState) x.ClearFromLevel();
+                    var levelObj = GetLevelObject(obj.Name);
+                    Logger.Log($"Loading object from level: {obj.Name}. Data has {levelObj.Data.Length} elements", GameLogger.LogType.Info);
+                    if (levelObj.Data.Length > 0) x.LoadLevelObject(levelObj.Data);
+                    else Logger.Log($"Level object {obj.Name} has no data. Level object will not be loaded", GameLogger.LogType.Info);
                 }
             });
         }
     }
 
-    /// <summary> Changes the state of the level object and synchronizes it with the level. </summary>
-    public void ChangeLevelObject(Node2D levelObject, bool active, Action callback = null)
+    /// <summary> Saves the state of the level object that can be synchronized between levels. </summary>
+    public void SaveLevelObject(Node2D levelObject, object[] data, Action callback = null)
     {
-        if (LevelObjects[levelInfo.LevelName].Any(x => x.name == levelObject.Name))
+        var objects = GetCurrentLevelObjects();
+
+        var i = GetLevelObjectIndex(levelObject.Name);
+        if (i != -1) // -1 means that level object doesn't exist
         {
-            var obj = LevelObjects[levelInfo.LevelName].First(x => x.name == levelObject.Name);
-            obj.state = active;
+            Logger.Log($"Saving level object: {levelObject.Name}. Data has {data.Length} elements", GameLogger.LogType.Info);
+
+            // Adding data to the level object.
+            var obj = GetCurrentLevelObjects()[i];
+            obj.Data = data;
+            GetCurrentLevelObjects()[i] = obj;
 
             callback?.Invoke();
         }
         else
-        {
             Logger.Log($"Level object not found: {levelObject.Name}", GameLogger.LogType.Warning);
-        }
     }
     #endregion
 
