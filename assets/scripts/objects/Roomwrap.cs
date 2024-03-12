@@ -1,5 +1,6 @@
 namespace Galatime;
 
+using Galatime.Global;
 using Godot;
 using NodeExtensionMethods;
 
@@ -7,11 +8,22 @@ using NodeExtensionMethods;
 /// <summary>
 /// Represents a trigger, which transitions to a new room (Scene)
 /// </summary>
-/// <remarks>Don't confuse with <see cref="GalatimeGlobals.LoadScene(string)"/>, because it's loads a scene, but that node is trigger for the room transition</remarks>
-public partial class Roomwrap : Node2D
+/// <remarks> Don't confuse with <see cref="GalatimeGlobals.LoadScene(string)"/>, because it's loads a scene, but that node is trigger for the room transition </remarks>
+[Tool] public partial class Roomwrap : Node2D
 {
-    [Export(PropertyHint.File)] public string Scene;
+    private string scene;
+    [Export(PropertyHint.File, "*.tscn")] public string Scene
+    {
+        get => scene;
+        set
+        {
+            scene = value;
+            UpdateConfigurationWarnings();
+        }
+    }
     [Export] public float AnimationDuration = 0.5f;
+    /// <summary> Determines the spawn point of the player in the next room. </summary>
+    [Export(PropertyHint.Range, "0,255,1")] public byte PlayerSpawnPoint = 0;
     public Color CustomColor;
     private Area2D TriggerArea;
 
@@ -21,7 +33,8 @@ public partial class Roomwrap : Node2D
         TriggerArea.BodyEntered += OnEnter;
     }
 
-    public override void _ExitTree() {
+    public override void _ExitTree() 
+    {
         TriggerArea.BodyEntered -= OnEnter;
     }
 
@@ -37,7 +50,16 @@ public partial class Roomwrap : Node2D
     }
     private void OnFadeEnded()
     {
+        LevelManager.Instance.PlayerSpawnPointIndex = PlayerSpawnPoint;
         var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
         globals.LoadScene(Scene);
+    }
+
+    public override string[] _GetConfigurationWarnings()
+    {
+        if (Scene.Length == 0)
+            return new string[] { "Please specify a scene or it will not be loaded" };
+        else
+            return System.Array.Empty<string>();
     }
 }

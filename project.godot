@@ -22,6 +22,7 @@ config/windows_native_icon="res://icon.ico"
 
 WindowManager="*res://assets/scripts/WindowManager.cs"
 GalatimeGlobals="*res://assets/scripts/GalatimeGlobals.cs"
+AssetsManager="*res://assets/scripts/AssetsManager.cs"
 PlayerVariables="*res://assets/scripts/PlayerVariables.cs"
 LevelManager="*res://assets/scripts/LevelManager.cs"
 EnemiesList="*res://assets/scripts/objects/enemies/controllers/EnemiesList.cs"

@@ -113,8 +113,6 @@ public partial class PauseMenu : Control
         {
             Paused = false;
             globals.LoadScene();
-            var levelManager = GetNode<LevelManager>("/root/LevelManager");
-            levelManager.EndAudioCombat();
         };
         SettingsButton.Pressed += () => OpenWindow(SettingsContainerControl, SettingsContainer.FirstControl);
     }

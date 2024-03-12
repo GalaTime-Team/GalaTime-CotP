@@ -53,6 +53,8 @@ public class Cheat
 /// <summary> Represents the cheats menu in the game. Used for debugging and testing. Also, it can be activated by the player. </summary>
 public partial class CheatsMenu : Control
 {
+    public GameLogger Logger { get; private set; } = new("CheatsMenu", GameLogger.ConsoleColor.Lime);
+
     public enum LogLevel
     {
         Result,
@@ -98,7 +100,7 @@ public partial class CheatsMenu : Control
             // Pause only when this cheat is active.
             GetTree().Paused = shown && GetCheat("pause_when_cheats_active").Active;
 
-            InputSearch.Clear(); // To clear previous search results.
+            if (GetCheat("clear_input_when_toggled").Active) InputSearch.Clear(); // To clear previous search results.
             // Focus on the first cheat.
             CheatButtons[0].GrabFocus();
         }
@@ -160,6 +162,7 @@ public partial class CheatsMenu : Control
             {
                 GetTree().Paused = Shown && active;
             }, Cheat.CheatType.Toggle, true),
+            new Cheat("clear_input_when_toggled", "Clear input when toggled", "Clears input text box when toggled.", "", null, Cheat.CheatType.Toggle, false),
             new Cheat("help_cheat", "Help for cheat", "Show help for this cheat.", "", (_, input) =>
             {
                 var inputArguments = ParseCheatArguments(input, 1);
@@ -243,7 +246,9 @@ public partial class CheatsMenu : Control
             LogLevel.Error => "red",
             _ => "white"
         };
-        LogLabel.AppendText($"[color={color}][{level}] [color=white]{text} {(SameLogsCount > 0 ? $"({SameLogsCount + 1}x)" : "")}");
+        var formattedText = $"[color={color}][{level}] [color=white]{text} {(SameLogsCount > 0 ? $"({SameLogsCount + 1}x)" : "")}";
+        LogLabel.AppendText(formattedText);
+        Logger.Log(formattedText);
     }
 
     /// <summary> Returns the cheat with the given id. Returns null if not found. </summary>
@@ -357,19 +362,48 @@ public partial class CheatsMenu : Control
     /// <returns> The parsed arguments and a boolean indicating if the parsing was successful. </returns>
     public (string[] args, bool result) ParseCheatArguments(string args, int requiredArgs = 0)
     {
-        if (args?.Length == 0)
+        if (args is null || args.Length == 0)
         {
             Log("No arguments", LogLevel.Error);
             return (Array.Empty<string>(), false);
         }
-        var inputArguments = args.Split(' ');
-        if (inputArguments.Length != requiredArgs)
+
+        var inputArguments = new List<string>();
+        var currentArgument = "";
+        var inQuotes = false;
+
+        for (var i = 0; i < args.Length; i++)
+        {
+            var c = args[i];
+
+            if (c == '"')
+            {
+                inQuotes = !inQuotes;
+                continue;
+            }
+
+            if (c == ' ' && !inQuotes)
+            {
+                inputArguments.Add(currentArgument);
+                currentArgument = "";
+                continue;
+            }
+
+            currentArgument += c;
+        }
+
+        inputArguments.Add(currentArgument);
+
+        if (inputArguments.Count < requiredArgs)
         {
             Log("Invalid number of arguments", LogLevel.Error);
             return (Array.Empty<string>(), false);
         }
-        return (inputArguments, true);
+
+        return (inputArguments.ToArray(), true);
     }
+
+
 
     /// <summary> Returns the player from the PlayerVariables. If the player is invalid, it shows an error in cheats menu log. </summary>
     public Player GetPlayer()

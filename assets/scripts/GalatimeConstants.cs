@@ -7,10 +7,16 @@ public static class GalatimeConstants
     public const string Version = "0.10.0";
     /// <summary> The short summary of the version. </summary>
     public const string VersionDescription = "Firecloak update\nPREVIEW BUILD";
+
     /// <summary> The path to the saves folder. </summary>
     public const string SavesPath = "user://saves/";
     /// <summary> The path to the settings file. </summary>
     public const string SettingsPath = "user://settings.yml";
+    /// <summary> The path to the assets file. </summary>
+    public const string AssetsPath = "res://assets/data/json/assets.csv";
+    /// <summary> The path to the levels file. </summary>
+    public const string LevelsDataPath = "res://assets/data/json/levels.csv";
+
     /// <summary> The Discord application ID, which is used for connecting to the Discord rich presence. </summary>
     public const string DISCORD_ID = "1071756821158699068";
 }

@@ -7,7 +7,6 @@ size = Vector2(128, 192)
 
 [node name="Roomwrap" type="Node2D"]
 script = ExtResource("1")
-Scene = "res://assets/scenes/test.tscn"
 
 [node name="TriggerArea" type="Area2D" parent="."]
 collision_layer = 0

@@ -141,6 +141,10 @@ public partial class MainMenu : Control
         GalatimeGlobals.CheckSaves();
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
 
+        // End previous level audio.
+        var levelManager = LevelManager.Instance;
+        levelManager.EndAudioCombat();
+
         // Play menu sound only when the menu is fully loaded.
         AudioMenu.Play();
         AudioMenuMuffled.Play();
