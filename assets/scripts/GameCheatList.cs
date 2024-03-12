@@ -13,7 +13,7 @@ public static class GameCheatList
         cheatsMenu.RegisterCheat(
             new Cheat(name: "[color=yellow]Game cheats[/color]", type: Cheat.CheatType.Separator),
             new Cheat(name: "Global data", type: Cheat.CheatType.Separator),
-            new Cheat("list_items", "List items", "Print list of all items", "cheat_list_items", (_, _) =>
+            new Cheat("list_items", "List items", "Print list of all items.", "cheat_list_items", (_, _) =>
             {
                 var items = GalatimeGlobals.ItemList;
                 var str = new StringBuilder();
@@ -22,7 +22,7 @@ public static class GameCheatList
 
                 cheatsMenu.Log(str.ToString(), CheatsMenu.LogLevel.Result);
             }),
-            new Cheat("abilities_list", "Abilities list", "Print list of all abilities", "cheat_abilities_list", (_, _) =>
+            new Cheat("abilities_list", "Abilities list", "Print list of all abilities.", "cheat_abilities_list", (_, _) =>
             {
                 var abilities = GalatimeGlobals.AbilitiesList;
                 var str = new StringBuilder();
@@ -31,7 +31,7 @@ public static class GameCheatList
 
                 cheatsMenu.Log(str.ToString(), CheatsMenu.LogLevel.Result);
             }),
-            new Cheat("levels_list", "Levels list", "Print list of all registered levels", "cheat_levels_list", (_, _) =>
+            new Cheat("levels_list", "Levels list", "Print list of all registered levels.", "cheat_levels_list", (_, _) =>
             {
                 var levels = AssetsManager.Instance.Levels;
                 var str = new StringBuilder();
@@ -41,7 +41,7 @@ public static class GameCheatList
                 cheatsMenu.Log(str.ToString(), CheatsMenu.LogLevel.Result);
             }),
             new Cheat(name: "Levels", type: Cheat.CheatType.Separator),
-            new Cheat("clear_level_objects_data", "Clear current level objects data", "Clears all level objects data in the current level", "cheat_clear_level_objects_data", (_, _) => {
+            new Cheat("clear_level_objects_data", "Clear current level objects data.", "Clears all level objects data in the current level", "cheat_clear_level_objects_data", (_, _) => {
                 var lm = LevelManager.Instance;
                 var objs = lm.GetCurrentLevelObjects();
                 for (var i = 0; i < objs.Count; i++)

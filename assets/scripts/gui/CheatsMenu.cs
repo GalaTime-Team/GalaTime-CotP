@@ -100,7 +100,7 @@ public partial class CheatsMenu : Control
             // Pause only when this cheat is active.
             GetTree().Paused = shown && GetCheat("pause_when_cheats_active").Active;
 
-            if (GetCheat("clear_input_when_toggled").Active) InputSearch.Clear(); // To clear previous search results.
+            if (GetCheat("clear_search_when_toggled").Active) InputSearch.Clear(); // To clear previous search results.
             // Focus on the first cheat.
             CheatButtons[0].GrabFocus();
         }
@@ -162,7 +162,7 @@ public partial class CheatsMenu : Control
             {
                 GetTree().Paused = Shown && active;
             }, Cheat.CheatType.Toggle, true),
-            new Cheat("clear_input_when_toggled", "Clear input when toggled", "Clears input text box when toggled.", "", null, Cheat.CheatType.Toggle, false),
+            new Cheat("clear_search_when_toggled", "Clear search when toggled", "Clears search input text box when toggled.", "", null, Cheat.CheatType.Toggle, false),
             new Cheat("help_cheat", "Help for cheat", "Show help for this cheat.", "", (_, input) =>
             {
                 var inputArguments = ParseCheatArguments(input, 1);
