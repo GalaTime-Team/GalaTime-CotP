@@ -10,6 +10,9 @@ public partial class AssetsManager : Node
 {
     GameLogger Logger { get; } = new(nameof(AssetsManager), GameLogger.ConsoleColor.Green);
 
+    /// <summary> Path to the assets folder. </summary>
+    public const string ASSETS_FOLDER_PATH = "res://assets/";
+
     public static AssetsManager Instance { get; private set; }
 
     /// <summary> Contains all the assets in the game. </summary>
@@ -20,16 +23,13 @@ public partial class AssetsManager : Node
     public override void _Ready()
     {
         Instance = this;
-
         LoadAssets();
     }
 
     public void LoadAssets()
     {
-        var assets = GetTextFromFile(GalatimeConstants.AssetsPath);
-        var levels = GetTextFromFile(GalatimeConstants.LevelsDataPath);
-        Assets = CSVToDictionary(assets);
-        Levels = CSVToDictionary(levels);
+        Assets = LoadAndGetAssets(GalatimeConstants.AssetsPath);
+        Levels = LoadAndGetAssets(GalatimeConstants.LevelsDataPath);
 
         // Print all loaded assets.
         var str = new StringBuilder();
@@ -38,6 +38,9 @@ public partial class AssetsManager : Node
         str.Append("is loaded!");
         Logger.Log(str.ToString(), GameLogger.LogType.Success);
     }
+
+    /// <summary> Shortcut to get the assets from a file. </summary>
+    public Dictionary<string, string> LoadAndGetAssets(string path) => CSVToDictionary(GetTextFromFile(path));
 
     /// <summary> Shortcut to get the text from a file. </summary>
     public string GetTextFromFile(string path)
@@ -78,7 +81,7 @@ public partial class AssetsManager : Node
     public T GetAsset<T>(string name) where T : class
     {
         var asset = Assets[name];
-        if (asset != null) return GD.Load<T>(asset);
+        if (asset != null) return GD.Load<T>(ASSETS_FOLDER_PATH + asset);
         else Logger.Log($"Asset {name} not found!", GameLogger.LogType.Error);
         
         return null;
