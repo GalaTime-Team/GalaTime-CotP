@@ -48,6 +48,8 @@ public class MiscSettingsData
     /// <summary> If the Discord presence is disabled. </summary>
     [YamlMember(Alias = "discord_presence_disabled"), SettingProperty("Discord Presence Disabled")]
     public bool DiscordActivityDisabled;
+    [YamlMember(Alias = "disable_damage_indicators"), SettingProperty("Disable Damage Indicator")]
+    public bool DisableDamageIndicator;
 }
 
 public class BindsSettingsData

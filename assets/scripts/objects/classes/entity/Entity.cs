@@ -354,6 +354,9 @@ public partial class Entity : CharacterBody2D
     /// <param name="type"></param>
     public void SpawnDamageEffect(float amount, DamageDifferenceType type)
     {
+        // If damage indicator is disabled, don't show the effect.
+        if (SettingsGlobals.Settings.Misc.DisableDamageIndicator) return;
+
         var damageEffectInstance = DamageEffectScene.Instantiate<DamageEffect>();
 
         // Setting damage effect and his properties
