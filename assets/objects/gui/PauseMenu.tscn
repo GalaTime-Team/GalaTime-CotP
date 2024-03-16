@@ -32,7 +32,7 @@ color = Color(0, 0, 0, 0)
 
 [node name="SettingsContainer" type="Control" parent="."]
 anchors_preset = 0
-offset_left = -488.0
+offset_left = -576.0
 offset_bottom = 648.0
 
 [node name="SettingsContainer" parent="SettingsContainer" instance=ExtResource("4_wiy5c")]

@@ -5,6 +5,8 @@ namespace Galatime.Settings;
 
 public class SettingsData
 {
+    [YamlMember(Alias = "video"), SettingProperty("Video")]
+    public VideoSettingsData Video = new();
     [YamlMember(Alias = "binds"), SettingProperty("Binds")]
     public BindsSettingsData Binds = new();
 
@@ -15,14 +17,29 @@ public class SettingsData
     public MiscSettingsData Misc = new();
 }
 
+public class VideoSettingsData
+{
+    /// <summary> The resolution of the game. </summary>
+    [YamlMember(Alias = "resolution"), SettingProperty("Resolution"), OptionsSetting(new string[] {"Current Resolution", "640x480", "800x600", "1024x768", "1152x864", "1280x960", "1280x720", "1920x1080" })]
+    public string Resolution = "1280x720";
+    [YamlMember(Alias = "max_fps"), SettingProperty("Max FPS"), OptionsSetting(new string[]{ "No Limit", "15", "30", "60", "90", "120", "144", "240" })]
+    public string MaxFps = "No Limit";
+    /// <summary> If the game is fullscreen. </summary>
+    [YamlMember(Alias = "fullscreen"), SettingProperty("Fullscreen")]
+    public bool Fullscreen = false;
+    /// <summary> If the game is vsync enabled. </summary>
+    [YamlMember(Alias = "vsync"), SettingProperty("Vsync")]
+    public bool Vsync = true;
+}
+
 public class AudioSettingsData
 {
     /// <summary> The master volume of the game. </summary>
-    [YamlMember(Alias = "master_volume"), SettingProperty("Master Volume"), RangeSetting(-80, 0, 4)]
+    [YamlMember(Alias = "master_volume"), SettingProperty("Master Volume")]
     public double MasterVolume = 1;
 
     /// <summary> The music volume of the game. </summary>
-    [YamlMember(Alias = "music_volume"), SettingProperty("Music Volume"), RangeSetting(-80, 0, 4)]
+    [YamlMember(Alias = "music_volume"), SettingProperty("Music Volume")]
     public double MusicVolume = 1;
 }
 
@@ -84,4 +101,11 @@ public class KeybindSettingAttribute : Attribute
 {
     public KeybindSettingAttribute(string actionName) => ActionName = actionName;
     public string ActionName;
+}
+
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+public class OptionsSettingAttribute : Attribute
+{
+    public OptionsSettingAttribute(string[] names) => Names = names;
+    public string[] Names;
 }

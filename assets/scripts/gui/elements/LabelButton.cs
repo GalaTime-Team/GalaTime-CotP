@@ -109,10 +109,7 @@ public partial class LabelButton : Button
                 break;
             case NotificationMouseExit:
             case NotificationFocusExit:
-                if (!Disabled)
-                {
-                    ExitHover();
-                }
+                if (!Disabled) ExitHover();
                 else
                 {
                     Tw?.Kill();
@@ -161,7 +158,7 @@ public partial class LabelButton : Button
         Tw = GetTween();
 
         float duration = Speed * 2;
-        TweenColor(Tw, PressedColor, DefaultColor, duration);
+        TweenColor(Tw, PressedColor, IsHovered() || HasFocus() ? HoverColor : DefaultColor, duration);
         Tw.TweenProperty(Label, "scale", DefaultScale, duration);
     }
 }

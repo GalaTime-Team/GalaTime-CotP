@@ -80,7 +80,7 @@ public partial class AssetsManager : Node
     /// <summary> Loads an asset by specified name and type. </summary>
     public T GetAsset<T>(string name) where T : class
     {
-        var asset = Assets[name];
+        var asset = Assets[name].Trim(); // I don't know why, but it's necessary.
         if (asset != null) return GD.Load<T>(ASSETS_FOLDER_PATH + asset);
         else Logger.Log($"Asset {name} not found!", GameLogger.LogType.Error);
         

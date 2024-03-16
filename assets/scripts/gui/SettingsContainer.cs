@@ -3,6 +3,7 @@ using Galatime.Settings;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Galatime.UI;
@@ -96,28 +97,23 @@ public partial class SettingsContainer : Control
         }
     }
 
-    public void CategoryButtonPressed(Control listControl)
-    {
-        CategoryControls.ForEach(x => x.Visible = x == listControl);
-    }
-
-    public Attribute GetAttribute(FieldInfo field)
-    {
-        return Attribute.GetCustomAttribute(field, typeof(SettingPropertyAttribute));
-    }
+    public void CategoryButtonPressed(Control listControl) => CategoryControls.ForEach(x => x.Visible = x == listControl);
+    public static Attribute GetAttribute(FieldInfo field) => Attribute.GetCustomAttribute(field, typeof(SettingPropertyAttribute));
+    public static T GetAttribute<T>(FieldInfo field) where T : Attribute => (T)Attribute.GetCustomAttribute(field, typeof(T));
 
     public void BuildSetting(Control listControl, SettingPropertyAttribute attribute, object obj, object value, Type type, FieldInfo field)
     {
         var convertedName = attribute != null ? attribute.Name : field.Name;
 
-        // Create a label node to display the name of the field.
-        var label = new Label { Text = convertedName, VerticalAlignment = VerticalAlignment.Bottom, CustomMinimumSize = new(0, 50) };
-        listControl.GetChild(0).AddChild(label);
+        // Create a setting element in the UI with the name of the setting.
+        var settingElement = AssetsManager.Instance.GetSceneAsset<HBoxContainer>("setting_element");
+        var settingName = settingElement.GetNode<Label>("Label");
+        settingName.Text = convertedName;
 
         // Check the type of the field and create a corresponding UI node.
         if (type == typeof(double))
         {
-            var rangeAttribute = (RangeSettingAttribute)Attribute.GetCustomAttribute(field, typeof(RangeSettingAttribute));
+            var rangeAttribute = GetAttribute<RangeSettingAttribute>(field);
             if (rangeAttribute == null) GD.PushWarning("Range attribute is null, ignoring");
             var slider = new HSlider
             {
@@ -125,33 +121,60 @@ public partial class SettingsContainer : Control
                 MaxValue = rangeAttribute != null ? rangeAttribute.Max : 1,
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
                 SizeFlagsVertical = SizeFlags.ShrinkCenter,
-                Step = rangeAttribute != null ? rangeAttribute.Step : 0.1
+                Step = rangeAttribute != null ? rangeAttribute.Step : 0.05
             };
             slider.Value = (double)value;
             slider.ValueChanged += (value) => ValueChanged(value, obj, field);
-            listControl.GetChild(0).AddChild(slider);
+            settingElement.AddChild(slider);
         }
         else if (type == typeof(bool))
         {
-            var checkBox = new CheckButton() { ButtonPressed = (bool)value };
+            var checkBox = new CheckButton() { ButtonPressed = (bool)value, SizeFlagsHorizontal = SizeFlags.ExpandFill };
             checkBox.Toggled += (value) => ValueChanged(value, obj, field);
-            listControl.GetChild(0).AddChild(checkBox);
+            settingElement.AddChild(checkBox);
         }
         else if (type == typeof(long))
         {
-            var keybindAttribute = (KeybindSettingAttribute)Attribute.GetCustomAttribute(field, typeof(KeybindSettingAttribute));
+            var keybindAttribute = GetAttribute<KeybindSettingAttribute>(field);
             if (keybindAttribute != null)
             {
                 var actionButton = ActionButtonScene.Instantiate<ActionButton>();
 
+                actionButton.SizeFlagsHorizontal = SizeFlags.ExpandFill;
                 actionButton.ActionName = keybindAttribute.ActionName;
                 actionButton.Key = (long)value;
                 actionButton.OnBound += (long key) => ValueChanged(key, obj, field);
 
                 // Add the container node to the scene tree as a child of this node.
-                listControl.GetChild(0).AddChild(actionButton);
+                settingElement.AddChild(actionButton);
             }
         }
+        else if (type == typeof(string))
+        {
+            var optionsAttribute = GetAttribute<OptionsSettingAttribute>(field);
+            var val = (string)value;
+            var menuButton = new MenuButton
+            {
+                SizeFlagsHorizontal = SizeFlags.ExpandFill,
+                Flat = false,
+                Text = val,
+                FocusMode = FocusModeEnum.All
+            };
+            var popup = menuButton.GetPopup();
+            foreach (var option in optionsAttribute.Names)
+            {
+                popup.AddItem(option);
+            }
+            popup.SetFocusedItem(optionsAttribute.Names.ToList().FindIndex(x => x == val));
+            popup.IndexPressed += (index) =>
+            {
+                menuButton.Text = optionsAttribute.Names[index];
+                ValueChanged(optionsAttribute.Names[index], obj, field);
+            };
+            settingElement.AddChild(menuButton);
+        }
+
+        listControl.GetChild(0).AddChild(settingElement);
     }
 
     // This function is called when any UI value is changed
