@@ -1,4 +1,4 @@
-[gd_resource type="AudioBusLayout" load_steps=6 format=3 uid="uid://bbmwupkugava1"]
+[gd_resource type="AudioBusLayout" load_steps=7 format=3 uid="uid://bbmwupkugava1"]
 
 [sub_resource type="AudioEffectHighPassFilter" id="AudioEffectHighPassFilter_d37j7"]
 resource_name = "HighPassFilter"
@@ -11,6 +11,10 @@ resonance = 1.0
 [sub_resource type="AudioEffectPitchShift" id="AudioEffectPitchShift_bwo0o"]
 resource_name = "PitchShift"
 pitch_scale = 0.8
+
+[sub_resource type="AudioEffectAmplify" id="AudioEffectAmplify_gwcbt"]
+resource_name = "Amplify"
+volume_db = 8.0
 
 [sub_resource type="AudioEffectReverb" id="AudioEffectReverb_1ncp6"]
 resource_name = "Reverb"
@@ -30,7 +34,7 @@ bus/2/name = &"MuffledMusic"
 bus/2/solo = false
 bus/2/mute = false
 bus/2/bypass_fx = false
-bus/2/volume_db = 0.0
+bus/2/volume_db = 0.00282288
 bus/2/send = &"Music"
 bus/2/effect/0/effect = SubResource("AudioEffectHighPassFilter_d37j7")
 bus/2/effect/0/enabled = true
@@ -38,6 +42,8 @@ bus/2/effect/1/effect = SubResource("AudioEffectLowPassFilter_bntpy")
 bus/2/effect/1/enabled = true
 bus/2/effect/2/effect = SubResource("AudioEffectPitchShift_bwo0o")
 bus/2/effect/2/enabled = true
+bus/2/effect/3/effect = SubResource("AudioEffectAmplify_gwcbt")
+bus/2/effect/3/enabled = true
 bus/3/name = &"Reverb"
 bus/3/solo = false
 bus/3/mute = false

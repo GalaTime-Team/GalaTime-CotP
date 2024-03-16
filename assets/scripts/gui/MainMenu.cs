@@ -141,13 +141,11 @@ public partial class MainMenu : Control
         GalatimeGlobals.CheckSaves();
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
 
-        // End previous level audio.
-        var levelManager = LevelManager.Instance;
-        levelManager.EndAudioCombat();
-
         // Play menu sound only when the menu is fully loaded.
-        AudioMenu.Play();
-        AudioMenuMuffled.Play();
+        // AudioMenu.Play();
+        // AudioMenuMuffled.Play();
+
+        MusicManager.Instance.Play("galatime");
     }
 
     private void InitializeMainMenuButtons()
@@ -278,11 +276,7 @@ public partial class MainMenu : Control
         // Adjust the audio volume for the settings page
         if (CurrentPage == "settings")
         {
-            var linearTween = GetTree().CreateTween();
-            linearTween.SetParallel(true);
-
-            linearTween.TweenProperty(AudioMenuMuffled, "volume_db", 0, TransitionTime / 2);
-            linearTween.TweenProperty(AudioMenu, "volume_db", -80, TransitionTime);
+            MusicManager.Instance.SwitchAudio(false, TransitionTime);
         }
 
         // Make the page visible
@@ -363,13 +357,9 @@ public partial class MainMenu : Control
         DelayInteract.Start();
         AudioMenuWhoosh.Play();
 
-        var linearTween = GetTree().CreateTween();
-        linearTween.SetParallel(true);
-
         SwipePage(GetOppositeSwipeDirection(CurrentSwipeDirection), CurrentPageControl, MainMenuControl);
 
-        linearTween.TweenProperty(AudioMenuMuffled, "volume_db", -80, TransitionTime);
-        linearTween.TweenProperty(AudioMenu, "volume_db", 0, TransitionTime / 2);
+        MusicManager.Instance.SwitchAudio(true, TransitionTime);
 
         for (int i = 0; i < MenuButtons.Count; i++)
         {

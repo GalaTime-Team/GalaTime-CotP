@@ -29,6 +29,7 @@ EnemiesList="*res://assets/scripts/objects/enemies/controllers/EnemiesList.cs"
 SettingsGlobals="*res://assets/scripts/SettingsGlobals.cs"
 DiscordController="*res://assets/scripts/DiscordController.cs"
 CutsceneManager="*res://assets/scripts/objects/CutsceneManager.cs"
+MusicManager="*res://assets/scripts/MusicManager.cs"
 
 [display]
 

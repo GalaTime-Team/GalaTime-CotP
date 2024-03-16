@@ -1,2 +1,6 @@
 setting_element,objects/gui/settings/elements/SettingElement.tscn
 player,objects/Player.tscn
+dream_world_audio,audios/soundtracks/dream_world.mp3
+classicalbreak,audios/soundtracks/enemies_test_level/classicalbreak.wav
+classicalbreakcalm,audios/soundtracks/enemies_test_level/classicalbreakcalm.wav
+galatime_audio,audios/soundtracks/galatime.mp3

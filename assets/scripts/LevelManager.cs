@@ -25,30 +25,13 @@ public partial class LevelManager : Node
 {
     public GameLogger Logger { get; private set; } = new("LevelManager", GameLogger.ConsoleColor.Green);
     public static LevelManager Instance { get; private set; }
-
-    /// <summary> The time, in seconds, which determines the switching duration between calm and combat. </summary>
-    const float AUDIO_SWITCHING_DURATION = 0.5f;
-    /// <summary> The time, in seconds, which determines the duration of the end of the combat audios. </summary>
-    const float AUDIO_ENDING_DURATION = 3f;
+    
     public const string CHEAT_MENU_SCENE_PATH = "res://assets/objects/gui/CheatsMenu.tscn";
-    /// <summary> The audio pack, which contains the audios for the level, contains the both calm and combat versions. </summary>
-    public Dictionary<string, AudioPack> AudioPacks = new() {
-            {"classicalbreak", new AudioPack(
-                "res://assets/audios/soundtracks/dream_world.mp3",
-                "res://assets/audios/soundtracks/dream_world.mp3"
-            )}
-        };
 
     public CheatsMenu CheatsMenu;
     /// <summary> The canvas layer. Used to add global independent UI elements. </summary>
     public CanvasLayer CanvasLayer;
 
-    /// <summary> The audio player when the character is in combat. </summary>
-    public AudioStreamPlayer AudioPlayerCombat;
-    /// <summary> The audio player when the character is in combat but this is a calm version. </summary>
-    public AudioStreamPlayer AudioPlayerCombatCalm;
-
-    public bool AudioCombatIsPlaying => AudioPlayerCombat.Playing && AudioPlayerCombatCalm.Playing;
     private bool isCombat = false;
     /// <summary> If the character is in combat. </summary>
     public bool IsCombat
@@ -64,8 +47,8 @@ public partial class LevelManager : Node
                     Array.ForEach(PlayerVariables.Instance.Allies, e => e.Instance?.Revive());
                 };
             }
-            // PlayerVariables.Instance.Allies
-            SwitchAudio(isCombat);
+
+            MusicManager.Instance.SwitchAudio(!isCombat);
         }
     }
 
@@ -125,9 +108,6 @@ public partial class LevelManager : Node
         CanvasLayer.AddChild(CheatsMenu);
 
         GameCheatList.InitializeCheats(CheatsMenu);
-
-        // Initialize audio players by creating them and adding them to the scene.
-        InitializeAudioPlayers();
     }
 
     public override void _Process(double delta)
@@ -264,58 +244,6 @@ public partial class LevelManager : Node
     }
     #endregion
 
-    #region Audio management
-    private void InitializeAudioPlayers()
-    {
-        AudioPlayerCombat = new() { VolumeDb = -80 };
-        AudioPlayerCombatCalm = new() { VolumeDb = -80 };
-        AddChild(AudioPlayerCombat);
-        AddChild(AudioPlayerCombatCalm);
-        AudioPlayerCombat.Bus = "Music";
-        AudioPlayerCombatCalm.Bus = "Music";
-    }
-
-    /// <summary> Plays the audio for the combat. </summary>
-    public void PlayAudioCombat(string audioPack)
-    {
-        // Check if the combat audios is played, if so, don't stop playing.
-        if (AudioCombatIsPlaying) return;
-
-        // Set the audio stream and play it
-        // We can also just play calm or combat, but sound will be unsynchronized.
-        AudioPlayerCombat.Stream = AudioPacks[audioPack].AudioCombat; AudioPlayerCombat.Play();
-        AudioPlayerCombatCalm.Stream = AudioPacks[audioPack].AudioCombatCalm; AudioPlayerCombatCalm.Play();
-
-        // Set the volume to calm or combat. 0 means is playing, -80 means silent.
-        AudioPlayerCombatCalm.VolumeDb = 0;
-    }
-
-    public void EndAudioCombat()
-    {
-        SwitchAudio(false, AUDIO_ENDING_DURATION, true);
-    }
-
-    private void SwitchAudio(bool isCombat, float duration = AUDIO_SWITCHING_DURATION, bool stopMusic = false)
-    {
-        var tween = GetTree().CreateTween().SetParallel();
-
-        // Set the player based on the combat state
-        var primaryPlayer = isCombat ? AudioPlayerCombat : AudioPlayerCombatCalm;
-        var secondaryPlayer = isCombat ? AudioPlayerCombatCalm : AudioPlayerCombat;
-
-        // Tween the volume. 
-        tween.TweenProperty(primaryPlayer, "volume_db", stopMusic ? -80 : 0, duration);
-        tween.TweenProperty(secondaryPlayer, "volume_db", -80, duration).SetDelay(stopMusic ? 0 : duration / 1.25).Finished += () =>
-        {
-            // Stop the music if needed by waiting for the tween to finish.
-            if (stopMusic)
-            {
-                primaryPlayer.Stop();
-                secondaryPlayer.Stop();
-            }
-        };
-    }
-    #endregion
 
     #region Tools
     /// <summary> Smoothly fades the time scale. </summary>
@@ -324,10 +252,15 @@ public partial class LevelManager : Node
     {
         var tween = GetTree().CreateTween().SetParallel();
         tween.TweenMethod(Callable.From<float>(x => Engine.TimeScale = x), 0.1f, 1f, duration);
-        AudioPlayerCombat.PitchScale = 0.1f;
-        AudioPlayerCombatCalm.PitchScale = 0.1f;
-        tween.TweenProperty(AudioPlayerCombat, "pitch_scale", 1f, duration);
-        tween.TweenProperty(AudioPlayerCombatCalm, "pitch_scale", 1f, duration);
+
+        var ma = MusicManager.Instance;
+        var a = ma.CurrentAudioPlayers[0];
+        var b = ma.CurrentAudioPlayers[1];
+        
+        a.PitchScale = 0.1f;
+        b.PitchScale = 0.1f;
+        tween.TweenProperty(a, "pitch_scale", 1f, duration);
+        tween.TweenProperty(b, "pitch_scale", 1f, duration);
     }
     #endregion
 }

@@ -60,6 +60,7 @@ public partial class AssetsManager : Node
         text.Split('\n').ToList().ForEach(line =>
         {
             var values = line.Split(',');
+            if (values[0] == string.Empty || values[1] == string.Empty) return;
             dictionary[values[0]] = values[1];
         });
 
