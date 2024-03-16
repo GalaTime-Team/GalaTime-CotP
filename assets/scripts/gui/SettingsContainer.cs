@@ -114,7 +114,6 @@ public partial class SettingsContainer : Control
         if (type == typeof(double))
         {
             var rangeAttribute = GetAttribute<RangeSettingAttribute>(field);
-            if (rangeAttribute == null) GD.PushWarning("Range attribute is null, ignoring");
             var slider = new HSlider
             {
                 MinValue = rangeAttribute != null ? rangeAttribute.Min : 0,

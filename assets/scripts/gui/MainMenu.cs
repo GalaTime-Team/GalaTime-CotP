@@ -321,6 +321,7 @@ public partial class MainMenu : Control
         // Add the offset to the previous position
         previousPosition += offset[direction];
 
+        nextControl.Position = offset[GetOppositeSwipeDirection(direction)];
         // Animate the previous control to the invisible position.
         GetTween().TweenProperty(previousControl, "position", previousPosition, TransitionTime);
         previousPosition.X += MainMenuControl.Size.X;
