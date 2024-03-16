@@ -127,13 +127,11 @@ anchor_right = 1.0
 offset_left = -328.0
 offset_top = 8.0
 offset_right = -24.0
-offset_bottom = 54.0
+offset_bottom = 32.0
 grow_horizontal = 0
 mouse_filter = 1
 bbcode_enabled = true
-text = "[center][color=green]Cheats are active :)[/color]
-[color=dark_slate_gray]Use [color=green]:)[/color] button to toggle this window
-"
+text = "[center][color=green]Cheats are active[/color]"
 fit_content = true
 autowrap_mode = 1
 
