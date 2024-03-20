@@ -98,7 +98,6 @@ public partial class SettingsContainer : Control
     }
 
     public void CategoryButtonPressed(Control listControl) => CategoryControls.ForEach(x => x.Visible = x == listControl);
-    public static Attribute GetAttribute(FieldInfo field) => Attribute.GetCustomAttribute(field, typeof(SettingPropertyAttribute));
     public static T GetAttribute<T>(FieldInfo field) where T : Attribute => (T)Attribute.GetCustomAttribute(field, typeof(T));
 
     public void BuildSetting(Control listControl, SettingPropertyAttribute attribute, object obj, object value, Type type, FieldInfo field)

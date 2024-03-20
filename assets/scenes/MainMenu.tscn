@@ -470,9 +470,9 @@ layout_mode = 2
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 48.0
-offset_top = -36.0
+offset_top = -40.0
 offset_right = 204.0
-offset_bottom = 11.0
+offset_bottom = 30.0
 grow_vertical = 2
 scale = Vector2(2, 2)
 theme_override_constants/separation = 6
@@ -549,6 +549,31 @@ theme_override_fonts/font = ExtResource("2_nxd72")
 text = "Credits"
 
 [node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/CreditsButton" index="1"]
+stream = ExtResource("6_8xiqm")
+
+[node name="ExitButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
+custom_minimum_size = Vector2(20, 13)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_nxd72")
+HoverColor = Color(1, 0, 0, 1)
+PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
+Speed = 0.1
+Font = ExtResource("2_nxd72")
+ButtonText = "Exit"
+metadata/page = "credits"
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="MainMenuContainer/VBoxContainer/ExitButton" index="0"]
+offset_left = -10.0
+offset_top = -6.5
+offset_right = 10.0
+offset_bottom = 6.5
+pivot_offset = Vector2(10, 6.5)
+theme_override_fonts/font = ExtResource("2_nxd72")
+text = "Exit"
+
+[node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/ExitButton" index="1"]
 stream = ExtResource("6_8xiqm")
 
 [node name="CreditsContainer" type="Control" parent="."]
@@ -748,3 +773,4 @@ autoplay = true
 [editable path="MainMenuContainer/VBoxContainer/StartButton"]
 [editable path="MainMenuContainer/VBoxContainer/SettingsButton"]
 [editable path="MainMenuContainer/VBoxContainer/CreditsButton"]
+[editable path="MainMenuContainer/VBoxContainer/ExitButton"]

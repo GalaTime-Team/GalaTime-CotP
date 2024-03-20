@@ -141,10 +141,6 @@ public partial class MainMenu : Control
         GalatimeGlobals.CheckSaves();
         VersionLabel.Text = $"PROPERTY OF GALATIME TEAM\nVersion {GalatimeConstants.Version}\n{GalatimeConstants.VersionDescription}";
 
-        // Play menu sound only when the menu is fully loaded.
-        // AudioMenu.Play();
-        // AudioMenuMuffled.Play();
-
         MusicManager.Instance.Play("galatime");
     }
 
@@ -155,8 +151,15 @@ public partial class MainMenu : Control
         {
             if (MenuButtons[i] is not LabelButton b) continue;
             if (i == 0) b.GrabFocus();
-            var page = (string)b.GetMeta("page");
-            b.Pressed += () => SwitchPage(page);
+            if (i != 3) // Skip the "Exit" button
+            {
+                var page = (string)b.GetMeta("page");
+                b.Pressed += () => SwitchPage(page);
+            }
+            else
+            {
+                if (i == 3) b.Pressed += () => CallExitAccept();
+            }
         }
     }
 
@@ -224,11 +227,9 @@ public partial class MainMenu : Control
     {
         AcceptWindow.CallAccept((bool result) =>
         {
-            if (result)
-            {
-                UpdateSaves();
-            }
-        }, "Do you really want to delete the save?", acceptColor: new Color(1, 0, 0), focus: button);
+            if (result) UpdateSaves();
+            // TODO: Implement delete
+        }, "Do you really want to delete the save?", AcceptWindow.AcceptType.YesNo, true, button);
     }
 
     public Tween GetTween() => GetTree().CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel(true);
@@ -284,14 +285,8 @@ public partial class MainMenu : Control
     }
 
     /// <summary> Gets the opposite swipe direction. </summary>
-    private static SwipeDirection GetOppositeSwipeDirection(SwipeDirection direction) => direction switch
-    {
-        SwipeDirection.UP => SwipeDirection.DOWN,
-        SwipeDirection.RIGHT => SwipeDirection.LEFT,
-        SwipeDirection.DOWN => SwipeDirection.UP,
-        SwipeDirection.LEFT => SwipeDirection.RIGHT,
-        _ => SwipeDirection.UP,
-    };
+    private static SwipeDirection GetOppositeSwipeDirection(SwipeDirection direction)
+        => (SwipeDirection)(((int)direction + 2) % 4);
 
     /// <summary>
     /// Swipes the current page to the specified direction.
@@ -330,14 +325,10 @@ public partial class MainMenu : Control
 
     public void ToMainMenu() // It's hacky, I don't want to rewrite it
     {
-        // GD.PrintRich($"[color=purple]MAIN MENU[/color]: Condition checking: [color=cyan]isMainMenu? - {IsMainMenu}, acceptIsVisible? - {AcceptIsVisible()}[/color]");
         if (DelayInteract.TimeLeft > 0) return;
         if (IsMainMenu && !AcceptWindow.Shown)
         {
-            AcceptWindow.CallAccept((bool result) =>
-            {
-                if (result) GetTree().Quit();
-            }, "Are you sure do you want to quit a game?", acceptColor: new Color(1, 0, 0), focus: (Control)MenuButtons[0]);
+            CallExitAccept();
             IsMainMenu = true;
             return;
         }
@@ -374,6 +365,11 @@ public partial class MainMenu : Control
 
         IsMainMenu = true;
     }
+
+    void CallExitAccept() => AcceptWindow.CallAccept((bool result) =>
+    {
+        if (result) GetTree().Quit();
+    }, "Are you sure do you want to quit a game?", AcceptWindow.AcceptType.YesNo, true, (Control)MenuButtons[0]);
 
     void DisableMenus()
     {

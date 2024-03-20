@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace Galatime.UI.Helpers;
@@ -6,6 +7,25 @@ namespace Galatime.UI.Helpers;
 /// <summary> Represents an accept window in the UI. It shows a text and an accept button or cancel button. </summary>
 public partial class AcceptWindow : Control
 {
+    /// <summary> Accept type of the accept window. </summary>
+    public enum AcceptType
+    {
+        YesNo,
+        Ok,
+        OkCancel,
+        YesNoCancel,
+        Understood
+    }
+
+    public Dictionary<AcceptType, (string acceptText, string cancelText)> AcceptActions = new()
+        {
+            { AcceptType.Ok, ("Ok", "") },
+            { AcceptType.OkCancel, ("Ok", "Cancel") },
+            { AcceptType.YesNo, ("Yes", "No") },
+            { AcceptType.YesNoCancel, ("Yes", "No") },
+            { AcceptType.Understood, ("Understood", "") },
+        };
+
     #region Nodes
     /// <summary> The buttons used in the accept window. Use <see cref="Accepted"/> or <see cref="Canceled"/> to get the result. </summary>
     public LabelButton AcceptButton, CancelButton;
@@ -80,8 +100,8 @@ public partial class AcceptWindow : Control
         AcceptButton.Pressed += () => OnAcceptButtonPressed(true);
         CancelButton.Pressed += () => OnAcceptButtonPressed(false);
 
-        DefaultAcceptColor = AcceptButton.HoverColor;
-        DefaultCancelColor = CancelButton.HoverColor;
+        DefaultAcceptColor = new Color(1f, 1f, 0f);
+        DefaultCancelColor = new Color(1f, 0f, 0f);
     }
 
     /// <summary> Creates an instance of the accept window and adds it to the scene. </summary>
@@ -97,30 +117,46 @@ public partial class AcceptWindow : Control
         return instance;
     }
 
+    /// <summary> Calls the accept window with options to customize the accept action. </summary>
+    /// <param name="text"> The text to be displayed in the accept window. Default value is "Accept this". </param>
+    /// <param name="acceptType"> The type of accept action to be used. </param>
+    /// <param name="yesIsBad"> Indicates whether "Yes" option should be considered as a bad action. </param>
+    /// <param name="focus"> The control to be focused when accepted. </param>
+    public void CallAccept(Action<bool> onAcceptCallback, string text = "Accept this", AcceptType acceptType = AcceptType.Ok, bool yesIsBad = false, Control focus = null)
+    {
+        var (acceptText, cancelText) = AcceptActions[acceptType];
+
+        var acceptColor = yesIsBad ? DefaultCancelColor : DefaultAcceptColor;
+        var cancelColor = !yesIsBad ? DefaultCancelColor : DefaultAcceptColor;
+
+        CallAccept(onAcceptCallback, text, acceptText, cancelText, acceptColor, cancelColor, !yesIsBad, focus: focus);
+    }
+
     /// <summary> Shows the accept window and when accepted, calls the <paramref name="onAcceptCallback"/>. </summary>
+    /// <param name="focusOnBit"> Indicates whether the focus should be grabbed on the accept or cancel button. </param>
     public void CallAccept(Action<bool> onAcceptCallback, string text = "Accept this", string acceptText = "Yes", string cancelText = "No",
-        Color acceptColor = default, Color cancelColor = default, Control focus = null)
+        Color acceptColor = default, Color cancelColor = default, bool focusOnBit = true, Control focus = null)
     {
         Shown = true;
-
-        // Set text.
         Text = text;
 
-        // Set buttons properties.
         SetButtonProperties(AcceptButton, acceptText, acceptColor);
         SetButtonProperties(CancelButton, cancelText, cancelColor);
 
-        // Set callback.
         OnAcceptCallback = onAcceptCallback;
 
-        AcceptButton.GrabFocus();
+        // Grab focus on the button.
+        if (focusOnBit) AcceptButton.GrabFocus();
+        else CancelButton.GrabFocus();
+
         CurrentFocus = focus;
     }
 
     private void SetButtonProperties(LabelButton button, string buttonText, Color hoverColor)
     {
+        button.Visible = !string.IsNullOrEmpty(buttonText);
         button.ButtonText = buttonText;
-        button.HoverColor = hoverColor != default ? hoverColor : DefaultAcceptColor;
+        button.HoverColor = hoverColor;
     }
 
     private void OnAcceptButtonPressed(bool value)
