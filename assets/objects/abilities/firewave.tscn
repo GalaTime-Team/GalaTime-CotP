@@ -244,7 +244,6 @@ anim_speed_min = 1.0
 anim_speed_max = 2.0
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6voer"]
-load_path = "res://.godot/imported/fire.png-66da15853b624a6c2c0a9a5e78e64414.ctex"
 
 [node name="Firewave" type="Node2D"]
 script = ExtResource("1_63eig")

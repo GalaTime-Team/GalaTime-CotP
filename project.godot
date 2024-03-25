@@ -45,10 +45,6 @@ project/assembly_name="Galatime"
 
 run/main_run_args="--cheats --save 1"
 
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/AS2P/plugin.cfg")
-
 [file_customization]
 
 folder_colors={
