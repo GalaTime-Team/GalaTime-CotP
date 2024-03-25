@@ -39,11 +39,10 @@ window/stretch/aspect="expand"
 
 [dotnet]
 
-project/assembly_name="galatime-project"
+project/assembly_name="Galatime"
 
 [editor]
 
-movie_writer/movie_file="D:/Projects/galatime-project-test/preview.avi"
 run/main_run_args="--cheats --save 1"
 
 [editor_plugins]
@@ -213,7 +212,7 @@ cheats_menu={
 
 [mono]
 
-project/assembly_name="galatime-project"
+project/assembly_name="Galatime"
 
 [physics]
 

@@ -25,5 +25,5 @@ GPSDK/
 Properties/launchSettings.json
 
 # .csproj
-galatime-project.csproj.old.*
-galatime-project.csproj.user
+Galatime.csproj.old.*
+Galatime.csproj.user

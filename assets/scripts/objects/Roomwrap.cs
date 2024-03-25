@@ -35,7 +35,7 @@ using NodeExtensionMethods;
 
     public override void _ExitTree() 
     {
-        TriggerArea.BodyEntered -= OnEnter;
+        // TriggerArea.BodyEntered -= OnEnter;
     }
 
     private void OnEnter(Node node)

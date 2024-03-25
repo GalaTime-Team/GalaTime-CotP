@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Godot;
 
 namespace Galatime.AI;
@@ -14,10 +13,12 @@ public class AttackCycle
     /// <summary> Override attack if condition is met. </summary>
     public Func<bool> OverrideAttackIf;
     /// <summary> Called when attack is selected. </summary>
-    public Action Attack;
+    public Action OnAttack;
+    /// <summary> Called when attack is finished or canceled by the switcher. Recomended to implement this for any attack because for example, enemy can die when attacking, but not necessary. </summary>
+    public Action OnAttackEnd;
 
-    public AttackCycle(string id, Action pAttack, float pChance = 1, Func<bool> pOverrideAttackIf = null) =>
-        (ID, Attack, OverrideAttackIf, Chance) = (id, pAttack, pOverrideAttackIf, pChance);
+    public AttackCycle(string id, Action pAttack, Action pAttackEnd = null, float pChance = 1, Func<bool> pOverrideAttackIf = null) =>
+        (ID, OnAttack, OverrideAttackIf, Chance) = (id, pAttack, pOverrideAttackIf, pChance);
 }
 
 /// <summary> Class for switching between attacks depending on conditions or random. </summary>
@@ -53,7 +54,17 @@ public partial class AttackSwitcher : Node
         set
         {
             if (value && enabled != value) NextCycle();
+            if (!value && enabled != value)
+            {
+                Logger.Log($"Disabled attack switcher. {CurrentAttackCycle?.ID ?? "None"}", GameLogger.LogType.Warning);
+
+                CurrentAttackCycle?.OnAttackEnd?.Invoke();
+                CurrentAttackCycle = null;
+
+                NextCycleTimer.Stop();
+            }
             enabled = value;
+
         }
     }
 
@@ -64,8 +75,12 @@ public partial class AttackSwitcher : Node
     }
 
     public void NextCycle()
-    {
+    {   
+        // Reset attack.
+        CurrentAttackCycle?.OnAttackEnd?.Invoke();
         CurrentAttackCycle = null;
+
+        // Start next attack.
         NextCycleTimer.Start(NextCycleDelay);
     }
 
@@ -104,7 +119,7 @@ public partial class AttackSwitcher : Node
         if (attack == null) return;
 
         CurrentAttackCycle = attack;
-        CurrentAttackCycle.Attack?.Invoke();
+        CurrentAttackCycle.OnAttack?.Invoke();
     }
 
     /// <summary> Registers an attack cycle. </summary>
