@@ -40,6 +40,7 @@ public partial class TargetController : Node2D
 
     /// <summary> The current target of the dependent entity. </summary>
     public Node2D CurrentTarget = null;
+    public bool HasTarget => CurrentTarget != null;
     private Node2D PreviousTarget = null;
 
     /// <summary> Returns the current target rotation based on global position. </summary>

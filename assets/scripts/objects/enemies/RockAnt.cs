@@ -1,9 +1,13 @@
 using System;
+
 using Galatime;
 using Galatime.AI;
 using Galatime.Helpers;
 using Galatime.Damage;
+using ExtensionMethods;
+
 using Godot;
+using Galatime.Global;
 
 public partial class RockAnt : Entity
 {
@@ -12,9 +16,8 @@ public partial class RockAnt : Entity
     public AudioStreamPlayer2D AudioBurrow;
     public CollisionShape2D Collision;
     public DamageArea DigDamageArea;
+    public DamageArea DamageArea;
 
-    public DamageBeam SalivaBeam;
-    public AnimationPlayer SalivaBeamAnimation;
     public DangerNotifierEffect DangerEffect;
 
     public Navigator Navigator;
@@ -24,7 +27,6 @@ public partial class RockAnt : Entity
 
     /// <summary> If the rock ant is currently targetting (is positioning towards a target). </summary>
     public bool DigTargetting;
-    public bool SalivaTargetting;
 
     public override void _Ready()
     {
@@ -33,18 +35,13 @@ public partial class RockAnt : Entity
         Sprite = GetNode<Sprite2D>("Sprite2D");
         AudioWalk = GetNode<AudioStreamPlayer2D>("AudioWalk");
         AudioBurrow = GetNode<AudioStreamPlayer2D>("AudioBurrow");
-
         Collision = GetNode<CollisionShape2D>("Collision");
-
         Navigator = GetNode<Navigator>("Navigator");
         TargetController = GetNode<TargetController>("TargetController");
         AttackSwitcher = GetNode<AttackSwitcher>("AttackSwitcher");
-
         RangedHitTracker = GetNode<RangedHitTracker>("RangedHitTracker");
-        SalivaBeam = GetNode<DamageBeam>("SalivaBeam");
-        SalivaBeamAnimation = GetNode<AnimationPlayer>("SalivaBeam/AnimationPlayer");
-
         DigDamageArea = GetNode<DamageArea>("DigDamageArea");
+        DamageArea = GetNode<DamageArea>("DamageArea");
 
         TargetController.OnTargetChanged += () =>
         {
@@ -62,15 +59,26 @@ public partial class RockAnt : Entity
     {
         AttackSwitcher.RegisterAttackCycles
         (
-            new AttackCycle("dig", Dig, Reset, 1f/3f, () => !RangedHitTracker.CanHit),
-            new AttackCycle("saliva", Saliva, Reset, 2f/3f) // 2:1 chance of saliva
+            new AttackCycle("dig", Dig, Reset, .25f, () => !RangedHitTracker.CanHit),
+            new AttackCycle("melee", () => {
+                DamageArea.Active = true;
+                DamageArea.AttackStat = Stats[EntityStatType.PhysicalAttack].Value;
+                
+                AttackSwitcher.StartTimer("melee", () => 
+                {
+                    DamageArea.Active = false;
+                    AttackSwitcher.NextCycle();
+                }, 1f);
+            }, Reset, .75f)
         );
     }
 
     public override void _MoveProcess(double delta)
     {
-        if (!DeathState) AttackSwitcher.Enabled = !DisableAI;
-        if (DeathState) AttackSwitcher.Enabled = false;
+        bool on = true;
+        if (!DeathState) on = !DisableAI;
+        if (DeathState || !TargetController.HasTarget) on = false;
+        AttackSwitcher.Enabled = on;
 
         Velocity = Vector2.Zero;
     }
@@ -78,36 +86,21 @@ public partial class RockAnt : Entity
     public override void _DeathEvent(float damageRotation = 0f)
     {
         AttackSwitcher.Enabled = false;
-        Sprite.Visible = false;
+        Reset();
+
+        // Make sprite red so it's obvious it's dead.
+        Sprite.Modulate = GameColors.Red;
     }
-
-    public void Saliva()
-    {
-        if (!RangedHitTracker.CanHit) 
-        {
-            AttackSwitcher.NextCycle();
-            return;
-        }
-
-        SalivaBeamAnimation.Stop();
-        var da = SalivaBeam.DamageArea;
-        da.Element = Element;
-        da.AttackStat = Stats[EntityStatType.MagicalAttack].Value;
-        SalivaBeamAnimation.Play("shoot");
-    }
-
-    // Used in animation
-    public void SetSalivaTargetting(bool value) => SalivaTargetting = value;
 
     public void Dig()
     {
         AudioBurrow.Play();
-        GetTree().CreateTimer(0.5f, false).Timeout += () => 
+        AttackSwitcher.StartTimer("dig", () => 
         {
             AIIgnore = true;
             Sprite.Visible = false;
             EndDig();
-        };
+        }, .5f);
     }
 
     public void EndDig()
@@ -117,8 +110,8 @@ public partial class RockAnt : Entity
         var rnd = new Random();
         var delay = rnd.Next(1, 4);
 
-        GetTree().CreateTimer(delay, false).Timeout += () => 
-        {   
+        AttackSwitcher.StartTimer("dig", () => 
+        {
             DangerEffect = DangerNotifierEffect.GetInstance();
             AddChild(DangerEffect);
             DangerEffect.GlobalPosition = GlobalPosition;
@@ -126,7 +119,7 @@ public partial class RockAnt : Entity
             DigTargetting = false;
 
             DangerEffect.Start();
-            GetTree().CreateTimer(0.35f, false).Timeout += () =>
+            AttackSwitcher.StartTimer("dig", () => 
             {
                 AIIgnore = false;
                 Sprite.Visible = true;
@@ -139,21 +132,24 @@ public partial class RockAnt : Entity
                 AudioBurrow.Play();
 
                 AttackSwitcher.NextCycle();
-            };
-        };
+            }, .35f);
+        }, delay);
     }
 
     public void Reset()
     {
-        SalivaTargetting = false;
-        Sprite.Rotation = 0;
-
         DigTargetting = false;
 
-        SalivaBeamAnimation.Stop();
         DangerEffect?.QueueFree();
         DangerEffect = null;
-        Visible = true;
+
+        Sprite.Visible = true;
+        Callable.From(() => Collision.Disabled = false).CallDeferred();
+
+        DamageArea.Active = false;
+        DigDamageArea.Active = false;
+
+        AudioWalk.Stop();
     }
 
     public override void _AIProcess(double delta)
@@ -161,41 +157,33 @@ public partial class RockAnt : Entity
         Velocity = Vector2.Zero;
 
         var t = TargetController.CurrentTarget;
-        // TODO: Change target angle rotation reference to target controller
-        if (SalivaTargetting) 
-            SalivaBeam.Rotation = RangedHitTracker.TargetAngleRotation;
+        // If no target, do nothing
+        if (t == null || DeathState) return;
 
-        if (AttackSwitcher.IsAttackCycleActive("saliva"))
-            Sprite.Rotation = RangedHitTracker.TargetAngleRotation + Mathf.Pi;
-        else
-            Sprite.Rotation = 0;
-
-        if (!DeathState && !AttackSwitcher.IsAttackCycleActive("dig") && !AttackSwitcher.IsAttackCycleActive("saliva")) 
+        if (AttackSwitcher.IsAttackCycleActive("melee"))
         {
+            DamageArea.Rotation = GlobalPosition.AngleToPoint(t.GlobalPosition) + (float)Math.PI;
+
             Navigator.Speed = Speed;
-
             var v = Navigator.NavigatorVelocity;
-            if (v.Length() > 10 && t.GlobalPosition.DistanceTo(GlobalPosition) > 100)
-            {
-                if (!AudioWalk.Playing) AudioWalk.Play();
+            
+            if (!AudioWalk.Playing) AudioWalk.Play();
+            if (v.Length() < 10 && AudioWalk.Playing) AudioWalk.Stop();
 
-                Velocity = v;
-                MoveAndSlide();
-            }
-            else
-            {
-                if (AudioWalk.Playing) AudioWalk.Stop();
-            }
+            Velocity = v;
+            MoveAndSlide();
         }
         else
-        {
             if (AudioWalk.Playing) AudioWalk.Stop();
-        }
 
+        // Targetting behavior
         if (DigTargetting)
-        {
             GlobalPosition = t.GlobalPosition;
-        }
+
+        // Disable collision if targetting.
         if (DigTargetting != Collision.Disabled) Callable.From(() => Collision.Disabled = DigTargetting).CallDeferred();
+ 
+        // Flip sprite based on direction.
+        Sprite.FlipSpriteByAngle(GlobalPosition.AngleToPoint(t.GlobalPosition));
     }
 }

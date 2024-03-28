@@ -18,7 +18,7 @@ public class AttackCycle
     public Action OnAttackEnd;
 
     public AttackCycle(string id, Action pAttack, Action pAttackEnd = null, float pChance = 1, Func<bool> pOverrideAttackIf = null) =>
-        (ID, OnAttack, OverrideAttackIf, Chance) = (id, pAttack, pOverrideAttackIf, pChance);
+        (ID, OnAttack, OnAttackEnd, OverrideAttackIf, Chance) = (id, pAttack, pAttackEnd, pOverrideAttackIf, pChance);
 }
 
 /// <summary> Class for switching between attacks depending on conditions or random. </summary>
@@ -57,14 +57,11 @@ public partial class AttackSwitcher : Node
             if (!value && enabled != value)
             {
                 Logger.Log($"Disabled attack switcher. {CurrentAttackCycle?.ID ?? "None"}", GameLogger.LogType.Warning);
-
-                CurrentAttackCycle?.OnAttackEnd?.Invoke();
-                CurrentAttackCycle = null;
+                ResetCurrentAttack();
 
                 NextCycleTimer.Stop();
             }
             enabled = value;
-
         }
     }
 
@@ -75,13 +72,23 @@ public partial class AttackSwitcher : Node
     }
 
     public void NextCycle()
-    {   
-        // Reset attack.
-        CurrentAttackCycle?.OnAttackEnd?.Invoke();
-        CurrentAttackCycle = null;
+    {
+        ResetCurrentAttack();
 
         // Start next attack.
         NextCycleTimer.Start(NextCycleDelay);
+    }
+
+    /// <summary> Resets the current attack and calls <see cref="AttackCycle.OnAttackEnd"/>. </summary>
+    public void ResetCurrentAttack()
+    {
+        if (CurrentAttackCycle != null)
+        {
+            CurrentAttackCycle.OnAttackEnd?.Invoke();
+            CurrentAttackCycle = null;
+        }
+        else
+            Logger.Log($"Current attack is null, cannot reset", GameLogger.LogType.Warning);
     }
 
     public void StartAttack()
@@ -113,6 +120,15 @@ public partial class AttackSwitcher : Node
             }
         }
     }
+
+    /// <summary> Starts the timer for the current attack. If there's no current attack, does nothing. Equivalent almost to <see cref="SceneTree.CreateTimer(float)"/>, but it's shorter. </summary>
+    /// <param name="id">The ID of the attack to start the timer for. </param>
+    public void StartTimer(string id, Action callback = null, float time = 1f) =>
+        GetTree().CreateTimer(time, false).Timeout += () => { if (IsAttackCycleActive(id)) callback?.Invoke(); };
+
+    /// <summary> Starts the timer and calls the callback after it has finished. Same as <see cref="SceneTree.CreateTimer(float)"/>, but it's shorter. </summary>
+    public void StartTimer(Action callback = null, float time = 1f) => 
+        GetTree().CreateTimer(time, false).Timeout += callback;
 
     private void SetAndCallCurrentCycle(AttackCycle attack)
     {

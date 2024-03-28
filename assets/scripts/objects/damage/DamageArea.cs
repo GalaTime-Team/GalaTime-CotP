@@ -34,6 +34,9 @@ public partial class DamageArea : Area2D
 
     /// <summary> If the damage area is active or not. Doesn't deal damage if inactive. This doesn't affect the <see cref="HitOneTime"/>. </summary>
     [Export] public bool Active;
+    /// <summary> How often the damage area deals damage. Damage Per Second. 0 means no damage. </summary>
+    [Export] public float DPS = 0;
+    private double DamageTimer = 0;
     #endregion
 
     #region Events
@@ -44,6 +47,20 @@ public partial class DamageArea : Area2D
     {
         // Attach event to the area to track entities.
         BodyEntered += OnBodyEntered;
+    }
+
+    public override void _Process(double delta)
+    {
+        if (Active && DPS > 0)
+        {
+            // If the damage area is active, then it deals damage every second.
+            DamageTimer += delta;
+            if (DamageTimer >= DPS)
+            {
+                HitOneTime();
+                DamageTimer = 0;
+            }
+        }
     }
 
     private void OnBodyEntered(Node body)

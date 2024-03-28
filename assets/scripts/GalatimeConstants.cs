@@ -1,3 +1,5 @@
+using Godot;
+
 namespace Galatime.Global;
 
 /// <summary> Represents a collection of constants used in the game. </summary>
@@ -19,6 +21,24 @@ public static class GalatimeConstants
 
     /// <summary> The Discord application ID, which is used for connecting to the Discord rich presence. </summary>
     public const string DISCORD_ID = "1071756821158699068";
+}
+
+/// <summary> A collection of colors used in the game. </summary>
+public static class GameColors 
+{
+    public readonly static Color Red = new(1f, 0f, 0f);
+    public readonly static Color Green = new(0f, 1f, 0f);
+    public readonly static Color Blue = new(0f, 0f, 1f);
+
+    public readonly static Color Yellow = new(1f, 1f, 0f);
+
+    public readonly static Color Gray = new(0.5f, 0.5f, 0.5f);
+
+    public readonly static Color DarkGray = new(0.25f, 0.25f, 0.25f);
+
+    public readonly static Color White = new(1f, 1f, 1f);
+
+    public readonly static Color Black = new(0f, 0f, 0f);
 }
 
 
