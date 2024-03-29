@@ -347,6 +347,7 @@ scroll_active = false
 autowrap_mode = 2
 visible_characters = 0
 visible_ratio = 0.0
+theme_override_fonts/normal_font = ExtResource("3_lpba1")
 TypingSpeed = 0.06
 PunctuationDelay = 0.3
 
@@ -372,6 +373,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_bqjxg")
 HoverScale = Vector2(1.2, 1.2)
+theme_override_fonts/font = ExtResource("3_bqjxg")
 Font = ExtResource("3_bqjxg")
 ButtonText = "Continue"
 metadata/_edit_lock_ = true

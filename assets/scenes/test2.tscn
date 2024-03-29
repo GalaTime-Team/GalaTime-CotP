@@ -1,17 +1,16 @@
 [gd_scene load_steps=5 format=3 uid="uid://71yxujk6v8x3"]
 
 [ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://assets/objects/roomwrap.tscn" id="2"]
-[ext_resource type="Texture2D" uid="uid://vbl81l3lg4le" path="res://sprites/gui/inventory/slot.png" id="3"]
-[ext_resource type="PackedScene" uid="uid://c2yuew1ydupwh" path="res://assets/objects/Item.tscn" id="4"]
+[ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/roomwrap.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://vbl81l3lg4le" path="res://assets/sprites/gui/inventory/slot.png" id="3"]
+[ext_resource type="PackedScene" uid="uid://c2yuew1ydupwh" path="res://assets/objects/ItemContainer.tscn" id="4"]
 
 [node name="Node2D" type="Node2D"]
 
-[node name="roomwrap" parent="." instance=ExtResource("2")]
+[node name="Roomwrap" parent="." instance=ExtResource("2")]
 position = Vector2(-268, 160)
 scale = Vector2(10, 1.01135)
 Scene = "res://assets/scenes/test.tscn"
-PlayerName = "player_body"
 
 [node name="player" parent="." instance=ExtResource("1")]
 position = Vector2(7, -232)
@@ -36,6 +35,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot2" type="TextureRect" parent="Control"]
@@ -51,6 +52,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot3" type="TextureRect" parent="Control"]
@@ -66,6 +69,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot4" type="TextureRect" parent="Control"]
@@ -81,6 +86,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot5" type="TextureRect" parent="Control"]
@@ -96,6 +103,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot6" type="TextureRect" parent="Control"]
@@ -112,6 +121,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot7" type="TextureRect" parent="Control"]
@@ -128,6 +139,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot8" type="TextureRect" parent="Control"]
@@ -144,6 +157,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot9" type="TextureRect" parent="Control"]
@@ -159,6 +174,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot10" type="TextureRect" parent="Control"]
@@ -175,6 +192,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot11" type="TextureRect" parent="Control"]
@@ -191,6 +210,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot12" type="TextureRect" parent="Control"]
@@ -207,6 +228,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot13" type="TextureRect" parent="Control"]
@@ -222,6 +245,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot14" type="TextureRect" parent="Control"]
@@ -238,6 +263,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot15" type="TextureRect" parent="Control"]
@@ -254,6 +281,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
 
 [node name="slot16" type="TextureRect" parent="Control"]
@@ -270,4 +299,6 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 1
+grow_vertical = 1
 mouse_filter = 1
