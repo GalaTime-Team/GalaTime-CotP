@@ -13,13 +13,12 @@ public partial class DragableObject : CharacterBody2D, ILevelObject
     public InteractiveTrigger InteractiveTrigger;
     public AudioStreamPlayer2D PushingAudio;
     public Sprite2D Sprite;
+    public CollisionShape2D Collision;
+    public RectangleShape2D CollisionShape => Collision.Shape as RectangleShape2D;
 
     private static TestCharacter CurrentCharacter;
 
-    public VectorShaker PullShake = new()
-    {
-        ShakeAmplitude = new(5f, 5f)
-    };
+    public VectorShaker PullShake = new() { ShakeAmplitude = new(5f, 5f) };
     private bool isDragging = false;
     /// <summary> Returns true if the object is currently being dragged. You can set this to true to start dragging or false to stop. </summary>
     public bool IsDragging
@@ -35,8 +34,12 @@ public partial class DragableObject : CharacterBody2D, ILevelObject
                 CurrentCharacter = null;
             }
             InteractiveTrigger.InteractText = IsDragging ? "Stop Pushing" : "Push";
+            // Shrink the collision shape to make the object not collide with the player and prevent it from being pushed in some directions.
+            CollisionShape.Size = value ? CollisionInitialSize * .80f : CollisionInitialSize;
         }
     }
+
+    public Vector2 CollisionInitialSize;
 
     public override void _Ready()
     {
@@ -44,11 +47,20 @@ public partial class DragableObject : CharacterBody2D, ILevelObject
         InteractiveTrigger = GetNode<InteractiveTrigger>("InteractiveTrigger");
         PushingAudio = GetNode<AudioStreamPlayer2D>("PushingAudio");
         Sprite = GetNode<Sprite2D>("Sprite");
+        Collision = GetNode<CollisionShape2D>("Collision");
         #endregion
 
         InteractiveTrigger.OnInteract += OnInteract;
         InteractiveTrigger.OnAreaAction += OnAreaAction;
         InteractiveTrigger.DisableIf = () => CurrentCharacter != null;
+
+        // Get the initial size of the collision shape.
+        if (Collision != null && Collision.Shape is RectangleShape2D shape) 
+        {
+            CollisionInitialSize = shape.Size;
+            // Make collision unique to not share it with other objects.
+            Collision.Shape = shape.Duplicate() as Shape2D;
+        }
     }
 
     public void LoadLevelObject(object[] state)
@@ -78,7 +90,7 @@ public partial class DragableObject : CharacterBody2D, ILevelObject
                 IsDragging = false;
 
             // If the character is pushing and moving.
-            if (Velocity.Length() > 0)
+            if (Velocity.Length() > .3f) // 0.3 is the threshold, character could have a slight velocity.
             {
                 // Play pushing audio
                 if (!PushingAudio.Playing)
@@ -89,7 +101,7 @@ public partial class DragableObject : CharacterBody2D, ILevelObject
                 PullShake.Enabled = true;
                 PullShake.ShakeProcess(delta);
                 Sprite.Position = PullShake.ShakenVector;
-            }
+            }   
             else
             {
                 // Otherwise stop the audio
