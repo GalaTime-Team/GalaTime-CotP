@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://c1u2weprncgn6"]
+[gd_scene load_steps=26 format=3 uid="uid://c1u2weprncgn6"]
 
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="1_ynmsx"]
 [ext_resource type="Script" path="res://assets/scripts/gui/AbilitiesContainer.cs" id="5_dkern"]
@@ -16,7 +16,10 @@
 [ext_resource type="AudioStream" uid="uid://bhsndockej8ku" path="res://assets/audios/sounds/book/page_twist_2.mp3" id="15_7fuac"]
 [ext_resource type="Texture2D" uid="uid://bonqewdme1ga8" path="res://assets/sprites/gui/diary/diary_menu.png" id="15_eltqh"]
 [ext_resource type="AudioStream" uid="uid://nm3hfgpnmw3o" path="res://assets/audios/sounds/book/page_twist_3.mp3" id="16_7knoa"]
+[ext_resource type="Script" path="res://assets/scripts/gui/diary/pages/EnemiesPageContainer.cs" id="16_14uli"]
+[ext_resource type="PackedScene" uid="uid://dra0o6uwyaspw" path="res://assets/objects/gui/elements/LabelButton.tscn" id="17_3yohx"]
 [ext_resource type="AudioStream" uid="uid://cfaify2bahhx3" path="res://assets/audios/sounds/book/page_twist_4.mp3" id="17_jmusj"]
+[ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="18_m0vfn"]
 
 [sub_resource type="Resource" id="Resource_bux4w"]
 script = ExtResource("14_u7va6")
@@ -29,6 +32,12 @@ script = ExtResource("14_u7va6")
 Id = "abilities"
 Control = NodePath("../AbilitiesPageContainer")
 Button = NodePath("PagesButtonsContainer/1")
+
+[sub_resource type="Resource" id="Resource_850vo"]
+script = ExtResource("14_u7va6")
+Id = "enemies"
+Control = NodePath("../EnemiesPageContainer")
+Button = NodePath("PagesButtonsContainer/2")
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_gu6my"]
 random_pitch = 1.1
@@ -60,7 +69,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("13_8hg8r")
-Pages = [SubResource("Resource_bux4w"), SubResource("Resource_7sl8l")]
+Pages = [SubResource("Resource_bux4w"), SubResource("Resource_7sl8l"), SubResource("Resource_850vo")]
 
 [node name="TextureRect" type="TextureRect" parent="DiaryBookContainer"]
 layout_mode = 1
@@ -88,17 +97,13 @@ offset_bottom = 16.0
 
 [node name="PagesButtonsContainer" type="HBoxContainer" parent="DiaryBookContainer"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 1.0
 offset_left = -224.0
-offset_top = -648.0
-offset_right = -4.0
-offset_bottom = -608.0
+offset_top = 8.0
+offset_bottom = 48.0
 grow_horizontal = 2
-grow_vertical = 0
 scale = Vector2(2, 2)
 theme_override_constants/separation = 14
 alignment = 1
@@ -120,10 +125,19 @@ theme_override_fonts/font = ExtResource("1_ynmsx")
 text = "Abilities"
 metadata/_edit_lock_ = true
 
+[node name="2" type="Label" parent="DiaryBookContainer/PagesButtonsContainer"]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = ExtResource("1_ynmsx")
+text = "Enemies"
+metadata/_edit_lock_ = true
+
 [node name="PageTwistAudio" type="AudioStreamPlayer" parent="DiaryBookContainer"]
 stream = SubResource("AudioStreamRandomizer_gu6my")
 
 [node name="AbilitiesPageContainer" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -131,9 +145,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -336.0
-offset_top = -228.0
+offset_top = -224.0
 offset_right = 344.0
-offset_bottom = 268.0
+offset_bottom = 264.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("9_rhh3g")
@@ -303,6 +317,82 @@ layout_mode = 2
 
 [node name="AbilityDescriptionContainer4" parent="AbilitiesPageContainer/AbilitiesList" instance=ExtResource("14_qgapf")]
 layout_mode = 2
+
+[node name="EnemiesPageContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -336.0
+offset_top = -224.0
+offset_right = 344.0
+offset_bottom = 264.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("16_14uli")
+
+[node name="LabelButton" parent="EnemiesPageContainer" instance=ExtResource("17_3yohx")]
+visible = false
+custom_minimum_size = Vector2(67, 14)
+layout_mode = 2
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 83.0
+offset_bottom = 30.0
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("18_m0vfn")
+HoverScale = Vector2(1.1, 1.1)
+HoverColor = Color(0.0980392, 0.0980392, 0.0980392, 1)
+PressedColor = Color(0, 0, 0, 1)
+DisabledColor = Color(0, 0, 0, 1)
+DefaultColor = Color(0, 0, 0, 1)
+Font = ExtResource("18_m0vfn")
+ButtonText = "001 - Slime"
+
+[node name="ListScroll" type="ScrollContainer" parent="EnemiesPageContainer"]
+layout_mode = 0
+offset_right = 156.0
+offset_bottom = 248.0
+scale = Vector2(2, 2)
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="ListMargin" type="MarginContainer" parent="EnemiesPageContainer/ListScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="List" type="VBoxContainer" parent="EnemiesPageContainer/ListScroll/ListMargin"]
+layout_mode = 2
+
+[node name="EntryPanel" type="RichTextLabel" parent="EnemiesPageContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 28.0
+offset_top = -108.0
+offset_right = 184.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("9_v3q7s")
+
+[node name="EntryIcon" type="TextureRect" parent="EnemiesPageContainer"]
+layout_mode = 0
+offset_left = 456.0
+offset_top = -8.0
+offset_right = 584.0
+offset_bottom = 120.0
 
 [node name="Inventory" type="GridContainer" parent="."]
 visible = false

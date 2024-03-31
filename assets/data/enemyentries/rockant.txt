@@ -1,0 +1,5 @@
+Rarity: Common
+Elements: Lapis
+Location: Cellordion forest
+
+Rock ants gained their name by gluing rocks to their bodies to discourage predators from attacking.

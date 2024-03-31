@@ -46,6 +46,12 @@ public partial class AssetsManager : Node
     public string GetTextFromFile(string path)
     {
         using var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
+        // If the file can't be opened, return an empty string.
+        if (file == null)
+        {
+            Logger.Log($"Couldn't open file: {path}. Returning an empty string", GameLogger.LogType.Warning);
+            return string.Empty;
+        }
         return file.GetAsText();
     }
 

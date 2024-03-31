@@ -29,6 +29,7 @@ text = "
 "
 script = ExtResource("2_aa5td")
 HoverScale = Vector2(1.4, 1.4)
+DefaultColor = Color(0.875, 0.875, 0.875, 1)
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1

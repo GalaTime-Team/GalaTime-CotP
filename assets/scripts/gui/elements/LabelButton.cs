@@ -10,6 +10,7 @@ public partial class LabelButton : Button
     [Export] public Color HoverColor = new(1, 1, 0);
     [Export] public Color PressedColor = new(0.49f, 0.49f, 0.49f);
     [Export] public Color DisabledColor = new(0.4f, 0.4f, 0.4f);
+    [Export] public Color DefaultColor = new(1f, 1f, 1f);
     [Export] public float Speed = 0.2f;
     [Export] public FontFile Font;
     private string buttonText = "BUTTON";
@@ -26,7 +27,6 @@ public partial class LabelButton : Button
 
     #region Variables
     private Vector2 DefaultScale;
-    private Color DefaultColor;
     private Tween Tw;
     #endregion
 
@@ -87,7 +87,6 @@ public partial class LabelButton : Button
     private void InitializeDefaults()
     {
         DefaultScale = Label.Scale;
-        DefaultColor = GetThemeColor("font_color");
     }
 
     private void InitializeAudios()
