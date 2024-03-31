@@ -1,5 +1,6 @@
-using Galatime;
 using Godot;
+
+using Galatime.Global;
 
 public partial class test : Node2D
 {

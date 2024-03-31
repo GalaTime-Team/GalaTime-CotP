@@ -1,9 +1,10 @@
-using Galatime;
-using Galatime.UI;
 using Godot;
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
+
+using Galatime.Global;
+using Galatime.UI;
 
 public partial class AbilitiesPageContainer : Control
 {

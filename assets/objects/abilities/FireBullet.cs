@@ -1,5 +1,7 @@
 using Galatime;
 using Galatime.Damage;
+using Galatime.Global;
+
 using Godot;
 
 public partial class FireBullet : GalatimeAbility

@@ -1,6 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Godot;
+
+using Galatime.Global;
+
+using System;
 
 namespace Galatime
 {

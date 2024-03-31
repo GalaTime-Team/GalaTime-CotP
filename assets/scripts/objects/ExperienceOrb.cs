@@ -1,5 +1,8 @@
-using System.Collections.Generic;
 using Godot;
+
+using Galatime.Global;
+
+using System.Collections.Generic;
 using NodeExtensionMethods;
 
 namespace Galatime

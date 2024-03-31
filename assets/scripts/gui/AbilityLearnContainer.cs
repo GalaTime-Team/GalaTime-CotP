@@ -1,5 +1,8 @@
 using Godot;
+
 using System;
+
+using Galatime.Global;
 
 namespace Galatime
 {

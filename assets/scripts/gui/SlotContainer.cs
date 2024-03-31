@@ -1,5 +1,7 @@
-using Galatime;
 using Godot;
+
+using Galatime.Global;
+using Galatime;
 
 public partial class SlotContainer : GridContainer
 {

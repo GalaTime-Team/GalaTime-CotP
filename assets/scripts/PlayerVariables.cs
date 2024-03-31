@@ -1,11 +1,11 @@
-using ExtensionMethods;
-using Galatime.Global;
 using Godot;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExtensionMethods;
 
-namespace Galatime;
+namespace Galatime.Global;
 
 /// <summary> Status of learning an ability. </summary>
 public enum LearnedStatus
@@ -20,6 +20,8 @@ public partial class PlayerVariables : Node
 {
     public static PlayerVariables Instance { get; private set; }
 
+    #region Variables
+
     /// <summary> Max number of inventory slots. </summary>
     public static int InventorySlots = 16;
     /// <summary> Max number of ability slots. </summary>
@@ -28,11 +30,13 @@ public partial class PlayerVariables : Node
     public static int CurrentInventoryItem = -1;
     /// <summary> Current save to load. </summary>
     public static int CurrentSave = 0;
-
     /// <summary> If the save is loaded. </summary>
     public bool IsLoaded { get; private set; }
 
+    #endregion
+
     #region Player Variables
+
     /// <summary> Inventory of the player. </summary>
     /// <remarks> Use <see cref="SetItem"/>, <see cref="RemoveItem"/> or <see cref="AddItem"/> to modify the inventory. </remarks>
     public Item[] Inventory = new Item[InventorySlots];
@@ -43,32 +47,31 @@ public partial class PlayerVariables : Node
     /// <remarks> Use <see cref="LearnAbility"/> to add an ability. </remarks>
     public Godot.Collections.Array<string> LearnedAbilities = new();
     public AllyData[] Allies = new AllyData[6];
-    #endregion
-    public Timer PlaytimeTimer;
 
+    #endregion
 
     #region Events
+
     /// <summary> Emitted when the inventory is changed. </summary>
     public Action OnItemsChanged;
     /// <summary> Emitted when the abilities are changed. </summary>
     public Action OnAbilitiesChanged;
     /// <summary> Emitted when an ability is learned. </summary>
     public Action OnAbilityLearned;
+    /// <summary> Emitted when the allies are changed. </summary>
     public Action OnAlliesChanged;
+
     #endregion
 
+    // TODO: REMOVE THESE LATER, BECAUSE IT'S REALLY UGLY.
     public static Action<float> OnXpChanged;
 
-    public Action<Player> OnPlayerIsReady;
     /// <summary> Instance of the player in the current scene. </summary>
     public Player Player;
     /// <summary> If the save should be loaded. After loading, automatically set to false. </summary>
     public bool ShouldLoadSave = true;
 
-    public PlayerVariables()
-    {
-        ResetValues();
-    }
+    public PlayerVariables() => ResetValues();
 
     private void ResetValues()
     {
@@ -76,7 +79,6 @@ public partial class PlayerVariables : Node
         Array.Fill(Abilities, new());
         Array.Fill(Allies, new());
         LearnedAbilities.Clear();
-        // for (int i = 0; i < AbilitySlots; i++) Abilities.Add(new());
     }
 
     public override void _Ready()
@@ -90,13 +92,8 @@ public partial class PlayerVariables : Node
         OnAbilitiesChanged?.Invoke();
     }
 
-    /// <summary> Set current save to load. </summary>
-    public void SetSave(int save)
-    {
-        CurrentSave = save;
-        ShouldLoadSave = true;
-        LevelManager.Instance.LevelObjects.Clear();
-    }
+    // I am not sure if this is the best way to do this. But it works. So I will leave it.
+    public void SetPlayerInstance(Player instance) => Player = instance;
 
     public void LoadVariables(Player instance)
     {
@@ -109,6 +106,16 @@ public partial class PlayerVariables : Node
         OnAbilityLearned?.Invoke();
         OnAlliesChanged?.Invoke();
 
+    }
+
+    #region Save/Load
+
+    /// <summary> Set current save to load. </summary>
+    public void SetSave(int save)
+    {
+        CurrentSave = save;
+        ShouldLoadSave = true;
+        LevelManager.Instance.LevelObjects.Clear();
     }
 
     // TODO: Rework this, because Godot.Collections.Dictionary is slow because of marshalling and not serializable.
@@ -186,23 +193,6 @@ public partial class PlayerVariables : Node
         }
     }
 
-    /// <summary> Gets all the consumables in the inventory. </summary>
-    public Item[] GetConsumables()
-    {
-        // Copy player inventory to a new temporary list.
-        var inventory = new List<Item>().Concat(GetNode<PlayerVariables>("/root/PlayerVariables").Inventory).ToList();
-        // Remove all empty items and non consumable items.
-        inventory.RemoveAll(item => item.IsEmpty || item.Type != ItemType.CONSUMABLE);
-        return inventory.ToArray();
-    }
-
-    // I am not sure if this is the best way to do this. But it works. So I will leave it.
-    public void SetPlayerInstance(Player instance)
-    {
-        Player = instance;
-        OnPlayerIsReady?.Invoke(Player);
-    }
-
     /// <summary> Converts dictionary keys to int. Used to be able to use keys of the dictionary as indexes. </summary>
     /// <param name="dict"> The dictionary to convert </param>
     /// <returns> The converted dictionary </returns>
@@ -224,6 +214,10 @@ public partial class PlayerVariables : Node
         }
         return newDict;
     }
+
+    #endregion
+
+    #region Abilities
 
     /// <summary> Checks if ability is learned </summary>
     /// <param name="abilityName"> ID of the ability </param>
@@ -255,6 +249,38 @@ public partial class PlayerVariables : Node
 
         return LearnedStatus.Ok;
     }
+
+    /// <summary> Sets ability to new slot. </summary>
+    /// <param name="ability"> JSON representation of ability data. </param>
+    public void SetAbility(AbilityData ability, int slot)
+    {
+        if (Abilities.Length > AbilitySlots)
+        {
+            GD.Print("Can't set ability up to " + Abilities.Length);
+            return;
+        }
+        Abilities[slot] = ability;
+        OnAbilitiesChanged?.Invoke();
+    }
+
+    /// <summary> Removes ability item from slot. </summary>
+    /// <param name="slot"> Item slot to delete. </param>
+    /// <returns> Previous ability. </returns>
+    public AbilityData RemoveAbility(int slot)
+    {
+        // Get pervious item to return
+        var previousItem = new AbilityData();
+        if (!Abilities[slot].IsEmpty) previousItem = Abilities[slot];
+        // Remove item
+        Abilities[slot] = new();
+        // Send item_changed signal to GUI
+        OnAbilitiesChanged?.Invoke();
+        return previousItem;
+    }
+
+    #endregion
+
+    #region Inventory
 
     /// <summary> Add item to free slot in the inventory. </summary>
     public void AddItem(Item item, int quantity)
@@ -313,34 +339,6 @@ public partial class PlayerVariables : Node
         }
     }
 
-    /// <summary> Sets ability to new slot. </summary>
-    /// <param name="ability"> JSON representation of ability data. </param>
-    public void SetAbility(AbilityData ability, int slot)
-    {
-        if (Abilities.Length > AbilitySlots)
-        {
-            GD.Print("Can't set ability up to " + Abilities.Length);
-            return;
-        }
-        Abilities[slot] = ability;
-        OnAbilitiesChanged?.Invoke();
-    }
-
-    /// <summary> Removes ability item from slot. </summary>
-    /// <param name="slot"> Item slot to delete. </param>
-    /// <returns> Previous ability. </returns>
-    public AbilityData RemoveAbility(int slot)
-    {
-        // Get pervious item to return
-        var previousItem = new AbilityData();
-        if (!Abilities[slot].IsEmpty) previousItem = Abilities[slot];
-        // Remove item
-        Abilities[slot] = new();
-        // Send item_changed signal to GUI
-        OnAbilitiesChanged?.Invoke();
-        return previousItem;
-    }
-
     /// <summary> Set inventory item to slot </summary>
     public Item SetItem(Item item, int slot)
     {
@@ -367,4 +365,16 @@ public partial class PlayerVariables : Node
         OnItemsChanged?.Invoke();
         return previousItem;
     }
+
+    /// <summary> Gets all the consumables in the inventory. </summary>
+    public Item[] GetConsumables()
+    {
+        // Copy player inventory to a new temporary list.
+        var inventory = new List<Item>().Concat(GetNode<PlayerVariables>("/root/PlayerVariables").Inventory).ToList();
+        // Remove all empty items and non consumable items.
+        inventory.RemoveAll(item => item.IsEmpty || item.Type != ItemType.CONSUMABLE);
+        return inventory.ToArray();
+    }
+
+    #endregion
 }

@@ -1,7 +1,9 @@
 using Godot;
-using NodeExtensionMethods;
+
 using System;
-using System.Linq;
+using NodeExtensionMethods;
+
+using Galatime.Global;
 
 namespace Galatime;
 

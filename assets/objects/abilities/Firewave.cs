@@ -1,5 +1,7 @@
 using Godot;
 
+using Galatime.Global;
+
 namespace Galatime
 {
     public partial class Firewave : GalatimeAbility

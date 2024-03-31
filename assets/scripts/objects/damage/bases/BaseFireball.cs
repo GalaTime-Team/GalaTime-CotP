@@ -1,5 +1,7 @@
 using Godot;
 
+using Galatime.Global;
+
 namespace Galatime.Damage;
 
 public partial class BaseFireball : Node2D, IBaseProjectile

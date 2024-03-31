@@ -1,9 +1,11 @@
-using Galatime;
 using Godot;
+
+using System;
 using System.Collections.Generic;
 
+using Galatime;
 using Galatime.Helpers;
-using System;
+using Galatime.Global;
 
 public enum HumanoidValues
 {
