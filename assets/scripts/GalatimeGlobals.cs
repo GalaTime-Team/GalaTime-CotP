@@ -11,6 +11,8 @@ public sealed partial class GalatimeGlobals : Node
 {
     public static GalatimeGlobals Instance { get; private set; }
 
+    #pragma warning disable CA2211 // Non-constant fields should not be visible
+
     /// <summary> List of every single item data that is registered in the game. </summary>
     public static List<Item> ItemList = new();
     /// <summary> List of every single ability data that is registered in the game. </summary>
@@ -216,10 +218,15 @@ public sealed partial class GalatimeGlobals : Node
             if (!ally.IsEmpty) allies.Add(ally.ID);
         }
         saveData.Add("allies", allies);
+        var discoveredEnemies = new Godot.Collections.Array();
+        for (int i = 0; i < PlayerVariables.DiscoveredEnemies.Count; i++)
+        {
+            discoveredEnemies.Add(PlayerVariables.DiscoveredEnemies[i]);
+            saveData.Add("discovered_enemies", discoveredEnemies);
+        }
         if (PlayerVariables.Player is not null) saveData.Add("xp", PlayerVariables.Player.Xp);
         return saveData;
     }
-
     private static Godot.Collections.Array GetTipsFromJson()
     {
         if (FileAccess.FileExists(PathListTips))

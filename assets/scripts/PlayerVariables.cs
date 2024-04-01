@@ -47,6 +47,8 @@ public partial class PlayerVariables : Node
     /// <remarks> Use <see cref="LearnAbility"/> to add an ability. </remarks>
     public Godot.Collections.Array<string> LearnedAbilities = new();
     public AllyData[] Allies = new AllyData[6];
+    /// <summary> List of the discovered enemies of their numeric ID. </summary>
+    public List<int> DiscoveredEnemies = new();
 
     #endregion
 
@@ -105,7 +107,11 @@ public partial class PlayerVariables : Node
         OnAbilitiesChanged?.Invoke();
         OnAbilityLearned?.Invoke();
         OnAlliesChanged?.Invoke();
+    }
 
+    public void DiscoverEnemy(int id)
+    {
+        if (!DiscoveredEnemies.Contains(id)) DiscoveredEnemies.Add(id);
     }
 
     #region Save/Load
