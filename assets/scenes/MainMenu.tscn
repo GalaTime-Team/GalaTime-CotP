@@ -305,8 +305,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -176.0
-offset_top = -64.0
-offset_right = -101.0
+offset_top = -72.0
+offset_right = -148.0
 offset_bottom = -41.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -364,10 +364,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -160.0
-offset_top = -66.0
-offset_right = 0.0
-offset_bottom = -43.0
+offset_left = -96.0
+offset_top = -80.0
+offset_right = -1.0
+offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(2, 2)
@@ -397,8 +397,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -176.0
-offset_top = -64.0
-offset_right = -101.0
+offset_top = -72.0
+offset_right = -148.0
 offset_bottom = -41.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -472,17 +472,15 @@ anchor_bottom = 0.5
 offset_left = 48.0
 offset_top = -40.0
 offset_right = 204.0
-offset_bottom = 30.0
+offset_bottom = 28.0
 grow_vertical = 2
 scale = Vector2(2, 2)
-theme_override_constants/separation = 6
 
 [node name="StartButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
 custom_minimum_size = Vector2(27, 13)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
-text = ""
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
 Font = ExtResource("2_nxd72")
@@ -490,42 +488,17 @@ ButtonText = "Start"
 metadata/page = "start"
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="MainMenuContainer/VBoxContainer/StartButton" index="0"]
-offset_left = -13.5
-offset_top = -6.5
-offset_right = 13.5
-offset_bottom = 6.5
-pivot_offset = Vector2(13.5, 6.5)
-theme_override_fonts/font = ExtResource("2_nxd72")
-text = "Start"
-
-[node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/StartButton" index="1"]
-stream = ExtResource("6_8xiqm")
-
 [node name="SettingsButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
 custom_minimum_size = Vector2(43, 13)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
-text = ""
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
 Font = ExtResource("2_nxd72")
 ButtonText = "Settings"
 metadata/page = "settings"
 metadata/_edit_lock_ = true
-
-[node name="Label" parent="MainMenuContainer/VBoxContainer/SettingsButton" index="0"]
-offset_left = -21.5
-offset_top = -6.5
-offset_right = 21.5
-offset_bottom = 6.5
-pivot_offset = Vector2(21.5, 6.5)
-theme_override_fonts/font = ExtResource("2_nxd72")
-text = "Settings"
-
-[node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/SettingsButton" index="1"]
-stream = ExtResource("6_8xiqm")
 
 [node name="CreditsButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
 custom_minimum_size = Vector2(37, 13)
@@ -538,18 +511,6 @@ Font = ExtResource("2_nxd72")
 ButtonText = "Credits"
 metadata/page = "credits"
 metadata/_edit_lock_ = true
-
-[node name="Label" parent="MainMenuContainer/VBoxContainer/CreditsButton" index="0"]
-offset_left = -18.5
-offset_top = -6.5
-offset_right = 18.5
-offset_bottom = 6.5
-pivot_offset = Vector2(18.5, 6.5)
-theme_override_fonts/font = ExtResource("2_nxd72")
-text = "Credits"
-
-[node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/CreditsButton" index="1"]
-stream = ExtResource("6_8xiqm")
 
 [node name="ExitButton" parent="MainMenuContainer/VBoxContainer" groups=["buttons"] instance=ExtResource("7_4ne4t")]
 custom_minimum_size = Vector2(20, 13)
@@ -564,20 +525,7 @@ ButtonText = "Exit"
 metadata/page = "credits"
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="MainMenuContainer/VBoxContainer/ExitButton" index="0"]
-offset_left = -10.0
-offset_top = -6.5
-offset_right = 10.0
-offset_bottom = 6.5
-pivot_offset = Vector2(10, 6.5)
-theme_override_fonts/font = ExtResource("2_nxd72")
-text = "Exit"
-
-[node name="AudioPressed" parent="MainMenuContainer/VBoxContainer/ExitButton" index="1"]
-stream = ExtResource("6_8xiqm")
-
 [node name="CreditsContainer" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -662,6 +610,7 @@ Interface: Sasik
 Extras: Nihhiu, Gamerknight64, Mr San
 Character Designer: Nihhiu, GamerKnight64, Mr San"
 scroll_active = false
+autowrap_mode = 0
 
 [node name="CodeCreditsLabel" type="RichTextLabel" parent="CreditsContainer/Control"]
 layout_mode = 0
@@ -674,7 +623,8 @@ theme_override_fonts/normal_font = ExtResource("2_nxd72")
 bbcode_enabled = true
 text = "[center][color=yellow]Code[/color]
 Coder/Programmer: Ardub
-Game Environment Designer: Nihhiu, GamerKnight64"
+Game Environment Designer: Nihhiu,
+GamerKnight64"
 scroll_active = false
 
 [node name="StoryCreditsLabel" type="RichTextLabel" parent="CreditsContainer/Control"]
@@ -724,8 +674,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -176.0
-offset_top = -64.0
-offset_right = -101.0
+offset_top = -72.0
+offset_right = -148.0
 offset_bottom = -41.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -769,8 +719,3 @@ stream = ExtResource("6_p1ru6")
 
 [node name="AudioStreamPlayerWhoosh" type="AudioStreamPlayer" parent="."]
 autoplay = true
-
-[editable path="MainMenuContainer/VBoxContainer/StartButton"]
-[editable path="MainMenuContainer/VBoxContainer/SettingsButton"]
-[editable path="MainMenuContainer/VBoxContainer/CreditsButton"]
-[editable path="MainMenuContainer/VBoxContainer/ExitButton"]

@@ -334,7 +334,6 @@ grow_vertical = 2
 script = ExtResource("16_14uli")
 
 [node name="LabelButton" parent="EnemiesPageContainer" instance=ExtResource("17_3yohx")]
-visible = false
 custom_minimum_size = Vector2(67, 14)
 layout_mode = 2
 offset_left = 16.0

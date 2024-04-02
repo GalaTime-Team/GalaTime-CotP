@@ -20,13 +20,13 @@ public partial class LabelButton : Button
         set
         {
             buttonText = value;
-            if (Label != null) Label.Text = buttonText;
+            if (Label != null) Label.Text = buttonText.Trim();
         }
     }
     #endregion
 
     #region Variables
-    private Vector2 DefaultScale;
+    private Vector2 DefaultScale = new(1f, 1f);
     private Tween Tw;
     #endregion
 
@@ -44,10 +44,11 @@ public partial class LabelButton : Button
     public override void _Ready()
     {
         Label = GetNode<Label>("Label");
-
         ButtonText = ButtonText; // Initialize text.
 
-        InitializeDefaults();
+        // Don't initialize unessessary thing in editor.
+        if (Engine.IsEditorHint()) return;
+
         InitializeAudios();
 
         Pressed += OnPressed;
@@ -66,27 +67,25 @@ public partial class LabelButton : Button
             Label.PivotOffset = Label.Size / 2;
 
             CustomMinimumSize = Label.Size;
-            if (Font != null && GetThemeFont("font").GetFontName() != Font.GetFontName())
+            if (Font != null && Label.GetThemeFont("font").GetFontName() != Font.GetFontName())
             {
                 Label.AddThemeFontOverride("font", Font);
                 AddThemeFontOverride("font", Font);
             }
 
+            // Make sure that button text is empty, because it causes issues and isn't needed.
+            if (!string.IsNullOrWhiteSpace(Text)) Text = string.Empty;
+
             Label.Size = Vector2.Zero;
 
-            /// Calculates and sets the position of the label within the container.
-            /// The label will be centered horizontally and vertically.
+            // Calculates and sets the position of the label within the container.
+            // The label will be centered horizontally and vertically.
             Label.Position = new Vector2()
             {
                 X = (Size.X - Label.Size.X) / 2,
                 Y = (Size.Y - Label.Size.Y) / 2
             };
         }
-    }
-
-    private void InitializeDefaults()
-    {
-        DefaultScale = Label.Scale;
     }
 
     private void InitializeAudios()
@@ -104,10 +103,12 @@ public partial class LabelButton : Button
         {
             case NotificationMouseEnter:
             case NotificationFocusEnter:
+                if (Engine.IsEditorHint()) break;
                 if (!Disabled) Hover();
                 break;
             case NotificationMouseExit:
             case NotificationFocusExit:
+                if (Engine.IsEditorHint()) break;
                 if (!Disabled) ExitHover();
                 else
                 {
