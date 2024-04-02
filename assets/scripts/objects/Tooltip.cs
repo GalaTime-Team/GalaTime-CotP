@@ -60,12 +60,12 @@ public partial class Tooltip : PanelContainer
         // Add description
         var sb = new StringBuilder();
         sb.Append(ability.Description);
-        sb.AppendLine($"Element: {ability.Element.Name}");
-        sb.AppendLine(ability.Reload > 0 ? $"Cooldown: [color=yellow]{ability.Reload}s[/color]" : "");
+        sb.Append($"Element: {ability.Element.Name}\n");
+        sb.Append(ability.Reload > 0 ? $"Cooldown: [color=yellow]{ability.Reload}s[/color]\n" : "");
         sb.Append(" \n");
-        sb.AppendLine(ability.Charges > 1 ? $"[color=green]+ Has {ability.Charges - 1} more charges[/color] ({ability.Charges})" : "");
-        sb.AppendLine(ability.Costs.Mana > 0 ? $"[color=orangered]- Consumes {ability.Costs.Mana} mana[/color]" : "");
-        sb.AppendLine(ability.Costs.Stamina > 0 ? $"[color=orangered]- Consumes {ability.Costs.Stamina} stamina[/color]" : "");
+        sb.Append(ability.Charges > 1 ? $"[color=green]+ Has {ability.Charges - 1} more charges[/color] ({ability.Charges})\n" : "");
+        sb.Append(ability.Costs.Mana > 0 ? $"[color=orangered]- Consumes {ability.Costs.Mana} mana[/color]\n" : "");
+        sb.Append(ability.Costs.Stamina > 0 ? $"[color=orangered]- Consumes {ability.Costs.Stamina} stamina[/color]" : "");
 
         WriteDescription(sb.ToString());
     }

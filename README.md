@@ -20,3 +20,5 @@ Install the following
     ```
 3. Open the project with Godot
 4. Run the project by using `F5` or by pressing "play" in the top left corner
+## Notes
+- Please, **DO NOT** use `StringBuilder.AppendLine()` in your code, because Godot [has a bug with it](https://github.com/godotengine/godot/issues/74351) that breaks line breaks when project is exported. Instead use `StringBuilder.Append("\n")`. If still having trouble try to switch line endings to `CRLF`, `LF` or `CR` in your editor in any files you are editing (For example `.tres`, `.txt`, `.json`, `.csv`, etc).
