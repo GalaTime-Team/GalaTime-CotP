@@ -1,6 +1,8 @@
-using Galatime;
-using Galatime.Helpers;
 using Godot;
+
+using Galatime;
+using Galatime.Global;
+using Galatime.Helpers;
 
 public partial class Slime : Entity
 {
@@ -75,6 +77,7 @@ public partial class Slime : Entity
     public override void _DeathEvent(float damageRotation = 0f)
     {
         base._DeathEvent();
+        PlayerVariables.Instance.DiscoverEnemy(1);
         DropXp();
         AnimationPlayer.Play("outro");
     }

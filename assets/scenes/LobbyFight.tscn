@@ -171,6 +171,10 @@ IsOpen = false
 position = Vector2(788, -36)
 SpawningEnemyId = "rockant"
 
+[node name="EnemySpawnPosition10" parent="EnemyRoom" instance=ExtResource("4_wqiaw")]
+position = Vector2(276, 860)
+SpawningEnemyId = "rockant"
+
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom"]
 position = Vector2(-206, 412)
 collision_layer = 0
@@ -207,13 +211,9 @@ scale = Vector2(2, 0.5)
 [node name="Collision" parent="EnemyRoom2/Doorblock2" index="1"]
 shape = SubResource("RectangleShape2D_54wtc")
 
-[node name="EnemySpawnPosition3" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
-position = Vector2(1236, -452)
-SpawningEnemyId = "firecloak"
-
 [node name="EnemySpawnPosition5" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
-position = Vector2(1428, -260)
-SpawningEnemyId = "rockant"
+position = Vector2(1236, -420)
+SpawningEnemyId = "firecloak"
 
 [node name="EnemySpawnPosition6" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
 position = Vector2(1428, -100)
@@ -222,10 +222,6 @@ SpawningEnemyId = "slime"
 [node name="EnemySpawnPosition7" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
 position = Vector2(1044, -100)
 SpawningEnemyId = "slime"
-
-[node name="EnemySpawnPosition2" parent="EnemyRoom2" instance=ExtResource("4_wqiaw")]
-position = Vector2(1044, -262)
-SpawningEnemyId = "rockant"
 
 [node name="TriggerArea" type="Area2D" parent="EnemyRoom2"]
 position = Vector2(1236, -100)

@@ -1,10 +1,12 @@
+using Godot;
+
+using System;
+
 using Galatime;
 using Galatime.AI;
 using Galatime.Damage;
+using Galatime.Global;
 using Galatime.Helpers;
-using Godot;
-using System;
-using System.Collections.Generic;
 
 public partial class Firecloak : Entity
 {
@@ -192,6 +194,7 @@ public partial class Firecloak : Entity
         AnimationPlayer.Play("death");
         Callable.From(() => Collision.Disabled = true).CallDeferred();
 
+        PlayerVariables.Instance.DiscoverEnemy(3);
     }
 
     public void Explode()

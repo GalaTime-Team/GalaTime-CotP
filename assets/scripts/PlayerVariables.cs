@@ -62,6 +62,7 @@ public partial class PlayerVariables : Node
     public Action OnAbilityLearned;
     /// <summary> Emitted when the allies are changed. </summary>
     public Action OnAlliesChanged;
+    public Action OnDiscoveredEnemiesChanged;
 
     #endregion
 
@@ -107,11 +108,15 @@ public partial class PlayerVariables : Node
         OnAbilitiesChanged?.Invoke();
         OnAbilityLearned?.Invoke();
         OnAlliesChanged?.Invoke();
+        OnDiscoveredEnemiesChanged?.Invoke();
     }
 
+    /// <summary> Discover an enemy by its numeric ID. </summary>
     public void DiscoverEnemy(int id)
     {
         if (!DiscoveredEnemies.Contains(id)) DiscoveredEnemies.Add(id);
+        OnDiscoveredEnemiesChanged?.Invoke();
+        GD.Print("Discovered enemies: " + DiscoveredEnemies.Select(x => x.ToString()).Aggregate((x, y) => x + ", " + y));
     }
 
     #region Save/Load
@@ -137,7 +142,7 @@ public partial class PlayerVariables : Node
 
             if (saveData.ContainsKey("equipped_abilities"))
             {
-                Godot.Collections.Dictionary abilitiesDeserialized = (Godot.Collections.Dictionary)saveData["equipped_abilities"];
+                var abilitiesDeserialized = (Godot.Collections.Dictionary)saveData["equipped_abilities"];
                 // Converting keys to int, to be able to use them as indexes and loops through them
                 var abilitiesUnconverted = ConvertKeysToInt(abilitiesDeserialized);
                 // Lopping through the saved abilities
@@ -151,7 +156,7 @@ public partial class PlayerVariables : Node
 
             if (saveData.ContainsKey("inventory"))
             {
-                Godot.Collections.Dictionary inventoryDeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
+                var inventoryDeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
                 // Converting keys to int, to be able to use them as indexes and loops through them
                 var inventoryUnconverted = ConvertKeysToInt(inventoryDeserialized);
                 for (int i = 0; i < inventoryUnconverted.Count; i++)
@@ -177,11 +182,21 @@ public partial class PlayerVariables : Node
 
             if (saveData.ContainsKey("allies"))
             {
-                Godot.Collections.Array alliesDeserialized = (Godot.Collections.Array)saveData["allies"];
+                var alliesDeserialized = (Godot.Collections.Array)saveData["allies"];
                 for (int i = 0; i < alliesDeserialized.Count; i++)
                 {
                     var ally = (string)alliesDeserialized[i];
                     Allies[i] = GalatimeGlobals.GetAllyById(ally);
+                }
+            }
+
+            if (saveData.ContainsKey("discovered_enemies"))
+            {
+                var discoveredEnemiesDeserialized = (Godot.Collections.Array)saveData["discovered_enemies"];
+                for (int i = 0; i < discoveredEnemiesDeserialized.Count; i++)
+                {
+                    var enemy = (int)discoveredEnemiesDeserialized[i];
+                    DiscoveredEnemies.Add(enemy);
                 }
             }
 

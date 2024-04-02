@@ -1,6 +1,7 @@
 using Godot;
 
 using Galatime.Global;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Galatime.UI;
@@ -14,6 +15,8 @@ public partial class EnemiesPageContainer : Control
     public LabelButton EntryButton;
     #endregion
 
+    public List<Node> EntryButtons = new();
+
     public override void _Ready()
     {
         #region Get nodes
@@ -23,19 +26,51 @@ public partial class EnemiesPageContainer : Control
         EntryButton = GetNode<LabelButton>("LabelButton");
         #endregion
 
+        UpdateEntireList();
+        PlayerVariables.Instance.OnDiscoveredEnemiesChanged += UpdateEntireList;
+
+        // Select first entry by default if discovered
+        var first = EnemiesList.EnemiesData.First();
+        if (CheckDiscovered(first.Value.NumID))
+            SelectEntry(first.Key);
+    }
+
+    public override void _ExitTree()
+    {
+        PlayerVariables.Instance.OnDiscoveredEnemiesChanged -= UpdateEntireList;
+    }
+
+    public void UpdateEntireList()
+    {
+        // Clear list firstly
+        EntryButtons.ForEach(x => x.QueueFree());
+        EntryButtons.Clear();
+
         foreach (var item in EnemiesList.EnemiesData)
         {
             // Added button to the list for each entry
             var button = EntryButton.Duplicate() as LabelButton;
-            button.ButtonText = $"{item.Value.GetEnemyNumID()} - {item.Value.Name}";
-            button.Pressed += () => SelectEntry(item.Key);
+
+            // If enemy is not discovered, disable button and don't reveal name
+            if (!CheckDiscovered(item.Value.NumID))
+            {
+                button.ButtonText = $"{item.Value.GetEnemyNumID()} - ?";
+                button.Disabled = true;
+            }
+            else
+            {
+                button.ButtonText = $"{item.Value.GetEnemyNumID()} - {item.Value.Name}";
+                button.Pressed += () => SelectEntry(item.Key);
+            }
+
+            // Added button to the list for each entry
             List.AddChild(button);
+            EntryButtons.Add(button);
             button.Visible = true;
         }
-
-        // Select first entry by default
-        SelectEntry(EnemiesList.EnemiesData.First().Key);
     }
+
+    public static bool CheckDiscovered(int nId) => PlayerVariables.Instance.DiscoveredEnemies.Any(x => x == nId);
 
     public void SelectEntry(string index)
     {

@@ -90,6 +90,8 @@ public partial class RockAnt : Entity
 
         // Make sprite red so it's obvious it's dead.
         Sprite.Modulate = GameColors.Red;
+
+        PlayerVariables.Instance.DiscoverEnemy(2);
     }
 
     public void Dig()
