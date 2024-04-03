@@ -30,6 +30,7 @@ SettingsGlobals="*res://assets/scripts/SettingsGlobals.cs"
 DiscordController="*res://assets/scripts/DiscordController.cs"
 CutsceneManager="*res://assets/scripts/objects/CutsceneManager.cs"
 MusicManager="*res://assets/scripts/MusicManager.cs"
+QuestManager="*res://assets/scripts/QuestManager.cs"
 
 [display]
 

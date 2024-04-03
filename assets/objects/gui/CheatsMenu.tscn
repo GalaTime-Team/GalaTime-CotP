@@ -135,7 +135,7 @@ text = "[center][color=green]Cheats are active[/color]"
 fit_content = true
 autowrap_mode = 1
 
-[node name="FPSCounterLabel" type="Label" parent="."]
+[node name="InfoLabel" type="Label" parent="."]
 layout_mode = 1
 offset_right = 78.0
 offset_bottom = 23.0

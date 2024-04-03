@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://txwr2a75w6yq"]
+[gd_scene load_steps=16 format=3 uid="uid://txwr2a75w6yq"]
 
 [ext_resource type="Script" path="res://assets/scripts/scenes/LLobby.cs" id="1_34ayc"]
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="2_2sbvd"]
@@ -42,6 +42,10 @@ scale_min = 4.0
 scale_max = 4.0
 scale_curve = SubResource("CurveTexture_t103a")
 hue_variation_max = 0.08
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_xy4uj"]
+a = Vector2(0, -96)
+b = Vector2(0, 96)
 
 [node name="Lobby" type="Node2D"]
 y_sort_enabled = true
@@ -123,6 +127,25 @@ SpawnIndex = 1
 
 [node name="PlayerSpawnPoint2" parent="." instance=ExtResource("9_b4c3c")]
 position = Vector2(384, 32)
+
+[node name="SlimeTutorialSpawn" type="Node2D" parent="."]
+position = Vector2(-128, 32)
+
+[node name="Blocker1" type="StaticBody2D" parent="."]
+position = Vector2(-256, 32)
+
+[node name="Collision" type="CollisionShape2D" parent="Blocker1"]
+shape = SubResource("SegmentShape2D_xy4uj")
+disabled = true
+metadata/_edit_lock_ = true
+
+[node name="Blocker2" type="StaticBody2D" parent="."]
+position = Vector2(384, 32)
+
+[node name="Collision" type="CollisionShape2D" parent="Blocker2"]
+shape = SubResource("SegmentShape2D_xy4uj")
+disabled = true
+metadata/_edit_lock_ = true
 
 [editable path="Roomwrap"]
 [editable path="Roomwrap2"]

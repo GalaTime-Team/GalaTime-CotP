@@ -70,7 +70,7 @@ public partial class CheatsMenu : Control
     public RichTextLabel LogLabel;
     public Button MinimizeButton;
     public Control Window;
-    public Label FPSCounterLabel;
+    public Label InfoLabel;
 
     public Tooltip Tooltip;
     #endregion
@@ -83,6 +83,8 @@ public partial class CheatsMenu : Control
     private int SameLogsCount = 0;
     private string PreviousLogText = "";
     private int PreviousFocusIndex = 0;
+
+    private double TimerLog = 0;
 
     private bool shown;
     /// <summary> If cheats menu is shown. </summary>
@@ -145,7 +147,7 @@ public partial class CheatsMenu : Control
         LogLabel = GetNode<RichTextLabel>("Window/VSplitContainer/LogLabel");
         MinimizeButton = GetNode<Button>("MinimizeButton");
         Window = GetNode<Control>("Window");
-        FPSCounterLabel = GetNode<Label>("FPSCounterLabel");
+        InfoLabel = GetNode<Label>("InfoLabel");
 
         Tooltip = WindowManager.Instance.Tooltip;
         #endregion
@@ -209,7 +211,19 @@ public partial class CheatsMenu : Control
 
     public override void _Process(double delta)
     {
-        FPSCounterLabel.Text = $"{Engine.GetFramesPerSecond()} FPS";
+        if (TimerLog < .5) TimerLog += delta;
+        if (TimerLog >= .5)
+        {
+            var quests = QuestManager.Instance.CurrentQuests;
+
+            var str = new StringBuilder();
+            str.Append("FPS: ").Append(Engine.GetFramesPerSecond()).Append('\n')
+            .Append("Current quests: ").Append(quests.Count != 0 ? quests.Select(x => x.Name).Aggregate((x, y) => $"{x}, {y}") : "None");
+
+            InfoLabel.Text = str.ToString();
+
+            TimerLog = 0;
+        }
 
         // Show/hide the cheats menu by pressing the key.
         if (Input.IsActionJustPressed("cheats_menu")) Shown = !Shown;
