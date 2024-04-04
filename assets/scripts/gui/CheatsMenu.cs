@@ -218,7 +218,7 @@ public partial class CheatsMenu : Control
 
             var str = new StringBuilder();
             str.Append("FPS: ").Append(Engine.GetFramesPerSecond()).Append('\n')
-            .Append("Current quests: ").Append(quests.Count != 0 ? quests.Select(x => x.Name).Aggregate((x, y) => $"{x}, {y}") : "None");
+            .Append("Current quests: ").Append(quests.Count != 0 ? quests.Select(x => x.Value.Name).Aggregate((x, y) => $"{x}, {y}") : "None");
 
             InfoLabel.Text = str.ToString();
 

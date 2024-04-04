@@ -58,9 +58,10 @@ public partial class QuestManager : Node
     public GameLogger Logger { get; private set; } = new GameLogger(nameof(QuestManager), GameLogger.ConsoleColor.Green);
 
     /// <summary> Currently active quests. </summary>
-    public List<Quest> CurrentQuests { get; private set; } = new List<Quest>();
+    public Dictionary<string, Quest> CurrentQuests { get; private set; } = new();
     /// <summary> Completed quests. </summary>
-    public List<Quest> CompletedQuests { get; private set; } = new List<Quest>();
+    public Dictionary<string, Quest> CompletedQuests { get; private set; } = new();
+
 
     /// <summary> Called when the player starts a quest. </summary>
     public Action<Quest> OnQuestStarted;
@@ -76,7 +77,7 @@ public partial class QuestManager : Node
     {
         if (IsQuestCompleted(quest.Id) || IsQuestStarted(quest.Id)) return false;
 
-        CurrentQuests.Add(quest);
+        CurrentQuests.Add(quest.Id, quest);
         OnQuestStarted?.Invoke(quest);
 
         Logger.Log($"Started quest: {quest.Name}", GameLogger.LogType.Success);
@@ -86,18 +87,18 @@ public partial class QuestManager : Node
 
     public void FinishQuest(string questId)
     {
-        var quest = CurrentQuests.Find(x => x.Id == questId);
+        var quest = CurrentQuests[questId];
 
         if (quest == null) Logger.Log($"Quest with id {questId} not found", GameLogger.LogType.Warning);
         else
         {
-            CurrentQuests.Remove(quest);
-            CompletedQuests.Add(quest);
+            CurrentQuests.Remove(questId);
+            CompletedQuests.Add(quest.Id, quest);
             Logger.Log($"Finished quest: {quest.Name}", GameLogger.LogType.Success);
         }
     }
 
     /// <summary> Checks if the quest with the given id is completed. </summary>
-    public bool IsQuestCompleted(string questId) => CompletedQuests.Any(x => x.Id == questId);
-    public bool IsQuestStarted(string questId) => CurrentQuests.Any(x => x.Id == questId);
+    public bool IsQuestCompleted(string questId) => CompletedQuests.ContainsKey(questId);
+    public bool IsQuestStarted(string questId) => CurrentQuests.ContainsKey(questId);
 }
