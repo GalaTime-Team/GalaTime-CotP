@@ -64,10 +64,14 @@ public partial class PlayerVariables : Node
     public Action OnAlliesChanged;
     public Action OnDiscoveredEnemiesChanged;
 
+    /// <summary> Emitted when the player is ready. </summary>
+    public Action PlayerIsReady;
+
     #endregion
 
     // TODO: REMOVE THESE LATER, BECAUSE IT'S REALLY UGLY.
     public static Action<float> OnXpChanged;
+    
 
     /// <summary> Instance of the player in the current scene. </summary>
     public Player Player;
@@ -109,6 +113,8 @@ public partial class PlayerVariables : Node
         OnAbilityLearned?.Invoke();
         OnAlliesChanged?.Invoke();
         OnDiscoveredEnemiesChanged?.Invoke();
+
+        PlayerIsReady?.Invoke();
     }
 
     /// <summary> Discover an enemy by its numeric ID. </summary>

@@ -44,7 +44,9 @@ public partial class DialogBox : NinePatchRect
     }
 
     public static readonly Vector2 DefaultSize = new(196, 56);
-    public static readonly Vector2 NASize = new(272, 72);
+    public static readonly Vector2 DefaultPosition = new(84, 24);
+    public static readonly Vector2 NASize = new(264, 72);
+    public static readonly Vector2 NAPosition = new(12, 12);
 
     /// <summary> Represents the current dialog. </summary>
     private DialogData CurrentDialog;
@@ -54,6 +56,7 @@ public partial class DialogBox : NinePatchRect
     public bool IsDialog = false;
 
     public Action OnDialogEndCallback;
+    public Action<int> OnDialogNextPhraseCallback;
 
     private AudioStreamPlayer DialogAudio;
     public override void _Ready()
@@ -72,10 +75,10 @@ public partial class DialogBox : NinePatchRect
 
     /// <summary> Start a dialog by registered dialog id in the game. </summary>
     /// <remarks> If the dialog is not exist, the dialog will be ended. Dialogs taken from the <see cref="GalatimeGlobals.DialogsList"/> </remarks>
-    public void StartDialog(string id, Action dialogEndCallback = null)
+    public void StartDialog(string id, Action dialogEndCallback = null, Action<int> dialogNextPhraseCallback = null)
     {
         var dialog = GalatimeGlobals.GetDialogById(id);
-        if (dialog is not null) StartDialog(dialog, dialogEndCallback);
+        if (dialog is not null) StartDialog(dialog, dialogEndCallback, dialogNextPhraseCallback);
         else
         {
             EndDialog();
@@ -99,7 +102,7 @@ public partial class DialogBox : NinePatchRect
         StartDialog(dialog);
     }
 
-    public void StartDialog(DialogData dialog, Action dialogEndCallback = null)
+    public void StartDialog(DialogData dialog, Action dialogEndCallback = null, Action<int> dialogNextPhraseCallback = null)
     {
         CurrentDialog = dialog;
 
@@ -109,6 +112,7 @@ public partial class DialogBox : NinePatchRect
         IsDialog = true;
 
         OnDialogEndCallback = dialogEndCallback;
+        OnDialogNextPhraseCallback = dialogNextPhraseCallback;
 
         CurrentPhrase++;
     }
@@ -148,28 +152,52 @@ public partial class DialogBox : NinePatchRect
 
         var character = GalatimeGlobals.GetCharacterById(phrase.CharacterID);
 
-        // Set the character portrait and name, but only if the character is not N/A, because it's means that the character is not exist.
-        TypingLabel.Size = character.ID == "na" ? NASize : DefaultSize;
-        CharacterNameLabel.Text = character.ID == "na" ? "" : character.Name;
+        if (character is not null)
+        {
+            // Set the character portrait and name, but only if the character is not N/A, because it's means that the character is not exist.
+            TypingLabel.Size = character.ID == "" ? NASize : DefaultSize;
+            TypingLabel.Position = character.ID == "" ? NAPosition : DefaultPosition;
+
+            CharacterNameLabel.Text = character.ID == "" ? "" : character.Name;
+
+            var emotion = character.EmotionPaths.Find(x => x.Id == phrase.EmotionID);
+            var voice = character.VoicePath != "" ? GD.Load<AudioStream>(character.VoicePath) : DefaultVoice;
+
+            TypingLabel.SetTypingAudio(voice);
+
+            #pragma warning disable CS0618 // Type or member is obsolete. AnimatedTexture is obsolete, but I want to use it anyway.
+
+            if (emotion != null)
+            {
+                Texture2D texture = GD.Load<Texture2D>(emotion.Path);
+                // Determine if character is animated or not.
+                if (texture is AnimatedTexture animatedTexture)
+                {
+                    animatedTexture.CurrentFrame = 0;
+                    CharacterPortraitTexture.Texture = animatedTexture;
+                }
+                else CharacterPortraitTexture.Texture = texture;
+            }
+        }
+        else
+        {
+            TypingLabel.Text = phrase.Text;
+
+            CharacterNameLabel.Text = "";
+            CharacterPortraitTexture.Texture = null;
+
+            TypingLabel.Size = NASize;
+            TypingLabel.Position = NAPosition;
+
+            TypingLabel.SetTypingAudio(DefaultVoice);
+        }
 
         TypingLabel.VisibleCharacters = 0;
         TypingLabel.Text = phrase.Text;
 
-        var emotion = character.EmotionPaths.Find(x => x.Id == phrase.EmotionID);
-        var voice = character.VoicePath != "" ? GD.Load<AudioStream>(character.VoicePath) : DefaultVoice;
-
-        TypingLabel.SetTypingAudio(voice);
-
-        // Determine if character is animated or not.
-        Texture2D texture = GD.Load<Texture2D>(emotion.Path);
-        if (texture is AnimatedTexture animatedTexture)
-        {
-            animatedTexture.CurrentFrame = 0;
-            CharacterPortraitTexture.Texture = animatedTexture;
-        }
-        else CharacterPortraitTexture.Texture = texture;
-
         StartTyping();
+        
+        OnDialogNextPhraseCallback?.Invoke(phraseId);
     }
 
     public void ExecuteActions(List<string> actions)

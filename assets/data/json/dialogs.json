@@ -6,7 +6,7 @@
         {
           "text": "Okay, are you ready?",
           "character": "raphael",
-          "emotion": "neutral"  
+          "emotion": "neutral"
         },
         {
           "text": "Yes, I'm ready.",
@@ -110,6 +110,32 @@
           "text": "Enjoy the game!",
           "character": "rafael",
           "emotion": "ready"
+        }
+      ]
+    },
+    {
+      "id": "tutorial_1_1",
+      "lines": [
+        {
+          "text": "I don't want to be slow at the [color=yellow]beginning[/color] of the game"
+        },
+        {
+          "text": "So, let me explain quickly how everything works"
+        },
+        {
+          "text": "Pick up a [color=yellow]sword[/color] and press [color=fuchsia]LMB[/color] to [color=yellow]attack[/color]"
+        },
+        {
+          "text": "Use [color=fuchsia]1-5[/color] to [color=yellow]use abilities[/color]"
+        },
+        {
+          "text": "If you want to [color=yellow]dodge[/color], press [color=fuchsia]SHIFT[/color]"
+        },
+        {
+          "text": "The [color=yellow]slime[/color] will appear and you have to [color=red]kill them[/color]!"
+        },
+        {
+          "text": "Good luck!"
         }
       ]
     }

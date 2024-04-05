@@ -81,6 +81,7 @@ namespace Galatime
 
             PlayerVariables.OnItemsChanged -= OnItemsChanged;
             PlayerVariables.OnAbilitiesChanged -= OnAbilitiesChangedForCharacter;
+            PlayerVariables.Player = null;
             Array.ForEach(PlayerVariables.Allies, x => x.Instance = null);
 
             CurrentCharacter = null;

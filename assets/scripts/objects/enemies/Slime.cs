@@ -7,23 +7,23 @@ using Galatime.Helpers;
 public partial class Slime : Entity
 {
     #region Nodes
-    private NavigationAgent2D Navigation;
-    private Sprite2D Sprite;
+    public NavigationAgent2D Navigation;
+    public Sprite2D Sprite;
 
     /// <summary> Area for the character's weapon. </summary>
-    private Area2D Weapon;
-    private AnimationPlayer AnimationPlayer;
+    public Area2D Weapon;
+    public AnimationPlayer AnimationPlayer;
 
     /// <summary> Timer for countdown to attack. </summary>
-    private Timer AttackCountdownTimer;
-    private TargetController TargetController;
+    public Timer AttackCountdownTimer;
+    public TargetController TargetController;
 
-    private GpuParticles2D Particles;
+    public GpuParticles2D Particles;
     #endregion
 
     #region Variables
     /// <summary> Packed scene for slime enemies. </summary>
-    private PackedScene SlimeScene;
+    public PackedScene SlimeScene;
     /// <summary> Character speed. </summary>
     #endregion
 

@@ -3,36 +3,72 @@ using Galatime.Global;
 using Galatime;
 
 public partial class LLobby : Node2D
-{   
-    public override async void _Ready() 
+{
+    QuestManager QuestManager;
+    PlayerVariables PlayerVariables;
+
+    public override void _Ready()
     {
+        QuestManager = QuestManager.Instance;
+        PlayerVariables = PlayerVariables.Instance;
+
         MusicManager.Instance.Play("dream_world");
 
-        void b(string n, bool v) { Callable.From(() => GetNode<StaticBody2D>(n).GetNode<CollisionShape2D>("Collision").Disabled = v).CallDeferred(); }
-
-        var qm = QuestManager.Instance;
-        if (qm.StartQuest(new Quest("tutorial_0", "Tutorial")))
+        if (QuestManager.StartQuest(new Quest("tutorial_0", "Tutorial")))
         {
             // Move spawn point to the left to avoid collision with the blockers.
             var cc = GetNode<Node2D>("PlayerSpawnPoint2");
             cc.GlobalPosition = new Vector2(cc.GlobalPosition.X - 128, cc.GlobalPosition.Y);
 
             // Activate blockers.
-            b("Blocker1", false); b("Blocker2", false);
+            SetTutorialBlocker("Blocker1", true); SetTutorialBlocker("Blocker2", true);
 
-            // Spawn slime.
-            var slime = EnemiesList.Enemies["slime"].Instantiate<Entity>();
-            slime.GlobalPosition = GetNode<Node2D>("SlimeTutorialSpawn").GlobalPosition;
-            AddChild(slime);
-
-            // End tutorial when slime dies.
-            slime.OnDeath += () =>
-            {
-                b("Blocker1", true); b("Blocker2", true);
-
-                LevelManager.Instance.TweenTimeScale(0.5f);
-                qm.FinishQuest("tutorial_0");
-            };
+            PlayerVariables.Instance.PlayerIsReady += PlayerIsReady;
         }
+    }
+
+    void SetTutorialBlocker(string n, bool v) { Callable.From(() => GetNode<StaticBody2D>(n).GetNode<CollisionShape2D>("Collision").Disabled = !v).CallDeferred(); }
+
+    void PlayerIsReady()
+    {
+        PlayerVariables.Instance.PlayerIsReady -= PlayerIsReady;
+
+        var p = PlayerVariables.Instance.Player;
+        Slime slime = null;
+
+        PlayerVariables.Instance.Player.PlayerGui.DialogBox.StartDialog("tutorial_1_1", dialogNextPhraseCallback: (int phraseId) =>
+        {
+            if (phraseId == 5)
+            {
+                // Don't let the player walk during introduction.
+                p.IsPlayerFrozen = true;
+                (Player.CurrentCharacter as TestCharacter).PlayDramaAnimation("IdleLeft");
+
+                // Spawn slime.
+                slime = EnemiesList.Enemies["slime"].Instantiate<Slime>();
+                slime.GlobalPosition = GetNode<Node2D>("SlimeTutorialSpawn").GlobalPosition;
+                AddChild(slime);
+
+                // End tutorial when slime dies.
+                slime.OnDeath += () =>
+                {
+                    SetTutorialBlocker("Blocker1", false); SetTutorialBlocker("Blocker2", false);
+
+                    LevelManager.Instance.TweenTimeScale(0.5f);
+                    QuestManager.FinishQuest("tutorial_0");
+                };
+
+                // Don't let the slime walk during introduction.
+                slime.DisableAI = true;
+                // Flip the slime horizontally to face the player.
+                slime.Sprite.FlipH = true;
+            }
+            // Let them walk again.
+            if (phraseId == 6)
+            {
+                slime.DisableAI = false;
+                p.IsPlayerFrozen = false;
+            }
+        });
     }
 }
