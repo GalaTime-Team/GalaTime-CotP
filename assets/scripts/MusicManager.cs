@@ -45,8 +45,7 @@ public partial class MusicManager : Node
                 new AudioPack
                 (
                     "dream_world_audio",
-                    "dream_world_audio",
-                    audioBusB: "MuffledMusic"
+                    "dream_world_combat_audio"
                 )
             },
             {
@@ -100,9 +99,21 @@ public partial class MusicManager : Node
         CurrentAudioPack = audioPack;
     }
 
-    public void SwitchAudio(bool bit, float duration = AUDIO_SWITCHING_DURATION, bool stopMusic = false) => SwitchAudio(bit, CurrentAudioPlayers[0], CurrentAudioPlayers[1], duration, stopMusic);
+    /// <summary> Pauses the audio, but plays it silently. </summary>
+    /// <param name="duration"> The duration of the fade out. </param>
+    public void Pause(float duration = AUDIO_SWITCHING_DURATION) => 
+        SwitchAudio(true, CurrentAudioPlayers[0], CurrentAudioPlayers[1], duration, true, false, true);
 
-    private void SwitchAudio(bool bit, AudioStreamPlayer A, AudioStreamPlayer B, float duration = AUDIO_SWITCHING_DURATION, bool stopMusic = false)
+    /// <summary> Switches the audio by specifying the bit. It crosses the audios. </summary>
+    /// <param name="bit"> The player to switch. True is A, false is B. </param>
+    /// <param name="duration"> The duration of the transition in seconds. </param>
+    /// <param name="stopMusic"> If true, the music will be stopped once the transition is finished. </param>
+    /// <param name="playFromBeginning"> If true, the next audio will be played from the beginning. </param>
+    /// <param name="pause"> If true, the music will be paused, but keeps playing silently. </param>
+    public void SwitchAudio(bool bit, float duration = AUDIO_SWITCHING_DURATION, bool stopMusic = false, bool playFromBeginning = false) => 
+        SwitchAudio(bit, CurrentAudioPlayers[0], CurrentAudioPlayers[1], duration, stopMusic, playFromBeginning);
+
+    private void SwitchAudio(bool bit, AudioStreamPlayer A, AudioStreamPlayer B, float duration = AUDIO_SWITCHING_DURATION, bool stopMusic = false, bool playFromBeginning = false, bool pause = false)
     {
         var tween = GetTree().CreateTween().SetParallel();
 
@@ -110,12 +121,16 @@ public partial class MusicManager : Node
         var primaryPlayer = bit ? A : B;
         var secondaryPlayer = bit ? B : A;
 
+        // Play from the beginning if needed.
+        if (playFromBeginning)
+            primaryPlayer.Seek(0);
+
         // Tween the volume. 
         tween.TweenProperty(primaryPlayer, "volume_db", stopMusic ? -80 : 0, duration);
         tween.TweenProperty(secondaryPlayer, "volume_db", -80, duration).SetDelay(stopMusic ? 0 : duration).Finished += () =>
         {
             // Stop the music if needed by waiting for the tween to finish.
-            if (stopMusic)
+            if (stopMusic && !pause)
             {
                 primaryPlayer.Stop();   
                 secondaryPlayer.Stop();

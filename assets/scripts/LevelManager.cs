@@ -47,8 +47,6 @@ public partial class LevelManager : Node
                     Array.ForEach(PlayerVariables.Instance.Allies, e => e.Instance?.Revive());
                 };
             }
-
-            MusicManager.Instance.SwitchAudio(!isCombat);
         }
     }
 

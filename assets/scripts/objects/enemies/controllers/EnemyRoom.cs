@@ -69,9 +69,13 @@ public partial class EnemyRoom : Node2D, ILevelObject
 
         LevelManager.Instance.IsCombat = true;
 
+        MusicManager.Instance.Pause();
+
         // Close all the doors
         foreach (var door in DoorBlocksList) door.IsOpen = false;
         await ToSignal(GetTree().CreateTimer(1.0f), "timeout");
+        
+        MusicManager.Instance.SwitchAudio(false, 0, playFromBeginning: true);
 
         // Spawn enemies at each spawn position
         foreach (var spawn in SpawnPositions)
@@ -104,6 +108,8 @@ public partial class EnemyRoom : Node2D, ILevelObject
         LevelManager.IsCombat = false;
         DoorBlocksList.ForEach(door => door.IsOpen = true);
         CurrentEnemies.Clear();
+
+        MusicManager.Instance.SwitchAudio(true, 1f);
 
         // Save the level object, so it can be loaded again between levels.
         LevelManager.Instance.SaveLevelObject(this, new object[] { false });
