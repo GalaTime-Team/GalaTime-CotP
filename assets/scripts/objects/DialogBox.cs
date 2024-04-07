@@ -1,15 +1,19 @@
+using Godot;
+
 using Galatime;
 using Galatime.Dialogue;
 using Galatime.Global;
+using Galatime.UI;
 using Galatime.UI.Helpers;
-using Godot;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 public partial class DialogBox : NinePatchRect
 {
+    public GameLogger Logger { get; private set; } = new GameLogger("DialogBox", GameLogger.ConsoleColor.Gray);
+
     public const string DEFAULT_VOICE_PATH = "res://assets/audios/sounds/talkbeeps/lol.wav";
     public AudioStream DefaultVoice;
 
@@ -17,6 +21,8 @@ public partial class DialogBox : NinePatchRect
     private Label CharacterNameLabel;
     private TextureRect CharacterPortraitTexture;
     private AnimationPlayer SkipAnimationPlayer;
+
+    public List<LabelButton> ChoiceButtons = new();
 
     private Player Player;
 
@@ -34,7 +40,10 @@ public partial class DialogBox : NinePatchRect
             // Check if the lines are ended, if so end the dialog.
             if (CurrentDialog is not null && currentPhrase >= CurrentDialog.Lines.Count)
             {
-                EndDialog();
+                if (CurrentDialog.Choices.Count > 0)
+                    StartChoice(CurrentDialog.Choices);
+                else
+                    EndDialog();
                 return;
             }
 
@@ -69,6 +78,10 @@ public partial class DialogBox : NinePatchRect
         SkipAnimationPlayer = GetNode<AnimationPlayer>("SkipAnimationPlayer");
         CharacterNameLabel = GetNode<Label>("CharacterName");
 
+        // Add the choice buttons. Currently only 2.
+        for (int i = 0; i < 2; i++)
+            ChoiceButtons.Add(GetNode<LabelButton>($"ChoiceButtonsContainer/ChoiceButton{i + 1}"));
+
         TypingLabel.OnTypingFinished += StopAndPlaySkipAnimation;
         TypingLabel.TypeTimer.Stop();
     }
@@ -81,29 +94,15 @@ public partial class DialogBox : NinePatchRect
         if (dialog is not null) StartDialog(dialog, dialogEndCallback, dialogNextPhraseCallback);
         else
         {
+            Logger.Log($"Dialog with id {id} not found.", GameLogger.LogType.Error);
             EndDialog();
         }
     }
 
-    /// <summary> Show a simple message as a dialog. </summary>
-    public void MessageDialog(string text)
-    {
-        var dialog = new DialogData
-        {
-            Lines = new List<DialogLineData>
-            {
-                new()
-                {
-                    Text = text
-                }
-            }
-        };
-
-        StartDialog(dialog);
-    }
-
     public void StartDialog(DialogData dialog, Action dialogEndCallback = null, Action<int> dialogNextPhraseCallback = null)
     {
+        Logger.Log($"Starting dialog: {dialog.ID}", GameLogger.LogType.Success);
+
         CurrentDialog = dialog;
 
         TypingLabel.Text = "";
@@ -117,19 +116,48 @@ public partial class DialogBox : NinePatchRect
         CurrentPhrase++;
     }
 
+    public void StartChoice(List<DialogChoiceData> choices)
+    {
+        ResetValues();
+
+        void b(LabelButton b, int i)
+        {
+            b.ButtonText = choices[i].Text;
+
+            void PressedAction()
+            {
+                StartDialog(choices[i].Target);
+                b.Pressed -= PressedAction; // Don't forget to remove the listener
+                ChoiceButtons.ForEach(bi =>
+                {
+                    bi.Visible = false;
+                    if (b.Name != bi.Name) bi.Pressed -= PressedAction;
+                });
+            }
+
+            b.Pressed += PressedAction;
+            b.Visible = true;
+        }
+
+        for (int i = 0; i < ChoiceButtons.Count; i++)
+            b(ChoiceButtons[i], i);
+    }
+
     public void EndDialog()
     {
         Visible = false;
         CanSkip = false;
         IsDialog = false;
+
         ResetValues();
+
+        OnDialogEndCallback?.Invoke();
     }
 
     private void StopAndPlaySkipAnimation()
     {
         SkipAnimationPlayer.Play("loop");
         CanSkip = true;
-
     }
 
     public void StartTyping() => TypingLabel.StartTyping();
@@ -151,7 +179,6 @@ public partial class DialogBox : NinePatchRect
         SkipAnimationPlayer.Play("start");
 
         var character = GalatimeGlobals.GetCharacterById(phrase.CharacterID);
-
         if (character is not null)
         {
             // Set the character portrait and name, but only if the character is not N/A, because it's means that the character is not exist.
@@ -196,10 +223,11 @@ public partial class DialogBox : NinePatchRect
         TypingLabel.Text = phrase.Text;
 
         StartTyping();
-        
+
         OnDialogNextPhraseCallback?.Invoke(phraseId);
     }
 
+    [Obsolete("Use callbacks instead.")]
     public void ExecuteActions(List<string> actions)
     {
         var str = new StringBuilder();
@@ -226,12 +254,12 @@ public partial class DialogBox : NinePatchRect
     {
         TypingLabel.Text = "";
         TypingLabel.VisibleCharacters = -1;
+        CharacterNameLabel.Text = "";
+        CharacterPortraitTexture.Texture = null;
 
         CurrentDialog = null;
         CanSkip = false;
         currentPhrase = -1;
-
-        OnDialogEndCallback?.Invoke();
     }
 
     public override void _UnhandledInput(InputEvent @event)

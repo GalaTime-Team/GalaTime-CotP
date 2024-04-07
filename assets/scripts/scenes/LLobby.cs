@@ -38,12 +38,8 @@ public partial class LLobby : Node2D
 
         PlayerVariables.Instance.Player.PlayerGui.DialogBox.StartDialog("tutorial_1_1", dialogNextPhraseCallback: (int phraseId) =>
         {
-            if (phraseId == 5)
+            if (phraseId == 0)
             {
-                // Don't let the player walk during introduction.
-                p.IsPlayerFrozen = true;
-                (Player.CurrentCharacter as TestCharacter).PlayDramaAnimation("IdleLeft");
-
                 // Spawn slime.
                 slime = EnemiesList.Enemies["slime"].Instantiate<Slime>();
                 slime.GlobalPosition = GetNode<Node2D>("SlimeTutorialSpawn").GlobalPosition;
@@ -57,17 +53,6 @@ public partial class LLobby : Node2D
                     LevelManager.Instance.TweenTimeScale(0.5f);
                     QuestManager.FinishQuest("tutorial_0");
                 };
-
-                // Don't let the slime walk during introduction.
-                slime.DisableAI = true;
-                // Flip the slime horizontally to face the player.
-                slime.Sprite.FlipH = true;
-            }
-            // Let them walk again.
-            if (phraseId == 6)
-            {
-                slime.DisableAI = false;
-                p.IsPlayerFrozen = false;
             }
         });
     }

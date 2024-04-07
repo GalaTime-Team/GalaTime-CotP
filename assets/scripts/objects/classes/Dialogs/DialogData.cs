@@ -24,6 +24,21 @@ public class DialogData
     [JsonProperty("lines")]
     /// <summary> The list of dialog lines in the dialog. </summary>
     public List<DialogLineData> Lines = new();
+
+    [JsonProperty("choices")]
+    public List<DialogChoiceData> Choices = new();
+}
+
+/// <summary> Represents a dialog choice in the dialog. </summary>
+public class DialogChoiceData
+{
+    [JsonProperty("text")]
+    /// <summary> The text that will be displayed in the dialog as the choice. </summary>
+    public string Text = "";
+
+    [JsonProperty("target")]
+    /// <summary> The target Id of the dialog when the choice is selected. </summary>
+    public string Target = "";
 }
 
 /// <summary> Represents a dialog line in the dialog. </summary>

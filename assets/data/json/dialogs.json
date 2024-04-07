@@ -117,25 +117,44 @@
       "id": "tutorial_1_1",
       "lines": [
         {
-          "text": "I don't want to be slow at the [color=yellow]beginning[/color] of the game"
+          "text": "Are you cool?"
+        }
+      ],
+      "choices":
+      [
+        {
+          "text": "Yeah",
+          "target": "tutorial_1_2"
         },
         {
-          "text": "So, let me explain quickly how everything works"
+          "text": "Not much...",
+          "target": "tutorial_1_3"
+        }
+      ]
+    },
+    {
+      "id": "tutorial_1_2",
+      "lines": [
+        {
+          "character": "arthur",
+          "emotion": "neutral",
+          "text": "Yeah, I'm cool."
         },
         {
-          "text": "Pick up a [color=yellow]sword[/color] and press [color=fuchsia]LMB[/color] to [color=yellow]attack[/color]"
+          "text": "I see..."
+        }
+      ]
+    },
+    {
+      "id": "tutorial_1_3",
+      "lines": [
+        {
+          "character": "arthur",
+          "emotion": "neutral",
+          "text": "I'm that cool."
         },
         {
-          "text": "Use [color=fuchsia]1-5[/color] to [color=yellow]use abilities[/color]"
-        },
-        {
-          "text": "If you want to [color=yellow]dodge[/color], press [color=fuchsia]SHIFT[/color]"
-        },
-        {
-          "text": "The [color=yellow]slime[/color] will appear and you have to [color=red]kill them[/color]!"
-        },
-        {
-          "text": "Good luck!"
+          "text": "Don't worry. You should be fine."
         }
       ]
     }

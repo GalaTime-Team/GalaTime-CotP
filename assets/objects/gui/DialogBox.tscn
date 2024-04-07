@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c5r33n1tcj86s"]
+[gd_scene load_steps=11 format=3 uid="uid://c5r33n1tcj86s"]
 
 [ext_resource type="Texture2D" uid="uid://62nl25lq8d81" path="res://assets/sprites/gui/dialog-background.png" id="1_f20lw"]
 [ext_resource type="Script" path="res://assets/scripts/objects/DialogBox.cs" id="2_3j6jw"]
@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://bwba3oyy3gjdi" path="res://assets/fonts/m5x7.ttf" id="4_3u1ey"]
 [ext_resource type="FontFile" uid="uid://d0lgxp8wsehq3" path="res://assets/fonts/m6x11.ttf" id="5_7edh5"]
 [ext_resource type="AudioStream" uid="uid://h1mkg7qkc6ls" path="res://assets/audios/sounds/talkbeeps/lol.wav" id="6_a204m"]
+[ext_resource type="PackedScene" uid="uid://dra0o6uwyaspw" path="res://assets/objects/gui/elements/LabelButton.tscn" id="7_pkxyd"]
 
 [sub_resource type="Animation" id="10"]
 resource_name = "loop"
@@ -72,6 +73,7 @@ offset_right = 232.0
 offset_bottom = 238.0
 scale = Vector2(0.5, 0.5)
 expand_mode = 1
+metadata/_edit_lock_ = true
 
 [node name="TypingLabel" parent="." instance=ExtResource("3_wvheh")]
 layout_mode = 0
@@ -83,6 +85,7 @@ theme_override_fonts/normal_font = ExtResource("4_3u1ey")
 visible_characters = 59
 visible_ratio = 0.479675
 TypingSpeed = 0.04
+metadata/_edit_lock_ = true
 
 [node name="Skip" type="Label" parent="."]
 layout_mode = 0
@@ -92,6 +95,7 @@ offset_right = 280.0
 offset_bottom = 84.0
 theme_override_fonts/font = ExtResource("4_3u1ey")
 text = "Skip"
+metadata/_edit_lock_ = true
 
 [node name="CharacterName" type="Label" parent="."]
 layout_mode = 0
@@ -101,6 +105,7 @@ offset_right = 227.0
 offset_bottom = 27.0
 theme_override_fonts/font = ExtResource("5_7edh5")
 text = "Name of the character"
+metadata/_edit_lock_ = true
 
 [node name="Voice" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_a204m")
@@ -109,3 +114,23 @@ stream = ExtResource("6_a204m")
 libraries = {
 "": SubResource("AnimationLibrary_a538s")
 }
+
+[node name="ChoiceButtonsContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 20.0
+offset_right = 272.0
+offset_bottom = 60.0
+
+[node name="ChoiceButton1" parent="ChoiceButtonsContainer" instance=ExtResource("7_pkxyd")]
+visible = false
+custom_minimum_size = Vector2(21, 14)
+layout_mode = 2
+ButtonText = "Yes"
+
+[node name="ChoiceButton2" parent="ChoiceButtonsContainer" instance=ExtResource("7_pkxyd")]
+visible = false
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_horizontal = 10
+ButtonText = "No"
