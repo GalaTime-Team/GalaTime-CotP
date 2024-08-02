@@ -481,6 +481,7 @@ custom_minimum_size = Vector2(27, 13)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
+theme_override_fonts/font = ExtResource("2_nxd72")
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
 Font = ExtResource("2_nxd72")
@@ -492,6 +493,7 @@ metadata/_edit_lock_ = true
 custom_minimum_size = Vector2(43, 13)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_nxd72")
 theme_override_fonts/font = ExtResource("2_nxd72")
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
@@ -505,6 +507,7 @@ custom_minimum_size = Vector2(37, 13)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_nxd72")
+theme_override_fonts/font = ExtResource("2_nxd72")
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
 Speed = 0.1
 Font = ExtResource("2_nxd72")
@@ -516,6 +519,7 @@ metadata/_edit_lock_ = true
 custom_minimum_size = Vector2(20, 13)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_nxd72")
 theme_override_fonts/font = ExtResource("2_nxd72")
 HoverColor = Color(1, 0, 0, 1)
 PressedColor = Color(0.490196, 0.490196, 0.490196, 1)
@@ -575,7 +579,7 @@ bbcode_enabled = true
 text = "[center][color=yellow]Sound[/color]
 Soundtrack Composer: Nihhiu, Lukas R
 Soundtrack Producer: Nihhiu
-Sound Effects: Lukas R, Ardub, Nihhiu
+Sound Effects: Lukas R, Nihhiu
 
 
 "
@@ -623,7 +627,7 @@ scale = Vector2(2, 2)
 theme_override_fonts/normal_font = ExtResource("2_nxd72")
 bbcode_enabled = true
 text = "[center][color=yellow]Code[/color]
-Coder/Programmer: Ardub
+Coder/Programmer: Nihhiu
 Game Environment Designer: Nihhiu,
 GamerKnight64"
 scroll_active = false

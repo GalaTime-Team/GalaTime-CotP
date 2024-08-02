@@ -1,11 +1,12 @@
 ![Built with Godot](https://img.shields.io/badge/Built%20with-Godot%20Engine-478CBF.svg?style=for-the-badge&logo=Godot-Engine&logoColor=white) and ![C#](https://img.shields.io/badge/C%23-512BD4.svg?style=for-the-badge&logo=csharp&logoColor=white)
-# GalaTime
-The game is made by Nihhiu and his GalaTime team.
+# GalaTime: Chronicles of the Past
+The game was created and directed by: Nihhiu  
+Made by: GalaTime Team
 # Getting Started
 To run the game we should follow the instructions below:
 ## Prerequisites
 Install the following
-- [Godot Engine 4.2.1 or later stable](https://godotengine.org/)
+- [Godot Engine - .NET 4.2.1 or later](https://godotengine.org/)
 - [.NET 6.0 or later](https://dotnet.microsoft.com/download/dotnet/6.0)
 - [Git](https://git-scm.com/) ~~(obvisously)~~
 ## Installation
@@ -15,7 +16,7 @@ Install the following
     ```
 2. Restore NuGet packages
     ```bash
-    cd Galatime
+    cd GalaTime-CotP
     dotnet restore
     ```
 3. Open the project with Godot
