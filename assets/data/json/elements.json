@@ -1,0 +1,249 @@
+[
+  {
+	"id": "aqua",
+	"name": "Aqua",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     1.0,
+		"caeli":    1.0,
+		"chaos":    2.0,
+		"ignis":    0.5,
+		"lapis":    1.0,
+		"lux":      0.5,
+		"naturalea":0.5,
+		"corporis": 0.0,
+		"spatium":  1.0,
+		"tenebris": 1.0,
+		"magic":    1.0,
+		"vetus":    1.0
+	}
+  },
+  {
+	"id": "caeli",
+	"name": "Caeli",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     1.0,
+		"caeli":    1.0,
+		"chaos":    1.0,
+		"ignis":    2.0,
+		"lapis":    2.0,
+		"lux":      0.0,
+		"naturalea":0.5,
+		"corporis": 0.0,
+		"spatium":  0.5,
+		"tenebris": 0.0,
+		"magic":    1.0,
+		"vetus":    1.0
+	}
+  },
+  {
+	"id": "chaos",
+	"name": "Chaos",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     1.0,
+		"caeli":    0.5,
+		"chaos":    1.0,
+		"ignis":    1.0,
+		"lapis":    0.5,
+		"lux":      2.0,
+		"naturalea":1.0,
+		"corporis": 0.0,
+		"spatium":  2.0,
+		"tenebris": 1.0,
+		"magic":    1.0,
+		"vetus":    1.0
+	}
+  },
+  {
+	"id": "ignis",
+	"name": "Ignis",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     2.0,
+		"caeli":    2.0,
+		"chaos":    1.0,
+		"ignis":    1.0,
+		"lapis":    1.0,
+		"lux":      1.0,
+		"naturalea":0.5,
+		"corporis": 1.0,
+		"spatium":  1.0,
+		"tenebris": 0.5,
+		"magic":    1.0,
+		"vetus":    1.0
+	}
+  },
+  {
+	"id": "lapis",
+	"name": "Lapis",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     2.0,
+		"caeli":    0.5,
+		"chaos":    2.0,
+		"ignis":    0.5,
+		"lapis":    1.0,
+		"lux":      0.5,
+		"naturalea":2.0,
+		"corporis": 2.0,
+		"spatium":  1.0,
+		"tenebris": 0.5,
+		"magic":    0.0,
+		"vetus":    0.0
+	}
+  },
+  {
+	"id": "lux",
+	"name": "Lux",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     2.0,
+		"caeli":    0.0,
+		"chaos":    0.5,
+		"ignis":    0.5,
+		"lapis":    1.0,
+		"lux":      0.0,
+		"naturalea":2.0,
+		"corporis": 0.5,
+		"spatium":  1.0,
+		"tenebris": 2.0,
+		"magic":    1.0,
+		"vetus":    1.0
+	}
+  },
+  {
+	"id": "naturalea",
+	"name": "Naturalea",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     0.5,
+		"caeli":    1.0,
+		"chaos":    1.0,
+		"ignis":    2.0,
+		"lapis":    1.0,
+		"lux":      0.5,
+		"naturalea":1.0,
+		"corporis": 1.0,
+		"spatium":  2.0,
+		"tenebris": 1.0,
+		"magic":    1.0,
+		"vetus":    1.0
+	}
+  },
+  {
+	"id": "corporis",
+	"name": "Corporis",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     0.5,
+		"caeli":    0.5,
+		"chaos":    1.0,
+		"ignis":    1.0,
+		"lapis":    1.0,
+		"lux":      2.0,
+		"naturalea":1.0,
+		"corporis": 1.0,
+		"spatium":  2.0,
+		"tenebris": 1.0,
+		"magic":    2.0,
+		"vetus":    0.5
+	}
+  },
+  {
+	"id": "spatium",
+	"name": "Spatium",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     1.0,
+		"caeli":    1.0,
+		"chaos":    1.0,
+		"ignis":    1.0,
+		"lapis":    1.0,
+		"lux":      0.5,
+		"naturalea":0.5,
+		"corporis": 0.0,
+		"spatium":  2.0,
+		"tenebris": 2.0,
+		"magic":    1.0,
+		"vetus":    0.0
+	}
+  },
+  {
+	"id": "tenebris",
+	"name": "Tenebris",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     0.5,
+		"caeli":    0.0,
+		"chaos":    1.0,
+		"ignis":    2.0,
+		"lapis":    0.0,
+		"lux":      2.0,
+		"naturalea":1.0,
+		"corporis": 2.0,
+		"spatium":  0.5,
+		"tenebris": 0.0,
+		"magic":    1.0,
+		"vetus":    0.5
+	}
+  },
+  {
+	"id": "magic",
+	"name": "Magic",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     1.0,
+		"caeli":    1.0,
+		"chaos":    0.5,
+		"ignis":    1.0,
+		"lapis":    2.0,
+		"lux":      1.0,
+		"naturalea":1.0,
+		"corporis": 0.5,
+		"spatium":  1.0,
+		"tenebris": 1.0,
+		"magic":    1.0,
+		"vetus":    2.0
+	}
+  },
+  {
+	"id": "vetus",
+	"name": "Vetus",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     1.0,
+		"caeli":    2.0,
+		"chaos":    1.0,
+		"ignis":    1.0,
+		"lapis":    1.0,
+		"lux":      1.0,
+		"naturalea":1.0,
+		"corporis": 2.0,
+		"spatium":  0.5,
+		"tenebris": 1.0,
+		"magic":    0.5,
+		"vetus":    1.0
+	}
+  },
+  {
+	"id": "inanus",
+	"name": "Inanus",
+	"description": "Text",
+	"damageMultipliers": {
+		"aqua":     1.0,
+		"caeli":    1.0,
+		"chaos":    1.0,
+		"ignis":    1.0,
+		"lapis":    1.0,
+		"lux":      1.0,
+		"naturalea":1.0,
+		"corporis": 1.0,
+		"spatium":  1.0,
+		"tenebris": 1.0,
+		"magic":    1.0,
+		"vetus":    1.0
+	}
+  }
+]

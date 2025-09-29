@@ -96,7 +96,7 @@ public partial class Slime : Entity
 	private void DealDamage(Entity entity)
 	{
 		AttackCountdownTimer.Start();
-		GalatimeElement element = GalatimeElement.Aqua;
+		GalatimeElement element = ElementManager.Aqua;
 		float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
 		entity.TakeDamage(50, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.Physical, 500, damageRotation);
 

@@ -90,7 +90,7 @@ public partial class Firecloak : Entity
 
 		DeathExplosion = Explosion.GetInstance();
 		DeathExplosion.Power = 14;
-		DeathExplosion.Element = GalatimeElement.Ignis;
+		DeathExplosion.Element = ElementManager.Ignis;
 		DeathExplosion.Type = ExplosionType.Red;
 
 		TargetController.OnTargetChanged += () =>

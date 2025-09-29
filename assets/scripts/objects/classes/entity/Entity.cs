@@ -168,6 +168,9 @@ public partial class Entity : CharacterBody2D
             // if (type == DamageType.physical) GD.Print(damageN + " RECEIVED DAMAGE. " + power + " ATTAKER POWER. " + attackStat + " ATTAKER ATTACK STATS. " + element.name + " RECEIVER ELEMENT NAME. " + elemen.name + " ATTAKER ELEMENT NAME. " + type + " ATTAKER DAMAGE TYPE. " + stats.physicalDefence.value + " RECEIVER PHYSICAL DEFENCE.");
         }
 
+        // Round damageN to the nearest integer and ensure it's at least 1.
+        damageN = Math.Max((int)Math.Round(damageN), 1);
+
         SpawnDamageEffect(damageN, damageResult.Type);
 
         if (DamageSpritePlayer is not null)
