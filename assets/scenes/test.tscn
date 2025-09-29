@@ -1,6 +1,6 @@
 [gd_scene load_steps=17 format=3 uid="uid://4itnwo0dn0ve"]
 
-[ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/Player.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://dxkmenalovoja" path="res://assets/objects/player.tscn" id="1"]
 [ext_resource type="Texture2D" uid="uid://cagolglhpvfvx" path="res://assets/sprites/tilesets/forest-grass1.png" id="2_7h8dw"]
 [ext_resource type="Texture2D" uid="uid://wa1gsob81s1v" path="res://assets/sprites/tilesets/forest-water1.png" id="3_85axt"]
 [ext_resource type="AudioStream" uid="uid://bpq516ae5duyf" path="res://assets/audios/soundtracks/filips_house.mp3" id="4_1lfic"]

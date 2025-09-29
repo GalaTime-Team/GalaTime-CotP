@@ -4,9 +4,9 @@ using Galatime.Global;
 
 public partial class test : Node2D
 {
-    public override void _Ready()
-    {
-        var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-        GetTree().Root.Title = "GalaTime - Test room";
-    }
+	public override void _Ready()
+	{
+		var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+		GetTree().Root.Title = "GalaTime - Test room";
+	}
 }

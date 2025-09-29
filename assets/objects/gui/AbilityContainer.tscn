@@ -111,6 +111,7 @@ layout_mode = 2
 offset_top = 16.0
 offset_right = 16.0
 offset_bottom = 32.0
+scale = Vector2(0.816327, 0.816327)
 pivot_offset = Vector2(8, 8)
 size_flags_horizontal = 4
 size_flags_vertical = 4

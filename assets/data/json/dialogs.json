@@ -1,162 +1,162 @@
 {
   "dialogs": [
-    {
-      "id": "test",
-      "lines": [
-        {
-          "text": "Okay, are you ready?",
-          "character": "raphael",
-          "emotion": "neutral"
-        },
-        {
-          "text": "Yes, I'm ready.",
-          "character": "arthur",
-          "emotion": "neutral"
-        },
-        {
-          "text": "Then, let's go!",
-          "character": "raphael",
-          "emotion": "neutral"
-        }
-      ]
-    },
-    {
-      "id": "test_01",
-      "lines": [
-        {
-          "text": "Do you liked my performance?",
-          "character": "arthur",
-          "emotion": "explaining"
-        },
-        {
-          "text": "Uhh... Arthur",
-          "character": "raphael",
-          "emotion": "sweating"
-        },
-        {
-          "text": "We should to go, not dance...",
-          "character": "raphael",
-          "emotion": "angry"
-        },
-        {
-          "text": "Fuck you!",
-          "character": "arthur",
-          "emotion": "angry"
-        }
-      ]
-    },
-    {
-      "id": "test_0",
-      "lines": [
-        {
-          "text": "What's this thing!?",
-          "character": "arthur",
-          "emotion": "neutral"
-        },
-        {
-          "text": "This kinda looks weird.",
-          "character": "arthur",
-          "emotion": "neutral"
-        },
-        {
-          "text": "It's worth it to enter?",
-          "character": "arthur",
-          "emotion": "neutral"
-        }
-      ]
-    },
-    {
-      "id": "tutorial_0",
-      "lines": [
-        {
-          "text": "Hello my dear [color=yellow]player[/color]!",
-          "character": "rafael",
-          "emotion": "surprised",
-          "actions": [
-            "toggleMove"
-          ]
-        },
-        {
-          "text": "It all looks very unfinished right now",
-          "character": "rafael",
-          "emotion": "sweating"
-        },
-        {
-          "text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]",
-          "character": "rafael",
-          "emotion": "neutral"
-        },
-        {
-          "text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]",
-          "character": "rafael",
-          "emotion": "neutral"
-        },
-        {
-          "text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped",
-          "character": "rafael",
-          "emotion": "neutral"
-        },
-        {
-          "text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]",
-          "character": "rafael",
-          "emotion": "neutral"
-        },
-        {
-          "text": "Soon the slimes will appear and you have to [color=red]eliminate[/color] them!",
-          "character": "rafael",
-          "emotion": "neutral"
-        },
-        {
-          "text": "Enjoy the game!",
-          "character": "rafael",
-          "emotion": "ready"
-        }
-      ]
-    },
-    {
-      "id": "tutorial_1_1",
-      "lines": [
-        {
-          "text": "Are you cool?"
-        }
-      ],
-      "choices":
-      [
-        {
-          "text": "Yeah",
-          "target": "tutorial_1_2"
-        },
-        {
-          "text": "Not much...",
-          "target": "tutorial_1_3"
-        }
-      ]
-    },
-    {
-      "id": "tutorial_1_2",
-      "lines": [
-        {
-          "character": "arthur",
-          "emotion": "neutral",
-          "text": "Yeah, I'm cool."
-        },
-        {
-          "text": "I see..."
-        }
-      ]
-    },
-    {
-      "id": "tutorial_1_3",
-      "lines": [
-        {
-          "character": "arthur",
-          "emotion": "neutral",
-          "text": "I'm that cool."
-        },
-        {
-          "text": "Don't worry. You should be fine."
-        }
-      ]
-    }
+	{
+	  "id": "test",
+	  "lines": [
+		{
+		  "text": "Okay, are you ready?",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Yes, I'm ready.",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Then, let's go!",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		}
+	  ]
+	},
+	{
+	  "id": "test_01",
+	  "lines": [
+		{
+		  "text": "Do you liked my performance?",
+		  "character": "arthur",
+		  "emotion": "explaining"
+		},
+		{
+		  "text": "Uhh... Arthur",
+		  "character": "raphael",
+		  "emotion": "sweating"
+		},
+		{
+		  "text": "We should to go, not dance...",
+		  "character": "raphael",
+		  "emotion": "angry"
+		},
+		{
+		  "text": "Fuck you!",
+		  "character": "arthur",
+		  "emotion": "angry"
+		}
+	  ]
+	},
+	{
+	  "id": "test_0",
+	  "lines": [
+		{
+		  "text": "What's this thing!?",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "This kinda looks weird.",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "It's worth it to enter?",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		}
+	  ]
+	},
+	{
+	  "id": "tutorial_0",
+	  "lines": [
+		{
+		  "text": "Hello my dear [color=yellow]player[/color]!",
+		  "character": "rafael",
+		  "emotion": "surprised",
+		  "actions": [
+			"toggleMove"
+		  ]
+		},
+		{
+		  "text": "It all looks very unfinished right now",
+		  "character": "rafael",
+		  "emotion": "sweating"
+		},
+		{
+		  "text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]",
+		  "character": "rafael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]",
+		  "character": "rafael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped",
+		  "character": "rafael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]",
+		  "character": "rafael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Soon the slimes will appear and you have to [color=red]eliminate[/color] them!",
+		  "character": "rafael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Enjoy the game!",
+		  "character": "rafael",
+		  "emotion": "ready"
+		}
+	  ]
+	},
+	{
+	  "id": "tutorial_1_1",
+	  "lines": [
+		{
+		  "text": "Are you cool?"
+		}
+	  ],
+	  "choices":
+	  [
+		{
+		  "text": "Yeah",
+		  "target": "tutorial_1_2"
+		},
+		{
+		  "text": "Not much...",
+		  "target": "tutorial_1_3"
+		}
+	  ]
+	},
+	{
+	  "id": "tutorial_1_2",
+	  "lines": [
+		{
+		  "character": "arthur",
+		  "emotion": "neutral",
+		  "text": "Yeah, I'm cool."
+		},
+		{
+		  "text": "I see..."
+		}
+	  ]
+	},
+	{
+	  "id": "tutorial_1_3",
+	  "lines": [
+		{
+		  "character": "arthur",
+		  "emotion": "neutral",
+		  "text": "I'm that cool."
+		},
+		{
+		  "text": "Don't worry. You should be fine."
+		}
+	  ]
+	}
   ]
 }
