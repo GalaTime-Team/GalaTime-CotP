@@ -30,11 +30,10 @@ public partial class Loading : CanvasLayer
 		if (!sceneLoaded)
 		{
 			var status = ResourceLoader.LoadThreadedGetStatus(sceneName, sceneProgress);
-			float sceneLoadProgress = (float)sceneProgress[0] * 70f; // Scene loading is 70% of total progress
+			float sceneLoadProgress = (float)sceneProgress[0] * 20f; // Scene loading is 20% of total progress
 			totalProgress = sceneLoadProgress;
 			progressBar.Value = totalProgress;
 			GD.Print($"{totalProgress}% - {status}. Scene: {sceneName}");
-
 			if (status == ResourceLoader.ThreadLoadStatus.Loaded)
 			{
 				sceneLoaded = true;
@@ -44,7 +43,6 @@ public partial class Loading : CanvasLayer
 		{
 			LoadElementsWithProgress();
 		}
-
 		if (sceneLoaded && elementsLoaded)
 		{
 			var instance = (PackedScene)ResourceLoader.LoadThreadedGet(sceneName);
@@ -58,22 +56,43 @@ public partial class Loading : CanvasLayer
 		try
 		{
 			GD.Print("Attempting to load elements from JSON");
-			string jsonPath = ProjectSettings.GlobalizePath(GalatimeGlobals.PathListElements);
-			GD.Print($"Loading elements from: {jsonPath}");
-			if (!Godot.FileAccess.FileExists(jsonPath))
+
+			// List of JSON files to load
+			string[] jsonPaths = {
+				GalatimeGlobals.PathListItems,
+				GalatimeGlobals.PathListAbilities,
+				GalatimeGlobals.PathListTips,
+				GalatimeGlobals.PathListDialogs,
+				GalatimeGlobals.PathListCharacters,
+				GalatimeGlobals.PathListAllies,
+				GalatimeGlobals.PathListElements
+			};
+
+			// Calculate progress increment
+			float progressIncrement = 100f / (jsonPaths.Length + 1); // +1 for the scene
+
+			// Load each JSON file and update progress
+			foreach (string jsonPath in jsonPaths)
 			{
-				GD.PrintErr($"File not found: {jsonPath}");
-				throw new FileNotFoundException($"File not found: {jsonPath}");
-			}
-			// Simulate loading progress for elements (30% of total progress)
-			for (int i = 1; i <= 30; i++)
-			{
+				string fullPath = ProjectSettings.GlobalizePath(jsonPath);
+				GD.Print($"Loading elements from: {fullPath}");
+
+				if (!Godot.FileAccess.FileExists(fullPath))
+				{
+					GD.PrintErr($"File not found: {fullPath}");
+					throw new FileNotFoundException($"File not found: {fullPath}");
+				}
+
+				// Simulate loading progress for each file
 				await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-				totalProgress = 70f + i;
+				totalProgress += progressIncrement;
 				progressBar.Value = totalProgress;
+				GD.Print($"Progress: {totalProgress}%");
 			}
-			// Assuming GalatimeGlobals.Instance is already set
+
+			// Initialize global data
 			GalatimeGlobals.Instance.InitializeGlobalData();
+
 			elementsLoaded = true;
 			GD.Print("Finished loading elements from JSON");
 		}
