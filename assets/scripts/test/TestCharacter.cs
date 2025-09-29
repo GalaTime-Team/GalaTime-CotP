@@ -7,225 +7,225 @@ using Godot;
 
 public partial class TestCharacter : HumanoidCharacter, IDrama
 {
-    [Export] public int FollowOrder;
-    [Export] public Godot.Collections.Array<string> DefaultAbilities;
+	[Export] public int FollowOrder;
+	[Export] public Godot.Collections.Array<string> DefaultAbilities;
 
-    public NavigationAgent2D Navigation;
-    public RayCast2D RayCast;
-    public AnimationPlayer AnimationPlayer;
+	public NavigationAgent2D Navigation;
+	public RayCast2D RayCast;
+	public AnimationPlayer AnimationPlayer;
 
-    public bool StrafeDirection = true;
-    public bool MeleeMode;
+	public bool StrafeDirection = true;
+	public bool MeleeMode;
 
-    public TargetController TargetController;
+	public TargetController TargetController;
 
-    public Timer RetreatDelayTimer, MoveDelayTimer, StrafeTimer, EnemySwitchDelayTimer, AttackTimer;
+	public Timer RetreatDelayTimer, MoveDelayTimer, StrafeTimer, EnemySwitchDelayTimer, AttackTimer;
 
-    public Player Player;
+	public Player Player;
 
-    private bool possessed;
-    /// <summary> True if the character is currently being possessed. That means the player is controlling it. </summary>
-    public bool Possessed
-    {
-        get => possessed;
-        set
-        {
-            possessed = value;
-            // Stop the attack timer, because no need to attack automatically.
-            if (value) AttackTimer.Stop();
-        }
-    }
+	private bool possessed;
+	/// <summary> True if the character is currently being possessed. That means the player is controlling it. </summary>
+	public bool Possessed
+	{
+		get => possessed;
+		set
+		{
+			possessed = value;
+			// Stop the attack timer, because no need to attack automatically.
+			if (value) AttackTimer.Stop();
+		}
+	}
 
-    [Export] public string DramaID { get; set; }
-    [Export] public Node2D DramaNode { get; set; }
-    public void SetDramaObject() => CutsceneManager.Instance.RegisterDramaObject(this);
-    
+	[Export] public string DramaID { get; set; }
+	[Export] public Node2D DramaNode { get; set; }
+	public void SetDramaObject() => CutsceneManager.Instance.RegisterDramaObject(this);
+	
 
-    public override void _Ready()
-    {
-        base._Ready();
+	public override void _Ready()
+	{
+		base._Ready();
 
-        SetDramaObject();
+		SetDramaObject();
 
-        Weapon = GetNode<Hand>("Hand");
-        HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
-        TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
-        DrinkingAudioPlayer = GetNode<AudioStreamPlayer2D>("DrinkingAudioPlayer");
-        Sprite = GetNode<Sprite2D>("Sprite2D");
+		Weapon = GetNode<Hand>("Hand");
+		HumanoidDoll = GetNode<HumanoidDoll>("HumanoidDoll");
+		TrailParticles = GetNode<GpuParticles2D>("TrailParticles");
+		DrinkingAudioPlayer = GetNode<AudioStreamPlayer2D>("DrinkingAudioPlayer");
+		Sprite = GetNode<Sprite2D>("Sprite2D");
 
-        Body = this;
+		Body = this;
 
-        AnimationPlayer = GetNode<AnimationPlayer>("Animation");
-        TargetController = GetNode<TargetController>("TargetController");
-        Navigation = GetNode<NavigationAgent2D>("Navigation");
-        RayCast = GetNode<RayCast2D>("RayCast");
+		AnimationPlayer = GetNode<AnimationPlayer>("Animation");
+		TargetController = GetNode<TargetController>("TargetController");
+		Navigation = GetNode<NavigationAgent2D>("Navigation");
+		RayCast = GetNode<RayCast2D>("RayCast");
 
-        var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
-        Player = playerVariables.Player;
+		var playerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
+		Player = playerVariables.Player;
 
-        InitializeTimers();
+		InitializeTimers();
 
-        for (var i = 0; i < (DefaultAbilities != null ? DefaultAbilities.Count : 0); i++) { AddAbility(GalatimeGlobals.GetAbilityById(DefaultAbilities[i]), i); }
+		for (var i = 0; i < (DefaultAbilities != null ? DefaultAbilities.Count : 0); i++) { AddAbility(GalatimeGlobals.GetAbilityById(DefaultAbilities[i]), i); }
 
-        if (LevelManager.Instance.CheatsMenu.GetCheat("god_mode").Active) Invincible = true;
-    }
+		if (LevelManager.Instance.CheatsMenu.GetCheat("god_mode").Active) Invincible = true;
+	}
 
-    private void InitializeTimers()
-    {
-        RetreatDelayTimer = new()
-        {
-            WaitTime = 0.3f,
-            OneShot = true
-        };
-        AddChild(RetreatDelayTimer);
+	private void InitializeTimers()
+	{
+		RetreatDelayTimer = new()
+		{
+			WaitTime = 0.3f,
+			OneShot = true
+		};
+		AddChild(RetreatDelayTimer);
 
-        MoveDelayTimer = new()
-        {
-            WaitTime = 0.3f,
-            OneShot = true
-        };
-        AddChild(MoveDelayTimer);
+		MoveDelayTimer = new()
+		{
+			WaitTime = 0.3f,
+			OneShot = true
+		};
+		AddChild(MoveDelayTimer);
 
-        StrafeTimer = new()
-        {
-            WaitTime = 0.5f
-        };
-        AddChild(StrafeTimer);
-        StrafeTimer.Timeout += ChangeStrafeDirection;
-        StrafeTimer.Start();
+		StrafeTimer = new()
+		{
+			WaitTime = 0.5f
+		};
+		AddChild(StrafeTimer);
+		StrafeTimer.Timeout += ChangeStrafeDirection;
+		StrafeTimer.Start();
 
-        AttackTimer = new()
-        {
-            WaitTime = 0.25f
-        };
-        AddChild(AttackTimer);
-        AttackTimer.Timeout += Attack;
-        AttackTimer.Start();
-    }
+		AttackTimer = new()
+		{
+			WaitTime = 0.25f
+		};
+		AddChild(AttackTimer);
+		AttackTimer.Timeout += Attack;
+		AttackTimer.Start();
+	}
 
-    float PathRotation => Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());   
+	float PathRotation => Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());   
 
-    public override void _AIProcess(double delta)
-    {
-        if (Possessed || DeathState) return;
-        if (TargetController.CurrentTarget != null) CombatMovement();
-        // Moving normally when there is no enemies.
-        else NormalMovement();
-    }
+	public override void _AIProcess(double delta)
+	{
+		if (Possessed || DeathState) return;
+		if (TargetController.CurrentTarget != null) CombatMovement();
+		// Moving normally when there is no enemies.
+		else NormalMovement();
+	}
 
-    private async void CombatMovement()
-    {
-        if (AttackTimer.IsStopped()) AttackTimer.Start();
+	private async void CombatMovement()
+	{
+		if (AttackTimer.IsStopped()) AttackTimer.Start();
 
-        Vector2 vectorPath;
+		Vector2 vectorPath;
 
-        // Take a sword if not equipped.
-        if (Weapon.Item == null) Weapon.TakeItem(GalatimeGlobals.GetItemById("golden_holder_sword"));
-        // Set RayCast position by angle to the enemy.
-        RayCast.TargetPosition = Vector2.Right.Rotated(GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition)) * 200;
-        // Set target position to the next enemy.
-        Navigation.TargetPosition = TargetController.CurrentTarget.GlobalPosition;
+		// Take a sword if not equipped.
+		if (Weapon.Item == null) Weapon.TakeItem(GalatimeGlobals.GetItemById("golden_holder_sword"));
+		// Set RayCast position by angle to the enemy.
+		RayCast.TargetPosition = Vector2.Right.Rotated(GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition)) * 200;
+		// Set target position to the next enemy.
+		Navigation.TargetPosition = TargetController.CurrentTarget.GlobalPosition;
 
-        // Vector from the target.
-        var pathRotation = Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());
-        await ToSignal(GetTree(), "physics_frame"); // Wait one physics frame
-        vectorPath = Vector2.Right.Rotated(pathRotation);
+		// Vector from the target.
+		var pathRotation = Body.GlobalPosition.AngleToPoint(Navigation.GetNextPathPosition());
+		await ToSignal(GetTree(), "physics_frame"); // Wait one physics frame
+		vectorPath = Vector2.Right.Rotated(pathRotation);
 
-        // Rotation to the enemy.
-        if (TargetController.CurrentTarget == null) return; // Make sure there is an enemy.
-        var enemyRotation = Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
-        Weapon.Rotation = enemyRotation;
+		// Rotation to the enemy.
+		if (TargetController.CurrentTarget == null) return; // Make sure there is an enemy.
+		var enemyRotation = Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
+		Weapon.Rotation = enemyRotation;
 
-        // Check if is in melee mode. Melee mode is when ally only uses sword. No need to use abilities when in melee mode.
-        if (!MeleeMode)
-        {
-            // Moving behavior based on distance.
-            var distance = Body.GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition);
-            if (distance >= 200 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
-            vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
-            if (RetreatDelayTimer.TimeLeft > 0) vectorPath = Vector2.Right.Rotated(enemyRotation + MathF.PI);
-            if (distance <= 150 && RetreatDelayTimer.TimeLeft == 0) RetreatDelayTimer.Start();
-        }
+		// Check if is in melee mode. Melee mode is when ally only uses sword. No need to use abilities when in melee mode.
+		if (!MeleeMode)
+		{
+			// Moving behavior based on distance.
+			var distance = Body.GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition);
+			if (distance >= 200 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
+			vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
+			if (RetreatDelayTimer.TimeLeft > 0) vectorPath = Vector2.Right.Rotated(enemyRotation + MathF.PI);
+			if (distance <= 150 && RetreatDelayTimer.TimeLeft == 0) RetreatDelayTimer.Start();
+		}
 
-        // Strafe up and down if the enemy.
-        vectorPath += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(pathRotation);
+		// Strafe up and down if the enemy.
+		vectorPath += new Vector2(0, StrafeDirection ? -1 : 1).Rotated(pathRotation);
 
-        // Check if any enemies are too close.
-        var swordColliders = Weapon.GetOverlappingBodies();
-        if (swordColliders.Count >= 1)
-        {
-            var obj = swordColliders[0];
-            // Check if enemy is enemy and not dead.
-            if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState) Weapon.Attack(this);
-        }
+		// Check if any enemies are too close.
+		var swordColliders = Weapon.GetOverlappingBodies();
+		if (swordColliders.Count >= 1)
+		{
+			var obj = swordColliders[0];
+			// Check if enemy is enemy and not dead.
+			if (obj is Entity e && e.IsInGroup("enemy") && !e.DeathState) Weapon.Attack(this);
+		}
 
-        Body.Velocity = vectorPath.Normalized() * Speed;
-    }
+		Body.Velocity = vectorPath.Normalized() * Speed;
+	}
 
-    public bool IsEnemy() => RayCast.GetCollider() is Entity e && e.IsInGroup("enemy") && !e.DeathState;
-    public void Attack()
-    {
-        var reloadedAbilities = Abilities.FindAll(x => CanUseAbility(x));
+	public bool IsEnemy() => RayCast.GetCollider() is Entity e && e.IsInGroup("enemy") && !e.DeathState;
+	public void Attack()
+	{
+		var reloadedAbilities = Abilities.FindAll(x => CanUseAbility(x));
 
-        // If there are no abilities that can be used, use sword.
-        if (reloadedAbilities.Count == 0)
-        {
-            MeleeMode = true;
-            return;
-        }
-        else MeleeMode = false;
+		// If there are no abilities that can be used, use sword.
+		if (reloadedAbilities.Count == 0)
+		{
+			MeleeMode = true;
+			return;
+		}
+		else MeleeMode = false;
 
-        var obj = RayCast.GetCollider();
-        // Check if enemy is enemy and not dead.
-        if (IsEnemy())
-        {
-            var rnd = new Random();
-            var i = rnd.Next(0, reloadedAbilities.Count);
-            UseAbility(i);
-        }
-    }
+		var obj = RayCast.GetCollider();
+		// Check if enemy is enemy and not dead.
+		if (IsEnemy())
+		{
+			var rnd = new Random();
+			var i = rnd.Next(0, reloadedAbilities.Count);
+			UseAbility(i);
+		}
+	}
 
-    public void ChangeStrafeDirection()
-    {
-        var rnd = new Random();
-        var i = rnd.Next(0, 2);
-        StrafeDirection = i == 0;
-    }
+	public void ChangeStrafeDirection()
+	{
+		var rnd = new Random();
+		var i = rnd.Next(0, 2);
+		StrafeDirection = i == 0;
+	}
 
-    /// <summary> Process of normal movement of the character. </summary>
-    private async void NormalMovement()
-    {
-        Weapon.Rotation = PathRotation;
+	/// <summary> Process of normal movement of the character. </summary>
+	private async void NormalMovement()
+	{
+		Weapon.Rotation = PathRotation;
 
-        // var allies = GetTree().GetNodesInGroup("ally");
-        // var followTo = allies[FollowOrder] as CharacterBody2D;
-        var followTo = Player.CurrentCharacter;
+		// var allies = GetTree().GetNodesInGroup("ally");
+		// var followTo = allies[FollowOrder] as CharacterBody2D;
+		var followTo = Player.CurrentCharacter;
 
-        if (followTo == null) return;
+		if (followTo == null) return;
 
-        Vector2 vectorPath;
-        RayCast.TargetPosition = Vector2.Zero;
-        Navigation.TargetPosition = followTo.GlobalPosition;
+		Vector2 vectorPath;
+		RayCast.TargetPosition = Vector2.Zero;
+		Navigation.TargetPosition = followTo.GlobalPosition;
 
-        await ToSignal(GetTree(), "physics_frame"); // Wait one physics frame
-        vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition());
-        var distance = Body.GlobalPosition.DistanceTo(followTo.GlobalPosition);
-        if (distance >= 150 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
-        vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
+		await ToSignal(GetTree(), "physics_frame"); // Wait one physics frame
+		vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition());
+		var distance = Body.GlobalPosition.DistanceTo(followTo.GlobalPosition);
+		if (distance >= 150 && MoveDelayTimer.TimeLeft == 0) MoveDelayTimer.Start();
+		vectorPath = MoveDelayTimer.TimeLeft > 0 ? vectorPath : Vector2.Zero;
 
-        Body.Velocity = vectorPath.Normalized() * Speed;
-        if (IsPushing) Body.Velocity *= PushingSpeedMultiplier;
-    }
+		Body.Velocity = vectorPath.Normalized() * Speed;
+		if (IsPushing) Body.Velocity *= PushingSpeedMultiplier;
+	}
 
-    public bool PlayDramaAnimation(string animationName)
-    {
-        if (!AnimationPlayer.HasAnimation(animationName)) return false;
-        AnimationPlayer.Play(animationName);
-        return true;
-    }
+	public bool PlayDramaAnimation(string animationName)
+	{
+		if (!AnimationPlayer.HasAnimation(animationName)) return false;
+		AnimationPlayer.Play(animationName);
+		return true;
+	}
 
-    public void StopDramaAnimation()
-    {
-        AnimationPlayer.Stop();
-    }
+	public void StopDramaAnimation()
+	{
+		AnimationPlayer.Stop();
+	}
 }

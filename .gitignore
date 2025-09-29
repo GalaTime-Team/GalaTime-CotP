@@ -27,3 +27,5 @@ Properties/launchSettings.json
 # .csproj
 Galatime.csproj.old.*
 Galatime.csproj.user
+
+*.import
