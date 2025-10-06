@@ -21,56 +21,11 @@
 	  ]
 	},
 	{
-	  "id": "test_01",
-	  "lines": [
-		{
-		  "text": "Do you liked my performance?",
-		  "character": "arthur",
-		  "emotion": "explaining"
-		},
-		{
-		  "text": "Uhh... Arthur",
-		  "character": "raphael",
-		  "emotion": "sweating"
-		},
-		{
-		  "text": "We should to go, not dance...",
-		  "character": "raphael",
-		  "emotion": "angry"
-		},
-		{
-		  "text": "Fuck you!",
-		  "character": "arthur",
-		  "emotion": "angry"
-		}
-	  ]
-	},
-	{
-	  "id": "test_0",
-	  "lines": [
-		{
-		  "text": "What's this thing!?",
-		  "character": "arthur",
-		  "emotion": "neutral"
-		},
-		{
-		  "text": "This kinda looks weird.",
-		  "character": "arthur",
-		  "emotion": "neutral"
-		},
-		{
-		  "text": "It's worth it to enter?",
-		  "character": "arthur",
-		  "emotion": "neutral"
-		}
-	  ]
-	},
-	{
 	  "id": "tutorial_0",
 	  "lines": [
 		{
 		  "text": "Hello my dear [color=yellow]player[/color]!",
-		  "character": "rafael",
+		  "character": "raphael",
 		  "emotion": "surprised",
 		  "actions": [
 			"toggleMove"
@@ -78,38 +33,38 @@
 		},
 		{
 		  "text": "It all looks very unfinished right now",
-		  "character": "rafael",
-		  "emotion": "sweating"
+		  "character": "raphael",
+		  "emotion": "nervous"
 		},
 		{
 		  "text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]",
-		  "character": "rafael",
-		  "emotion": "neutral"
+		  "character": "raphael",
+		  "emotion": "thinking"
 		},
 		{
 		  "text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]",
-		  "character": "rafael",
-		  "emotion": "neutral"
+		  "character": "raphael",
+		  "emotion": "trusting"
 		},
 		{
 		  "text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped",
-		  "character": "rafael",
-		  "emotion": "neutral"
+		  "character": "raphael",
+		  "emotion": "thinking"
 		},
 		{
 		  "text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]",
-		  "character": "rafael",
-		  "emotion": "neutral"
+		  "character": "raphael",
+		  "emotion": "laughing"
 		},
 		{
 		  "text": "Soon the slimes will appear and you have to [color=red]eliminate[/color] them!",
-		  "character": "rafael",
-		  "emotion": "neutral"
+		  "character": "raphael",
+		  "emotion": "surprised"
 		},
 		{
 		  "text": "Enjoy the game!",
-		  "character": "rafael",
-		  "emotion": "ready"
+		  "character": "raphael",
+		  "emotion": "laughing"
 		}
 	  ]
 	},
@@ -151,10 +106,136 @@
 		{
 		  "character": "arthur",
 		  "emotion": "neutral",
-		  "text": "I'm that cool."
+		  "text": "I'm not that cool."
 		},
 		{
 		  "text": "Don't worry. You should be fine."
+		}
+	  ]
+	},
+	{
+	  "id": "test_01",
+	  "lines": [
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "neutral_n"
+		},
+		{
+		  "text": "I hate the word nut.",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "cum is a nicer word.",
+		  "character": "arthur",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "...!",
+		  "character": "neven",
+		  "emotion": "blushing_n"
+		},
+		{
+		  "text": "What...?",
+		  "character": "raphael",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "Oh, look at the squirrels storing cum for the winter.",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": ".........",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "coffee_n"
+		},
+		{
+		  "text": "I regret this.",
+		  "character": "arthur",
+		  "emotion": "annoyed"
+		}
+	  ]
+	},
+	{
+	  "id": "test_02",
+	  "lines": [
+		{
+		  "text": "Arthur, you're such a romantic. A toaster would probably fall in love with you.",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "like_n"
+		},
+		{
+		  "text": "What's that supposed to mean? And what is he doing?",
+		  "character": "arthur",
+		  "emotion": "stressed"
+		}
+		,
+		{
+		  "text": "He's agreeing that you'd marry a toaster. It's the only appliance that would [color=yellow]toastally[/color] like you.",
+		  "character": "raphael",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "That's riddiculous! I'd never marry a toaster!",
+		  "character": "arthur",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "relaxing_n"
+		},
+		{
+		  "text": "See? Now he's saying you're too picky. You'd reject the toaster for not having a \"warm enough personality.\"",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "I don't even-",
+		  "character": "arthur",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "Oh, and Neven also says you're a \"lost cause.\"",
+		  "character": "raphael",
+		  "emotion": "laughing"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "coffee_n"
+		},
+		{
+		  "text": "He did not!",
+		  "character": "arthur",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "Yuh-huh. He totally did. Look at him",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "like_n"
+		},
+		{
+		  "text": "Yeah... whatever dude.",
+		  "character": "arthur",
+		  "emotion": "stressed"
 		}
 	  ]
 	}

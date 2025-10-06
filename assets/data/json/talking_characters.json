@@ -1,41 +1,51 @@
 {
   "characters": [
-    {
-      "id": "gabriel",
-      "name": "Gabriel",
-      "emotions": [
-        { "id": "thumbup", "path": "res://assets/sprites/gui/dialog/characters/gabriel/thumbup/thumbup.tres" },
-        { "id": "neutral", "path": "res://assets/sprites/gui/dialog/characters/gabriel/neutral.png" }
-      ]
-    },
-    {
-      "id": "raphael",
-      "name": "Raphael",
-      "emotions": [
-        { "id": "angry", "path": "res://assets/sprites/gui/dialog/characters/rafael/angry/angry.tres" },
-        { "id": "neutral", "path": "res://assets/sprites/gui/dialog/characters/rafael/neutral.png" },
-        { "id": "serious", "path": "res://assets/sprites/gui/dialog/characters/rafael/serious.png" },
-        { "id": "surprised", "path": "res://assets/sprites/gui/dialog/characters/rafael/surprised.png" },
-        { "id": "sweating", "path": "res://assets/sprites/gui/dialog/characters/rafael/sweating/sweating.tres" },
-        { "id": "ready", "path": "res://assets/sprites/gui/dialog/characters/rafael/ready/ready.tres" }
-      ],
-      "voice": "res://assets/audios/sounds/talkbeeps/malebeep0.wav"
-    },
-    {
-      "id": "arthur",
-      "name": "Arthur",
-      "emotions": [
-        { "id": "neutral", "path": "res://assets/sprites/gui/dialog/characters/arthur/neutral/neutral.tres" },
-        { "id": "unsure", "path": "res://assets/sprites/gui/dialog/characters/arthur/unsure/unsure.tres" },
-        { "id": "surprised", "path": "res://assets/sprites/gui/dialog/characters/arthur/surprised/suprised.tres" },
-        { "id": "sweating", "path": "res://assets/sprites/gui/dialog/characters/arthur/sweating/sweating.tres" },
-        { "id": "angry", "path": "res://assets/sprites/gui/dialog/characters/arthur/angry/angry.tres" },
-        { "id": "justwokeup", "path": "res://assets/sprites/gui/dialog/characters/arthur/justwokeup/justwokeup.tres" },
-        { "id": "flustered", "path": "res://assets/sprites/gui/dialog/characters/arthur/flustered/flustered.tres" },
-        { "id": "explaining", "path": "res://assets/sprites/gui/dialog/characters/arthur/explaining/explaining.tres" },
-        { "id": "anoyed", "path": "res://assets/sprites/gui/dialog/characters/arthur/anoyed/anoyed.tres" }
-      ],
-      "sound": "res://sounds/characters/arthur.wav"
-    }
+	{
+	  "id": "raphael",
+	  "name": "Raphael",
+	  "emotions": [
+		{ "id": "neutral", "path": "res://assets/sprites/gui/dialog/characters/raphael/neutral.png" },
+		{ "id": "angry", "path": "res://assets/sprites/gui/dialog/characters/raphael/angry.png" },
+		{ "id": "laughing", "path": "res://assets/sprites/gui/dialog/characters/raphael/laughing.png" },
+		{ "id": "nervous", "path": "res://assets/sprites/gui/dialog/characters/raphael/nervous.png" },
+		{ "id": "serious", "path": "res://assets/sprites/gui/dialog/characters/raphael/serious.png" },
+		{ "id": "surprised", "path": "res://assets/sprites/gui/dialog/characters/raphael/surprised.png" },
+		{ "id": "thinking", "path": "res://assets/sprites/gui/dialog/characters/raphael/thinking.png" },
+		{ "id": "trusting", "path": "res://assets/sprites/gui/dialog/characters/raphael/trusting.png" }
+	  ],
+	  "voice": "res://assets/audios/sounds/talkbeeps/malebeep0.wav"
+	},
+	{
+	  "id": "arthur",
+	  "name": "Arthur",
+	  "emotions": [
+		{ "id": "neutral", "path": "res://assets/sprites/gui/dialog/characters/arthur/neutral.png" },
+		{ "id": "annoyed", "path": "res://assets/sprites/gui/dialog/characters/arthur/annoyed.png" },
+		{ "id": "happy", "path": "res://assets/sprites/gui/dialog/characters/arthur/happy.png" },
+		{ "id": "stressed", "path": "res://assets/sprites/gui/dialog/characters/arthur/stressed.png" },
+	  ],
+	  "sound": "res://sounds/characters/arthur.wav"
+	},
+	{
+	  "id": "neven",
+	  "name": "Neven",
+	  "emotions": [
+		{ "id": "neutral_y", "path": "res://assets/sprites/gui/dialog/characters/neven/neutral_y.png" },
+		{ "id": "blushing_y", "path": "res://assets/sprites/gui/dialog/characters/neven/blushing_y.png" },
+		{ "id": "kyun_y", "path": "res://assets/sprites/gui/dialog/characters/neven/kyun_y.png" },
+		{ "id": "like_y", "path": "res://assets/sprites/gui/dialog/characters/neven/like_y.png" },
+		{ "id": "relaxing_y", "path": "res://assets/sprites/gui/dialog/characters/neven/relaxing_y.png" },
+		{ "id": "thinking_y", "path": "res://assets/sprites/gui/dialog/characters/neven/thinking_y.png" },
+		{ "id": "neutral_n", "path": "res://assets/sprites/gui/dialog/characters/neven/neutral_n.png" },
+		{ "id": "blushing_n", "path": "res://assets/sprites/gui/dialog/characters/neven/blushing_n.png" },
+		{ "id": "coffee_n", "path": "res://assets/sprites/gui/dialog/characters/neven/coffee_n.png" },
+		{ "id": "kyun_n", "path": "res://assets/sprites/gui/dialog/characters/neven/kyun_n.png" },
+		{ "id": "like_n", "path": "res://assets/sprites/gui/dialog/characters/neven/like_n.png" },
+		{ "id": "relaxing_n", "path": "res://assets/sprites/gui/dialog/characters/neven/relaxing_n.png" },
+		{ "id": "suspicious_n", "path": "res://assets/sprites/gui/dialog/characters/neven/suspicious_n.png" },
+		{ "id": "thinking_n", "path": "res://assets/sprites/gui/dialog/characters/neven/thinking_n.png" }
+	  ],
+	  "sound": "res://sounds/characters/arthur.wav"
+	}
   ]
 }
