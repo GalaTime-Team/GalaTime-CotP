@@ -53,6 +53,9 @@ public partial class RockAnt : Entity
 
 		RegisterAttacks();
 		AttackSwitcher.NextCycle();
+		
+		// Add custom AI behavior for movement and attack coordination
+		AddAIBehavior(MovementBehavior);
 	}
 
 	public void RegisterAttacks()
@@ -155,6 +158,13 @@ public partial class RockAnt : Entity
 	}
 
 	public override void _AIProcess(double delta)
+	{
+		// Call base to execute custom AI behaviors
+		base._AIProcess(delta);
+	}
+	
+	/// <summary> Custom AI behavior for movement and attack patterns. </summary>
+	private void MovementBehavior(double delta)
 	{
 		Velocity = Vector2.Zero;
 

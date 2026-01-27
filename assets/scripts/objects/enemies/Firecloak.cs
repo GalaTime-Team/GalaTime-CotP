@@ -101,6 +101,9 @@ public partial class Firecloak : Entity
 
 		RegisterAttackCycles();
 		AttackSwitcher.NextCycle();
+		
+		// Add custom AI behaviors for movement and combat
+		AddAIBehavior(MovementAndCombatBehavior);
 	}
 
 	#region Attack cycles
@@ -227,6 +230,13 @@ public partial class Firecloak : Entity
 	}
 
 	public override void _AIProcess(double delta)
+	{
+		// Call base to execute custom AI behaviors
+		base._AIProcess(delta);
+	}
+	
+	/// <summary> Custom AI behavior for movement and combat positioning. </summary>
+	private void MovementAndCombatBehavior(double delta)
 	{
 		Velocity = Vector2.Zero;
 

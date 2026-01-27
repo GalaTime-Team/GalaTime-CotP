@@ -30,12 +30,22 @@ public partial class ShootingBuddy : Entity
 		ShootingTimer.Timeout += OnShootingTimerTimeout;
 
 		Projectile.TimeoutTimer.WaitTime = 999f;
+		
+		// Setup projectile shooting as a custom AI behavior
+		AddAIBehavior(ProjectileShootingBehavior);
+	}
+	
+	/// <summary> Custom AI behavior for shooting projectiles at the target. </summary>
+	private void ProjectileShootingBehavior(double delta)
+	{
+		// This behavior is triggered by the timer, so we don't need to do anything here
+		// The timer callback handles the actual shooting
 	}
 
 	private void OnShootingTimerTimeout()
 	{
 		// Don't shoot if no target or AI is disabled.
-		if (TargetController.CurrentTarget == null || DisableAI) return; 
+		if (TargetController.CurrentTarget == null || DisableAI || DeathState) return; 
 
 		var projectile = Projectile.Duplicate() as Projectile;
 		projectile.AttackStat = Stats[EntityStatType.MagicalAttack].Value;
@@ -56,6 +66,12 @@ public partial class ShootingBuddy : Entity
 	private void OnProjectileExploded(Projectile projectile = null)
 	{
 		projectile.GetNode<Sprite2D>("Sprite").Visible = false;
+	}
+	
+	public override void _AIProcess(double delta)
+	{
+		// Call base to execute custom AI behaviors
+		base._AIProcess(delta);
 	}
 
 	public override void _DeathEvent(float damageRotation = 0f)
