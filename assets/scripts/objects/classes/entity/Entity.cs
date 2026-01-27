@@ -27,6 +27,10 @@ public partial class Entity : CharacterBody2D
     public bool DisableAI;
     /// <summary> If entity should be ignored by AI. </summary>
     public bool AIIgnore;
+    /// <summary> The list of abilities available to this entity (up to 3 ranged attacks). </summary>
+    public System.Collections.Generic.List<AbilityData> Abilities = new();
+    /// <summary> Custom AI behaviors that can be assigned to this entity. </summary>
+    public System.Collections.Generic.List<System.Action<double>> AIBehaviors = new();
     #endregion
 
     #region Scenes
@@ -270,6 +274,11 @@ public partial class Entity : CharacterBody2D
     /// <summary> AI process for entity's, called by <see cref="_PhysicsProcess"/>. It not called if <see cref="DisableAI"/> is true. </summary>
     public virtual void _AIProcess(double delta)
     {
+        // Execute all custom AI behaviors
+        foreach (var behavior in AIBehaviors)
+        {
+            behavior?.Invoke(delta);
+        }
     }
 
     /// <summary> Physics process for entity's </summary>
@@ -376,4 +385,130 @@ public partial class Entity : CharacterBody2D
     {
         // TODO: Implement effect
     }
+
+    #region Ability System
+    /// <summary> Adds an ability to the entity at the specified index. </summary>
+    /// <param name="ability">The ability data to add.</param>
+    /// <param name="index">The index where to add the ability (0-2 for ranged attacks).</param>
+    public virtual void AddAbility(AbilityData ability, int index)
+    {
+        // Ensure the abilities list has enough space
+        while (Abilities.Count <= index) Abilities.Add(new AbilityData());
+        
+        Abilities[index] = ability;
+        
+        // Setup cooldown timer if the ability has a reload time
+        if (ability.Reload > 0)
+        {
+            ref Timer cooldownTimer = ref Abilities[index].CooldownTimer;
+            
+            // Clean up previous timer if it exists
+            if (cooldownTimer != null && GodotObject.IsInstanceValid(cooldownTimer))
+            {
+                cooldownTimer.Stop();
+                cooldownTimer.QueueFree();
+                cooldownTimer = null;
+            }
+            
+            // Create new cooldown timer
+            cooldownTimer = new Timer
+            {
+                Name = $"{ability.Name}CooldownTimer",
+                WaitTime = ability.Reload,
+                OneShot = true
+            };
+            cooldownTimer.Timeout += () => OnAbilityCooldownComplete(index);
+            AddChild(cooldownTimer);
+            
+            // Start timer if ability is not fully charged
+            if (Abilities[index].Charges < Abilities[index].MaxCharges)
+            {
+                cooldownTimer.Start();
+            }
+        }
+    }
+
+    /// <summary> Called when an ability cooldown completes. </summary>
+    protected virtual void OnAbilityCooldownComplete(int index)
+    {
+        var ability = Abilities[index];
+        if (ability.Charges < ability.MaxCharges)
+        {
+            ability.Charges++;
+            if (ability.Charges < ability.MaxCharges)
+            {
+                ability.CooldownTimer.Start();
+            }
+        }
+    }
+
+    /// <summary> Uses an ability at the specified index. </summary>
+    /// <param name="index">The index of the ability to use (0-2).</param>
+    /// <returns>True if the ability was successfully used, false otherwise.</returns>
+    public virtual bool UseAbility(int index)
+    {
+        // Check if index is valid
+        if (index < 0 || index >= Abilities.Count) return false;
+        
+        var ability = Abilities[index];
+        
+        // Check if ability can be used
+        if (ability.IsEmpty || !ability.IsReloaded || ability.Charges <= 0) return false;
+        
+        // Load and execute the ability
+        var abilityScene = ResourceLoader.Load<PackedScene>(ability.ScenePath);
+        var abilityInstance = abilityScene.Instantiate<GalatimeAbility>();
+        abilityInstance.Data = ability;
+        
+        // Add the ability to the scene and execute it
+        GetParent().AddChild(abilityInstance);
+        abilityInstance.Execute(this);
+        
+        // Start cooldown and reduce charges
+        ability.CooldownTimer.Stop();
+        ability.CooldownTimer.Start();
+        ability.Charges--;
+        
+        return true;
+    }
+
+    /// <summary> Removes an ability at the specified index. </summary>
+    public virtual void RemoveAbility(int index)
+    {
+        if (index < 0 || index >= Abilities.Count) return;
+        
+        var ability = Abilities[index];
+        if (ability.CooldownTimer != null && GodotObject.IsInstanceValid(ability.CooldownTimer))
+        {
+            ability.CooldownTimer.Stop();
+            ability.CooldownTimer.QueueFree();
+        }
+        
+        Abilities[index] = new AbilityData();
+    }
+    #endregion
+
+    #region AI System
+    /// <summary> Adds a custom AI behavior to this entity. </summary>
+    /// <param name="behavior">The AI behavior action that takes delta time as parameter.</param>
+    public void AddAIBehavior(System.Action<double> behavior)
+    {
+        if (!AIBehaviors.Contains(behavior))
+        {
+            AIBehaviors.Add(behavior);
+        }
+    }
+
+    /// <summary> Removes a custom AI behavior from this entity. </summary>
+    public void RemoveAIBehavior(System.Action<double> behavior)
+    {
+        AIBehaviors.Remove(behavior);
+    }
+
+    /// <summary> Clears all custom AI behaviors. </summary>
+    public void ClearAIBehaviors()
+    {
+        AIBehaviors.Clear();
+    }
+    #endregion
 }

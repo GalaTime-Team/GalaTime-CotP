@@ -32,7 +32,7 @@ public partial class HumanoidCharacter : Entity
     public bool IsWalk => State == HumanoidStates.Idle || State == HumanoidStates.Walk;
 
     /// <summary> The list of abilities of the character. </summary>
-    public List<AbilityData> Abilities = new();
+    public new List<AbilityData> Abilities = new();
 
     public Timer DodgeTimer;
     public Timer AbilityCountdownTimer;
@@ -78,8 +78,8 @@ public partial class HumanoidCharacter : Entity
     {
         base._Ready();
 
-        // Initialize abilities
-        Abilities = new List<AbilityData>();
+        // Initialize abilities list with the correct size
+        Abilities.Clear();
         for (int i = 0; i < PlayerVariables.AbilitySlots; i++) Abilities.Add(new());
 
         InitializeValues();
@@ -134,7 +134,7 @@ public partial class HumanoidCharacter : Entity
         if (Weapon != null) if (toUp) Weapon.ZIndex = 1; else Weapon.ZIndex = 0;
     }
 
-    public virtual AbilityData AddAbility(AbilityData ab, int i)
+    public override void AddAbility(AbilityData ab, int i)
     {
         bool isValid(Node i) => i != null && IsInstanceValid(i);
 
@@ -168,8 +168,6 @@ public partial class HumanoidCharacter : Entity
             }
         }
         OnAbilityAdded?.Invoke(Abilities[i], i);
-
-        return Abilities[i];
     }
 
     private void OnCooldownTimerTimeout(int i)
@@ -202,7 +200,7 @@ public partial class HumanoidCharacter : Entity
         OnRevived -= OnCharacterRevived;
     }
 
-    public virtual void RemoveAbility(int i)
+    public override void RemoveAbility(int i)
     {
         AbilityData ability = new();
         Abilities[i] = ability;
@@ -210,7 +208,7 @@ public partial class HumanoidCharacter : Entity
         OnAbilityRemoved?.Invoke();
     }
 
-    public virtual bool UseAbility(int i)
+    public override bool UseAbility(int i)
     {
         var ability = Abilities[i];
         if (CanUseAbility(ability))

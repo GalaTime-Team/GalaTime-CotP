@@ -107,6 +107,9 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 
 	public override void _AIProcess(double delta)
 	{
+		// Call base AI behaviors first
+		base._AIProcess(delta);
+		
 		if (Possessed || DeathState) return;
 		if (TargetController.CurrentTarget != null) CombatMovement();
 		// Moving normally when there is no enemies.

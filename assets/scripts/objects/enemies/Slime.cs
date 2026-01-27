@@ -71,6 +71,9 @@ public partial class Slime : Entity
 
 	public override void _AIProcess(double delta)
 	{
+		// Call base AI behaviors first
+		base._AIProcess(delta);
+		
 		if (!DeathState) Move(); else Body.Velocity = Vector2.Zero;
 	}
 
