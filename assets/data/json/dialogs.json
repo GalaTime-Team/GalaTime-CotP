@@ -32,27 +32,27 @@
 		  ]
 		},
 		{
-		  "text": "It all looks very unfinished right now",
+		  "text": "It all looks very unfinished right now.",
 		  "character": "raphael",
 		  "emotion": "nervous"
 		},
 		{
-		  "text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color]",
+		  "text": "So please [color=yellow]find bugs[/color] and [color=yellow]rate the gameplay[/color].",
 		  "character": "raphael",
 		  "emotion": "thinking"
 		},
 		{
-		  "text": "If you press [color=fuchsia]ESC[/color] you can change your [color=yellow]abilities[/color] and [color=yellow]inventory[/color]",
+		  "text": "If you press [color=fuchsia]E[/color] you can open your [color=yellow]inventory[/color].",
 		  "character": "raphael",
 		  "emotion": "trusting"
 		},
 		{
-		  "text": "Use keys [color=fuchsia]1-5[/color] to use [color=yellow]abilities[/color] and abilities should be equipped",
+		  "text": "Use keys [color=fuchsia]1-3[/color] to use your [color=yellow]powers[/color].",
 		  "character": "raphael",
 		  "emotion": "thinking"
 		},
 		{
-		  "text": "Press [color=fuchsia]SHIFT[/color] you can make a [color=yellow]dodge[/color]",
+		  "text": "Press [color=fuchsia]SHIFT[/color] to [color=yellow]dodge[/color]",
 		  "character": "raphael",
 		  "emotion": "laughing"
 		},
@@ -238,6 +238,600 @@
 		  "emotion": "stressed"
 		}
 	  ]
-	}
+	},
+	{
+	  "id": "test_03",
+	  "lines": [
+		{
+		  "text": "Let's be clear... it wasn't me. I don't make mistakes that stupid.",
+		  "character": "noelia",
+		  "emotion": "tedious"
+		},
+		{
+		  "text": "Oh, absolutely not. You only make [color=yellow]graceful[/color] ones.",
+		  "character": "raphael",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "Like that time you \"strategically retreated\" from the laboratory.",
+		  "character": "raphael",
+		  "emotion": "laughing"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "coffee_n"
+		},
+		{
+		  "text": "And if you mention it again, I'll [color=red]strategically retreat[/color] your tongue from your mouth.",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "neutral_n"
+		},
+		{
+		  "text": "Wait... Noelia, are you serious? You can't just-",
+		  "character": "arthur",
+		  "emotion": "stressed"
+		},
+		{
+		  "text": "Relax noble knight. you know she's serious when she stops smiling.",
+		  "character": "raphael",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "I'm [color=red]not[/color] smilling.",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "Oh... I think I can see it now.",
+		  "character": "arthur",
+		  "emotion": "happy"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "like_n"
+		},
+		{
+		  "text": "Hehe... so this is your way of chickening out?",
+		  "character": "noelia",
+		  "emotion": "mocking"
+		},
+		{
+		  "text": "Hold it, Neven was saying that Arthur's right, you are smilling.",
+		  "character": "raphael",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "...",
+		  "character": "noelia",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "neutral_n"
+		},
+		{
+		  "text": "You can tell Raphael to stop translating his brain damage to sarcasm.",
+		  "character": "noelia",
+		  "emotion": "tedious"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "relaxing_n"
+		},
+		{
+		  "text": "Wait, Raphael has brain damage?",
+		  "character": "arthur",
+		  "emotion": "stressed"
+		},
+		{
+		  "text": "I can't believe you would ask your mute brother to \"tell\" me something. How inconsiderate.",
+		  "character": "raphael",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "Oh... you!!",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		}
+	  ]
+	},
+	{
+	  "id": "gk_01",
+	  "lines": [
+		{
+		  "text": "So...",
+		  "character": "noelia",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Does anyone know where the heck we are?",
+		  "character": "noelia",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "Nope.",
+		  "character": "raphael",
+		  "emotion": "trusting"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "coffee_n"
+		},
+		{
+		  "text": "I dunno.",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Great...",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "I'm stuck here with an ",
+		  "character": "noelia",
+		  "emotion": "tedious"
+		},
+		{
+		  "text": "[color=red]amnesiac loser[/color], a [color=red]stupid giant bird face[/color] and my [color=yellow]brother[/color]...",
+		  "character": "noelia",
+		  "emotion": "tedious"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "neutral_n"
+		},
+		{
+		  "text": "At least I found him.",
+		  "character": "noelia",
+		  "emotion": "happy"
+		},
+		{
+		  "text": "Wait...",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "I'm not a loser.",
+		  "character": "arthur",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "...",
+		  "character": "raphael",
+		  "emotion": "serious"
+		},
+		{
+		  "text": "Honestly, what's with the creepy mask? I've never seen your face...",
+		  "character": "noelia",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "Stuck on Halloween, granpa?",
+		  "character": "noelia",
+		  "emotion": "mocking"
+		},
+		{
+		  "text": "Now that you mention, me neither...",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Wait... Halloween?",
+		  "character": "arthur",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "relaxing_n"
+		},
+		{
+		  "text": "It's... complicated...",
+		  "character": "raphael",
+		  "emotion": "serious"
+		},
+		{
+		  "text": "Pffft. I'm sure it's to hide that ugly maidenless face of yours.",
+		  "character": "noelia",
+		  "emotion": "laughing"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "kyun_n"
+		},
+		{
+		  "text": "...",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Holy crap, Neven, you killed her!!",
+		  "character": "raphael",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "He didn't even... say anything...",
+		  "character": "noelia",
+		  "emotion": "tedious"
+		},
+		{
+		  "text": "Raphael knows him so well, I don't know how he can understand him.",
+		  "character": "arthur",
+		  "emotion": "happy"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "like_n"
+		},
+		{
+		  "text": "Wh- \"knows him so we-\"...",
+		  "character": "noelia",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "Yeah, whatever...",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		}
+	  ]
+	},
+	{
+	  "id": "gk_02",
+	  "lines": [
+		{
+		  "text": "Noelia.. is that really you, sis?",
+		  "character": "pacci",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "I-",
+		  "character": "noelia",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "I can't believe this...",
+		  "character": "noelia",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "After all these years, I finally found you two...",
+		  "character": "noelia",
+		  "emotion": "happy"
+		},
+		{
+		  "text": "Oh... This moment couldn't get any better.",
+		  "character": "noelia",
+		  "emotion": "happy"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "like_n"
+		},
+		{
+		  "text": "Aw...",
+		  "character": "arthur",
+		  "emotion": "happy"
+		},
+		{
+		  "text": "The family's finally together again...",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "noelia",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "On second thought...",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "thinking_n"
+		},
+		{
+		  "text": "I didn't say anything bad this time!",
+		  "character": "arthur",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "Now, now Arthur...",
+		  "character": "raphael",
+		  "emotion": "trusting"
+		},
+		{
+		  "text": "Let's give the family some privacy, shall we?",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "Yeah, please do.",
+		  "character": "noelia",
+		  "emotion": "tedious"
+		},
+		{
+		  "text": "Where are you going, Raphael?",
+		  "character": "pacci",
+		  "emotion": "concerned"
+		},
+		{
+		  "text": "You're part of the family too.",
+		  "character": "pacci",
+		  "emotion": "relaxed"
+		},
+		{
+		  "text": "... what!?",
+		  "character": "noelia",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "like_n"
+		},
+		{
+		  "text": "No, no, no thumbs up!",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "What do you mean he's part of the family?",
+		  "character": "noelia",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "He helped us like family would when we were younger.",
+		  "character": "pacci",
+		  "emotion": "relaxed"
+		},
+		{
+		  "text": "Taught us how to defend ourselves, about the world...",
+		  "character": "pacci",
+		  "emotion": "relaxed"
+		},
+		{
+		  "text": "He's like an uncle to us.",
+		  "character": "pacci",
+		  "emotion": "relaxed"
+		},
+		{
+		  "text": "... Really?",
+		  "character": "noelia",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "like_n"
+		},
+		{
+		  "text": "I-...",
+		  "character": "noelia",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "I see...",
+		  "character": "noelia",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "Thanks... for taking care of my brothers...",
+		  "character": "noelia",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "...!",
+		  "character": "neven",
+		  "emotion": "neutral_n"
+		},
+		{
+		  "text": "Woah, I can't believe she's actually being nice to you. ",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "You and me both.",
+		  "character": "raphael",
+		  "emotion": "nervous"
+		},
+		{
+		  "text": "Oh, flip off! I too can be nice when I want to, you know!",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "...",
+		  "character": "arthur",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "relaxing_n"
+		},
+		{
+		  "text": "Whatever!",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		}
+	  ]
+	},
+	{
+	  "id": "gk_03",
+	  "lines": [
+		{
+		  "text": "Our brave heroes, and Noelia"
+		},
+		{
+		  "text": "HEY!",
+		  "character": "noelia",
+		  "emotion": "annoyed"
+		},
+		{
+		  "text": "Are engaging in a conversation, let's see what they are talking about..."
+		},
+		{
+		  "text": "...Hey, bird face.",
+		  "character": "noelia",
+		  "emotion": "mocking"
+		},
+		{
+		  "text": "What is it, hobbit?",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "What exactly do you do?",
+		  "character": "noelia",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "I've never seen you working there before.",
+		  "character": "noelia",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "Well, according to my script, I study a variety of subjects.",
+		  "character": "raphael",
+		  "emotion": "trusting"
+		},
+		{
+		  "text": "Such as elemental effects over living tissue, the alchemical uses of material manifestation of-",
+		  "character": "raphael",
+		  "emotion": "trusting"
+		},
+		{
+		  "text": "Uh- Yeah... I'm not hearing all'dat.",
+		  "character": "noelia",
+		  "emotion": "tedious"
+		},
+		{
+		  "text": "... I'm an alchemist and scholar...",
+		  "character": "raphael",
+		  "emotion": "trusting"
+		},
+		{
+		  "text": "So a nerd, that figures...",
+		  "character": "noelia",
+		  "emotion": "mocking"
+		},
+		{
+		  "text": "...",
+		  "character": "pacci",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "relaxing_n"
+		},
+		{
+		  "text": "What I can't figure out is how a nerd like you taught them how to fight.",
+		  "character": "noelia",
+		  "emotion": "mocking"
+		},
+		{
+		  "text": "What? Want me to show it to you how it's done?",
+		  "character": "raphael",
+		  "emotion": "trusting"
+		},
+		{
+		  "text": "Guys...",
+		  "character": "pacci",
+		  "emotion": "concerned"
+		},
+		{
+		  "text": "I'll have you know I studied swordsmanship since I was little.",
+		  "character": "noelia",
+		  "emotion": "mocking"
+		},
+		{
+		  "text": "[color=yellow]1[/color] You're still a little girl, so that doesn't mean much.",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "[color=yellow]And 2[/color], alright, if we ever get a stick nearby, I know who to call then.",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		},
+		{
+		  "text": "...",
+		  "character": "neven",
+		  "emotion": "thinking_n"
+		},
+		{
+		  "text": "Right, I'm sorry.",
+		  "character": "raphael",
+		  "emotion": "serious"
+		},
+		{
+		  "text": "I don't really get what you two are arguing about, but what was that last part about the script?",
+		  "character": "arthur",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "I have no idea.",
+		  "character": "pacci",
+		  "emotion": "thinking"
+		},
+		{
+		  "text": "Hehe...",
+		  "character": "noelia",
+		  "emotion": "mocking"
+		},
+		{
+		  "text": "The old bird is probably going [color=yellow]cuco[/color] with age.",
+		  "character": "noelia",
+		  "emotion": "mocking"
+		},
+		{
+		  "text": "Ha... I can't believe they used to ship us both.",
+		  "character": "raphael",
+		  "emotion": "nervous"
+		},
+		{
+		  "text": "... What did you say to me?",
+		  "character": "noelia",
+		  "emotion": "surprised"
+		},
+		{
+		  "text": "Nothing, nothing.",
+		  "character": "raphael",
+		  "emotion": "neutral"
+		}
+	  ]
+	},
+	{
+		"id": "gk_trailer_01",
+		"lines": [
+		  {
+			"text": "In the last trailer, our great heroes have fought Noellia, to which she lost and somehow a rift in the space time continuum sucked them into a mysterious realm. How will they handle this situation, find out now in this trailer of... GALATIME"
+		  }
+		]
+	  }
   ]
 }

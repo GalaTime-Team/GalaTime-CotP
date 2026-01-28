@@ -22,14 +22,14 @@ public partial class AIRuleData : Resource
 	/// <summary> Whether this rule is enabled. </summary>
 	[Export] public bool Enabled { get; set; } = true;
 	
-	/// <summary> Behavior to execute when conditions are met. </summary>
-	[Export] public AIBehaviorType BehaviorType { get; set; } = AIBehaviorType.Idle;
-	
 	/// <summary> Optional: Specific ability ID to use (for RangedAttack behavior). Leave empty to use entity's default ability. </summary>
 	[Export] public string AbilityId { get; set; } = "";
 	
 	/// <summary> Optional: Specific ability index to use (0-2, for RangedAttack behavior). -1 means use AbilityId or default. </summary>
 	[Export] public int AbilityIndex { get; set; } = -1;
+	
+	/// <summary> Behavior to execute when conditions are met. </summary>
+	[Export] public AIBehaviorType BehaviorType { get; set; } = AIBehaviorType.Idle;
 	
 	/// <summary> Parameters for the behavior (e.g., distance, speed). </summary>
 	[Export] public Dictionary BehaviorParams { get; set; } = new();
