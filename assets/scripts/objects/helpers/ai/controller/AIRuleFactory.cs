@@ -17,8 +17,8 @@ public static class AIRuleFactory
 	{
 		if (data == null) return null;
 		
-		// Create behavior
-		var behavior = CreateBehavior(data.BehaviorType, data.BehaviorParams);
+		// Create behavior with ability selection support
+		var behavior = CreateBehavior(data.BehaviorType, data.BehaviorParams, data.AbilityId, data.AbilityIndex, entity);
 		if (behavior == null)
 		{
 			GD.PushWarning($"Failed to create behavior type: {data.BehaviorType}");
@@ -48,10 +48,32 @@ public static class AIRuleFactory
 	
 	/// <summary>
 	/// Creates an AIBehavior from behavior type and parameters.
+	/// Supports ability selection via abilityId or abilityIndex.
 	/// </summary>
-	public static AIBehavior CreateBehavior(AIBehaviorType type, Dictionary parameters)
+	public static AIBehavior CreateBehavior(AIBehaviorType type, Dictionary parameters, string abilityId = "", int abilityIndex = -1, Entity entity = null)
 	{
 		parameters ??= new Dictionary();
+		
+		// Determine which ability index to use for RangedAttack
+		int finalAbilityIndex = abilityIndex;
+		if (type == AIBehaviorType.RangedAttack)
+		{
+			// If abilityId is specified, try to find it in entity's abilities
+			if (!string.IsNullOrEmpty(abilityId) && entity != null)
+			{
+				finalAbilityIndex = FindAbilityIndex(entity, abilityId);
+				if (finalAbilityIndex == -1)
+				{
+					GD.PushWarning($"Ability '{abilityId}' not found in entity, using index {abilityIndex}");
+					finalAbilityIndex = abilityIndex >= 0 ? abilityIndex : 0;
+				}
+			}
+			// Otherwise use the provided index, or default from parameters
+			else if (finalAbilityIndex < 0)
+			{
+				finalAbilityIndex = GetIntParam(parameters, "ability_index", 0);
+			}
+		}
 		
 		return type switch
 		{
@@ -63,7 +85,7 @@ public static class AIRuleFactory
 				cooldown: GetFloatParam(parameters, "cooldown", 0f)),
 			
 			AIBehaviorType.RangedAttack => new RangedAttackBehavior(
-				abilityIndex: GetIntParam(parameters, "ability_index", 0),
+				abilityIndex: finalAbilityIndex,
 				strafe: GetBoolParam(parameters, "strafe", true),
 				optimalDistance: GetFloatParam(parameters, "optimal_distance", 300f),
 				cooldown: GetFloatParam(parameters, "cooldown", 1f)),
@@ -89,6 +111,23 @@ public static class AIRuleFactory
 			
 			_ => null
 		};
+	}
+	
+	/// <summary>
+	/// Finds the index of an ability in an entity by ability ID.
+	/// Returns -1 if not found.
+	/// </summary>
+	private static int FindAbilityIndex(Entity entity, string abilityId)
+	{
+		for (int i = 0; i < entity.Abilities.Count; i++)
+		{
+			var ability = entity.Abilities[i];
+			if (ability != null && ability.ID == abilityId)
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	/// <summary>

@@ -25,24 +25,17 @@ public partial class AIRuleData : Resource
 	/// <summary> Behavior to execute when conditions are met. </summary>
 	[Export] public AIBehaviorType BehaviorType { get; set; } = AIBehaviorType.Idle;
 	
-	/// <summary> Parameters for the behavior (e.g., distance, speed, ability index). </summary>
+	/// <summary> Optional: Specific ability ID to use (for RangedAttack behavior). Leave empty to use entity's default ability. </summary>
+	[Export] public string AbilityId { get; set; } = "";
+	
+	/// <summary> Optional: Specific ability index to use (0-2, for RangedAttack behavior). -1 means use AbilityId or default. </summary>
+	[Export] public int AbilityIndex { get; set; } = -1;
+	
+	/// <summary> Parameters for the behavior (e.g., distance, speed). </summary>
 	[Export] public Dictionary BehaviorParams { get; set; } = new();
 	
 	/// <summary> Conditions that must ALL be true for this rule to execute. </summary>
 	[Export] public Array<AIConditionData> Conditions { get; set; } = new();
-}
-
-/// <summary>
-/// Exportable data for a single AI condition.
-/// </summary>
-[GlobalClass]
-public partial class AIConditionData : Resource
-{
-	/// <summary> Type of condition to check. </summary>
-	[Export] public AIConditionType ConditionType { get; set; } = AIConditionType.HasTarget;
-	
-	/// <summary> Parameters for the condition (e.g., threshold, distance). </summary>
-	[Export] public Dictionary ConditionParams { get; set; } = new();
 }
 
 /// <summary>
