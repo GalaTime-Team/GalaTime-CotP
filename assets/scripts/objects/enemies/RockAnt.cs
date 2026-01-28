@@ -2,6 +2,7 @@ using System;
 
 using Galatime;
 using Galatime.AI;
+using Galatime.AI.Controller;
 using Galatime.Helpers;
 using Galatime.Damage;
 using ExtensionMethods;
@@ -24,6 +25,9 @@ public partial class RockAnt : Entity
 	public TargetController TargetController;
 	public AttackSwitcher AttackSwitcher;
 	public RangedHitTracker RangedHitTracker;
+	
+	/// <summary> AI Controller for intelligent behavior. </summary>
+	public AIController AIController;
 
 	/// <summary> If the rock ant is currently targetting (is positioning towards a target). </summary>
 	public bool DigTargetting;
@@ -54,8 +58,53 @@ public partial class RockAnt : Entity
 		RegisterAttacks();
 		AttackSwitcher.NextCycle();
 		
-		// Add custom AI behavior for movement and attack coordination
+		// Setup AI Controller
+		SetupAI();
+	}
+	
+	private void SetupAI()
+	{
+		// Create AI Controller
+		AIController = new AIController();
+		AIController.Entity = this;
+		AIController.DebugMode = false;
+		AddChild(AIController);
+		
+		// Load RockAnt abilities
+		var digAbility = GalatimeGlobals.GetAbilityById("rockant_dig");
+		if (digAbility != null)
+		{
+			AddAbility(digAbility, 0);
+		}
+		
+		var meleeAbility = GalatimeGlobals.GetAbilityById("rockant_melee");
+		if (meleeAbility != null)
+		{
+			AddAbility(meleeAbility, 1);
+		}
+		
+		// Priority 50: Melee when close to target
+		var meleeRule = new AIRule("MeleeAttack", new MeleeAttackBehavior(stopDistance: 80f), priority: 50)
+			.AddCondition(new HasTargetCondition())
+			.AddCondition(new TargetDistanceCondition(TargetDistanceCondition.DistanceType.LessThan, 150f));
+		AIController.AddRule(meleeRule);
+		
+		// Priority 40: Approach if too far
+		var approachRule = new AIRule("Approach", new MeleeAttackBehavior(stopDistance: 100f), priority: 40)
+			.AddCondition(new HasTargetCondition())
+			.AddCondition(new TargetDistanceCondition(TargetDistanceCondition.DistanceType.GreaterThan, 150f));
+		AIController.AddRule(approachRule);
+		
+		// Priority 0: Idle when no target
+		var idleRule = new AIRule("Idle", new IdleBehavior(), priority: 0)
+			.AddCondition(new NoTargetCondition());
+		AIController.AddRule(idleRule);
+		
+		// Keep existing movement behavior for compatibility with AttackSwitcher
 		AddAIBehavior(MovementBehavior);
+		
+		// Add controller to AI behavior system
+		AddAIBehavior((delta) => AIController.Process(delta));
 	}
 
 	public void RegisterAttacks()

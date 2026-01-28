@@ -3,6 +3,7 @@ using Galatime;
 using Galatime.Global;
 using Galatime.Helpers;
 using Galatime.Interfaces;
+using Galatime.AI.Controller;
 using Godot;
 
 public partial class TestCharacter : HumanoidCharacter, IDrama
@@ -22,6 +23,9 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 	public Timer RetreatDelayTimer, MoveDelayTimer, StrafeTimer, EnemySwitchDelayTimer, AttackTimer;
 
 	public Player Player;
+	
+	/// <summary> AI Controller for intelligent behavior when not possessed. </summary>
+	public AIController AIController;
 
 	private bool possessed;
 	/// <summary> True if the character is currently being possessed. That means the player is controlling it. </summary>
@@ -33,6 +37,8 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 			possessed = value;
 			// Stop the attack timer, because no need to attack automatically.
 			if (value) AttackTimer.Stop();
+			// Disable AI Controller when possessed
+			if (AIController != null) AIController.Enabled = !value;
 		}
 	}
 
@@ -68,6 +74,62 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		for (var i = 0; i < (DefaultAbilities != null ? DefaultAbilities.Count : 0); i++) { AddAbility(GalatimeGlobals.GetAbilityById(DefaultAbilities[i]), i); }
 
 		if (LevelManager.Instance.CheatsMenu.GetCheat("god_mode").Active) Invincible = true;
+		
+		// Setup AI Controller for when not possessed
+		SetupAI();
+	}
+	
+	private void SetupAI()
+	{
+		// Create AI Controller (only used when not possessed)
+		AIController = new AIController();
+		AIController.Entity = this;
+		AIController.DebugMode = false;
+		AIController.Enabled = !Possessed; // Disable if currently possessed
+		AddChild(AIController);
+		
+		// Priority 90: Conserve stamina when low
+		var conserveStaminaRule = new AIRule("ConserveStamina", new FleeBehavior(300f, cooldown: 2f), priority: 90)
+			.AddCondition(new LowStaminaCondition(0.3f))
+			.AddCondition(new HasTargetCondition())
+			.AddCondition(new TargetDistanceCondition(TargetDistanceCondition.DistanceType.LessThan, 150f));
+		AIController.AddRule(conserveStaminaRule);
+		
+		// Priority 70: Use ability 0 when available (70% probability)
+		var ability0Rule = new AIRule("UseAbility0", new RangedAttackBehavior(0, true, 300f, cooldown: 1f), priority: 70, probability: 0.7f)
+			.AddCondition(new HasTargetCondition())
+			.AddCondition(new AbilityReadyCondition(0))
+			.AddCondition(new TargetDistanceCondition(TargetDistanceCondition.DistanceType.GreaterThan, 200f));
+		AIController.AddRule(ability0Rule);
+		
+		// Priority 65: Use ability 1 when available (60% probability)
+		var ability1Rule = new AIRule("UseAbility1", new RangedAttackBehavior(1, true, 250f, cooldown: 1.5f), priority: 65, probability: 0.6f)
+			.AddCondition(new HasTargetCondition())
+			.AddCondition(new AbilityReadyCondition(1));
+		AIController.AddRule(ability1Rule);
+		
+		// Priority 60: Use ability 2 when available (50% probability)
+		var ability2Rule = new AIRule("UseAbility2", new RangedAttackBehavior(2, true, 280f, cooldown: 2f), priority: 60, probability: 0.5f)
+			.AddCondition(new HasTargetCondition())
+			.AddCondition(new AbilityReadyCondition(2));
+		AIController.AddRule(ability2Rule);
+		
+		// Priority 10: Follow player when no enemies
+		var followRule = new AIRule("FollowPlayer", new FollowPlayerBehavior(120f), priority: 10)
+			.AddCondition(new NoTargetCondition());
+		AIController.AddRule(followRule);
+		
+		// Priority 0: Idle as last resort
+		var idleRule = new AIRule("Idle", new IdleBehavior(), priority: 0);
+		AIController.AddRule(idleRule);
+		
+		// Add controller to AI behavior system (only active when not possessed)
+		AddAIBehavior((delta) => {
+			if (!Possessed && AIController != null)
+			{
+				AIController.Process(delta);
+			}
+		});
 	}
 
 	private void InitializeTimers()

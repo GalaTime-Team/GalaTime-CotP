@@ -3,6 +3,7 @@ using Godot;
 using Galatime;
 using Galatime.Global;
 using Galatime.Helpers;
+using Galatime.AI.Controller;
 
 public partial class Slime : Entity
 {
@@ -19,6 +20,9 @@ public partial class Slime : Entity
 	public TargetController TargetController;
 
 	public GpuParticles2D Particles;
+	
+	/// <summary> AI Controller for intelligent behavior. </summary>
+	public AIController AIController;
 	#endregion
 
 	#region Variables
@@ -55,6 +59,38 @@ public partial class Slime : Entity
 		};
 		AttackCountdownTimer.Timeout += JustHit;
 		AddChild(AttackCountdownTimer);
+		
+		// Setup AI Controller
+		SetupAI();
+	}
+	
+	private void SetupAI()
+	{
+		// Create AI Controller
+		AIController = new AIController();
+		AIController.Entity = this;
+		AIController.DebugMode = false;
+		AddChild(AIController);
+		
+		// Load slime melee ability
+		var meleeAbility = GalatimeGlobals.GetAbilityById("slime_melee");
+		if (meleeAbility != null)
+		{
+			AddAbility(meleeAbility, 0);
+		}
+		
+		// Rule 1: Melee attack when has target (priority 50)
+		var meleeRule = new AIRule("MeleeAttack", new MeleeAttackBehavior(stopDistance: 50f), priority: 50)
+			.AddCondition(new HasTargetCondition());
+		AIController.AddRule(meleeRule);
+		
+		// Rule 2: Idle when no target (priority 0)
+		var idleRule = new AIRule("Idle", new IdleBehavior(), priority: 0)
+			.AddCondition(new NoTargetCondition());
+		AIController.AddRule(idleRule);
+		
+		// Add controller to AI behavior system
+		AddAIBehavior((delta) => AIController.Process(delta));
 	}
 
 	public override void _ExitTree()
@@ -71,9 +107,10 @@ public partial class Slime : Entity
 
 	public override void _AIProcess(double delta)
 	{
-		// Call base AI behaviors first
+		// Call base AI behaviors first (includes AI Controller)
 		base._AIProcess(delta);
 		
+		// Keep existing movement logic for compatibility
 		if (!DeathState) Move(); else Body.Velocity = Vector2.Zero;
 	}
 
