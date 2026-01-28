@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using Newtonsoft.Json;
 
@@ -8,6 +9,28 @@ namespace Galatime
     {
         public int Mana;
         public int Stamina;
+    }
+
+    public enum AbilityType
+    {
+        Physical,    // Physical damage ability
+        Magical,     // Magical damage ability
+        SelfBuff,    // Self-inflicted buff
+        TargetBuff,  // Buff applied to target
+        Heal,        // Healing ability
+        Hybrid       // Combination of types
+    }
+
+    public struct StatModifier
+    {
+        [JsonProperty("stat")]
+        public string Stat;  // "speed", "physical_attack", "magical_attack", "defense", etc.
+        
+        [JsonProperty("value")]
+        public float Value;  // Amount to modify (can be negative)
+        
+        [JsonProperty("duration")]
+        public float Duration;  // How long the modifier lasts (0 = permanent)
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -44,6 +67,38 @@ namespace Galatime
         [JsonProperty("reload")]
         /// <summary> The reloading time of the ability in seconds. </summary>
         public float Reload = 0;
+
+        [JsonProperty("attack")]
+        /// <summary> Base attack damage amount. </summary>
+        public float Attack = 0;
+
+        [JsonProperty("heal")]
+        /// <summary> Healing amount. </summary>
+        public float Heal = 0;
+
+        [JsonProperty("ability_type"), JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        /// <summary> The type of ability (Physical, Magical, SelfBuff, TargetBuff, Heal, Hybrid). </summary>
+        public AbilityType Type = AbilityType.Magical;
+
+        [JsonProperty("stat_modifiers")]
+        /// <summary> List of stat modifications this ability applies. </summary>
+        public List<StatModifier> StatModifiers = new();
+
+        [JsonProperty("range")]
+        /// <summary> The range of the ability in pixels. </summary>
+        public float Range = 0;
+
+        [JsonProperty("area_of_effect")]
+        /// <summary> Area of effect radius. 0 means single target. </summary>
+        public float AreaOfEffect = 0;
+
+        [JsonProperty("projectile_speed")]
+        /// <summary> Speed of projectile if applicable. </summary>
+        public float ProjectileSpeed = 0;
+
+        [JsonProperty("can_crit")]
+        /// <summary> Whether this ability can critical hit. </summary>
+        public bool CanCrit = true;
 
         /// <summary> The icon texture of the ability. </summary>
         public Texture2D Icon = null;
