@@ -21,6 +21,19 @@ public partial class Entity : CharacterBody2D
     [Export] public float Timeout = 3f;
     /// <summary> If the entity is invincible, meaning it won't take any damage. It can be killed if SetHealth is called with negative value. </summary>
     [Export] public bool Invincible = false;
+    
+    /// <summary> Ability IDs to load automatically (e.g., "fireball", "firebullet"). Max 3 abilities. </summary>
+    [Export] public Godot.Collections.Array<string> DefaultAbilityIds { get; set; } = new();
+    
+    /// <summary> AI rules to configure behavior automatically. Can be set up in Godot editor. </summary>
+    [Export] public Godot.Collections.Array<AI.Controller.AIRuleData> AIRules { get; set; } = new();
+    
+    /// <summary> Whether to automatically setup AI from AIRules on ready. </summary>
+    [Export] public bool AutoSetupAI { get; set; } = true;
+    
+    /// <summary> Whether to enable debug mode for AI Controller. </summary>
+    [Export] public bool AIDebugMode { get; set; } = false;
+    
     private Vector2 KnockbackVelocity = Vector2.Zero;
     public bool CanMove = true;
     /// <summary> If entity can do AI. It means it will be processed by <see cref="_AIProcess"/> </summary>
@@ -31,6 +44,8 @@ public partial class Entity : CharacterBody2D
     public System.Collections.Generic.List<AbilityData> Abilities = new();
     /// <summary> Custom AI behaviors that can be assigned to this entity. </summary>
     public System.Collections.Generic.List<System.Action<double>> AIBehaviors = new();
+    /// <summary> The AI controller for this entity (created automatically if AIRules are set). </summary>
+    public AI.Controller.AIController AIController { get; private set; }
     #endregion
 
     #region Scenes
@@ -118,6 +133,14 @@ public partial class Entity : CharacterBody2D
             DeathTimer.Timeout += () => QueueFree();
         }
 
+        // Automatically load abilities from exported IDs
+        LoadDefaultAbilities();
+
+        // Automatically setup AI from exported rules
+        if (AutoSetupAI)
+        {
+            SetupAIFromRules();
+        }
 
         // Needed to register entity to level manager.
         LevelManager.Instance.RegisterEntity(this);
@@ -509,6 +532,61 @@ public partial class Entity : CharacterBody2D
     public void ClearAIBehaviors()
     {
         AIBehaviors.Clear();
+    }
+    
+    /// <summary>
+    /// Loads abilities from DefaultAbilityIds array automatically.
+    /// Called during _Ready() if abilities are specified in the editor.
+    /// </summary>
+    private void LoadDefaultAbilities()
+    {
+        if (DefaultAbilityIds == null || DefaultAbilityIds.Count == 0) return;
+        
+        for (int i = 0; i < System.Math.Min(DefaultAbilityIds.Count, 3); i++)
+        {
+            var abilityId = DefaultAbilityIds[i];
+            if (string.IsNullOrEmpty(abilityId)) continue;
+            
+            var ability = GalatimeGlobals.GetAbilityById(abilityId);
+            if (ability != null)
+            {
+                AddAbility(ability, i);
+            }
+            else
+            {
+                GD.PushWarning($"Entity {Name}: Failed to load ability '{abilityId}'");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Sets up AI Controller from exported AIRules.
+    /// Called during _Ready() if AutoSetupAI is true and AIRules are defined.
+    /// </summary>
+    private void SetupAIFromRules()
+    {
+        if (AIRules == null || AIRules.Count == 0) return;
+        
+        // Create AI Controller
+        AIController = new AI.Controller.AIController();
+        AIController.Entity = this;
+        AIController.DebugMode = AIDebugMode;
+        AddChild(AIController);
+        
+        // Add rules from exported data
+        foreach (var ruleData in AIRules)
+        {
+            if (ruleData == null) continue;
+            
+            var rule = AI.Controller.AIRuleFactory.CreateRule(ruleData, this);
+            if (rule != null)
+            {
+                AIController.AddRule(rule);
+            }
+        }
+        
+        // Integrate with entity AI system
+        AddAIBehavior((delta) => AIController.Process(delta));
     }
     #endregion
 }
