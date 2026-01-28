@@ -232,6 +232,7 @@ _data = {
 collision_layer = 4
 motion_mode = 1
 script = ExtResource("1_0eun4")
+DefaultAbilityIds = Array[String](["firecloak_fireball", "firecloak_dash"])
 Stats = SubResource("Resource_57xwu")
 Element = SubResource("Resource_pg41o")
 Team = 1

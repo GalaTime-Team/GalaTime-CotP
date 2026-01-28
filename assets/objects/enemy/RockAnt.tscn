@@ -79,6 +79,7 @@ size = Vector2(20, 30)
 [node name="RockAnt" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_t74t7")
+DefaultAbilityIds = Array[String](["rockant_dig", "rockant_melee"])
 Stats = SubResource("Resource_jkgrs")
 Element = SubResource("Resource_7oh24")
 Team = 1
