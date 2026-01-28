@@ -9,11 +9,7 @@ public partial class Entity : CharacterBody2D
 {
 	#region Variables
 	/// <summary> Stats, which are applied to entity. </summary>
-	// [Export] public EntityStats Stats = new(new());
 	[Export] public EntityStats Stats { get; set; }
-	
-	/// <summary> Optional: Fixed stats configuration (9 fixed entries, easier to configure in editor). </summary>
-	[Export] public FixedEntityStats FixedStats { get; set; }
 	
 	[Export] public GalatimeElement Element { get; set; }
 	[Export] public Teams Team;
@@ -111,12 +107,6 @@ public partial class Entity : CharacterBody2D
 
 	public override void _Ready()
 	{
-		// Convert FixedStats to Stats if provided
-		if (FixedStats != null && Stats == null)
-		{
-			Stats = FixedStats.ToEntityStats();
-		}
-		
 		LoadScenes();
 
 		Health = Stats[EntityStatType.Health].Value;

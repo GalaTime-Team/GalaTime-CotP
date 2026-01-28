@@ -34,48 +34,16 @@ public enum EntityStatType
 [GlobalClass, Tool, Icon("res://assets/sprites/editoricons/stats.svg")]
 public partial class EntityStats : Resource, IEnumerable<EntityStat>
 {
-	private Godot.Collections.Array<EntityStatType> statsNames = new();
-	[Export]
-	public Godot.Collections.Array<EntityStatType> StatsNames
-	{
-		get => statsNames; set
-		{
-			statsNames = value;
-			RemoveDuplicates(statsNames);
-			MatchSize(statsValues, statsNames);
-		}
-	}
-	private Godot.Collections.Array<float> statsValues = new();
-	[Export]
-	public Godot.Collections.Array<float> StatsValues
-	{
-		get => statsValues; set
-		{
-			statsValues = value;
-			MatchSize(statsValues, statsNames);
-			InitializeStats();
-		}
-	}
-
-	// Matches the size of two arrays by adding default values to the smaller array or removing values from the larger array.
-	public void MatchSize<[MustBeVariant] T, [MustBeVariant] T2>(Godot.Collections.Array<T> a, Godot.Collections.Array<T2> b)
-	{
-		while (a.Count < b.Count) a.Add(default);
-		while (a.Count > b.Count) a.RemoveAt(a.Count - 1);
-	}
-
-	public Godot.Collections.Array<EntityStatType> RemoveDuplicates(Godot.Collections.Array<EntityStatType> a)
-	{
-		var tempArray = a;
-		for (int i = 0; i < tempArray.Count; i++)
-		{
-			for (int j = i + 1; j < tempArray.Count; j++)
-			{
-				if (tempArray[i] == tempArray[j] && tempArray[i] != EntityStatType.Unsigned) a.RemoveAt(j);
-			}
-		}
-		return a;
-	}
+	// Fixed 9 stats - one for each EntityStatType (excluding Unsigned)
+	[Export] public float Health { get; set; } = 100f;
+	[Export] public float Mana { get; set; } = 100f;
+	[Export] public float Stamina { get; set; } = 100f;
+	[Export] public float Agility { get; set; } = 0f;
+	[Export] public float PhysicalAttack { get; set; } = 0f;
+	[Export] public float MagicalAttack { get; set; } = 0f;
+	[Export] public float PhysicalDefense { get; set; } = 0f;
+	[Export] public float MagicalDefense { get; set; } = 0f;
+	[Export] public float KnockbackResistance { get; set; } = 0f;
 
 	/// <summary> This dictionary stores the stats by their type as the key and the EntityStat object as the value. </summary>
 	public Dictionary<EntityStatType, EntityStat> Stats { get; set; } = new();
@@ -94,11 +62,21 @@ public partial class EntityStats : Resource, IEnumerable<EntityStat>
 			Stats[stat].StatChanged += OnStatChanged;
 		}
 
-		// Initialize the dictionary by editor values.
-		for (int i = 0; i < StatsNames.Count; i++)
+		// Initialize the dictionary from fixed property values
+		Stats[EntityStatType.Health] = new EntityStat(EntityStatType.Health, (int)Health);
+		Stats[EntityStatType.Mana] = new EntityStat(EntityStatType.Mana, (int)Mana);
+		Stats[EntityStatType.Stamina] = new EntityStat(EntityStatType.Stamina, (int)Stamina);
+		Stats[EntityStatType.Agility] = new EntityStat(EntityStatType.Agility, (int)Agility);
+		Stats[EntityStatType.PhysicalAttack] = new EntityStat(EntityStatType.PhysicalAttack, (int)PhysicalAttack);
+		Stats[EntityStatType.MagicalAttack] = new EntityStat(EntityStatType.MagicalAttack, (int)MagicalAttack);
+		Stats[EntityStatType.PhysicalDefense] = new EntityStat(EntityStatType.PhysicalDefense, (int)PhysicalDefense);
+		Stats[EntityStatType.MagicalDefense] = new EntityStat(EntityStatType.MagicalDefense, (int)MagicalDefense);
+		Stats[EntityStatType.KnockbackResistance] = new EntityStat(EntityStatType.KnockbackResistance, (int)KnockbackResistance);
+		
+		// Subscribe to StatChanged events
+		foreach (var stat in Stats.Values)
 		{
-			EntityStatType statType = StatsNames[i];
-			Stats[statType] = new EntityStat(statType, (int)StatsValues[i]);
+			stat.StatChanged += OnStatChanged;
 		}
 	}
 
