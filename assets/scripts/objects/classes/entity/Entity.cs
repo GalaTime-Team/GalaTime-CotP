@@ -133,8 +133,9 @@ public partial class Entity : CharacterBody2D
 			DeathTimer.Timeout += () => QueueFree();
 		}
 
-		// Ensure Stats dictionary is initialized from fixed properties
-		if (Stats != null && Stats.Count == 0)
+		// ALWAYS ensure Stats dictionary is initialized from fixed properties
+		// Don't rely on Count check as it may be unreliable during initialization
+		if (Stats != null)
 		{
 			Stats.InitializeStats();
 		}

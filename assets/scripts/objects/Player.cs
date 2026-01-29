@@ -91,6 +91,10 @@ namespace Galatime
         private void OnStatsChanged(EntityStats stats)
         {
             HumanoidCharacter c = CurrentCharacter;
+            
+            // Defensive check: Ensure character and stats are ready before accessing
+            if (c == null || stats == null || stats.Count == 0) return;
+            
             PlayerGui.OnStatsChanged(stats, c.Health, c.Stamina.Value, c.Mana.Value);
         }
 
@@ -221,8 +225,15 @@ namespace Galatime
         }
 
         /// If the current character is possessed, attempts to switch control to a living ally character.
+        /// NOTE: Character switching has been disabled per user request.
         public void OnDeathCharacter()
         {
+            // Character switching functionality has been disabled.
+            // When a character dies, game should handle it through death screen instead.
+            // Keeping this method for compatibility but removing the switching logic.
+            
+            /*
+            // Old character switching logic (disabled):
             var characters = Array.FindAll(PlayerVariables.Allies, x => x.Instance != null && !x.Instance.DeathState);
             if ((CurrentCharacter as TestCharacter).Possessed && characters.Length > 0)
             {
@@ -230,6 +241,7 @@ namespace Galatime
                 var character = characters[0];
                 SwitchCharacter(character);
             }
+            */
         }
 
         /// <summary> Loads characters and switches to the main character. </summary>
@@ -273,6 +285,11 @@ namespace Galatime
             }
         }
 
+        /// <summary>
+        /// Switches control to a different character.
+        /// NOTE: Character switching has been disabled for normal gameplay per user request.
+        /// This method is only used for initial character setup when loading the game.
+        /// </summary>
         public void SwitchCharacter(AllyData data)
         {
             // Check if data and Instance are valid
@@ -304,6 +321,12 @@ namespace Galatime
             // Subscribe to events for the new character.
             if (CurrentCharacter != null && IsInstanceValid(CurrentCharacter))
             {
+                // Ensure stats are initialized before subscribing to events
+                if (CurrentCharacter.Stats != null && CurrentCharacter.Stats.Count == 0)
+                {
+                    CurrentCharacter.Stats.InitializeStats();
+                }
+                
                 CurrentCharacter.Stats.OnStatsChanged += OnStatsChanged;
                 CurrentCharacter.Stamina.OnValueChanged += OnStaminaChanged;
                 CurrentCharacter.Mana.OnValueChanged += OnManaChanged;
