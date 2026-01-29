@@ -12,5 +12,9 @@
 	"learned_abilities": {
 
 	},
+	"allies": [
+		"arthur",
+		"raphael"
+	],
 	"playtime": 0
 }
