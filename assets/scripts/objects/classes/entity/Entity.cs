@@ -133,6 +133,12 @@ public partial class Entity : CharacterBody2D
 			DeathTimer.Timeout += () => QueueFree();
 		}
 
+		// Ensure Stats dictionary is initialized from fixed properties
+		if (Stats != null && Stats.Count == 0)
+		{
+			Stats.InitializeStats();
+		}
+
 		// Automatically load abilities from exported IDs
 		LoadDefaultAbilities();
 

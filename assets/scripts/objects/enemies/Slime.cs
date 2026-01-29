@@ -101,6 +101,8 @@ public partial class Slime : Entity
 
 	public void Spawned()
 	{
+		if (AnimationPlayer == null) return;
+		
 		CanMove = true;
 		AnimationPlayer.Play("walk");
 	}
@@ -145,6 +147,8 @@ public partial class Slime : Entity
 
 	public void SpawnParticles()
 	{
+		if (Particles == null) return;
+		
 		var particles = Particles.Duplicate() as GpuParticles2D;
 		AddChild(particles);
 		particles.TopLevel = true;

@@ -275,13 +275,16 @@ namespace Galatime
 
         public void SwitchCharacter(AllyData data)
         {
+            // Check if data and Instance are valid
+            if (data == null || data.Instance == null || !IsInstanceValid(data.Instance)) return;
+            
             if (data.Instance is not null && data.Instance.DeathState) return; // Don't let to switch character if it's dead.
 
             // Make sure that all characters are loaded.
             LoadCharacters();
 
             // Unsubscribe from events from the previous character.
-            if (CurrentCharacter != null)
+            if (CurrentCharacter != null && IsInstanceValid(CurrentCharacter))
             {
                 CurrentCharacter.Stats.OnStatsChanged -= OnStatsChanged;
                 CurrentCharacter.Stamina.OnValueChanged -= OnStaminaChanged;
@@ -299,24 +302,27 @@ namespace Galatime
             CurrentAlly = data;
 
             // Subscribe to events for the new character.
-            CurrentCharacter.Stats.OnStatsChanged += OnStatsChanged;
-            CurrentCharacter.Stamina.OnValueChanged += OnStaminaChanged;
-            CurrentCharacter.Mana.OnValueChanged += OnManaChanged;
-            CurrentCharacter.OnHealthChanged += HealthChangedEvent;
+            if (CurrentCharacter != null && IsInstanceValid(CurrentCharacter))
+            {
+                CurrentCharacter.Stats.OnStatsChanged += OnStatsChanged;
+                CurrentCharacter.Stamina.OnValueChanged += OnStaminaChanged;
+                CurrentCharacter.Mana.OnValueChanged += OnManaChanged;
+                CurrentCharacter.OnHealthChanged += HealthChangedEvent;
 
-            CurrentCharacter.OnAbilityAdded += OnAbilityAddedForCharacter;
-            CurrentCharacter.OnAbilityUsed += OnAbilityUsedForCharacter;
-            CurrentCharacter.OnAbilityReload += OnAbilityReloadForCharacter;
+                CurrentCharacter.OnAbilityAdded += OnAbilityAddedForCharacter;
+                CurrentCharacter.OnAbilityUsed += OnAbilityUsedForCharacter;
+                CurrentCharacter.OnAbilityReload += OnAbilityReloadForCharacter;
 
-            // Set the character as possessed to control it.
-            (CurrentCharacter as TestCharacter).Possessed = true;
+                // Set the character as possessed to control it.
+                (CurrentCharacter as TestCharacter).Possessed = true;
 
-            // Again, update the UI.
-            OnStatsChanged(CurrentCharacter.Stats);
-            OnAbilitiesChangedForCharacter();
-            OnItemsChanged();
+                // Again, update the UI.
+                OnStatsChanged(CurrentCharacter.Stats);
+                OnAbilitiesChangedForCharacter();
+                OnItemsChanged();
 
-            PlayerGui.SetCharacterIcon(CurrentAlly);
+                PlayerGui.SetCharacterIcon(CurrentAlly);
+            }
         }
 
         // All input handling for the player goes here.
