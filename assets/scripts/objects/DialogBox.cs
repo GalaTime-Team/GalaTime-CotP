@@ -25,6 +25,9 @@ public partial class DialogBox : NinePatchRect
 	public List<LabelButton> ChoiceButtons = new();
 
 	private Player Player;
+	
+	// Track previous AI states to restore them after dialog
+	private Dictionary<Entity, bool> PreviousAIStates = new();
 
 	private int currentPhrase = -1;
 	/// <summary> Represents the current phrase index. </summary>
@@ -113,6 +116,9 @@ public partial class DialogBox : NinePatchRect
 		OnDialogEndCallback = dialogEndCallback;
 		OnDialogNextPhraseCallback = dialogNextPhraseCallback;
 
+		// Freeze player and entities during dialog
+		FreezeGameForDialog();
+
 		CurrentPhrase++;
 	}
 
@@ -150,6 +156,9 @@ public partial class DialogBox : NinePatchRect
 		IsDialog = false;
 
 		ResetValues();
+
+		// Unfreeze player and entities after dialog
+		UnfreezeGameAfterDialog();
 
 		OnDialogEndCallback?.Invoke();
 	}
@@ -260,6 +269,83 @@ public partial class DialogBox : NinePatchRect
 		CurrentDialog = null;
 		CanSkip = false;
 		currentPhrase = -1;
+	}
+
+	/// <summary> Freezes the player and all entities when dialog starts. </summary>
+	private void FreezeGameForDialog()
+	{
+		// Get the Player instance - DialogBox is child of PlayerGui which is child of CanvasLayer which is child of Player
+		if (Player == null)
+		{
+			// Navigate up the scene tree: DialogBox -> PlayerGui -> CanvasLayer -> Player
+			var parent = GetParent(); // PlayerGui
+			if (parent != null)
+			{
+				parent = parent.GetParent(); // CanvasLayer
+				if (parent != null)
+				{
+					parent = parent.GetParent(); // Player
+					Player = parent as Player;
+				}
+			}
+		}
+
+		// Freeze player
+		if (Player != null)
+		{
+			Player.IsPlayerFrozen = true;
+			if (Player.CurrentCharacter != null)
+			{
+				Player.CurrentCharacter.CanMove = false;
+			}
+		}
+
+		// Disable AI for all entities
+		PreviousAIStates.Clear();
+		var entities = LevelManager.Instance?.Entities;
+		if (entities != null)
+		{
+			foreach (var entity in entities)
+			{
+				if (entity != null && !entity.DeathState)
+				{
+					// Store previous state so we can restore it
+					PreviousAIStates[entity] = entity.DisableAI;
+					entity.DisableAI = true;
+					entity.CanMove = false;
+				}
+			}
+		}
+	}
+
+	/// <summary> Unfreezes the player and all entities when dialog ends. </summary>
+	private void UnfreezeGameAfterDialog()
+	{
+		// Unfreeze player
+		if (Player != null)
+		{
+			Player.IsPlayerFrozen = false;
+			if (Player.CurrentCharacter != null)
+			{
+				Player.CurrentCharacter.CanMove = true;
+			}
+		}
+
+		// Restore AI for all entities
+		var entities = LevelManager.Instance?.Entities;
+		if (entities != null)
+		{
+			foreach (var entity in entities)
+			{
+				if (entity != null && PreviousAIStates.ContainsKey(entity))
+				{
+					// Restore previous AI state
+					entity.DisableAI = PreviousAIStates[entity];
+					entity.CanMove = true;
+				}
+			}
+		}
+		PreviousAIStates.Clear();
 	}
 
 	public override void _UnhandledInput(InputEvent @event)
