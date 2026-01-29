@@ -222,46 +222,6 @@ namespace Galatime
             }, Array.Empty<bool>());
         }
 
-        public void CallCharacterWheel()
-        {
-            // Don't let the player select characters if not in combat.
-            // if (!LevelManager.Instance.IsCombat) return;
-
-            var max = SelectWheel.WheelSegmentMaxCount;
-
-            // Needed arrays for the wheel to work.
-            var placeholders = new TextureRect[max];
-            var names = new string[max];
-            var disabled = new bool[max];
-
-            var characters = Array.FindAll(PlayerVariables.Allies, c => !c.IsEmpty);
-            for (int i = 0; i < characters.Length; i++)
-            {
-                var character = characters[i];
-
-                placeholders[i] = new TextureRect
-                {
-                    // Disabling mouse filter to make sure that hover event will be triggered.
-                    MouseFilter = MouseFilterEnum.Ignore,
-                    // Set position of the item container in the wheel segment.
-                    Position = new Vector2(10, 3),
-                    Size = new Vector2(16, 16),
-                    PivotOffset = new Vector2(8, 8),
-                    Texture = character.Icon
-                };
-                names[i] = character.Name;
-                disabled[i] = character.Instance.DeathState;
-            }
-
-            if (characters.Length == 0) return;
-
-            SelectWheel.CallWheel("character_wheel", characters.Length, placeholders, names, (int i) =>
-            {
-                GD.Print($"Selected character {i} ({PlayerVariables.Allies[i].Name}).");
-                PlayerVariables.Player.SwitchCharacter(PlayerVariables.Allies[i]);
-            }, disabled);
-        }
-
         public void DisplayItem() => OnItemsChanged?.Invoke();
     }
 }
