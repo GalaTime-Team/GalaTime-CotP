@@ -3,6 +3,7 @@ using Galatime;
 using Galatime.Global;
 using Galatime.Helpers;
 using Galatime.Interfaces;
+using Galatime.AI.Controller;
 using Godot;
 
 public partial class TestCharacter : HumanoidCharacter, IDrama
@@ -22,6 +23,9 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 	public Timer RetreatDelayTimer, MoveDelayTimer, StrafeTimer, EnemySwitchDelayTimer, AttackTimer;
 
 	public Player Player;
+	
+	/// <summary> AI Controller for intelligent behavior when not possessed. </summary>
+	public AIController AIController;
 
 	private bool possessed;
 	/// <summary> True if the character is currently being possessed. That means the player is controlling it. </summary>
@@ -33,6 +37,8 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 			possessed = value;
 			// Stop the attack timer, because no need to attack automatically.
 			if (value) AttackTimer.Stop();
+			// Disable AI Controller when possessed
+			if (AIController != null) AIController.Enabled = !value;
 		}
 	}
 
@@ -68,6 +74,32 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		for (var i = 0; i < (DefaultAbilities != null ? DefaultAbilities.Count : 0); i++) { AddAbility(GalatimeGlobals.GetAbilityById(DefaultAbilities[i]), i); }
 
 		if (LevelManager.Instance.CheatsMenu.GetCheat("god_mode").Active) Invincible = true;
+		
+		// Setup AI Controller for when not possessed
+		SetupAI();
+	}
+	
+	private void SetupAI()
+	{
+		// Create AI Controller (only used when not possessed)
+		// AI rules should be configured in the scene via AIRules property, not hardcoded here.
+		AIController = new AIController();
+		AIController.Entity = this;
+		AIController.DebugMode = false;
+		AIController.Enabled = !Possessed; // Disable if currently possessed
+		AddChild(AIController);
+		
+		// REMOVED: Hardcoded AI rules. Configure AI in the scene editor instead using AIRules property.
+		// This allows each character instance to have different AI behaviors without code changes.
+		// If you need AI, add AIRuleData entries to the AIRules property in the scene inspector.
+		
+		// Add controller to AI behavior system (only active when not possessed)
+		AddAIBehavior((delta) => {
+			if (!Possessed && AIController != null)
+			{
+				AIController.Process(delta);
+			}
+		});
 	}
 
 	private void InitializeTimers()
@@ -107,14 +139,29 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 
 	public override void _AIProcess(double delta)
 	{
+		// Call base AI behaviors first (includes AI Controller)
+		base._AIProcess(delta);
+		
 		if (Possessed || DeathState) return;
-		if (TargetController.CurrentTarget != null) CombatMovement();
-		// Moving normally when there is no enemies.
-		else NormalMovement();
+		
+		// Check if TargetController is initialized before accessing it
+		if (TargetController == null) return;
+		
+		// DISABLED: Hardcoded movement logic. Movement should be configured via AIController/AIRules.
+		// If you need AI movement, add AIRuleData entries to the AIRules property in the scene.
+		// The old hardcoded movement system has been replaced with the configurable AI Controller system.
+		
+		// Legacy movement methods (commented out):
+		// if (TargetController.CurrentTarget != null) CombatMovement();
+		// // Moving normally when there is no enemies.
+		// else NormalMovement();
 	}
 
 	private async void CombatMovement()
 	{
+		// Check if required nodes are initialized
+		if (Weapon == null || TargetController == null || TargetController.CurrentTarget == null || RayCast == null) return;
+		
 		if (AttackTimer.IsStopped()) AttackTimer.Start();
 
 		Vector2 vectorPath;
@@ -132,8 +179,10 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		vectorPath = Vector2.Right.Rotated(pathRotation);
 
 		// Rotation to the enemy.
-		if (TargetController.CurrentTarget == null) return; // Make sure there is an enemy.
+		// Check again after async operation in case target changed
+		if (TargetController == null || TargetController.CurrentTarget == null) return;
 		var enemyRotation = Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
+		if (Weapon == null) return; // Check Weapon before accessing
 		Weapon.Rotation = enemyRotation;
 
 		// Check if is in melee mode. Melee mode is when ally only uses sword. No need to use abilities when in melee mode.
@@ -195,6 +244,9 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 	/// <summary> Process of normal movement of the character. </summary>
 	private async void NormalMovement()
 	{
+		// Check if Weapon is initialized before accessing it
+		if (Weapon == null) return;
+		
 		Weapon.Rotation = PathRotation;
 
 		// var allies = GetTree().GetNodesInGroup("ally");

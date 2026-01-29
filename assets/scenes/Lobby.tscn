@@ -1,12 +1,12 @@
-[gd_scene load_steps=17 format=3 uid="uid://txwr2a75w6yq"]
+[gd_scene format=3 uid="uid://txwr2a75w6yq"]
 
-[ext_resource type="Script" path="res://assets/scripts/scenes/LLobby.cs" id="1_34ayc"]
+[ext_resource type="Script" uid="uid://kqukwftpyaeo" path="res://assets/scripts/scenes/LLobby.cs" id="1_34ayc"]
 [ext_resource type="PackedScene" uid="uid://dt5h73awssdsx" path="res://assets/objects/helpers/LevelInfo.tscn" id="2_2sbvd"]
 [ext_resource type="PackedScene" uid="uid://b36vtmqscr1we" path="res://assets/data/environment/DreamWorldWorldEnvironment.tscn" id="2_htnjq"]
 [ext_resource type="Texture2D" uid="uid://dvfjexhndc0g1" path="res://assets/sprites/particles/dream_world_particles.png" id="3_fwky3"]
 [ext_resource type="TileSet" uid="uid://bjos0o0ign6i5" path="res://assets/data/tileset/DreamWorldTileset.tres" id="6_7hqno"]
 [ext_resource type="Texture2D" uid="uid://37gawcujv7pt" path="res://assets/sprites/levels/dream_world/room_fade.png" id="7_0cak1"]
-[ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/Roomwrap.tscn" id="8_frg3l"]
+[ext_resource type="PackedScene" uid="uid://cpuy2j7u1neip" path="res://assets/objects/roomwrap.tscn" id="8_frg3l"]
 [ext_resource type="PackedScene" uid="uid://cdla80jpultqr" path="res://assets/objects/level/PlayerSpawnPoint.tscn" id="9_b4c3c"]
 
 [sub_resource type="Curve" id="Curve_tl2pf"]
@@ -50,33 +50,33 @@ b = Vector2(0, 96)
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_uo04f"]
 vertices = PackedVector2Array(368, 240, -240, 240, -240, -176, 368, -176)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-256, -192, 384, -192, 384, 256, -256, 256)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-256, -192, 384, -192, 384.00006, 35.926117, 384, 256, -256, 256, -255.99997, 27.940094)])
 source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 16.0
 
-[node name="Lobby" type="Node2D"]
+[node name="Lobby" type="Node2D" unique_id=1198505071]
 y_sort_enabled = true
 script = ExtResource("1_34ayc")
 metadata/_edit_vertical_guides_ = [-563.0]
 metadata/_edit_lock_ = true
 
-[node name="DreamWorldWorldEnvironment" parent="." instance=ExtResource("2_htnjq")]
+[node name="DreamWorldWorldEnvironment" parent="." unique_id=186437735 instance=ExtResource("2_htnjq")]
 
-[node name="LevelInfo" parent="." instance=ExtResource("2_2sbvd")]
+[node name="LevelInfo" parent="." unique_id=657782403 instance=ExtResource("2_2sbvd")]
 LevelName = "Dream World"
 Day = 1
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1227074368]
 visible = false
 position = Vector2(456, 384)
 amount = 700
-process_material = SubResource("ParticleProcessMaterial_gnc7l")
 texture = ExtResource("3_fwky3")
 lifetime = 10.0
 preprocess = 10.0
 visibility_rect = Rect2(-1000, -500, 2000, 1000)
+process_material = SubResource("ParticleProcessMaterial_gnc7l")
 
-[node name="Roomwrap" parent="." instance=ExtResource("8_frg3l")]
+[node name="Roomwrap" parent="." unique_id=2138108104 instance=ExtResource("8_frg3l")]
 position = Vector2(544, 32)
 Scene = "res://assets/scenes/LobbyFight.tscn"
 
@@ -87,7 +87,7 @@ metadata/_edit_lock_ = true
 position = Vector2(0, 0)
 metadata/_edit_lock_ = true
 
-[node name="Roomwrap2" parent="." instance=ExtResource("8_frg3l")]
+[node name="Roomwrap2" parent="." unique_id=113313470 instance=ExtResource("8_frg3l")]
 position = Vector2(-416, 32)
 Scene = "res://assets/scenes/LobbyFight.tscn"
 PlayerSpawnPoint = 1
@@ -99,62 +99,63 @@ metadata/_edit_lock_ = true
 position = Vector2(0, 0)
 metadata/_edit_lock_ = true
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1989863615]
 position = Vector2(-384, 32)
 scale = Vector2(4, 4)
 texture = ExtResource("7_0cak1")
 
-[node name="Sprite2D2" type="Sprite2D" parent="."]
-position = Vector2(512, 32)
-scale = Vector2(4, 4)
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=2031044312]
+position = Vector2(504.5, 32)
+scale = Vector2(4.234375, 4)
 texture = ExtResource("7_0cak1")
 flip_h = true
 
-[node name="TileMap" type="TileMap" parent="."]
+[node name="TileMap" type="TileMap" parent="." unique_id=1431776277]
 z_index = -2
 scale = Vector2(4, 4)
 tile_set = ExtResource("6_7hqno")
 format = 2
 layer_0/tile_data = PackedInt32Array(-196613, 1, 0, -131077, 1, 0, -65541, 1, 0, -5, 1, 2, 65531, 1, 2, 131067, 1, 2, 196603, 1, 0, 262139, 1, 0, -196612, 1, 0, -131076, 1, 2, -65540, 1, 2, -4, 1, 2, 65532, 1, 2, 131068, 1, 2, 196604, 1, 2, 262140, 1, 2, -196611, 1, 0, -131075, 1, 2, -65539, 1, 2, -3, 1, 2, 65533, 1, 2, 131069, 1, 2, 196605, 1, 2, 262141, 1, 2, -196610, 1, 0, -131074, 1, 2, -65538, 1, 2, -2, 1, 2, 65534, 1, 2, 131070, 1, 2, 196606, 1, 2, 262142, 1, 2, -196609, 1, 0, -131073, 1, 2, -65537, 1, 2, -1, 1, 2, 65535, 1, 2, 131071, 1, 2, 196607, 1, 2, 262143, 1, 2, -262144, 1, 0, -196608, 1, 2, -131072, 1, 2, -65536, 1, 2, 0, 1, 2, 65536, 1, 2, 131072, 1, 2, 196608, 1, 2, -262143, 1, 0, -196607, 1, 2, -131071, 1, 2, -65535, 1, 2, 1, 1, 2, 65537, 1, 2, 131073, 1, 2, 196609, 1, 2, -262142, 1, 0, -196606, 1, 2, -131070, 1, 2, -65534, 1, 2, 2, 1, 2, 65538, 1, 2, 131074, 1, 2, 196610, 1, 2, -262141, 1, 0, -196605, 1, 2, -131069, 1, 2, -65533, 1, 2, 3, 1, 2, 65539, 1, 2, 131075, 1, 2, 196611, 1, 2, -262140, 1, 0, -196604, 1, 2, -131068, 1, 2, -65532, 1, 2, 4, 1, 2, 65540, 1, 2, 131076, 1, 2, 196612, 1, 2, -262139, 1, 0, -196603, 1, 2, -131067, 1, 2, -65531, 1, 2, 5, 1, 2, 65541, 1, 2, 131077, 1, 2, 196613, 1, 2, -262138, 1, 0, -196602, 1, 0, 196614, 1, 0, 327675, 1, 0, 327676, 1, 0, 327677, 1, 0, 327678, 1, 0, 327679, 1, 0, 262144, 1, 0, 262145, 1, 0, 262146, 1, 0, 262147, 1, 0, 262148, 1, 0, 262149, 1, 0, 262150, 1, 0, -65530, 1, 2, 6, 1, 2, 65542, 1, 2, -65529, 1, 2, 7, 1, 2, 65543, 1, 2, -65528, 1, 2, 8, 1, 2, 65544, 1, 2, -65527, 1, 2, 9, 1, 2, 65545, 1, 2, 131078, 1, 0, 131079, 1, 0, 131080, 1, 0, 131081, 1, 0, -131066, 1, 0, -131065, 1, 0, -131064, 1, 0, -131063, 1, 0, 196602, 1, 0, 196601, 1, 0, 196600, 1, 0, -65542, 1, 0, -65543, 1, 0, -65544, 1, 0, -6, 1, 2, -7, 1, 2, -8, 1, 2, 65528, 1, 2, 131064, 1, 2, 131065, 1, 2, 131066, 1, 2, 65530, 1, 2, 65529, 1, 2)
+layer_1/name = "Layer1"
 layer_1/tile_data = PackedInt32Array(262140, 131073, 1, 196605, 65537, 1, 131072, 65537, 1, -131071, 65537, 1, -196605, 131073, 2, 4, 65537, 1, -65531, 65537, 0, 131077, 131073, 1, -65538, 196609, 1, 131064, 196609, 0, 131066, 131073, 2, -3, 131073, 0, 65543, 131073, 2)
 metadata/_edit_lock_ = true
 
-[node name="Particles" type="GPUParticles2D" parent="."]
+[node name="Particles" type="GPUParticles2D" parent="." unique_id=674782431]
 position = Vector2(64, 32)
 amount = 300
-process_material = SubResource("ParticleProcessMaterial_18dqa")
 texture = ExtResource("3_fwky3")
 lifetime = 10.0
 preprocess = 10.0
 visibility_rect = Rect2(-2000, -1000, 4000, 2000)
+process_material = SubResource("ParticleProcessMaterial_18dqa")
 
-[node name="PlayerSpawnPoint" parent="." instance=ExtResource("9_b4c3c")]
+[node name="PlayerSpawnPoint" parent="." unique_id=150691060 instance=ExtResource("9_b4c3c")]
 position = Vector2(-256, 32)
 SpawnIndex = 1
 
-[node name="PlayerSpawnPoint2" parent="." instance=ExtResource("9_b4c3c")]
+[node name="PlayerSpawnPoint2" parent="." unique_id=128965250 instance=ExtResource("9_b4c3c")]
 position = Vector2(384, 32)
 
-[node name="SlimeTutorialSpawn" type="Node2D" parent="."]
+[node name="SlimeTutorialSpawn" type="Node2D" parent="." unique_id=231602512]
 position = Vector2(-128, 32)
 
-[node name="Blocker1" type="StaticBody2D" parent="."]
-position = Vector2(-256, 32)
+[node name="Blocker1" type="StaticBody2D" parent="." unique_id=840636281]
+position = Vector2(-295, 33)
 
-[node name="Collision" type="CollisionShape2D" parent="Blocker1"]
+[node name="Collision" type="CollisionShape2D" parent="Blocker1" unique_id=588263460]
 shape = SubResource("SegmentShape2D_xy4uj")
 disabled = true
 metadata/_edit_lock_ = true
 
-[node name="Blocker2" type="StaticBody2D" parent="."]
-position = Vector2(384, 32)
+[node name="Blocker2" type="StaticBody2D" parent="." unique_id=230073693]
+position = Vector2(431, 32)
 
-[node name="Collision" type="CollisionShape2D" parent="Blocker2"]
+[node name="Collision" type="CollisionShape2D" parent="Blocker2" unique_id=2056169770]
 shape = SubResource("SegmentShape2D_xy4uj")
 disabled = true
 metadata/_edit_lock_ = true
 
-[node name="Navigation" type="NavigationRegion2D" parent="."]
+[node name="Navigation" type="NavigationRegion2D" parent="." unique_id=1437456564]
 navigation_polygon = SubResource("NavigationPolygon_uo04f")
 
 [editable path="Roomwrap"]

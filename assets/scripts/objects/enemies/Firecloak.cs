@@ -4,6 +4,7 @@ using System;
 
 using Galatime;
 using Galatime.AI;
+using Galatime.AI.Controller;
 using Galatime.Damage;
 using Galatime.Global;
 using Galatime.Helpers;
@@ -28,6 +29,9 @@ public partial class Firecloak : Entity
 	public TrailEffect TrailEffect;
 
 	public Explosion DeathExplosion;
+	
+	/// <summary> AI Controller for intelligent behavior. </summary>
+	public AIController AIController;
 	#endregion
 
 	#region Variables
@@ -101,6 +105,54 @@ public partial class Firecloak : Entity
 
 		RegisterAttackCycles();
 		AttackSwitcher.NextCycle();
+		
+		// Setup AI Controller
+		SetupAI();
+	}
+	
+	private void SetupAI()
+	{
+		// Create AI Controller
+		AIController = new AIController();
+		AIController.Entity = this;
+		AIController.DebugMode = false;
+		AddChild(AIController);
+		
+		// Load Firecloak abilities
+		var fireballAbility = GalatimeGlobals.GetAbilityById("firecloak_fireball");
+		if (fireballAbility != null)
+		{
+			AddAbility(fireballAbility, 0);
+		}
+		
+		var dashAbility = GalatimeGlobals.GetAbilityById("firecloak_dash");
+		if (dashAbility != null)
+		{
+			AddAbility(dashAbility, 1);
+		}
+		
+		// Priority 50: Strafe around target
+		var strafeRule = new AIRule("Strafe", new StrafeBehavior(optimalDistance: 250f, clockwise: true), priority: 50, probability: 0.6f)
+			.AddCondition(new HasTargetCondition())
+			.AddCondition(new TargetDistanceCondition(TargetDistanceCondition.DistanceType.Between, 100f, 400f));
+		AIController.AddRule(strafeRule);
+		
+		// Priority 30: Approach if too far
+		var approachRule = new AIRule("Approach", new MeleeAttackBehavior(stopDistance: 250f), priority: 30)
+			.AddCondition(new HasTargetCondition())
+			.AddCondition(new TargetDistanceCondition(TargetDistanceCondition.DistanceType.GreaterThan, 400f));
+		AIController.AddRule(approachRule);
+		
+		// Priority 0: Idle when no target
+		var idleRule = new AIRule("Idle", new IdleBehavior(), priority: 0)
+			.AddCondition(new NoTargetCondition());
+		AIController.AddRule(idleRule);
+		
+		// Keep existing movement behavior for compatibility
+		AddAIBehavior(MovementAndCombatBehavior);
+		
+		// Add controller to AI behavior system
+		AddAIBehavior((delta) => AIController.Process(delta));
 	}
 
 	#region Attack cycles
@@ -227,6 +279,13 @@ public partial class Firecloak : Entity
 	}
 
 	public override void _AIProcess(double delta)
+	{
+		// Call base to execute custom AI behaviors
+		base._AIProcess(delta);
+	}
+	
+	/// <summary> Custom AI behavior for movement and combat positioning. </summary>
+	private void MovementAndCombatBehavior(double delta)
 	{
 		Velocity = Vector2.Zero;
 

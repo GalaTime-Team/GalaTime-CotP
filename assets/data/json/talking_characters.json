@@ -20,9 +20,11 @@
 	  "name": "Arthur",
 	  "emotions": [
 		{ "id": "neutral", "path": "res://assets/sprites/gui/dialog/characters/arthur/neutral.png" },
+		{ "id": "angry", "path": "res://assets/sprites/gui/dialog/characters/arthur/angry.png" },
 		{ "id": "annoyed", "path": "res://assets/sprites/gui/dialog/characters/arthur/annoyed.png" },
 		{ "id": "happy", "path": "res://assets/sprites/gui/dialog/characters/arthur/happy.png" },
 		{ "id": "stressed", "path": "res://assets/sprites/gui/dialog/characters/arthur/stressed.png" },
+		{ "id": "thinking", "path": "res://assets/sprites/gui/dialog/characters/arthur/thinking.png" }
 	  ],
 	  "sound": "res://sounds/characters/arthur.wav"
 	},
@@ -45,7 +47,37 @@
 		{ "id": "suspicious_n", "path": "res://assets/sprites/gui/dialog/characters/neven/suspicious_n.png" },
 		{ "id": "thinking_n", "path": "res://assets/sprites/gui/dialog/characters/neven/thinking_n.png" }
 	  ],
-	  "sound": "res://sounds/characters/arthur.wav"
+	  "voice": "res://sounds/characters/arthur.wav"
+	},
+	{
+	  "id": "noelia",
+	  "name": "Noelia",
+	  "emotions": [
+		{ "id": "neutral", "path": "res://assets/sprites/gui/dialog/characters/noelia/neutral.png" },
+		{ "id": "annoyed", "path": "res://assets/sprites/gui/dialog/characters/noelia/annoyed.png" },
+		{ "id": "happy", "path": "res://assets/sprites/gui/dialog/characters/noelia/happy.png" },
+		{ "id": "laughing", "path": "res://assets/sprites/gui/dialog/characters/noelia/laughing.png" },
+		{ "id": "mocking", "path": "res://assets/sprites/gui/dialog/characters/noelia/mocking.png" },
+		{ "id": "naughty", "path": "res://assets/sprites/gui/dialog/characters/noelia/naughty.png" },
+		{ "id": "surprised", "path": "res://assets/sprites/gui/dialog/characters/noelia/surprised.png" },
+		{ "id": "stressed", "path": "res://assets/sprites/gui/dialog/characters/noelia/stressed.png" },
+		{ "id": "tedious", "path": "res://assets/sprites/gui/dialog/characters/noelia/tedious.png" },
+		{ "id": "thinking", "path": "res://assets/sprites/gui/dialog/characters/noelia/thinking.png" }
+	  ],
+	  "voice": "res://assets/audios/sounds/talkbeeps/femalebeep0.wav"
+	},
+	{
+	  "id": "pacci",
+	  "name": "Pacci",
+	  "emotions": [
+		{ "id": "neutral", "path": "res://assets/sprites/gui/dialog/characters/pacci/neutral.png" },
+		{ "id": "annoyed", "path": "res://assets/sprites/gui/dialog/characters/pacci/annoyed.png" },
+		{ "id": "concerned", "path": "res://assets/sprites/gui/dialog/characters/pacci/concerned.png" },
+		{ "id": "surprised", "path": "res://assets/sprites/gui/dialog/characters/pacci/surprised.png" },
+		{ "id": "thinking", "path": "res://assets/sprites/gui/dialog/characters/pacci/thinking.png" },
+		{ "id": "relaxed", "path": "res://assets/sprites/gui/dialog/characters/pacci/relaxed.png" }
+	  ],
+	  "voice": "res://assets/audios/sounds/talkbeeps/malebeep0.wav"
 	}
   ]
 }

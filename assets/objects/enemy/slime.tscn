@@ -1,12 +1,14 @@
-[gd_scene load_steps=35 format=3 uid="uid://dfsfnjxcwp6ye"]
+[gd_scene format=3 uid="uid://66tjv4ma7pd1"]
 
-[ext_resource type="Script" path="res://assets/scripts/objects/enemies/Slime.cs" id="1_ufwr7"]
+[ext_resource type="Script" uid="uid://dew5pkk4g4il7" path="res://assets/scripts/objects/enemies/Slime.cs" id="1_ufwr7"]
 [ext_resource type="Texture2D" uid="uid://cyglxm8058sgm" path="res://assets/sprites/particles/Slime_particles.png" id="2_h3u7x"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_qtebx"]
+[ext_resource type="Script" uid="uid://b8kgnttd0pjw" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_qtebx"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="2_wehpt"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_6ijah"]
+[ext_resource type="Script" uid="uid://bkgiux1k7eygg" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_6ijah"]
 [ext_resource type="Texture2D" uid="uid://bxtr8vepdgom0" path="res://assets/sprites/entity/slime/walk/slime-walk.png" id="4_7rx10"]
+[ext_resource type="Script" uid="uid://cbh3u0hflbp65" path="res://assets/scripts/objects/helpers/ai/controller/AIRuleData.cs" id="4_hbs5s"]
 [ext_resource type="Texture2D" uid="uid://5woajs1ijig4" path="res://assets/sprites/entity/slime/idle/slime_idle.png" id="5_3qjpr"]
+[ext_resource type="Script" uid="uid://cq1ping2lnq7b" path="res://assets/scripts/objects/helpers/ai/controller/AIConditionData.cs" id="5_l1s2w"]
 [ext_resource type="Texture2D" uid="uid://cvhy0adnokmjs" path="res://assets/sprites/entity/slime/hit/slime_hit.png" id="6_a2u57"]
 [ext_resource type="Texture2D" uid="uid://btyuawnmohqgj" path="res://assets/sprites/entity/slime/slime_die.png" id="8_6anry"]
 [ext_resource type="Texture2D" uid="uid://uobi5sye5gk8" path="res://assets/sprites/entity/slime/spawn/slime_spawn.png" id="9_0bcgf"]
@@ -20,12 +22,30 @@
 
 [sub_resource type="Resource" id="Resource_ygl1b"]
 script = ExtResource("2_qtebx")
-StatsNames = [1, 5, 6, 7, 8]
-StatsValues = [19.0, 21.0, 25.0, 10.0, 34.0]
+Health = 19.0
+Mana = 19.0
+Stamina = 15.0
+Agility = 37.0
+PhysicalAttack = 17.0
+MagicalAttack = 25.0
+PhysicalDefense = 10.0
+MagicalDefense = 34.0
+KnockbackResistance = 100.0
 
 [sub_resource type="Resource" id="Resource_lywks"]
 script = ExtResource("3_6ijah")
 InitializerElement = "Aqua"
+
+[sub_resource type="Resource" id="Resource_2mdke"]
+script = ExtResource("5_l1s2w")
+metadata/_custom_type_script = "uid://cq1ping2lnq7b"
+
+[sub_resource type="Resource" id="Resource_fwlrx"]
+script = ExtResource("4_hbs5s")
+RuleName = "Attack"
+BehaviorType = 1
+Conditions = Array[ExtResource("5_l1s2w")]([SubResource("Resource_2mdke")])
+metadata/_custom_type_script = "uid://cbh3u0hflbp65"
 
 [sub_resource type="Curve" id="2"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.0325581, 1), 0.0, 0.0, 0, 0, Vector2(0.586047, 1), 0.0, 0.0, 0, 0, Vector2(0.776744, 0.493182), -2.88528, -2.88528, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -462,13 +482,13 @@ tracks/4/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_3ftb8"]
 _data = {
-"RESET": SubResource("Animation_r7yfp"),
-"hit": SubResource("Animation_acyj0"),
-"idle": SubResource("Animation_tef67"),
-"intro": SubResource("7"),
-"outro": SubResource("8"),
-"spawn": SubResource("Animation_pbee1"),
-"walk": SubResource("Animation_n10k5")
+&"RESET": SubResource("Animation_r7yfp"),
+&"hit": SubResource("Animation_acyj0"),
+&"idle": SubResource("Animation_tef67"),
+&"intro": SubResource("7"),
+&"outro": SubResource("8"),
+&"spawn": SubResource("Animation_pbee1"),
+&"walk": SubResource("Animation_n10k5")
 }
 
 [sub_resource type="RectangleShape2D" id="6"]
@@ -476,22 +496,16 @@ _data = {
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_qhsy6"]
 streams_count = 2
 stream_0/stream = ExtResource("10_0hirf")
-stream_0/weight = 1.0
 stream_1/stream = ExtResource("12_nqco5")
-stream_1/weight = 1.0
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_n2adw"]
 streams_count = 4
 stream_0/stream = ExtResource("13_n7iwd")
-stream_0/weight = 1.0
 stream_1/stream = ExtResource("14_4lcyu")
-stream_1/weight = 1.0
 stream_2/stream = ExtResource("15_clftc")
-stream_2/weight = 1.0
 stream_3/stream = ExtResource("16_7wsu3")
-stream_3/weight = 1.0
 
-[node name="Slime" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["enemy"]]
+[node name="Slime" type="CharacterBody2D" unique_id=1995133772 node_paths=PackedStringArray("Body") groups=["enemy"]]
 collision_layer = 4
 collision_mask = 7
 script = ExtResource("1_ufwr7")
@@ -500,60 +514,60 @@ Element = SubResource("Resource_lywks")
 Team = 1
 DroppedXp = 10
 Speed = 100.0
+DefaultAbilityIds = Array[String](["slime_melee"])
+AIRules = Array[ExtResource("4_hbs5s")]([SubResource("Resource_fwlrx")])
 Body = NodePath(".")
 
-[node name="Particles" type="GPUParticles2D" parent="."]
+[node name="Particles" type="GPUParticles2D" parent="." unique_id=439998572]
 z_index = -1
 emitting = false
-process_material = SubResource("4")
 texture = ExtResource("2_h3u7x")
 lifetime = 2.0
 one_shot = true
 explosiveness = 1.0
 visibility_rect = Rect2(-250, -250, 500, 500)
+process_material = SubResource("4")
 metadata/_edit_lock_ = true
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1238423209]
 light_mask = 0
 y_sort_enabled = true
 scale = Vector2(4, 4)
 texture = ExtResource("5_3qjpr")
 hframes = 16
 
-[node name="TargetController" parent="." instance=ExtResource("2_wehpt")]
+[node name="TargetController" parent="." unique_id=786453928 instance=ExtResource("2_wehpt")]
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=676583891]
 z_index = 1
 shape = SubResource("CircleShape2D_s5e5c")
 
-[node name="Navigation" type="NavigationAgent2D" parent="."]
+[node name="Navigation" type="NavigationAgent2D" parent="." unique_id=901375906]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_3ftb8")
-}
-autoplay = "spawn"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1388079699]
+libraries/ = SubResource("AnimationLibrary_3ftb8")
+autoplay = &"spawn"
 
-[node name="DamageEffectPoint" type="Marker2D" parent="."]
+[node name="DamageEffectPoint" type="Marker2D" parent="." unique_id=2050602753]
 position = Vector2(-20, -25)
 
-[node name="Weapon" type="Area2D" parent="."]
+[node name="Weapon" type="Area2D" parent="." unique_id=441625393]
 collision_layer = 0
 collision_mask = 2
 metadata/_edit_lock_ = true
 
-[node name="Collision" type="CollisionShape2D" parent="Weapon"]
+[node name="Collision" type="CollisionShape2D" parent="Weapon" unique_id=1226992126]
 position = Vector2(30, 0)
 shape = SubResource("6")
 
-[node name="AudioSound" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioSound" type="AudioStreamPlayer2D" parent="." unique_id=314235904]
 stream = SubResource("AudioStreamRandomizer_qhsy6")
 volume_db = 8.0
 
-[node name="AudioSoundDamage" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioSoundDamage" type="AudioStreamPlayer2D" parent="." unique_id=1336501799]
 stream = SubResource("AudioStreamRandomizer_n2adw")
 volume_db = 8.0
 
-[node name="AudioSoundDeath" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioSoundDeath" type="AudioStreamPlayer2D" parent="." unique_id=631687827]
 stream = ExtResource("17_frwy4")
 volume_db = 8.0

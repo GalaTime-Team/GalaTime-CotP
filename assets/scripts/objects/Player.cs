@@ -91,6 +91,10 @@ namespace Galatime
         private void OnStatsChanged(EntityStats stats)
         {
             HumanoidCharacter c = CurrentCharacter;
+            
+            // Defensive check: Ensure character and stats are ready before accessing
+            if (c == null || stats == null || stats.Count == 0) return;
+            
             PlayerGui.OnStatsChanged(stats, c.Health, c.Stamina.Value, c.Mana.Value);
         }
 
@@ -99,7 +103,7 @@ namespace Galatime
             Vector2 inputVelocity = Vector2.Zero;
 
             // Don't move if the player is not event exist.
-            if (CurrentCharacter != null || IsInstanceValid(CurrentCharacter))
+            if (CurrentCharacter != null && IsInstanceValid(CurrentCharacter) && CurrentCharacter.Weapon != null)
             {
                 if (Input.IsActionPressed("game_move_up")) inputVelocity.Y -= 1;
                 if (Input.IsActionPressed("game_move_down")) inputVelocity.Y += 1;
@@ -113,13 +117,16 @@ namespace Galatime
 
                 if (CurrentCharacter.IsPushing) CurrentCharacter.Body.Velocity *= CurrentCharacter.PushingSpeedMultiplier;
 
-                CurrentCharacter?.Weapon.LookAt(GetGlobalMousePosition());
+                CurrentCharacter.Weapon.LookAt(GetGlobalMousePosition());
                 SetCameraPosition();
             }
         }
 
         private void SetCameraPosition()
         {
+            // Check if CurrentCharacter and Weapon are initialized
+            if (CurrentCharacter == null || CurrentCharacter.Weapon == null) return;
+            
             var c = CurrentCharacter;
             var cpos = c.Weapon.GlobalPosition;
             Camera.GlobalPosition = Camera.GlobalPosition.Lerp(cpos + ((GetGlobalMousePosition() - c.Weapon.GlobalPosition) / 5 + CameraOffset), 0.05f);
@@ -218,8 +225,15 @@ namespace Galatime
         }
 
         /// If the current character is possessed, attempts to switch control to a living ally character.
+        /// NOTE: Character switching has been disabled per user request.
         public void OnDeathCharacter()
         {
+            // Character switching functionality has been disabled.
+            // When a character dies, game should handle it through death screen instead.
+            // Keeping this method for compatibility but removing the switching logic.
+            
+            /*
+            // Old character switching logic (disabled):
             var characters = Array.FindAll(PlayerVariables.Allies, x => x.Instance != null && !x.Instance.DeathState);
             if ((CurrentCharacter as TestCharacter).Possessed && characters.Length > 0)
             {
@@ -227,6 +241,7 @@ namespace Galatime
                 var character = characters[0];
                 SwitchCharacter(character);
             }
+            */
         }
 
         /// <summary> Loads characters and switches to the main character. </summary>
@@ -270,15 +285,23 @@ namespace Galatime
             }
         }
 
+        /// <summary>
+        /// Switches control to a different character.
+        /// NOTE: Character switching has been disabled for normal gameplay per user request.
+        /// This method is only used for initial character setup when loading the game.
+        /// </summary>
         public void SwitchCharacter(AllyData data)
         {
+            // Check if data and Instance are valid
+            if (data == null || data.Instance == null || !IsInstanceValid(data.Instance)) return;
+            
             if (data.Instance is not null && data.Instance.DeathState) return; // Don't let to switch character if it's dead.
 
             // Make sure that all characters are loaded.
             LoadCharacters();
 
             // Unsubscribe from events from the previous character.
-            if (CurrentCharacter != null)
+            if (CurrentCharacter != null && IsInstanceValid(CurrentCharacter))
             {
                 CurrentCharacter.Stats.OnStatsChanged -= OnStatsChanged;
                 CurrentCharacter.Stamina.OnValueChanged -= OnStaminaChanged;
@@ -296,30 +319,43 @@ namespace Galatime
             CurrentAlly = data;
 
             // Subscribe to events for the new character.
-            CurrentCharacter.Stats.OnStatsChanged += OnStatsChanged;
-            CurrentCharacter.Stamina.OnValueChanged += OnStaminaChanged;
-            CurrentCharacter.Mana.OnValueChanged += OnManaChanged;
-            CurrentCharacter.OnHealthChanged += HealthChangedEvent;
+            if (CurrentCharacter != null && IsInstanceValid(CurrentCharacter))
+            {
+                // Ensure stats are initialized before subscribing to events
+                if (CurrentCharacter.Stats != null && CurrentCharacter.Stats.Count == 0)
+                {
+                    CurrentCharacter.Stats.InitializeStats();
+                }
+                
+                CurrentCharacter.Stats.OnStatsChanged += OnStatsChanged;
+                CurrentCharacter.Stamina.OnValueChanged += OnStaminaChanged;
+                CurrentCharacter.Mana.OnValueChanged += OnManaChanged;
+                CurrentCharacter.OnHealthChanged += HealthChangedEvent;
 
-            CurrentCharacter.OnAbilityAdded += OnAbilityAddedForCharacter;
-            CurrentCharacter.OnAbilityUsed += OnAbilityUsedForCharacter;
-            CurrentCharacter.OnAbilityReload += OnAbilityReloadForCharacter;
+                CurrentCharacter.OnAbilityAdded += OnAbilityAddedForCharacter;
+                CurrentCharacter.OnAbilityUsed += OnAbilityUsedForCharacter;
+                CurrentCharacter.OnAbilityReload += OnAbilityReloadForCharacter;
 
-            // Set the character as possessed to control it.
-            (CurrentCharacter as TestCharacter).Possessed = true;
+                // Set the character as possessed to control it.
+                (CurrentCharacter as TestCharacter).Possessed = true;
 
-            // Again, update the UI.
-            OnStatsChanged(CurrentCharacter.Stats);
-            OnAbilitiesChangedForCharacter();
-            OnItemsChanged();
+                // Again, update the UI.
+                OnStatsChanged(CurrentCharacter.Stats);
+                OnAbilitiesChangedForCharacter();
+                OnItemsChanged();
 
-            PlayerGui.SetCharacterIcon(CurrentAlly);
+                PlayerGui.SetCharacterIcon(CurrentAlly);
+            }
         }
 
         // All input handling for the player goes here.
         public override void _UnhandledInput(InputEvent @event)
         {
             if (IsPlayerFrozen) return;
+            
+            // NOTE: ui_accept is used by InteractiveTrigger for portal/interaction
+            // Don't handle it here to allow InteractiveTrigger to process it
+            
             if (@event.IsActionPressed("game_attack")) CurrentCharacter?.Weapon.Attack(CurrentCharacter);
             if (@event.IsActionPressed("game_dodge")) CurrentCharacter?.Dodge();
             if (@event.IsActionPressed("game_inventory")) PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;
