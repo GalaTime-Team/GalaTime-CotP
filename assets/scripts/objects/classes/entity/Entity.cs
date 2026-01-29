@@ -84,7 +84,15 @@ public partial class Entity : CharacterBody2D
 	public void SetHealth(float value, float damageRotation = 0f)
 	{
 		if (Invincible && value < 0) return;
-		health = Math.Clamp((float)Math.Round(value, 2), 0, Stats[EntityStatType.Health].Value);
+		
+		// Defensive check: Ensure Stats dictionary is initialized before accessing
+		float maxHealth = 100f; // Default fallback
+		if (Stats != null && Stats.Count > 0 && Stats.Stats.ContainsKey(EntityStatType.Health))
+		{
+			maxHealth = Stats[EntityStatType.Health].Value;
+		}
+		
+		health = Math.Clamp((float)Math.Round(value, 2), 0, maxHealth);
 		HealthChangedEvent(health);
 		OnHealthChanged?.Invoke(health);
 		if (health <= 0)
@@ -107,6 +115,13 @@ public partial class Entity : CharacterBody2D
 
 	public override void _Ready()
 	{
+		// CRITICAL: Initialize Stats dictionary FIRST, before ANY access to it
+		// This MUST be the first thing we do in _Ready()
+		if (Stats != null)
+		{
+			Stats.InitializeStats();
+		}
+
 		LoadScenes();
 
 		Health = Stats[EntityStatType.Health].Value;
@@ -131,13 +146,6 @@ public partial class Entity : CharacterBody2D
 			};
 			AddChild(DeathTimer);
 			DeathTimer.Timeout += () => QueueFree();
-		}
-
-		// ALWAYS ensure Stats dictionary is initialized from fixed properties
-		// Don't rely on Count check as it may be unreliable during initialization
-		if (Stats != null)
-		{
-			Stats.InitializeStats();
 		}
 
 		// Automatically load abilities from exported IDs
@@ -234,7 +242,16 @@ public partial class Entity : CharacterBody2D
 		if (!DeathState) return;
 
 		DeathState = false;
-		Heal(Stats[EntityStatType.Health].Value); // Restores the entity's health to full.
+		
+		// Defensive check: Ensure Stats dictionary is initialized before accessing
+		if (Stats != null && Stats.Count > 0 && Stats.Stats.ContainsKey(EntityStatType.Health))
+		{
+			Heal(Stats[EntityStatType.Health].Value); // Restores the entity's health to full.
+		}
+		else
+		{
+			Heal(100f); // Default fallback heal amount
+		}
 
 		OnRevived?.Invoke(); // Notify any listeners that the entity has been revived.
 	}
