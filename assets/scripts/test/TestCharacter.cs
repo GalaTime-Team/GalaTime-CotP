@@ -139,7 +139,7 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 
 	public override void _AIProcess(double delta)
 	{
-		// Call base AI behaviors first
+		// Call base AI behaviors first (includes AI Controller)
 		base._AIProcess(delta);
 		
 		if (Possessed || DeathState) return;
@@ -147,9 +147,14 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		// Check if TargetController is initialized before accessing it
 		if (TargetController == null) return;
 		
-		if (TargetController.CurrentTarget != null) CombatMovement();
-		// Moving normally when there is no enemies.
-		else NormalMovement();
+		// DISABLED: Hardcoded movement logic. Movement should be configured via AIController/AIRules.
+		// If you need AI movement, add AIRuleData entries to the AIRules property in the scene.
+		// The old hardcoded movement system has been replaced with the configurable AI Controller system.
+		
+		// Legacy movement methods (commented out):
+		// if (TargetController.CurrentTarget != null) CombatMovement();
+		// // Moving normally when there is no enemies.
+		// else NormalMovement();
 	}
 
 	private async void CombatMovement()

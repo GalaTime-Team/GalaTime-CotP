@@ -112,8 +112,12 @@ public partial class Slime : Entity
 		// Call base AI behaviors first (includes AI Controller)
 		base._AIProcess(delta);
 		
-		// Keep existing movement logic for compatibility
-		if (!DeathState) Move(); else Body.Velocity = Vector2.Zero;
+		// DISABLED: Hardcoded movement logic. Movement should be configured via AIController/AIRules.
+		// If you need AI movement, add AIRuleData entries to the AIRules property in the scene.
+		// The old hardcoded movement system has been replaced with the configurable AI Controller system.
+		
+		// Legacy movement method (commented out):
+		// if (!DeathState) Move(); else Body.Velocity = Vector2.Zero;
 	}
 
 	public override void _DeathEvent(float damageRotation = 0f)
