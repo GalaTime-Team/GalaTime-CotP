@@ -358,7 +358,8 @@ namespace Galatime
             
             if (@event.IsActionPressed("game_attack")) CurrentCharacter?.Weapon.Attack(CurrentCharacter);
             if (@event.IsActionPressed("game_dodge")) CurrentCharacter?.Dodge();
-            if (@event.IsActionPressed("game_inventory")) PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;
+            // Inventory toggle is now handled in PlayerGui._Input() to work when paused
+            // if (@event.IsActionPressed("game_inventory")) PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;
             if (@event.IsActionPressed("game_potion_wheel")) PlayerGui.CallConsumableWheel();
 
             // Checking for input for abilities.
