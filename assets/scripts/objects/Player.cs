@@ -50,8 +50,16 @@ namespace Galatime
             {
                 isPlayerFrozen = value;
 
-                CurrentCharacter.DisableHumanoidDoll = isPlayerFrozen;
-                CurrentCharacter.HumanoidDoll.SetAnimation(CurrentCharacter.VectorRotation, HumanoidStates.Idle);
+                // Only manipulate character state if CurrentCharacter exists
+                if (CurrentCharacter != null)
+                {
+                    CurrentCharacter.DisableHumanoidDoll = isPlayerFrozen;
+                    if (CurrentCharacter.HumanoidDoll != null)
+                    {
+                        CurrentCharacter.HumanoidDoll.SetAnimation(CurrentCharacter.VectorRotation, HumanoidStates.Idle);
+                    }
+                }
+                
                 if (isPlayerFrozen) WindowManager.Instance.CloseAll();
             }
         }
