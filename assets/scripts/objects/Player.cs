@@ -351,7 +351,8 @@ namespace Galatime
         // All input handling for the player goes here.
         public override void _UnhandledInput(InputEvent @event)
         {
-            if (IsPlayerFrozen) return;
+            // Block all player actions when frozen or when inventory is open
+            if (IsPlayerFrozen || PlayerGui.InventoryOpen) return;
             
             // NOTE: ui_accept is used by InteractiveTrigger for portal/interaction
             // Don't handle it here to allow InteractiveTrigger to process it

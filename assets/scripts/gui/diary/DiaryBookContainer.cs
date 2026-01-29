@@ -15,7 +15,7 @@ public partial class DiaryBookContainer : Control
 	public AudioStreamPlayer PageTwistAudio;
 	public Tween Tween;
 
-	public Tween GetTween() => GetTree().CreateTween().SetParallel().SetTrans(Tween.TransitionType.Cubic).SetPauseMode(Tween.TweenPauseMode.Process);
+	public Tween GetTween() => GetTree().CreateTween().SetParallel().SetTrans(Tween.TransitionType.Cubic);
 
 	public override void _Ready()
 	{

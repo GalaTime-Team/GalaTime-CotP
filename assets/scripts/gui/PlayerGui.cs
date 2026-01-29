@@ -55,8 +55,8 @@ namespace Galatime
                 InventoryPanel.Visible = inventoryOpen;
                 Player.CurrentCharacter.CanMove = !inventoryOpen;
                 
-                // Pause the game when inventory is opened
-                GetTree().Paused = inventoryOpen;
+                // Note: We don't pause the game anymore - just block player actions
+                // The game world (enemies, animations, timers) continues running
             }
         }
 
