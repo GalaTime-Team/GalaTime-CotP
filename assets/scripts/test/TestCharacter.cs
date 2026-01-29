@@ -84,10 +84,6 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		AIController.Enabled = !Possessed; // Disable if currently possessed
 		AddChild(AIController);
 		
-		// REMOVED: Hardcoded AI rules. Configure AI in the scene editor instead using AIRules property.
-		// This allows each character instance to have different AI behaviors without code changes.
-		// If you need AI, add AIRuleData entries to the AIRules property in the scene inspector.
-		
 		// Add controller to AI behavior system (only active when not possessed)
 		AddAIBehavior((delta) => {
 			if (!Possessed && AIController != null)
@@ -141,15 +137,6 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		
 		// Check if TargetController is initialized before accessing it
 		if (TargetController == null) return;
-		
-		// DISABLED: Hardcoded movement logic. Movement should be configured via AIController/AIRules.
-		// If you need AI movement, add AIRuleData entries to the AIRules property in the scene.
-		// The old hardcoded movement system has been replaced with the configurable AI Controller system.
-		
-		// Legacy movement methods (commented out):
-		// if (TargetController.CurrentTarget != null) CombatMovement();
-		// // Moving normally when there is no enemies.
-		// else NormalMovement();
 	}
 
 	private async void CombatMovement()

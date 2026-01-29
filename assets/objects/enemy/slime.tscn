@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://66tjv4ma7pd1"]
+[gd_scene format=3 uid="uid://bbvqkvw6d85wn"]
 
 [ext_resource type="Script" uid="uid://dew5pkk4g4il7" path="res://assets/scripts/objects/enemies/Slime.cs" id="1_ufwr7"]
 [ext_resource type="Texture2D" uid="uid://cyglxm8058sgm" path="res://assets/sprites/particles/Slime_particles.png" id="2_h3u7x"]

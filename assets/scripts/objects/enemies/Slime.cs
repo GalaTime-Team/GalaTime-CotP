@@ -48,22 +48,6 @@ public partial class Slime : Entity
 		Weapon = GetNode<Area2D>("Weapon");
 
 		TargetController.TargetTeam = Teams.Allies;
-
-		// DISABLED: Hardcoded attack system. All attacks now go through the ability system.
-		// The weapon area is kept for potential future use (e.g., collision detection)
-		// but no longer triggers direct damage. Use AI Controller with RangedAttackBehavior
-		// to trigger attacks via the ability system (slime_melee ability).
-		
-		// Legacy attack event subscriptions (commented out):
-		// Weapon.BodyEntered += Attack;
-		// Weapon.BodyExited += OnAreaExit;
-		// AttackCountdownTimer = new Timer
-		// {
-		// 	WaitTime = 1f,
-		// 	OneShot = true
-		// };
-		// AttackCountdownTimer.Timeout += JustHit;
-		// AddChild(AttackCountdownTimer);
 		
 		// Setup AI Controller
 		SetupAI();
@@ -78,29 +62,13 @@ public partial class Slime : Entity
 		AIController.DebugMode = false;
 		AddChild(AIController);
 		
-		// REMOVED: Hardcoded AI rules. Configure AI in the scene editor instead using AIRules property.
-		// This allows each slime instance to have different AI behaviors without code changes.
-		// If you need AI, add AIRuleData entries to the AIRules property in the scene inspector.
-		
-		// Legacy hardcoded rules (commented out):
-		// var meleeRule = new AIRule("MeleeAttack", new MeleeAttackBehavior(stopDistance: 50f), priority: 50)
-		//     .AddCondition(new HasTargetCondition());
-		// AIController.AddRule(meleeRule);
-		// 
-		// var idleRule = new AIRule("Idle", new IdleBehavior(), priority: 0)
-		//     .AddCondition(new NoTargetCondition());
-		// AIController.AddRule(idleRule);
-		
 		// Add controller to AI behavior system (processes scene-configured rules)
 		AddAIBehavior((delta) => AIController.Process(delta));
 	}
 
 	public override void _ExitTree()
 	{
-		// DISABLED: No longer using hardcoded attack events
-		// Legacy event unsubscriptions (commented out):
-		// Weapon.BodyEntered -= Attack;
-		// Weapon.BodyExited -= OnAreaExit;
+		
 	}
 
 	public void Spawned()
@@ -115,10 +83,6 @@ public partial class Slime : Entity
 	{
 		// Call base AI behaviors first (includes AI Controller)
 		base._AIProcess(delta);
-		
-		// DISABLED: Hardcoded movement logic. Movement should be configured via AIController/AIRules.
-		// If you need AI movement, add AIRuleData entries to the AIRules property in the scene.
-		// The old hardcoded movement system has been replaced with the configurable AI Controller system.
 		
 		// Legacy movement method (commented out):
 		// if (!DeathState) Move(); else Body.Velocity = Vector2.Zero;
@@ -158,32 +122,6 @@ public partial class Slime : Entity
 		DropXp();
 		AnimationPlayer.Play("outro");
 	}
-
-	// DISABLED: Hardcoded attack methods. All attacks now go through the ability system.
-	// To make slime attack, configure AI in scene with RangedAttackBehavior that uses
-	// the slime_melee ability (defined in abilities.json).
-	
-	// Legacy attack methods (commented out):
-	// public void Attack(Node2D body)
-	// {
-	// 	if (!DeathState && body is Entity entity) DealDamage(entity);
-	// }
-	//
-	// public void JustHit()
-	// {
-	// 	var bodies = Weapon.GetOverlappingBodies()[0] as Entity;
-	// 	if (bodies is Entity entity) DealDamage(entity);
-	// }
-	//
-	// private void DealDamage(Entity entity)
-	// {
-	// 	AttackCountdownTimer.Start();
-	// 	GalatimeElement element = ElementManager.Aqua;
-	// 	float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-	// 	entity.TakeDamage(50, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.Physical, 500, damageRotation);
-	//
-	// 	AnimationPlayer.Play("hit");
-	// }
 
 	public void SpawnParticles()
 	{
