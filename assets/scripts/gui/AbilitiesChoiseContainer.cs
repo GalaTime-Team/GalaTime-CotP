@@ -22,8 +22,8 @@ namespace Galatime
 			PlayerVariables.OnAbilitiesChanged += LoadAbilities;
 
 			var abilityContainerScene = ResourceLoader.Load<PackedScene>("res://assets/objects/gui/AbilityContainer.tscn");
-			// Adding ability containers
-			for (int i = 0; i < PlayerVariables.AbilitySlots; i++)
+			// Adding ability containers - hardcoded to 3 slots as per requirements
+			for (int i = 0; i < 3; i++)
 			{
 				// Instantiate ability container and add it to the abilities container
 				var instance = abilityContainerScene.Instantiate<AbilityContainer>();

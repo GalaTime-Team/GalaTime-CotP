@@ -54,6 +54,9 @@ namespace Galatime
 
                 InventoryPanel.Visible = inventoryOpen;
                 Player.CurrentCharacter.CanMove = !inventoryOpen;
+                
+                // Pause the game when inventory is opened
+                GetTree().Paused = inventoryOpen;
             }
         }
 
@@ -223,5 +226,16 @@ namespace Galatime
         }
 
         public void DisplayItem() => OnItemsChanged?.Invoke();
+
+        public override void _Input(InputEvent @event)
+        {
+            // Handle ESC key to close inventory
+            if (Input.IsActionJustPressed("ui_cancel") && InventoryOpen)
+            {
+                InventoryOpen = false;
+                // Accept the input so it doesn't propagate to PauseMenu
+                GetViewport().SetInputAsHandled();
+            }
+        }
     }
 }
