@@ -360,7 +360,6 @@ namespace Galatime
             if (@event.IsActionPressed("game_dodge")) CurrentCharacter?.Dodge();
             if (@event.IsActionPressed("game_inventory")) PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;
             if (@event.IsActionPressed("game_potion_wheel")) PlayerGui.CallConsumableWheel();
-            if (@event.IsActionPressed("game_character_wheel")) PlayerGui.CallCharacterWheel();
 
             // Checking for input for abilities.
             for (int i = 0; i < PlayerVariables.Abilities.Length; i++) if (@event.IsActionPressed($"game_ability_{i + 1}")) CurrentCharacter?.UseAbility(i);
