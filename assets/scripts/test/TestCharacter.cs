@@ -173,6 +173,10 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		base._AIProcess(delta);
 		
 		if (Possessed || DeathState) return;
+		
+		// Check if TargetController is initialized before accessing it
+		if (TargetController == null) return;
+		
 		if (TargetController.CurrentTarget != null) CombatMovement();
 		// Moving normally when there is no enemies.
 		else NormalMovement();
@@ -180,6 +184,9 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 
 	private async void CombatMovement()
 	{
+		// Check if required nodes are initialized
+		if (Weapon == null || TargetController == null || TargetController.CurrentTarget == null || RayCast == null) return;
+		
 		if (AttackTimer.IsStopped()) AttackTimer.Start();
 
 		Vector2 vectorPath;
@@ -197,8 +204,10 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		vectorPath = Vector2.Right.Rotated(pathRotation);
 
 		// Rotation to the enemy.
-		if (TargetController.CurrentTarget == null) return; // Make sure there is an enemy.
+		// Check again after async operation in case target changed
+		if (TargetController == null || TargetController.CurrentTarget == null) return;
 		var enemyRotation = Body.GlobalPosition.AngleToPoint(TargetController.CurrentTarget.GlobalPosition);
+		if (Weapon == null) return; // Check Weapon before accessing
 		Weapon.Rotation = enemyRotation;
 
 		// Check if is in melee mode. Melee mode is when ally only uses sword. No need to use abilities when in melee mode.
@@ -260,6 +269,9 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 	/// <summary> Process of normal movement of the character. </summary>
 	private async void NormalMovement()
 	{
+		// Check if Weapon is initialized before accessing it
+		if (Weapon == null) return;
+		
 		Weapon.Rotation = PathRotation;
 
 		// var allies = GetTree().GetNodesInGroup("ally");
