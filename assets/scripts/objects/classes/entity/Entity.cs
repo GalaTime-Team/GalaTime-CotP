@@ -494,6 +494,7 @@ public partial class Entity : CharacterBody2D
 	/// <returns>True if the ability was successfully used, false otherwise.</returns>
 	public virtual bool UseAbility(int index)
 	{
+		if (DisableAI) return false;
 		// Check if index is valid
 		if (index < 0 || index >= Abilities.Count) return false;
 		

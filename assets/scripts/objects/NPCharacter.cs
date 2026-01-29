@@ -121,6 +121,7 @@ public partial class NPCharacter : Entity
     /// <summary> Tries to use a random available ability. </summary>
     private void TryUseAbility()
     {
+        if (DisableAI) return;
         if (DeathState || Abilities.Count == 0) return;
         if (TargetController == null || TargetController.CurrentTarget == null) return;
         
