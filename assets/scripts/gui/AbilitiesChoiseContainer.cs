@@ -42,20 +42,22 @@ namespace Galatime
 
 		public void LoadAbilities()
 		{
-			int i = 0;
-			foreach (var ability in PlayerVariables.Abilities)
+			// Only load abilities up to the number of available containers
+			int maxSlots = System.Math.Min(PlayerVariables.Abilities.Length, AbilityContainers.Count);
+			
+			for (int i = 0; i < maxSlots; i++)
 			{
+				var ability = PlayerVariables.Abilities[i];
+				var ab = AbilityContainers[i];
+				
 				if (!ability.IsEmpty)
 				{
-					var ab = AbilityContainers[i];
 					ab.Load(ability);
 				}
 				else
 				{
-					var ab = AbilityContainers[i];
 					ab.Unload();
 				}
-				i++;
 			}
 		}
 

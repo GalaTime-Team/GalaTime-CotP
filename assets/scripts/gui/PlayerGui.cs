@@ -227,6 +227,11 @@ namespace Galatime
 
         public void DisplayItem() => OnItemsChanged?.Invoke();
 
+        /// <summary> 
+        /// Handles input for the PlayerGui, specifically ESC key to close the inventory.
+        /// When inventory is open and ESC is pressed, this method closes the inventory
+        /// and marks the input as handled to prevent it from propagating to the PauseMenu.
+        /// </summary>
         public override void _Input(InputEvent @event)
         {
             // Handle ESC key to close inventory

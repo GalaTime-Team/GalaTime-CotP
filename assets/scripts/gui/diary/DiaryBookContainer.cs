@@ -45,7 +45,7 @@ public partial class DiaryBookContainer : Control
 	/// <summary> Calls the given action for each page. </summary>
 	public void ForEachPageControl(Action<DiaryPage> action) => Pages.ToList().ForEach(action);
 	/// <summary> Returns the page with the given id. Returns null if not found. </summary>
-	public DiaryPage GetPage(string id) => Pages.First(x => x.Id == id);
+	public DiaryPage GetPage(string id) => Pages.FirstOrDefault(x => x.Id == id);
 
 	/// <summary> Opens a page by its ID. </summary>
 	/// <param name="id">The ID of the page to open.</param>
@@ -53,6 +53,12 @@ public partial class DiaryBookContainer : Control
 	public void OpenPage(string id, bool playSound = true)
 	{
 		var page = GetPage(id);
+		if (page == null) 
+		{
+			GD.PrintErr($"Page with ID '{id}' not found.");
+			return;
+		}
+		
 		ForEachPageControl(x =>
 		{
 			// Hide all controls
