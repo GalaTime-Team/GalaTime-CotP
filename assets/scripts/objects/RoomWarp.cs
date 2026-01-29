@@ -9,35 +9,42 @@ namespace Galatime;
 /// Handles warping/teleporting between rooms/scenes.
 /// Automatically triggers when player enters the Area2D.
 /// </summary>
-public partial class RoomWarp : Node2D
+[Tool] public partial class RoomWarp : Node2D
 {
-	[Export] public string Scene { get; set; } = "";
-	[Export] public int Room { get; set; } = 0;
+	private string scene = "";
+	[Export(PropertyHint.File, "*.tscn")] public string Scene
+	{
+		get => scene;
+		set
+		{
+			scene = value;
+			UpdateConfigurationWarnings();
+		}
+	}
 	[Export] public float AnimationDuration = 0.5f;
 	/// <summary> Determines the spawn point of the player in the next room. </summary>
 	[Export(PropertyHint.Range, "0,255,1")] public byte PlayerSpawnPoint = 0;
 	
 	private Area2D TriggerArea;
+	private bool isTriggered = false;
 
 	public override void _Ready()
 	{
 		base._Ready();
 		
-		// Get or create the trigger area
-		TriggerArea = GetNodeOrNull<Area2D>("TriggerArea");
-		if (TriggerArea != null)
-		{
-			TriggerArea.BodyEntered += OnEnter;
-		}
-		else
-		{
-			GD.PushWarning("RoomWarp: No TriggerArea child node found. Add an Area2D named 'TriggerArea' as a child.");
-		}
+		if (Engine.IsEditorHint()) return;
+		
+		// Get the trigger area
+		TriggerArea = GetNode<Area2D>("TriggerArea");
+		TriggerArea.BodyEntered += OnEnter;
 	}
 	
 	public override void _ExitTree()
 	{
 		base._ExitTree();
+		
+		if (Engine.IsEditorHint()) return;
+		
 		if (TriggerArea != null)
 		{
 			TriggerArea.BodyEntered -= OnEnter;
@@ -50,11 +57,18 @@ public partial class RoomWarp : Node2D
 	/// </summary>
 	private void OnEnter(Node node)
 	{
+		// Prevent multiple activations
+		if (isTriggered) return;
+		
 		// Check if the node is a possessed character (player-controlled)
 		if (!node.IsPossessed())
 		{
 			return;
 		}
+		
+		// Mark as triggered to prevent re-entry
+		isTriggered = true;
+		TriggerArea.BodyEntered -= OnEnter;
 		
 		GD.Print($"RoomWarp: Player entered, initiating transition to: {Scene}");
 		
@@ -108,5 +122,13 @@ public partial class RoomWarp : Node2D
 		globals.LoadScene(Scene);
 		
 		GD.Print("RoomWarp: Scene load initiated");
+	}
+	
+	public override string[] _GetConfigurationWarnings()
+	{
+		if (Scene.Length == 0)
+			return new string[] { "Please specify a scene or it will not be loaded" };
+		else
+			return System.Array.Empty<string>();
 	}
 }
