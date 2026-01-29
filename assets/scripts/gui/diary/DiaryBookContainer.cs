@@ -35,11 +35,18 @@ public partial class DiaryBookContainer : Control
 		}
 
 		// Open the first page by default (inventory)
+		// Use CallDeferred to ensure all nodes are properly positioned in the scene tree
 		if (Pages.Count > 0)
 		{
 			var firstPage = Pages[0];
-			OpenPage(firstPage.Id, playSound: false);
+			CallDeferred(nameof(OpenPageDeferred), firstPage.Id);
 		}
+	}
+	
+	/// <summary> Deferred page opening to ensure scene tree is ready. </summary>
+	private void OpenPageDeferred(string pageId)
+	{
+		OpenPage(pageId, playSound: false);
 	}
 
 	/// <summary> Calls the given action for each page. </summary>
