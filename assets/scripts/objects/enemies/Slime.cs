@@ -49,16 +49,21 @@ public partial class Slime : Entity
 
 		TargetController.TargetTeam = Teams.Allies;
 
-		Weapon.BodyEntered += Attack;
-		Weapon.BodyExited += OnAreaExit;
-
-		AttackCountdownTimer = new Timer
-		{
-			WaitTime = 1f,
-			OneShot = true
-		};
-		AttackCountdownTimer.Timeout += JustHit;
-		AddChild(AttackCountdownTimer);
+		// DISABLED: Hardcoded attack system. All attacks now go through the ability system.
+		// The weapon area is kept for potential future use (e.g., collision detection)
+		// but no longer triggers direct damage. Use AI Controller with RangedAttackBehavior
+		// to trigger attacks via the ability system (slime_melee ability).
+		
+		// Legacy attack event subscriptions (commented out):
+		// Weapon.BodyEntered += Attack;
+		// Weapon.BodyExited += OnAreaExit;
+		// AttackCountdownTimer = new Timer
+		// {
+		// 	WaitTime = 1f,
+		// 	OneShot = true
+		// };
+		// AttackCountdownTimer.Timeout += JustHit;
+		// AddChild(AttackCountdownTimer);
 		
 		// Setup AI Controller
 		SetupAI();
@@ -92,8 +97,10 @@ public partial class Slime : Entity
 
 	public override void _ExitTree()
 	{
-		Weapon.BodyEntered -= Attack;
-		Weapon.BodyExited -= OnAreaExit;
+		// DISABLED: No longer using hardcoded attack events
+		// Legacy event unsubscriptions (commented out):
+		// Weapon.BodyEntered -= Attack;
+		// Weapon.BodyExited -= OnAreaExit;
 	}
 
 	public void Spawned()
@@ -125,26 +132,31 @@ public partial class Slime : Entity
 		AnimationPlayer.Play("outro");
 	}
 
-	public void Attack(Node2D body)
-	{
-		if (!DeathState && body is Entity entity) DealDamage(entity);
-	}
-
-	public void JustHit()
-	{
-		var bodies = Weapon.GetOverlappingBodies()[0] as Entity;
-		if (bodies is Entity entity) DealDamage(entity);
-	}
-
-	private void DealDamage(Entity entity)
-	{
-		AttackCountdownTimer.Start();
-		GalatimeElement element = ElementManager.Aqua;
-		float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
-		entity.TakeDamage(50, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.Physical, 500, damageRotation);
-
-		AnimationPlayer.Play("hit");
-	}
+	// DISABLED: Hardcoded attack methods. All attacks now go through the ability system.
+	// To make slime attack, configure AI in scene with RangedAttackBehavior that uses
+	// the slime_melee ability (defined in abilities.json).
+	
+	// Legacy attack methods (commented out):
+	// public void Attack(Node2D body)
+	// {
+	// 	if (!DeathState && body is Entity entity) DealDamage(entity);
+	// }
+	//
+	// public void JustHit()
+	// {
+	// 	var bodies = Weapon.GetOverlappingBodies()[0] as Entity;
+	// 	if (bodies is Entity entity) DealDamage(entity);
+	// }
+	//
+	// private void DealDamage(Entity entity)
+	// {
+	// 	AttackCountdownTimer.Start();
+	// 	GalatimeElement element = ElementManager.Aqua;
+	// 	float damageRotation = GlobalPosition.AngleToPoint(entity.GlobalPosition);
+	// 	entity.TakeDamage(50, Stats[EntityStatType.PhysicalAttack].Value, element, DamageType.Physical, 500, damageRotation);
+	//
+	// 	AnimationPlayer.Play("hit");
+	// }
 
 	public void SpawnParticles()
 	{
@@ -157,7 +169,9 @@ public partial class Slime : Entity
 		particles.GlobalPosition = GlobalPosition;
 	}
 
-	public void OnAreaExit(Node2D body) => AttackCountdownTimer.Stop();
+	// DISABLED: Legacy method for hardcoded attack system
+	// Legacy method (commented out):
+	// public void OnAreaExit(Node2D body) => AttackCountdownTimer.Stop();
 
 	public void Move()
 	{
