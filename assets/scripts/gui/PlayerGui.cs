@@ -94,11 +94,11 @@ namespace Galatime
             SelectWheel = GetNode<SelectWheel>("SelectWheel");
             #endregion
 
-            // Set PlayerGui to always process so it can handle input when paused (e.g., ESC to close inventory)
+            // Set PlayerGui to always process so it can handle input even if other systems pause the game
+            // (e.g., PauseMenu, DeathScreen). This ensures inventory controls work in all states.
             ProcessMode = Node.ProcessModeEnum.Always;
             
-            // Set inventory to always process, even when the game is paused
-            // This allows the inventory UI to remain interactive while the game world is paused
+            // Set inventory to always process for the same reason - works even if game is paused by other systems
             InventoryPanel.ProcessMode = Node.ProcessModeEnum.Always;
 
             PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
