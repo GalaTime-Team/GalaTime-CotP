@@ -82,46 +82,16 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 	private void SetupAI()
 	{
 		// Create AI Controller (only used when not possessed)
+		// AI rules should be configured in the scene via AIRules property, not hardcoded here.
 		AIController = new AIController();
 		AIController.Entity = this;
 		AIController.DebugMode = false;
 		AIController.Enabled = !Possessed; // Disable if currently possessed
 		AddChild(AIController);
 		
-		// Priority 90: Conserve stamina when low
-		var conserveStaminaRule = new AIRule("ConserveStamina", new FleeBehavior(300f, cooldown: 2f), priority: 90)
-			.AddCondition(new LowStaminaCondition(0.3f))
-			.AddCondition(new HasTargetCondition())
-			.AddCondition(new TargetDistanceCondition(TargetDistanceCondition.DistanceType.LessThan, 150f));
-		AIController.AddRule(conserveStaminaRule);
-		
-		// Priority 70: Use ability 0 when available (70% probability)
-		var ability0Rule = new AIRule("UseAbility0", new RangedAttackBehavior(0, true, 300f, cooldown: 1f), priority: 70, probability: 0.7f)
-			.AddCondition(new HasTargetCondition())
-			.AddCondition(new AbilityReadyCondition(0))
-			.AddCondition(new TargetDistanceCondition(TargetDistanceCondition.DistanceType.GreaterThan, 200f));
-		AIController.AddRule(ability0Rule);
-		
-		// Priority 65: Use ability 1 when available (60% probability)
-		var ability1Rule = new AIRule("UseAbility1", new RangedAttackBehavior(1, true, 250f, cooldown: 1.5f), priority: 65, probability: 0.6f)
-			.AddCondition(new HasTargetCondition())
-			.AddCondition(new AbilityReadyCondition(1));
-		AIController.AddRule(ability1Rule);
-		
-		// Priority 60: Use ability 2 when available (50% probability)
-		var ability2Rule = new AIRule("UseAbility2", new RangedAttackBehavior(2, true, 280f, cooldown: 2f), priority: 60, probability: 0.5f)
-			.AddCondition(new HasTargetCondition())
-			.AddCondition(new AbilityReadyCondition(2));
-		AIController.AddRule(ability2Rule);
-		
-		// Priority 10: Follow player when no enemies
-		var followRule = new AIRule("FollowPlayer", new FollowPlayerBehavior(120f), priority: 10)
-			.AddCondition(new NoTargetCondition());
-		AIController.AddRule(followRule);
-		
-		// Priority 0: Idle as last resort
-		var idleRule = new AIRule("Idle", new IdleBehavior(), priority: 0);
-		AIController.AddRule(idleRule);
+		// REMOVED: Hardcoded AI rules. Configure AI in the scene editor instead using AIRules property.
+		// This allows each character instance to have different AI behaviors without code changes.
+		// If you need AI, add AIRuleData entries to the AIRules property in the scene inspector.
 		
 		// Add controller to AI behavior system (only active when not possessed)
 		AddAIBehavior((delta) => {

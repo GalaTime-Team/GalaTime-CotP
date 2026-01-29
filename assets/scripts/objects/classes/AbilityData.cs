@@ -188,7 +188,14 @@ namespace Galatime
             if (Reload > 0) CooldownTimer.WaitTime = Reload;
         }
 
-        public static bool operator ==(AbilityData ab1, AbilityData ab2) => ab1.ID == ab2.ID && ab1.ScenePath == ab2.ScenePath;
+        public static bool operator ==(AbilityData ab1, AbilityData ab2)
+        {
+            // Handle null cases
+            if (ReferenceEquals(ab1, null) && ReferenceEquals(ab2, null)) return true;
+            if (ReferenceEquals(ab1, null) || ReferenceEquals(ab2, null)) return false;
+            
+            return ab1.ID == ab2.ID && ab1.ScenePath == ab2.ScenePath;
+        }
 
         public static bool operator !=(AbilityData ab1, AbilityData ab2) => !(ab1 == ab2);
     }
