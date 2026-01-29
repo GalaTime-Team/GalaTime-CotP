@@ -8,9 +8,6 @@ using Godot;
 
 public partial class TestCharacter : HumanoidCharacter, IDrama
 {
-	[Export] public int FollowOrder;
-	[Export] public Godot.Collections.Array<string> DefaultAbilities;
-
 	public NavigationAgent2D Navigation;
 	public RayCast2D RayCast;
 	public AnimationPlayer AnimationPlayer;
@@ -70,8 +67,6 @@ public partial class TestCharacter : HumanoidCharacter, IDrama
 		Player = playerVariables.Player;
 
 		InitializeTimers();
-
-		for (var i = 0; i < (DefaultAbilities != null ? DefaultAbilities.Count : 0); i++) { AddAbility(GalatimeGlobals.GetAbilityById(DefaultAbilities[i]), i); }
 
 		if (LevelManager.Instance.CheatsMenu.GetCheat("god_mode").Active) Invincible = true;
 		
