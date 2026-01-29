@@ -352,6 +352,10 @@ namespace Galatime
         public override void _UnhandledInput(InputEvent @event)
         {
             if (IsPlayerFrozen) return;
+            
+            // NOTE: ui_accept is used by InteractiveTrigger for portal/interaction
+            // Don't handle it here to allow InteractiveTrigger to process it
+            
             if (@event.IsActionPressed("game_attack")) CurrentCharacter?.Weapon.Attack(CurrentCharacter);
             if (@event.IsActionPressed("game_dodge")) CurrentCharacter?.Dodge();
             if (@event.IsActionPressed("game_inventory")) PlayerGui.InventoryOpen = !PlayerGui.InventoryOpen;

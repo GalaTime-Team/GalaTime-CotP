@@ -108,7 +108,7 @@ public partial class Slime : Entity
 		if (AnimationPlayer == null) return;
 		
 		CanMove = true;
-		AnimationPlayer.Play("walk");
+		// Don't auto-play walk animation - let _PhysicsProcess control it based on actual movement
 	}
 
 	public override void _AIProcess(double delta)
@@ -122,6 +122,33 @@ public partial class Slime : Entity
 		
 		// Legacy movement method (commented out):
 		// if (!DeathState) Move(); else Body.Velocity = Vector2.Zero;
+	}
+	
+	public override void _PhysicsProcess(double delta)
+	{
+		base._PhysicsProcess(delta);
+		
+		// Control animation based on actual movement
+		if (AnimationPlayer != null && !DeathState)
+		{
+			// Check if slime is actually moving (velocity > small threshold)
+			if (Body.Velocity.Length() > 10f)
+			{
+				// Only play walk if not already playing
+				if (AnimationPlayer.CurrentAnimation != "walk")
+				{
+					AnimationPlayer.Play("walk");
+				}
+			}
+			else
+			{
+				// Stop animation when idle (not moving)
+				if (AnimationPlayer.CurrentAnimation == "walk")
+				{
+					AnimationPlayer.Stop();
+				}
+			}
+		}
 	}
 
 	public override void _DeathEvent(float damageRotation = 0f)
@@ -181,15 +208,36 @@ public partial class Slime : Entity
 		var enemy = TargetController.CurrentTarget;
 		if (enemy != null && CanMove)
 		{
-			Vector2 vectorPath = Vector2.Zero;
-			Navigation.TargetPosition = enemy.GlobalPosition;
-			vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition()) * Speed;
-			float rotation = Body.GlobalPosition.AngleToPoint(enemy.GlobalPosition);
-			Weapon.Rotation = rotation;
-			float rotationDeg = Mathf.RadToDeg(rotation);
-			float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
-			if (Sprite != null) Sprite.FlipH = rotationDegPositive <= 90;
-			Body.Velocity = vectorPath;
+			// Calculate distance to target
+			float distanceToTarget = Body.GlobalPosition.DistanceTo(enemy.GlobalPosition);
+			
+			// Stop moving when close enough to target (prevents sticking/overlapping)
+			// Minimum distance should be slightly more than weapon range
+			const float MIN_DISTANCE = 70f; // Stop at 70 pixels from target
+			
+			if (distanceToTarget > MIN_DISTANCE)
+			{
+				Vector2 vectorPath = Vector2.Zero;
+				Navigation.TargetPosition = enemy.GlobalPosition;
+				vectorPath = Body.GlobalPosition.DirectionTo(Navigation.GetNextPathPosition()) * Speed;
+				float rotation = Body.GlobalPosition.AngleToPoint(enemy.GlobalPosition);
+				Weapon.Rotation = rotation;
+				float rotationDeg = Mathf.RadToDeg(rotation);
+				float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
+				if (Sprite != null) Sprite.FlipH = rotationDegPositive <= 90;
+				Body.Velocity = vectorPath;
+			}
+			else
+			{
+				// Too close - stop moving to prevent sticking
+				Body.Velocity = Vector2.Zero;
+				// Still face the target
+				float rotation = Body.GlobalPosition.AngleToPoint(enemy.GlobalPosition);
+				Weapon.Rotation = rotation;
+				float rotationDeg = Mathf.RadToDeg(rotation);
+				float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
+				if (Sprite != null) Sprite.FlipH = rotationDegPositive <= 90;
+			}
 		}
 		else Body.Velocity = Vector2.Zero;
 	}
