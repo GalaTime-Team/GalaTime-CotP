@@ -156,6 +156,9 @@ public partial class Slime : Entity
 
 	public void Move()
 	{
+		// Check if required nodes are initialized
+		if (Navigation == null || TargetController == null || Weapon == null) return;
+		
 		var enemy = TargetController.CurrentTarget;
 		if (enemy != null && CanMove)
 		{
@@ -166,7 +169,7 @@ public partial class Slime : Entity
 			Weapon.Rotation = rotation;
 			float rotationDeg = Mathf.RadToDeg(rotation);
 			float rotationDegPositive = rotationDeg * 1 > 0 ? rotationDeg : -rotationDeg;
-			Sprite.FlipH = rotationDegPositive <= 90;
+			if (Sprite != null) Sprite.FlipH = rotationDegPositive <= 90;
 			Body.Velocity = vectorPath;
 		}
 		else Body.Velocity = Vector2.Zero;

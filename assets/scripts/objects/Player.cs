@@ -99,7 +99,7 @@ namespace Galatime
             Vector2 inputVelocity = Vector2.Zero;
 
             // Don't move if the player is not event exist.
-            if (CurrentCharacter != null || IsInstanceValid(CurrentCharacter))
+            if (CurrentCharacter != null && IsInstanceValid(CurrentCharacter) && CurrentCharacter.Weapon != null)
             {
                 if (Input.IsActionPressed("game_move_up")) inputVelocity.Y -= 1;
                 if (Input.IsActionPressed("game_move_down")) inputVelocity.Y += 1;
@@ -113,13 +113,16 @@ namespace Galatime
 
                 if (CurrentCharacter.IsPushing) CurrentCharacter.Body.Velocity *= CurrentCharacter.PushingSpeedMultiplier;
 
-                CurrentCharacter?.Weapon.LookAt(GetGlobalMousePosition());
+                CurrentCharacter.Weapon.LookAt(GetGlobalMousePosition());
                 SetCameraPosition();
             }
         }
 
         private void SetCameraPosition()
         {
+            // Check if CurrentCharacter and Weapon are initialized
+            if (CurrentCharacter == null || CurrentCharacter.Weapon == null) return;
+            
             var c = CurrentCharacter;
             var cpos = c.Weapon.GlobalPosition;
             Camera.GlobalPosition = Camera.GlobalPosition.Lerp(cpos + ((GetGlobalMousePosition() - c.Weapon.GlobalPosition) / 5 + CameraOffset), 0.05f);

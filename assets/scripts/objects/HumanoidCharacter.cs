@@ -53,6 +53,9 @@ public partial class HumanoidCharacter : Entity
 
     public override void _MoveProcess(double delta)
     {
+        // Check if required nodes are initialized
+        if (Weapon == null || HumanoidDoll == null) return;
+
         // Required for the rotate character animation.
         SetDirectionByWeapon();
 
@@ -63,7 +66,7 @@ public partial class HumanoidCharacter : Entity
         if (!DisableHumanoidDoll) HumanoidDoll.SetAnimation(VectorRotation, State);
 
         // Set the trail particles texture to the same as the sprite texture.
-        TrailParticles.Texture = Sprite?.Texture;
+        if (TrailParticles != null && Sprite != null) TrailParticles.Texture = Sprite.Texture;
     }
 
     protected virtual void OnManaChanged(float mana)
@@ -270,6 +273,9 @@ public partial class HumanoidCharacter : Entity
 
     protected void SetDirectionByWeapon()
     {
+        // Check if Weapon is initialized before accessing it
+        if (Weapon == null) return;
+        
         var r = Mathf.Wrap(Weapon.RotationDegrees, 0, 360);
         VectorRotation = r switch
         {
