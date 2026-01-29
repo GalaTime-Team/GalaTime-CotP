@@ -66,30 +66,27 @@ public partial class Slime : Entity
 	
 	private void SetupAI()
 	{
-		// Create AI Controller
+		// Create AI Controller (used only when AI rules are configured in scene)
+		// AI rules should be configured in the scene via AIRules property, not hardcoded here.
 		AIController = new AIController();
 		AIController.Entity = this;
 		AIController.DebugMode = false;
 		AddChild(AIController);
 		
-		// Load slime melee ability
-		var meleeAbility = GalatimeGlobals.GetAbilityById("slime_melee");
-		if (meleeAbility != null)
-		{
-			AddAbility(meleeAbility, 0);
-		}
+		// REMOVED: Hardcoded AI rules. Configure AI in the scene editor instead using AIRules property.
+		// This allows each slime instance to have different AI behaviors without code changes.
+		// If you need AI, add AIRuleData entries to the AIRules property in the scene inspector.
 		
-		// Rule 1: Melee attack when has target (priority 50)
-		var meleeRule = new AIRule("MeleeAttack", new MeleeAttackBehavior(stopDistance: 50f), priority: 50)
-			.AddCondition(new HasTargetCondition());
-		AIController.AddRule(meleeRule);
+		// Legacy hardcoded rules (commented out):
+		// var meleeRule = new AIRule("MeleeAttack", new MeleeAttackBehavior(stopDistance: 50f), priority: 50)
+		//     .AddCondition(new HasTargetCondition());
+		// AIController.AddRule(meleeRule);
+		// 
+		// var idleRule = new AIRule("Idle", new IdleBehavior(), priority: 0)
+		//     .AddCondition(new NoTargetCondition());
+		// AIController.AddRule(idleRule);
 		
-		// Rule 2: Idle when no target (priority 0)
-		var idleRule = new AIRule("Idle", new IdleBehavior(), priority: 0)
-			.AddCondition(new NoTargetCondition());
-		AIController.AddRule(idleRule);
-		
-		// Add controller to AI behavior system
+		// Add controller to AI behavior system (processes scene-configured rules)
 		AddAIBehavior((delta) => AIController.Process(delta));
 	}
 
