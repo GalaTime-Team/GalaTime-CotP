@@ -22,6 +22,10 @@ boot_splash/image="res://bootsplash.png"
 config/icon="res://icon.png"
 config/windows_native_icon="res://icon.ico"
 
+[audio]
+
+buses/default_bus_layout="uid://bbmwupkugava1"
+
 [autoload]
 
 WindowManager="*res://assets/scripts/WindowManager.cs"

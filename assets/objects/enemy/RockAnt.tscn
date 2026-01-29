@@ -1,8 +1,8 @@
-[gd_scene load_steps=22 format=3 uid="uid://cabtyqykhr11m"]
+[gd_scene format=3 uid="uid://cabtyqykhr11m"]
 
-[ext_resource type="Script" path="res://assets/scripts/objects/enemies/RockAnt.cs" id="1_t74t7"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_32ae6"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_0y6a4"]
+[ext_resource type="Script" uid="uid://bcwx1fggwq38w" path="res://assets/scripts/objects/enemies/RockAnt.cs" id="1_t74t7"]
+[ext_resource type="Script" uid="uid://b8kgnttd0pjw" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_32ae6"]
+[ext_resource type="Script" uid="uid://bkgiux1k7eygg" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_0y6a4"]
 [ext_resource type="AudioStream" uid="uid://x2qhqmm8tmhe" path="res://assets/audios/sounds/enemies/rockant/spider_crawl.mp3" id="3_7vcng"]
 [ext_resource type="PackedScene" uid="uid://b7c0bqk25nd8k" path="res://assets/objects/helpers/ai/Navigator.tscn" id="3_oam5i"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="4_0jq7v"]
@@ -14,8 +14,15 @@
 
 [sub_resource type="Resource" id="Resource_jkgrs"]
 script = ExtResource("2_32ae6")
-StatsNames = [5, 6, 7, 8, 1]
-StatsValues = [34.0, 5.0, 49.0, 21.0, 34.0]
+Health = 43.0
+Mana = 11.0
+Stamina = 12.0
+Agility = 11.0
+PhysicalAttack = 34.0
+MagicalAttack = 5.0
+PhysicalDefense = 61.0
+MagicalDefense = 21.0
+KnockbackResistance = 1.0
 
 [sub_resource type="Resource" id="Resource_7oh24"]
 script = ExtResource("3_0y6a4")
@@ -23,7 +30,6 @@ InitializerElement = "Lapis"
 
 [sub_resource type="Resource" id="Resource_cx6nu"]
 script = ExtResource("3_0y6a4")
-InitializerElement = "Default"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b4gca"]
 radius = 48.0
@@ -65,74 +71,71 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_lnage"]
 _data = {
-"RESET": SubResource("Animation_5vvfm"),
-"idle": SubResource("Animation_okwih")
+&"RESET": SubResource("Animation_5vvfm"),
+&"idle": SubResource("Animation_okwih")
 }
 
 [sub_resource type="Resource" id="Resource_kaehm"]
 script = ExtResource("3_0y6a4")
-InitializerElement = "Default"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kdf4g"]
 size = Vector2(20, 30)
 
-[node name="RockAnt" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["enemy"]]
+[node name="RockAnt" type="CharacterBody2D" unique_id=1867190409 node_paths=PackedStringArray("Body") groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_t74t7")
-DefaultAbilityIds = Array[String](["rockant_dig", "rockant_melee"])
 Stats = SubResource("Resource_jkgrs")
 Element = SubResource("Resource_7oh24")
 Team = 1
 Speed = 250.0
+DefaultAbilityIds = Array[String](["rockant_dig", "rockant_melee"])
 Body = NodePath(".")
 
-[node name="RangedHitTracker" parent="." node_paths=PackedStringArray("TargetControllerReference") instance=ExtResource("4_r0q4w")]
+[node name="RangedHitTracker" parent="." unique_id=1580905200 node_paths=PackedStringArray("TargetControllerReference") instance=ExtResource("4_r0q4w")]
 Range = 700.0
 TargetControllerReference = NodePath("../TargetController")
 
-[node name="DigDamageArea" parent="." instance=ExtResource("4_p0vr4")]
+[node name="DigDamageArea" parent="." unique_id=270100171 instance=ExtResource("4_p0vr4")]
 Element = SubResource("Resource_cx6nu")
 Power = 50.0
 Knockback = 100.0
 
-[node name="Collision" type="CollisionShape2D" parent="DigDamageArea"]
+[node name="Collision" type="CollisionShape2D" parent="DigDamageArea" unique_id=1163818937]
 shape = SubResource("CircleShape2D_b4gca")
 
-[node name="TargetController" parent="." instance=ExtResource("4_0jq7v")]
+[node name="TargetController" parent="." unique_id=250340415 instance=ExtResource("4_0jq7v")]
 
-[node name="Navigator" parent="." node_paths=PackedStringArray("Body") instance=ExtResource("3_oam5i")]
+[node name="Navigator" parent="." unique_id=574713019 node_paths=PackedStringArray("Body") instance=ExtResource("3_oam5i")]
 Body = NodePath("..")
 
-[node name="AttackSwitcher" parent="." instance=ExtResource("6_y4jaw")]
+[node name="AttackSwitcher" parent="." unique_id=1571853699 instance=ExtResource("6_y4jaw")]
 NextCycleDelay = 0.2
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=795491937]
 shape = SubResource("CircleShape2D_dr2gs")
 
-[node name="AudioWalk" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioWalk" type="AudioStreamPlayer2D" parent="." unique_id=1202215488]
 stream = ExtResource("3_7vcng")
 
-[node name="AudioBurrow" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioBurrow" type="AudioStreamPlayer2D" parent="." unique_id=1920494076]
 stream = ExtResource("8_vcjy6")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2061282202]
 position = Vector2(0, -8)
 scale = Vector2(4, 4)
 texture = ExtResource("12_jmn8g")
 hframes = 9
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_lnage")
-}
-autoplay = "idle"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1448681027]
+libraries/ = SubResource("AnimationLibrary_lnage")
+autoplay = &"idle"
 
-[node name="DamageArea" parent="." instance=ExtResource("4_p0vr4")]
+[node name="DamageArea" parent="." unique_id=737300818 instance=ExtResource("4_p0vr4")]
 Element = SubResource("Resource_kaehm")
 Power = 10.0
 Knockback = 200.0
 DPS = 0.3
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea" unique_id=819960381]
 position = Vector2(-40, 0)
 shape = SubResource("RectangleShape2D_kdf4g")

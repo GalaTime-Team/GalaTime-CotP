@@ -11,12 +11,6 @@
 			"name": "Raphael",
 			"icon": "res://assets/sprites/gui/characters/icon/raphael_icon.png",
 			"scene": "res://assets/objects/entity/character/Raphael.tscn"
-		},
-		{
-			"id": "neven",
-			"name": "Neven",
-			"icon": "res://assets/sprites/gui/characters/icon/raphael_icon.png",
-			"scene": "res://assets/objects/entity/character/Neven.tscn"
 		}
 	]
 }

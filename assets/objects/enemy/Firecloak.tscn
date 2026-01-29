@@ -1,8 +1,8 @@
-[gd_scene load_steps=27 format=3 uid="uid://dlp02ewci0kv6"]
+[gd_scene format=3 uid="uid://dlp02ewci0kv6"]
 
-[ext_resource type="Script" path="res://assets/scripts/objects/enemies/Firecloak.cs" id="1_0eun4"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ogpqi"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_wke3y"]
+[ext_resource type="Script" uid="uid://b0k4gcags61m6" path="res://assets/scripts/objects/enemies/Firecloak.cs" id="1_0eun4"]
+[ext_resource type="Script" uid="uid://b8kgnttd0pjw" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ogpqi"]
+[ext_resource type="Script" uid="uid://bkgiux1k7eygg" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_wke3y"]
 [ext_resource type="PackedScene" uid="uid://cjlu5sfy7lowv" path="res://assets/objects/damage/DamageArea.tscn" id="4_7imr7"]
 [ext_resource type="PackedScene" uid="uid://ch8k8il34d3f" path="res://assets/objects/helpers/ai/AttackSwitcher.tscn" id="4_aa3vr"]
 [ext_resource type="PackedScene" uid="uid://b7c0bqk25nd8k" path="res://assets/objects/helpers/ai/Navigator.tscn" id="4_aavsd"]
@@ -16,8 +16,14 @@
 
 [sub_resource type="Resource" id="Resource_57xwu"]
 script = ExtResource("2_ogpqi")
-StatsNames = [1, 5, 6, 7, 8, 9]
-StatsValues = [33.0, 40.0, 56.0, 23.0, 39.0, 500.0]
+Health = 33.0
+Mana = 47.0
+Stamina = 8.0
+Agility = 50.0
+PhysicalAttack = 40.0
+MagicalAttack = 70.0
+PhysicalDefense = 29.0
+MagicalDefense = 39.0
 
 [sub_resource type="Resource" id="Resource_pg41o"]
 script = ExtResource("3_wke3y")
@@ -28,7 +34,6 @@ colors = PackedColorArray(1, 0, 0, 0, 1, 1, 0, 1)
 
 [sub_resource type="Resource" id="Resource_cx6nu"]
 script = ExtResource("3_wke3y")
-InitializerElement = "Default"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tey4c"]
 size = Vector2(8, 48)
@@ -220,32 +225,32 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5vyl2"]
 _data = {
-"RESET": SubResource("Animation_rml3x"),
-"dash_intro": SubResource("Animation_qe2k1"),
-"dash_loop": SubResource("Animation_qjhfd"),
-"dash_outro": SubResource("Animation_jbntn"),
-"death": SubResource("Animation_u7mxb"),
-"idle": SubResource("Animation_n3oqy")
+&"RESET": SubResource("Animation_rml3x"),
+&"dash_intro": SubResource("Animation_qe2k1"),
+&"dash_loop": SubResource("Animation_qjhfd"),
+&"dash_outro": SubResource("Animation_jbntn"),
+&"death": SubResource("Animation_u7mxb"),
+&"idle": SubResource("Animation_n3oqy")
 }
 
-[node name="Firecloak" type="CharacterBody2D" node_paths=PackedStringArray("Body") groups=["enemy"]]
+[node name="Firecloak" type="CharacterBody2D" unique_id=1213438740 node_paths=PackedStringArray("Body") groups=["enemy"]]
 collision_layer = 4
 motion_mode = 1
 script = ExtResource("1_0eun4")
-DefaultAbilityIds = Array[String](["firecloak_fireball", "firecloak_dash"])
 Stats = SubResource("Resource_57xwu")
 Element = SubResource("Resource_pg41o")
 Team = 1
 DroppedXp = 30
 Timeout = 7.0
+DefaultAbilityIds = Array[String](["firecloak_fireball", "firecloak_dash"])
 Body = NodePath(".")
 
-[node name="AttackSwitcher" parent="." instance=ExtResource("4_aa3vr")]
+[node name="AttackSwitcher" parent="." unique_id=897257324 instance=ExtResource("4_aa3vr")]
 
-[node name="Navigator" parent="." node_paths=PackedStringArray("Body") instance=ExtResource("4_aavsd")]
+[node name="Navigator" parent="." unique_id=1960706819 node_paths=PackedStringArray("Body") instance=ExtResource("4_aavsd")]
 Body = NodePath("..")
 
-[node name="TrailEffect" parent="." node_paths=PackedStringArray("Parent") instance=ExtResource("4_f8v1j")]
+[node name="TrailEffect" parent="." unique_id=1524737845 node_paths=PackedStringArray("Parent") instance=ExtResource("4_f8v1j")]
 position = Vector2(0, -8)
 width = 20.0
 default_color = Color(1, 1, 0, 1)
@@ -255,63 +260,61 @@ Length = 50
 DistanceGap = 20.0
 Parent = NodePath("..")
 
-[node name="DamageArea" parent="." instance=ExtResource("4_7imr7")]
+[node name="DamageArea" parent="." unique_id=376611363 instance=ExtResource("4_7imr7")]
 Element = SubResource("Resource_cx6nu")
 Power = 40.0
 Knockback = 700.0
 
-[node name="Collision" type="CollisionShape2D" parent="DamageArea"]
+[node name="Collision" type="CollisionShape2D" parent="DamageArea" unique_id=736270742]
 position = Vector2(48, 0)
 shape = SubResource("RectangleShape2D_tey4c")
 
-[node name="RangedHitTracker" parent="." node_paths=PackedStringArray("TargetControllerReference") instance=ExtResource("4_txqf1")]
+[node name="RangedHitTracker" parent="." unique_id=103109934 node_paths=PackedStringArray("TargetControllerReference") instance=ExtResource("4_txqf1")]
 Range = 500.0
 Rays = 3
 RaysAngleOffset = 0.03
 RequiredToCanHit = 3
 TargetControllerReference = NodePath("../TargetController")
 
-[node name="BaseFireball" parent="." instance=ExtResource("4_plde0")]
+[node name="BaseFireball" parent="." unique_id=1756020564 instance=ExtResource("4_plde0")]
 
 [node name="Projectile" parent="BaseFireball" index="0"]
 TargetTeam = 0
 
-[node name="TargetController" parent="." instance=ExtResource("4_n0y02")]
+[node name="TargetController" parent="." unique_id=740196242 instance=ExtResource("4_n0y02")]
 position = Vector2(0, -9.53674e-07)
 rotation = 3.14159
 scale = Vector2(0.154931, 83.6219)
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=476066116]
 position = Vector2(0, -30)
 scale = Vector2(4, 4)
 texture = ExtResource("6_pfbco")
 hframes = 8
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=1811443080]
 shape = SubResource("CircleShape2D_alfla")
 
-[node name="FireballSpawnTimer" type="Timer" parent="."]
+[node name="FireballSpawnTimer" type="Timer" parent="." unique_id=1176671307]
 one_shot = true
 
-[node name="AttackCycleTimer" type="Timer" parent="."]
+[node name="AttackCycleTimer" type="Timer" parent="." unique_id=1915455814]
 one_shot = true
 
-[node name="DashPrepareTimer" type="Timer" parent="."]
+[node name="DashPrepareTimer" type="Timer" parent="." unique_id=1609735983]
 one_shot = true
 
-[node name="StrafeTimer" type="Timer" parent="."]
+[node name="StrafeTimer" type="Timer" parent="." unique_id=241752369]
 wait_time = 0.5
 autostart = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_5vyl2")
-}
-autoplay = "idle"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=752197513]
+libraries/ = SubResource("AnimationLibrary_5vyl2")
+autoplay = &"idle"
 
-[node name="Navigation" type="NavigationAgent2D" parent="."]
+[node name="Navigation" type="NavigationAgent2D" parent="." unique_id=762702072]
 
-[node name="DangerNotifierEffect" parent="." instance=ExtResource("9_mtr2w")]
+[node name="DangerNotifierEffect" parent="." unique_id=348773075 instance=ExtResource("9_mtr2w")]
 position = Vector2(0, -90)
 
 [editable path="BaseFireball"]

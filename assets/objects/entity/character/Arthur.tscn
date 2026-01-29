@@ -1,12 +1,12 @@
-[gd_scene load_steps=79 format=3 uid="uid://b3swrkwv16hh8"]
+[gd_scene format=3 uid="uid://b3swrkwv16hh8"]
 
-[ext_resource type="Script" path="res://assets/scripts/test/TestCharacter.cs" id="1_bupbm"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ansg2"]
+[ext_resource type="Script" uid="uid://deciywmptw287" path="res://assets/scripts/test/TestCharacter.cs" id="1_bupbm"]
+[ext_resource type="Script" uid="uid://b8kgnttd0pjw" path="res://assets/scripts/objects/classes/entity/EntityStats.cs" id="2_ansg2"]
 [ext_resource type="PackedScene" uid="uid://6o1rqehhcbme" path="res://assets/objects/helpers/TargetController.tscn" id="2_yypln"]
-[ext_resource type="Script" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_mapt0"]
+[ext_resource type="Script" uid="uid://bkgiux1k7eygg" path="res://assets/scripts/objects/classes/GalatimeElement.cs" id="3_mapt0"]
 [ext_resource type="PackedScene" uid="uid://dc61rj5d7csf6" path="res://assets/objects/HumanoidDoll.tscn" id="3_njik4"]
 [ext_resource type="Texture2D" uid="uid://cix3e7gxy5gsx" path="res://assets/sprites/characters/arthur/attacking/left_combo1.png" id="4_4ipih"]
-[ext_resource type="Script" path="res://assets/scripts/objects/Hand.cs" id="5_fet1m"]
+[ext_resource type="Script" uid="uid://tcjnd1jllfnr" path="res://assets/scripts/objects/Hand.cs" id="5_fet1m"]
 [ext_resource type="Texture2D" uid="uid://dcqfpyclso664" path="res://assets/sprites/characters/arthur/attacking/down_combo1.png" id="6_epprk"]
 [ext_resource type="Texture2D" uid="uid://cy8g8juxd058m" path="res://assets/sprites/characters/arthur/walking/arthur_right1.png" id="6_khv0i"]
 [ext_resource type="Texture2D" uid="uid://bjokfsc7q3ven" path="res://assets/sprites/characters/arthur/attacking/down_combo2.png" id="7_ck8yy"]
@@ -57,10 +57,17 @@
 [ext_resource type="Texture2D" uid="uid://4yidblnd2rb0" path="res://assets/sprites/characters/arthur/walking/arthur_up7.png" id="88_s1t4j"]
 [ext_resource type="Texture2D" uid="uid://vnix876nkcjq" path="res://assets/sprites/characters/arthur/walking/arthur_up8.png" id="89_p3ry6"]
 
-[sub_resource type="Resource" id="Resource_76knt"]
+[sub_resource type="Resource" id="Resource_r64lj"]
 script = ExtResource("2_ansg2")
-StatsNames = [1, 2, 3, 5, 6, 7, 8]
-StatsValues = [70.0, 80.0, 65.0, 75.0, 80.0, 65.0, 75.0]
+Health = 70.0
+Mana = 65.0
+Stamina = 52.0
+Agility = 60.0
+PhysicalAttack = 94.0
+MagicalAttack = 100.0
+PhysicalDefense = 65.0
+MagicalDefense = 60.0
+metadata/_custom_type_script = "uid://b8kgnttd0pjw"
 
 [sub_resource type="Resource" id="Resource_53up3"]
 script = ExtResource("3_mapt0")
@@ -290,70 +297,68 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jfmqd"]
 _data = {
-"AttackDown": SubResource("Animation_edjqb"),
-"AttackLeft": SubResource("Animation_ooin2"),
-"AttackRight": SubResource("Animation_leklu"),
-"AttackUp": SubResource("Animation_gnkkp"),
-"IdleDown": SubResource("2"),
-"IdleLeft": SubResource("Animation_04ai0"),
-"IdleRight": SubResource("Animation_iudhk"),
-"IdleUp": SubResource("Animation_6e5sb"),
-"RESET": SubResource("3"),
-"WalkDown": SubResource("Animation_rlbe6"),
-"WalkLeft": SubResource("Animation_ishmn"),
-"WalkRight": SubResource("Animation_blr53"),
-"WalkUp": SubResource("Animation_rmntb")
+&"AttackDown": SubResource("Animation_edjqb"),
+&"AttackLeft": SubResource("Animation_ooin2"),
+&"AttackRight": SubResource("Animation_leklu"),
+&"AttackUp": SubResource("Animation_gnkkp"),
+&"IdleDown": SubResource("2"),
+&"IdleLeft": SubResource("Animation_04ai0"),
+&"IdleRight": SubResource("Animation_iudhk"),
+&"IdleUp": SubResource("Animation_6e5sb"),
+&"RESET": SubResource("3"),
+&"WalkDown": SubResource("Animation_rlbe6"),
+&"WalkLeft": SubResource("Animation_ishmn"),
+&"WalkRight": SubResource("Animation_blr53"),
+&"WalkUp": SubResource("Animation_rmntb")
 }
 
-[node name="Arthur" type="CharacterBody2D" node_paths=PackedStringArray("DramaNode", "Body") groups=["ally"]]
+[node name="Arthur" type="CharacterBody2D" unique_id=1242191603 node_paths=PackedStringArray("DramaNode", "Body") groups=["ally"]]
 y_sort_enabled = true
 collision_layer = 2
 script = ExtResource("1_bupbm")
 DramaID = "arthur"
 DramaNode = NodePath(".")
-Stats = SubResource("Resource_76knt")
+Stats = SubResource("Resource_r64lj")
 Element = SubResource("Resource_53up3")
 Speed = 300.0
 Timeout = 0.0
 Body = NodePath(".")
 
-[node name="TrailParticles" type="GPUParticles2D" parent="."]
+[node name="TrailParticles" type="GPUParticles2D" parent="." unique_id=468709490]
 position = Vector2(0, -30)
 emitting = false
-process_material = SubResource("ParticleProcessMaterial_rj76l")
 lifetime = 0.3
+process_material = SubResource("ParticleProcessMaterial_rj76l")
 
-[node name="TargetController" parent="." instance=ExtResource("2_yypln")]
+[node name="TargetController" parent="." unique_id=858125013 instance=ExtResource("2_yypln")]
 TargetTeam = 1
 SwitchDuration = 0.5
 
-[node name="HumanoidDoll" parent="." instance=ExtResource("3_njik4")]
+[node name="HumanoidDoll" parent="." unique_id=882003473 instance=ExtResource("3_njik4")]
 AnimationPlayerPath = NodePath("../Animation")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1669560244]
 y_sort_enabled = true
 position = Vector2(0, -30)
 scale = Vector2(4, 4)
 texture = ExtResource("6_epprk")
 
-[node name="Hand" type="Marker2D" parent="."]
+[node name="Hand" type="Marker2D" parent="." unique_id=289626313]
 script = ExtResource("5_fet1m")
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=465443502]
 shape = SubResource("CircleShape2D_r02rj")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=1475129822]
 
-[node name="Navigation" type="NavigationAgent2D" parent="."]
+[node name="Navigation" type="NavigationAgent2D" parent="." unique_id=713783816]
 
-[node name="RayCast" type="RayCast2D" parent="."]
+[node name="RayCast" type="RayCast2D" parent="." unique_id=535915118]
 target_position = Vector2(0, 0)
 collision_mask = 7
 
-[node name="Animation" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_jfmqd")
-}
+[node name="Animation" type="AnimationPlayer" parent="." unique_id=1274438841]
+libraries/ = SubResource("AnimationLibrary_jfmqd")
 
-[node name="DrinkingAudioPlayer" type="AudioStreamPlayer2D" parent="."]
+[node name="DrinkingAudioPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1583980721]
 stream = ExtResource("67_i5yqt")
