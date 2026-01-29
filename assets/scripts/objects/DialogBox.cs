@@ -330,6 +330,13 @@ public partial class DialogBox : NinePatchRect
 					
 					entity.DisableAI = true;
 					entity.CanMove = false;
+					
+					// Immediately stop any ongoing movement by clearing velocity
+					// This is crucial for NPCs that set Body.Velocity in their AI
+					if (entity.Body != null)
+					{
+						entity.Body.Velocity = Vector2.Zero;
+					}
 				}
 			}
 		}

@@ -46,6 +46,14 @@ public partial class DiaryBookContainer : Control
 	/// <summary> Deferred page opening to ensure scene tree is ready. </summary>
 	private void OpenPageDeferred(string pageId)
 	{
+		// If pageId is null or page not found, default to first page
+		var page = GetPage(pageId);
+		if (page == null && Pages.Count > 0)
+		{
+			pageId = Pages[0].Id;
+			GD.Print($"Page '{pageId}' not found or null, defaulting to first page: {pageId}");
+		}
+		
 		OpenPage(pageId, playSound: false);
 	}
 
