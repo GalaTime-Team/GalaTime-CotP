@@ -62,6 +62,7 @@ public partial class WindowManager : Node
         // Load global UI elements.
         Tooltip = LoadAndAddElement<Tooltip>("res://assets/objects/Tooltip.tscn");
         Tooltip.Scale = Vector2.One * 2f; // Scale it up a bit.
+        Tooltip.ProcessMode = Node.ProcessModeEnum.Always; // Keep tooltip interactive when game is paused
     }
 
     /// <summary> Loads and adds an element to the scene. </summary>

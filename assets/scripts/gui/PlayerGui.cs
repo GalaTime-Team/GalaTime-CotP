@@ -94,6 +94,10 @@ namespace Galatime
             SelectWheel = GetNode<SelectWheel>("SelectWheel");
             #endregion
 
+            // Set inventory to always process, even when the game is paused
+            // This allows the inventory UI to remain interactive while the game world is paused
+            InventoryPanel.ProcessMode = Node.ProcessModeEnum.Always;
+
             PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
             PlayerVariables.OnItemsChanged += DisplayItem;
 
