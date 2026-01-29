@@ -94,6 +94,9 @@ namespace Galatime
             SelectWheel = GetNode<SelectWheel>("SelectWheel");
             #endregion
 
+            // Set PlayerGui to always process so it can handle input when paused (e.g., ESC to close inventory)
+            ProcessMode = Node.ProcessModeEnum.Always;
+            
             // Set inventory to always process, even when the game is paused
             // This allows the inventory UI to remain interactive while the game world is paused
             InventoryPanel.ProcessMode = Node.ProcessModeEnum.Always;
@@ -232,12 +235,21 @@ namespace Galatime
         public void DisplayItem() => OnItemsChanged?.Invoke();
 
         /// <summary> 
-        /// Handles input for the PlayerGui, specifically ESC key to close the inventory.
+        /// Handles input for the PlayerGui, specifically ESC and B keys to toggle inventory.
         /// When inventory is open and ESC is pressed, this method closes the inventory
         /// and marks the input as handled to prevent it from propagating to the PauseMenu.
+        /// Also handles the B key (game_inventory) to open/close the inventory.
         /// </summary>
         public override void _Input(InputEvent @event)
         {
+            // Handle B key to toggle inventory (works even when paused)
+            if (Input.IsActionJustPressed("game_inventory"))
+            {
+                InventoryOpen = !InventoryOpen;
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+            
             // Handle ESC key to close inventory
             if (Input.IsActionJustPressed("ui_cancel") && InventoryOpen)
             {

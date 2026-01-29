@@ -22,7 +22,7 @@ namespace Galatime
 		private PlayerVariables PlayerVariables;
 
 
-		public void SetTween() => Tween = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel();
+		public void SetTween() => Tween = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetParallel().SetPauseMode(Tween.TweenPauseMode.Process);
 
 		public override void _Ready()
 		{
