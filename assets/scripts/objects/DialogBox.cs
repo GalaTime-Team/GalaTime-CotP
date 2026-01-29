@@ -8,6 +8,7 @@ using Galatime.UI.Helpers;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 public partial class DialogBox : NinePatchRect
@@ -25,6 +26,13 @@ public partial class DialogBox : NinePatchRect
 	public List<LabelButton> ChoiceButtons = new();
 
 	private Player Player;
+	
+	// Track previous states to restore them after dialog
+	private Dictionary<Entity, bool> PreviousAIStates = new();
+	private Dictionary<Entity, bool> PreviousCanMoveStates = new();
+	private bool PreviousPlayerFrozen = false;
+	private bool PreviousPlayerCanMove = true;
+	private bool IsGameFrozenForDialog = false;
 
 	private int currentPhrase = -1;
 	/// <summary> Represents the current phrase index. </summary>
@@ -113,6 +121,9 @@ public partial class DialogBox : NinePatchRect
 		OnDialogEndCallback = dialogEndCallback;
 		OnDialogNextPhraseCallback = dialogNextPhraseCallback;
 
+		// Freeze player and entities during dialog
+		FreezeGameForDialog();
+
 		CurrentPhrase++;
 	}
 
@@ -150,6 +161,9 @@ public partial class DialogBox : NinePatchRect
 		IsDialog = false;
 
 		ResetValues();
+
+		// Unfreeze player and entities after dialog
+		UnfreezeGameAfterDialog();
 
 		OnDialogEndCallback?.Invoke();
 	}
@@ -260,6 +274,117 @@ public partial class DialogBox : NinePatchRect
 		CurrentDialog = null;
 		CanSkip = false;
 		currentPhrase = -1;
+	}
+
+	/// <summary> Freezes the player and all entities when dialog starts. </summary>
+	private void FreezeGameForDialog()
+	{
+		// Don't freeze again if already frozen (e.g., during dialog choices)
+		if (IsGameFrozenForDialog) return;
+		
+		// Get the Player instance - DialogBox is child of PlayerGui which is child of CanvasLayer which is child of Player
+		if (Player == null)
+		{
+			// Navigate up the scene tree: DialogBox -> PlayerGui -> CanvasLayer -> Player
+			var parent = GetParent(); // PlayerGui
+			if (parent != null)
+			{
+				parent = parent.GetParent(); // CanvasLayer
+				if (parent != null)
+				{
+					parent = parent.GetParent(); // Player
+					Player = parent as Player;
+				}
+			}
+		}
+
+		// Freeze player and store previous state
+		if (Player != null)
+		{
+			PreviousPlayerFrozen = Player.IsPlayerFrozen;
+			Player.IsPlayerFrozen = true;
+			
+			if (Player.CurrentCharacter != null)
+			{
+				PreviousPlayerCanMove = Player.CurrentCharacter.CanMove;
+				Player.CurrentCharacter.CanMove = false;
+			}
+		}
+
+		// Disable AI for all entities and store previous states
+		PreviousAIStates.Clear();
+		PreviousCanMoveStates.Clear();
+		
+		var entities = LevelManager.Instance?.Entities;
+		if (entities != null)
+		{
+			// Create a copy of the list to avoid modification during iteration
+			var entitiesCopy = entities.ToList();
+			foreach (var entity in entitiesCopy)
+			{
+				if (entity != null && !entity.DeathState && GodotObject.IsInstanceValid(entity))
+				{
+					// Store previous states so we can restore them
+					PreviousAIStates[entity] = entity.DisableAI;
+					PreviousCanMoveStates[entity] = entity.CanMove;
+					
+					entity.DisableAI = true;
+					entity.CanMove = false;
+					
+					// Immediately stop any ongoing movement by clearing velocity
+					// This is crucial for NPCs that set Body.Velocity in their AI
+					if (entity.Body != null)
+					{
+						entity.Body.Velocity = Vector2.Zero;
+					}
+				}
+			}
+		}
+		
+		IsGameFrozenForDialog = true;
+	}
+
+	/// <summary> Unfreezes the player and all entities when dialog ends. </summary>
+	private void UnfreezeGameAfterDialog()
+	{
+		// Only unfreeze if we actually froze the game
+		if (!IsGameFrozenForDialog) return;
+		
+		// Restore player state
+		if (Player != null)
+		{
+			Player.IsPlayerFrozen = PreviousPlayerFrozen;
+			if (Player.CurrentCharacter != null)
+			{
+				Player.CurrentCharacter.CanMove = PreviousPlayerCanMove;
+			}
+		}
+
+		// Restore AI and CanMove for all entities using the tracked states
+		// Iterate over dictionary keys to avoid collection modification issues
+		var entitiesToRestore = PreviousAIStates.Keys.ToList();
+		foreach (var entity in entitiesToRestore)
+		{
+			// Check if entity is still valid and not freed
+			if (entity != null && GodotObject.IsInstanceValid(entity) && !entity.IsQueuedForDeletion())
+			{
+				// Restore previous AI state
+				if (PreviousAIStates.ContainsKey(entity))
+				{
+					entity.DisableAI = PreviousAIStates[entity];
+				}
+				
+				// Restore previous CanMove state
+				if (PreviousCanMoveStates.ContainsKey(entity))
+				{
+					entity.CanMove = PreviousCanMoveStates[entity];
+				}
+			}
+		}
+		
+		PreviousAIStates.Clear();
+		PreviousCanMoveStates.Clear();
+		IsGameFrozenForDialog = false;
 	}
 
 	public override void _UnhandledInput(InputEvent @event)

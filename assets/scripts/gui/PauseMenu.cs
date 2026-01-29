@@ -153,6 +153,9 @@ public partial class PauseMenu : Control
     {
         if (Input.IsActionJustPressed("ui_cancel"))
         {
+            // Don't open pause menu if inventory is open
+            if (WindowManager.Instance.IsOpened("inventory")) return;
+            
             Paused = !Paused;
         }
     }

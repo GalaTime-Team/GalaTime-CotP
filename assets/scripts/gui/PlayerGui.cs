@@ -54,6 +54,9 @@ namespace Galatime
 
                 InventoryPanel.Visible = inventoryOpen;
                 Player.CurrentCharacter.CanMove = !inventoryOpen;
+                
+                // Note: We don't pause the game anymore - just block player actions
+                // The game world (enemies, animations, timers) continues running
             }
         }
 
@@ -90,6 +93,13 @@ namespace Galatime
 
             SelectWheel = GetNode<SelectWheel>("SelectWheel");
             #endregion
+
+            // Set PlayerGui to always process so it can handle input even if other systems pause the game
+            // (e.g., PauseMenu, DeathScreen). This ensures inventory controls work in all states.
+            ProcessMode = Node.ProcessModeEnum.Always;
+            
+            // Set inventory to always process for the same reason - works even if game is paused by other systems
+            InventoryPanel.ProcessMode = Node.ProcessModeEnum.Always;
 
             PlayerVariables = GetNode<PlayerVariables>("/root/PlayerVariables");
             PlayerVariables.OnItemsChanged += DisplayItem;
@@ -223,5 +233,30 @@ namespace Galatime
         }
 
         public void DisplayItem() => OnItemsChanged?.Invoke();
+
+        /// <summary> 
+        /// Handles input for the PlayerGui, specifically ESC and B keys to toggle inventory.
+        /// When inventory is open and ESC is pressed, this method closes the inventory
+        /// and marks the input as handled to prevent it from propagating to the PauseMenu.
+        /// Also handles the B key (game_inventory) to open/close the inventory.
+        /// </summary>
+        public override void _Input(InputEvent @event)
+        {
+            // Handle B key to toggle inventory (works even when paused)
+            if (Input.IsActionJustPressed("game_inventory"))
+            {
+                InventoryOpen = !InventoryOpen;
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+            
+            // Handle ESC key to close inventory
+            if (Input.IsActionJustPressed("ui_cancel") && InventoryOpen)
+            {
+                InventoryOpen = false;
+                // Accept the input so it doesn't propagate to PauseMenu
+                GetViewport().SetInputAsHandled();
+            }
+        }
     }
 }

@@ -33,20 +33,47 @@ public partial class DiaryBookContainer : Control
 			// TODO: Replace with OnPressed
 			page.ButtonNode.GuiInput += (InputEvent @event) => OnButtonsInput(@event, id);
 		}
+
+		// Open the first page by default (inventory)
+		// Use CallDeferred to ensure all nodes are properly positioned in the scene tree
+		if (Pages.Count > 0)
+		{
+			var firstPage = Pages[0];
+			CallDeferred(nameof(OpenPageDeferred), firstPage.Id);
+		}
+	}
+	
+	/// <summary> Deferred page opening to ensure scene tree is ready. </summary>
+	private void OpenPageDeferred(string pageId)
+	{
+		// If pageId is null or page not found, default to first page
+		var page = GetPage(pageId);
+		if (page == null && Pages.Count > 0)
+		{
+			pageId = Pages[0].Id;
+			GD.Print($"Page '{pageId}' not found or null, defaulting to first page: {pageId}");
+		}
+		
+		OpenPage(pageId, playSound: false);
 	}
 
 	/// <summary> Calls the given action for each page. </summary>
 	public void ForEachPageControl(Action<DiaryPage> action) => Pages.ToList().ForEach(action);
 	/// <summary> Returns the page with the given id. Returns null if not found. </summary>
-	public DiaryPage GetPage(string id) => Pages.First(x => x.Id == id);
+	public DiaryPage GetPage(string id) => Pages.FirstOrDefault(x => x.Id == id);
 
-	// TODO: Replace with regular buttons
-	public void OnButtonsInput(InputEvent @event, string id)
+	/// <summary> Opens a page by its ID. </summary>
+	/// <param name="id">The ID of the page to open.</param>
+	/// <param name="playSound">Whether to play the page turn sound.</param>
+	public void OpenPage(string id, bool playSound = true)
 	{
-		// Check if pressed left mouse button on the button
-		if (!(@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)) return;
-
 		var page = GetPage(id);
+		if (page == null) 
+		{
+			GD.PrintErr($"Page with ID '{id}' not found.");
+			return;
+		}
+		
 		ForEachPageControl(x =>
 		{
 			// Hide all controls
@@ -65,7 +92,16 @@ public partial class DiaryBookContainer : Control
 		AnimatePageButton(page);
 
 		page.ControlNode.Visible = true;
-		PageTwistAudio.Play();
+		if (playSound) PageTwistAudio.Play();
+	}
+
+	// TODO: Replace with regular buttons
+	public void OnButtonsInput(InputEvent @event, string id)
+	{
+		// Check if pressed left mouse button on the button
+		if (!(@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)) return;
+
+		OpenPage(id);
 	}
 
 	// TODO: Replace buttons completely
