@@ -41,19 +41,56 @@ using NodeExtensionMethods;
 
     private void OnEnter(Node node)
     {
-        // if (node is Player p)
-        if (node.IsPossessed())
+        // Check if the node is a possessed character (player-controlled)
+        if (!node.IsPossessed())
         {
-            var p = node as TestCharacter;
-            p.CanMove = false;
-            PlayerVariables.Instance.Player.PlayerGui.OnFade(true, AnimationDuration, OnFadeEnded);
+            return;
         }
+        
+        GD.Print($"Roomwrap: Player entered portal trigger, initiating transition to: {Scene}");
+        
+        // Cast to TestCharacter (HumanoidCharacter base class)
+        var character = node as TestCharacter;
+        if (character == null)
+        {
+            GD.PrintErr("Roomwrap: Node is possessed but not TestCharacter, cannot transition");
+            return;
+        }
+        
+        // Verify we have a valid scene to load
+        if (string.IsNullOrEmpty(Scene))
+        {
+            GD.PrintErr("Roomwrap: Cannot transition - Scene path is not set");
+            return;
+        }
+        
+        // Verify PlayerGui exists for fade animation
+        if (PlayerVariables.Instance?.Player?.PlayerGui == null)
+        {
+            GD.PrintErr("Roomwrap: Cannot transition - PlayerGui not available");
+            return;
+        }
+        
+        // Disable character movement during transition
+        character.CanMove = false;
+        
+        // Start fade animation
+        GD.Print($"Roomwrap: Starting fade animation (duration: {AnimationDuration}s)");
+        PlayerVariables.Instance.Player.PlayerGui.OnFade(true, AnimationDuration, OnFadeEnded);
     }
     private void OnFadeEnded()
     {
+        GD.Print($"Roomwrap: Fade completed, loading scene: {Scene}");
+        GD.Print($"Roomwrap: Setting spawn point index to: {PlayerSpawnPoint}");
+        
+        // Set spawn point for next room
         LevelManager.Instance.PlayerSpawnPointIndex = PlayerSpawnPoint;
+        
+        // Load the new scene
         var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
         globals.LoadScene(Scene);
+        
+        GD.Print("Roomwrap: Scene load initiated");
     }
 
     public override string[] _GetConfigurationWarnings()
