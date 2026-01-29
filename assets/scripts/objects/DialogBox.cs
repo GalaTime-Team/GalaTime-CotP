@@ -8,6 +8,7 @@ using Galatime.UI.Helpers;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 public partial class DialogBox : NinePatchRect
@@ -26,8 +27,12 @@ public partial class DialogBox : NinePatchRect
 
 	private Player Player;
 	
-	// Track previous AI states to restore them after dialog
+	// Track previous states to restore them after dialog
 	private Dictionary<Entity, bool> PreviousAIStates = new();
+	private Dictionary<Entity, bool> PreviousCanMoveStates = new();
+	private bool PreviousPlayerFrozen = false;
+	private bool PreviousPlayerCanMove = true;
+	private bool IsGameFrozenForDialog = false;
 
 	private int currentPhrase = -1;
 	/// <summary> Represents the current phrase index. </summary>
@@ -274,6 +279,9 @@ public partial class DialogBox : NinePatchRect
 	/// <summary> Freezes the player and all entities when dialog starts. </summary>
 	private void FreezeGameForDialog()
 	{
+		// Don't freeze again if already frozen (e.g., during dialog choices)
+		if (IsGameFrozenForDialog) return;
+		
 		// Get the Player instance - DialogBox is child of PlayerGui which is child of CanvasLayer which is child of Player
 		if (Player == null)
 		{
@@ -290,62 +298,86 @@ public partial class DialogBox : NinePatchRect
 			}
 		}
 
-		// Freeze player
+		// Freeze player and store previous state
 		if (Player != null)
 		{
+			PreviousPlayerFrozen = Player.IsPlayerFrozen;
 			Player.IsPlayerFrozen = true;
+			
 			if (Player.CurrentCharacter != null)
 			{
+				PreviousPlayerCanMove = Player.CurrentCharacter.CanMove;
 				Player.CurrentCharacter.CanMove = false;
 			}
 		}
 
-		// Disable AI for all entities
+		// Disable AI for all entities and store previous states
 		PreviousAIStates.Clear();
+		PreviousCanMoveStates.Clear();
+		
 		var entities = LevelManager.Instance?.Entities;
 		if (entities != null)
 		{
-			foreach (var entity in entities)
+			// Create a copy of the list to avoid modification during iteration
+			var entitiesCopy = entities.ToList();
+			foreach (var entity in entitiesCopy)
 			{
-				if (entity != null && !entity.DeathState)
+				if (entity != null && !entity.DeathState && GodotObject.IsInstanceValid(entity))
 				{
-					// Store previous state so we can restore it
+					// Store previous states so we can restore them
 					PreviousAIStates[entity] = entity.DisableAI;
+					PreviousCanMoveStates[entity] = entity.CanMove;
+					
 					entity.DisableAI = true;
 					entity.CanMove = false;
 				}
 			}
 		}
+		
+		IsGameFrozenForDialog = true;
 	}
 
 	/// <summary> Unfreezes the player and all entities when dialog ends. </summary>
 	private void UnfreezeGameAfterDialog()
 	{
-		// Unfreeze player
+		// Only unfreeze if we actually froze the game
+		if (!IsGameFrozenForDialog) return;
+		
+		// Restore player state
 		if (Player != null)
 		{
-			Player.IsPlayerFrozen = false;
+			Player.IsPlayerFrozen = PreviousPlayerFrozen;
 			if (Player.CurrentCharacter != null)
 			{
-				Player.CurrentCharacter.CanMove = true;
+				Player.CurrentCharacter.CanMove = PreviousPlayerCanMove;
 			}
 		}
 
-		// Restore AI for all entities
-		var entities = LevelManager.Instance?.Entities;
-		if (entities != null)
+		// Restore AI and CanMove for all entities using the tracked states
+		// Iterate over dictionary keys to avoid collection modification issues
+		var entitiesToRestore = PreviousAIStates.Keys.ToList();
+		foreach (var entity in entitiesToRestore)
 		{
-			foreach (var entity in entities)
+			// Check if entity is still valid and not freed
+			if (entity != null && GodotObject.IsInstanceValid(entity) && !entity.IsQueuedForDeletion())
 			{
-				if (entity != null && PreviousAIStates.ContainsKey(entity))
+				// Restore previous AI state
+				if (PreviousAIStates.ContainsKey(entity))
 				{
-					// Restore previous AI state
 					entity.DisableAI = PreviousAIStates[entity];
-					entity.CanMove = true;
+				}
+				
+				// Restore previous CanMove state
+				if (PreviousCanMoveStates.ContainsKey(entity))
+				{
+					entity.CanMove = PreviousCanMoveStates[entity];
 				}
 			}
 		}
+		
 		PreviousAIStates.Clear();
+		PreviousCanMoveStates.Clear();
+		IsGameFrozenForDialog = false;
 	}
 
 	public override void _UnhandledInput(InputEvent @event)
