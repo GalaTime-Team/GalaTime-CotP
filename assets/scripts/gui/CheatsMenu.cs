@@ -99,7 +99,7 @@ public partial class CheatsMenu : Control
 
 			shown = value;
 			Window.Visible = shown;
-			
+
 			// Show/hide the minimize button and labels when the cheats menu is shown/hidden
 			MinimizeButton.Visible = shown;
 			InfoLabel.Visible = shown;
@@ -124,11 +124,12 @@ public partial class CheatsMenu : Control
 			var enabled = GalatimeGlobals.CMDArgs.ContainsKey("cheats"); // Activate cheats only if cheats are defined in the command line.
 			activated = value && enabled;
 
-			// Keep the control visible to process input, but hide UI elements initially
+			// Keep the CheatsMenu control visible to receive input events, but hide child UI elements until the user opens the menu
 			Visible = activated;
 			if (activated)
 			{
 				// Hide all visible UI elements initially until user presses the cheats key
+				Window.Visible = false;
 				MinimizeButton.Visible = false;
 				InfoLabel.Visible = false;
 				CheatLabel.Visible = false;
