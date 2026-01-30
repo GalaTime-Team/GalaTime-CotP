@@ -71,6 +71,7 @@ public partial class CheatsMenu : Control
 	public Button MinimizeButton;
 	public Control Window;
 	public Label InfoLabel;
+	public RichTextLabel CheatLabel;
 
 	public Tooltip Tooltip;
 	#endregion
@@ -98,6 +99,11 @@ public partial class CheatsMenu : Control
 
 			shown = value;
 			Window.Visible = shown;
+			
+			// Show/hide the minimize button and labels when the cheats menu is shown/hidden
+			MinimizeButton.Visible = shown;
+			InfoLabel.Visible = shown;
+			CheatLabel.Visible = shown;
 
 			// Pause only when this cheat is active.
 			GetTree().Paused = shown && GetCheat("pause_when_cheats_active").Active;
@@ -118,7 +124,15 @@ public partial class CheatsMenu : Control
 			var enabled = GalatimeGlobals.CMDArgs.ContainsKey("cheats"); // Activate cheats only if cheats are defined in the command line.
 			activated = value && enabled;
 
+			// Keep the control visible to process input, but hide UI elements initially
 			Visible = activated;
+			if (activated)
+			{
+				// Hide all visible UI elements initially until user presses the cheats key
+				MinimizeButton.Visible = false;
+				InfoLabel.Visible = false;
+				CheatLabel.Visible = false;
+			}
 		}
 	}
 	#endregion
@@ -148,6 +162,7 @@ public partial class CheatsMenu : Control
 		MinimizeButton = GetNode<Button>("MinimizeButton");
 		Window = GetNode<Control>("Window");
 		InfoLabel = GetNode<Label>("InfoLabel");
+		CheatLabel = GetNode<RichTextLabel>("CheatLabel");
 
 		Tooltip = WindowManager.Instance.Tooltip;
 		#endregion
