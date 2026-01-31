@@ -81,12 +81,6 @@ public class BindsSettingsData
     [YamlMember(Alias = "ability_3"), SettingProperty("Ability 3"), KeybindSetting("game_ability_3")]
     public long Ability3 = (long)Godot.Key.Key3;
 
-    [YamlMember(Alias = "ability_4"), SettingProperty("Ability 4"), KeybindSetting("game_ability_4")]
-    public long Ability4 = (long)Godot.Key.Key4;
-
-    [YamlMember(Alias = "ability_5"), SettingProperty("Ability 5"), KeybindSetting("game_ability_5")]
-    public long Ability5 = (long)Godot.Key.Key5;
-
     [YamlMember(Alias = "interact"), SettingProperty("Interact / Continue"), KeybindSetting("ui_accept")]
     public long Interact = (long)Godot.Key.Enter;
 
