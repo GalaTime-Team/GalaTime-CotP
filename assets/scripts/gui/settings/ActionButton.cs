@@ -69,10 +69,60 @@ public partial class ActionButton : Button
 
     public void BindKey(InputEvent @event)
     {
-        if (@event is not InputEventKey key) return; // Don't bind non key events.
-        Key = (long)key.PhysicalKeycode;
+        // Remove previous bind
+        InputMap.ActionEraseEvents(ActionName);
+        
+        // Accept keyboard keys, mouse buttons, and joypad buttons/axes
+        if (@event is InputEventKey keyEvent)
+        {
+            Key = (long)keyEvent.PhysicalKeycode;
+            var newEvent = new InputEventKey() { PhysicalKeycode = keyEvent.PhysicalKeycode };
+            InputMap.ActionAddEvent(ActionName, newEvent);
+        }
+        else if (@event is InputEventMouseButton mouseEvent)
+        {
+            // Store mouse button as a special key value (use negative values to distinguish from keyboard)
+            Key = -(long)mouseEvent.ButtonIndex;
+            var newEvent = new InputEventMouseButton() { ButtonIndex = mouseEvent.ButtonIndex };
+            InputMap.ActionAddEvent(ActionName, newEvent);
+        }
+        else if (@event is InputEventJoypadButton joyEvent)
+        {
+            // Store joypad button (use values starting from -1000 to distinguish)
+            Key = -1000 - (long)joyEvent.ButtonIndex;
+            var newEvent = new InputEventJoypadButton() { ButtonIndex = joyEvent.ButtonIndex };
+            InputMap.ActionAddEvent(ActionName, newEvent);
+        }
+        else if (@event is InputEventJoypadMotion joyMotion)
+        {
+            // Store joypad axis (use values starting from -2000 to distinguish)
+            Key = -2000 - (long)joyMotion.Axis;
+            var newEvent = new InputEventJoypadMotion() 
+            { 
+                Axis = joyMotion.Axis,
+                AxisValue = joyMotion.AxisValue
+            };
+            InputMap.ActionAddEvent(ActionName, newEvent);
+        }
+        else
+        {
+            return; // Unsupported input type
+        }
+        
+        DisplayKey();
+        OnBound?.Invoke(Key);
     }
 
     /// <summary> Displays the key of the bind on button. </summary>
-    public void DisplayKey() => Text = InputMap.ActionGetEvents(ActionName)[0].AsText().Replace(" (Physical)", "");
+    public void DisplayKey()
+    {
+        if (InputMap.ActionGetEvents(ActionName).Count > 0)
+        {
+            Text = InputMap.ActionGetEvents(ActionName)[0].AsText().Replace(" (Physical)", "");
+        }
+        else
+        {
+            Text = "None";
+        }
+    }
 }

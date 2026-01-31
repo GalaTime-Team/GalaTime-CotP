@@ -67,7 +67,7 @@ public class BindsSettingsData
     public long MoveRight = (long)Godot.Key.D;
 
     [YamlMember(Alias = "attack"), SettingProperty("Attack"), KeybindSetting("game_attack")]
-    public long Attack = (long)Godot.Key.None;
+    public long Attack = -1; // Left Mouse Button (stored as negative MouseButton.Left)
 
     [YamlMember(Alias = "dodge"), SettingProperty("Dodge"), KeybindSetting("game_dodge")]
     public long Dodge = (long)Godot.Key.Shift;
@@ -82,7 +82,7 @@ public class BindsSettingsData
     public long Ability3 = (long)Godot.Key.Key3;
 
     [YamlMember(Alias = "interact"), SettingProperty("Interact / Continue"), KeybindSetting("ui_accept")]
-    public long Interact = (long)Godot.Key.Enter;
+    public long Interact = (long)Godot.Key.Space; // Changed from Enter to Space
 
     [YamlMember(Alias = "cancel"), SettingProperty("Cancel / Close"), KeybindSetting("ui_cancel")]
     public long Cancel = (long)Godot.Key.Escape;
