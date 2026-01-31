@@ -81,7 +81,7 @@ public partial class ActionButton : Button
         }
         else if (@event is InputEventMouseButton mouseEvent)
         {
-            // Store mouse button as a special key value (use negative values to distinguish from keyboard)
+            // Store mouse button as negative value (e.g., -1 for left mouse button)
             Key = -(long)mouseEvent.ButtonIndex;
             var newEvent = new InputEventMouseButton() { ButtonIndex = mouseEvent.ButtonIndex };
             InputMap.ActionAddEvent(ActionName, newEvent);
@@ -96,11 +96,12 @@ public partial class ActionButton : Button
         else if (@event is InputEventJoypadMotion joyMotion)
         {
             // Store joypad axis (use values starting from -2000 to distinguish)
+            // Note: We don't store the specific AxisValue to allow any threshold to trigger
             Key = -2000 - (long)joyMotion.Axis;
             var newEvent = new InputEventJoypadMotion() 
             { 
                 Axis = joyMotion.Axis,
-                AxisValue = joyMotion.AxisValue
+                AxisValue = joyMotion.AxisValue > 0 ? 0.5f : -0.5f // Use standard threshold
             };
             InputMap.ActionAddEvent(ActionName, newEvent);
         }

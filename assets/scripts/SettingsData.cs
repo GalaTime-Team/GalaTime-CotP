@@ -67,7 +67,7 @@ public class BindsSettingsData
     public long MoveRight = (long)Godot.Key.D;
 
     [YamlMember(Alias = "attack"), SettingProperty("Attack"), KeybindSetting("game_attack")]
-    public long Attack = -1; // Left Mouse Button (stored as negative MouseButton.Left)
+    public long Attack = -1; // Encoded value for Left Mouse Button (= -(long)MouseButton.Left)
 
     [YamlMember(Alias = "dodge"), SettingProperty("Dodge"), KeybindSetting("game_dodge")]
     public long Dodge = (long)Godot.Key.Shift;
