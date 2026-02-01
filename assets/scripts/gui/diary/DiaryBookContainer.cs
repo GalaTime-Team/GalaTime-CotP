@@ -34,18 +34,22 @@ public partial class DiaryBookContainer : Control
 			page.ButtonNode.GuiInput += (InputEvent @event) => OnButtonsInput(@event, id);
 		}
 
-		// Open the first page by default (inventory)
-		// Use CallDeferred to ensure all nodes are properly positioned in the scene tree
+		// Open the first page by default (inventory) after layout is ready
 		if (Pages.Count > 0)
 		{
-			var firstPage = Pages[0];
-			CallDeferred(nameof(OpenPageDeferred), firstPage.Id);
+			OpenFirstPageAsync();
 		}
 	}
 	
-	/// <summary> Deferred page opening to ensure scene tree is ready. </summary>
-	private void OpenPageDeferred(string pageId)
+	/// <summary> Opens the first page after waiting for layout to be computed. </summary>
+	private async void OpenFirstPageAsync()
 	{
+		// Wait for the next process frame to ensure layout containers have computed positions
+		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+		
+		var firstPage = Pages[0];
+		var pageId = firstPage.Id;
+		
 		// If pageId is null or page not found, default to first page
 		var page = GetPage(pageId);
 		if (page == null && Pages.Count > 0)
