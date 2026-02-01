@@ -99,7 +99,10 @@ public partial class ActionButton : Button
     public void BindKey(InputEvent @event)
     {
         // Accept keyboard keys, mouse buttons, and joypad buttons/axes
-        // The Key property setter will handle adding to InputMap
+        // The Key property setter will handle:
+        // - Adding events to InputMap
+        // - Calling DisplayKey()
+        // - Invoking OnBound callback
         if (@event is InputEventKey keyEvent)
         {
             Key = (long)keyEvent.PhysicalKeycode;
