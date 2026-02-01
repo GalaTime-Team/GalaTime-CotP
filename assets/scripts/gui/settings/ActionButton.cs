@@ -28,12 +28,41 @@ public partial class ActionButton : Button
         {
             key = value;
 
-            // Create key event based on key.
-            var @event = new InputEventKey() { PhysicalKeycode = (Key)key };
-
-            // Remove previous bind.
+            // Remove previous bind
             InputMap.ActionEraseEvents(ActionName);
-            InputMap.ActionAddEvent(ActionName, @event);
+
+            // Decode the stored value and create appropriate input event
+            if (key > 0)
+            {
+                // Positive value: Keyboard key
+                var @event = new InputEventKey() { PhysicalKeycode = (Key)key };
+                InputMap.ActionAddEvent(ActionName, @event);
+            }
+            else if (key >= -999)
+            {
+                // Negative value -1 to -999: Mouse button
+                var buttonIndex = (MouseButton)(-(int)key);
+                var @event = new InputEventMouseButton() { ButtonIndex = buttonIndex };
+                InputMap.ActionAddEvent(ActionName, @event);
+            }
+            else if (key >= -1999)
+            {
+                // Negative value -1000 to -1999: Joypad button
+                var buttonIndex = (JoyButton)(-(int)key - 1000);
+                var @event = new InputEventJoypadButton() { ButtonIndex = buttonIndex };
+                InputMap.ActionAddEvent(ActionName, @event);
+            }
+            else
+            {
+                // Negative value -2000 and below: Joypad axis
+                var axis = (JoyAxis)(-(int)key - 2000);
+                var @event = new InputEventJoypadMotion() 
+                { 
+                    Axis = axis,
+                    AxisValue = 0.5f // Use standard threshold
+                };
+                InputMap.ActionAddEvent(ActionName, @event);
+            }
 
             DisplayKey();
 
@@ -69,49 +98,32 @@ public partial class ActionButton : Button
 
     public void BindKey(InputEvent @event)
     {
-        // Remove previous bind
-        InputMap.ActionEraseEvents(ActionName);
-        
         // Accept keyboard keys, mouse buttons, and joypad buttons/axes
+        // The Key property setter will handle adding to InputMap
         if (@event is InputEventKey keyEvent)
         {
             Key = (long)keyEvent.PhysicalKeycode;
-            var newEvent = new InputEventKey() { PhysicalKeycode = keyEvent.PhysicalKeycode };
-            InputMap.ActionAddEvent(ActionName, newEvent);
         }
         else if (@event is InputEventMouseButton mouseEvent)
         {
             // Store mouse button as negative value (e.g., -1 for left mouse button)
             Key = -(long)mouseEvent.ButtonIndex;
-            var newEvent = new InputEventMouseButton() { ButtonIndex = mouseEvent.ButtonIndex };
-            InputMap.ActionAddEvent(ActionName, newEvent);
         }
         else if (@event is InputEventJoypadButton joyEvent)
         {
             // Store joypad button (use values starting from -1000 to distinguish)
             Key = -1000 - (long)joyEvent.ButtonIndex;
-            var newEvent = new InputEventJoypadButton() { ButtonIndex = joyEvent.ButtonIndex };
-            InputMap.ActionAddEvent(ActionName, newEvent);
         }
         else if (@event is InputEventJoypadMotion joyMotion)
         {
             // Store joypad axis (use values starting from -2000 to distinguish)
             // Note: We don't store the specific AxisValue to allow any threshold to trigger
             Key = -2000 - (long)joyMotion.Axis;
-            var newEvent = new InputEventJoypadMotion() 
-            { 
-                Axis = joyMotion.Axis,
-                AxisValue = joyMotion.AxisValue > 0 ? 0.5f : -0.5f // Use standard threshold
-            };
-            InputMap.ActionAddEvent(ActionName, newEvent);
         }
         else
         {
             return; // Unsupported input type
         }
-        
-        DisplayKey();
-        OnBound?.Invoke(Key);
     }
 
     /// <summary> Displays the key of the bind on button. </summary>
