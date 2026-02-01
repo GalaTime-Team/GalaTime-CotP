@@ -312,12 +312,6 @@ layout_mode = 2
 [node name="AbilityDescriptionContainer2" parent="AbilitiesPageContainer/AbilitiesList" instance=ExtResource("14_qgapf")]
 layout_mode = 2
 
-[node name="AbilityDescriptionContainer3" parent="AbilitiesPageContainer/AbilitiesList" instance=ExtResource("14_qgapf")]
-layout_mode = 2
-
-[node name="AbilityDescriptionContainer4" parent="AbilitiesPageContainer/AbilitiesList" instance=ExtResource("14_qgapf")]
-layout_mode = 2
-
 [node name="EnemiesPageContainer" type="Control" parent="."]
 visible = false
 layout_mode = 1

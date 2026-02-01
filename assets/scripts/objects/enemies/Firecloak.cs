@@ -158,6 +158,7 @@ public partial class Firecloak : Entity
 	#region Attack cycles
 	public void FireballAttack()
 	{
+		if (DisableAI) return;
 		if (GlobalPosition.DistanceTo(TargetController.CurrentTarget.GlobalPosition) < 100 && !DeathState) // Don't launch fireball if we are too close to the target.
 		{
 			AttackSwitcher.NextCycle();
@@ -184,6 +185,7 @@ public partial class Firecloak : Entity
 
 	public void DashAttack()
 	{
+		if (DisableAI) return;
 		if (DeathState) return;
 
 		// Spawn danger effect to notify the player that enemy is about to dash.
@@ -211,6 +213,7 @@ public partial class Firecloak : Entity
 
 	public void Dash()
 	{
+		if (DisableAI) return;
 		DangerDashEffect.End();
 
 		if (DeathState) return;

@@ -66,8 +66,26 @@ public class BindsSettingsData
     [YamlMember(Alias = "move_right"), SettingProperty("Move right"), KeybindSetting("game_move_right")]
     public long MoveRight = (long)Godot.Key.D;
 
+    [YamlMember(Alias = "attack"), SettingProperty("Attack"), KeybindSetting("game_attack")]
+    public long Attack = -1; // Encoded value for Left Mouse Button (= -(long)MouseButton.Left)
+
     [YamlMember(Alias = "dodge"), SettingProperty("Dodge"), KeybindSetting("game_dodge")]
     public long Dodge = (long)Godot.Key.Shift;
+
+    [YamlMember(Alias = "ability_1"), SettingProperty("Ability 1"), KeybindSetting("game_ability_1")]
+    public long Ability1 = (long)Godot.Key.Key1;
+
+    [YamlMember(Alias = "ability_2"), SettingProperty("Ability 2"), KeybindSetting("game_ability_2")]
+    public long Ability2 = (long)Godot.Key.Key2;
+
+    [YamlMember(Alias = "ability_3"), SettingProperty("Ability 3"), KeybindSetting("game_ability_3")]
+    public long Ability3 = (long)Godot.Key.Key3;
+
+    [YamlMember(Alias = "interact"), SettingProperty("Interact / Continue"), KeybindSetting("ui_accept")]
+    public long Interact = (long)Godot.Key.Space; // Changed from Enter to Space
+
+    [YamlMember(Alias = "cancel"), SettingProperty("Cancel / Close"), KeybindSetting("ui_cancel")]
+    public long Cancel = (long)Godot.Key.Escape;
 
     [YamlMember(Alias = "inventory"), SettingProperty("Inventory"), KeybindSetting("game_inventory")]
     public long Pause = (long)Godot.Key.B;
