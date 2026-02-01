@@ -127,11 +127,20 @@ public partial class DiaryBookContainer : Control
 		var btn = page.ButtonNode as Label;
 		var margin = 24;
 
-		var calculatedSize = (btn.Size * 2) with { Y = btn.Size.Y * 2.22f };
+		// Get the scale factor from the button's parent container (PagesButtonsContainer has scale 2x)
+		var parentScale = btn.GetParent<Control>().Scale;
+		
+		// Calculate size accounting for the parent's scale
+		var scaledSize = btn.Size * parentScale;
+		// Add extra height (1.11f multiplier) to provide visual padding around the text
+		var calculatedSize = scaledSize with { Y = scaledSize.Y * 1.11f };
 		var calculatedMargin = new Vector2(margin, margin * .22f);
 
 		var targetSize = calculatedSize + calculatedMargin;
-		var targetPosition = btn.GlobalPosition - calculatedMargin / 2;
+		
+		// Get the screen position using the global transform which accounts for all transforms including scale
+		var btnGlobalTransform = btn.GetGlobalTransformWithCanvas();
+		var targetPosition = btnGlobalTransform.Origin - calculatedMargin / 2;
 
 		if (animate)
 		{
