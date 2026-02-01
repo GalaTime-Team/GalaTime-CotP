@@ -54,7 +54,8 @@ public partial class DiaryBookContainer : Control
 			GD.Print($"Page '{pageId}' not found or null, defaulting to first page: {pageId}");
 		}
 		
-		OpenPage(pageId, playSound: false);
+		// On initial open, set the selection immediately without animation
+		OpenPage(pageId, playSound: false, animate: false);
 	}
 
 	/// <summary> Calls the given action for each page. </summary>
@@ -65,7 +66,8 @@ public partial class DiaryBookContainer : Control
 	/// <summary> Opens a page by its ID. </summary>
 	/// <param name="id">The ID of the page to open.</param>
 	/// <param name="playSound">Whether to play the page turn sound.</param>
-	public void OpenPage(string id, bool playSound = true)
+	/// <param name="animate">Whether to animate the tab selection. Set to false for initial selection.</param>
+	public void OpenPage(string id, bool playSound = true, bool animate = true)
 	{
 		var page = GetPage(id);
 		if (page == null) 
@@ -83,13 +85,21 @@ public partial class DiaryBookContainer : Control
 			var b = x.ButtonNode;
 			if (b != null)
 			{
-				var t = GetTween();
-				t.TweenMethod(Callable.From<Color>(x => b.AddThemeColorOverride("font_color", x)),
-					b.GetThemeColor("font_color"), new Color(1f, 1f, 1f), 0.5f);
+				if (animate)
+				{
+					var t = GetTween();
+					t.TweenMethod(Callable.From<Color>(x => b.AddThemeColorOverride("font_color", x)),
+						b.GetThemeColor("font_color"), new Color(1f, 1f, 1f), 0.5f);
+				}
+				else
+				{
+					// Set color immediately without animation
+					b.AddThemeColorOverride("font_color", new Color(1f, 1f, 1f));
+				}
 			}
 		});
-		// Animate the selected block
-		AnimatePageButton(page);
+		// Animate or set the selected block
+		AnimatePageButton(page, animate);
 
 		page.ControlNode.Visible = true;
 		if (playSound) PageTwistAudio.Play();
@@ -105,8 +115,10 @@ public partial class DiaryBookContainer : Control
 	}
 
 	// TODO: Replace buttons completely
-	/// <summary> Animates the selected block to the given page. </summary>
-	private void AnimatePageButton(DiaryPage page)
+	/// <summary> Animates or sets the selected block to the given page. </summary>
+	/// <param name="page">The page to select.</param>
+	/// <param name="animate">Whether to animate the selection. If false, sets position immediately.</param>
+	private void AnimatePageButton(DiaryPage page, bool animate = true)
 	{
 		var btn = page.ButtonNode as Label;
 		var margin = 24;
@@ -114,12 +126,25 @@ public partial class DiaryBookContainer : Control
 		var calculatedSize = (btn.Size * 2) with { Y = btn.Size.Y * 2.22f };
 		var calculatedMargin = new Vector2(margin, margin * .22f);
 
-		Tween = GetTween();
-		Tween?.TweenMethod(Callable.From<Vector2>(x =>
-			SelectedBlock.Size = x), SelectedBlock.Size, calculatedSize + calculatedMargin, 0.5f);
-		Tween?.TweenMethod(Callable.From<Vector2>(x =>
-			SelectedBlock.GlobalPosition = x), SelectedBlock.GlobalPosition, btn.GlobalPosition - calculatedMargin / 2, 0.5f);
-		Tween?.TweenMethod(Callable.From<Color>(x => btn.AddThemeColorOverride("font_color", x)),
-			btn.GetThemeColor("font_color"), new Color(0f, 0f, 0f), 0.5f);
+		var targetSize = calculatedSize + calculatedMargin;
+		var targetPosition = btn.GlobalPosition - calculatedMargin / 2;
+
+		if (animate)
+		{
+			Tween = GetTween();
+			Tween?.TweenMethod(Callable.From<Vector2>(x =>
+				SelectedBlock.Size = x), SelectedBlock.Size, targetSize, 0.5f);
+			Tween?.TweenMethod(Callable.From<Vector2>(x =>
+				SelectedBlock.GlobalPosition = x), SelectedBlock.GlobalPosition, targetPosition, 0.5f);
+			Tween?.TweenMethod(Callable.From<Color>(x => btn.AddThemeColorOverride("font_color", x)),
+				btn.GetThemeColor("font_color"), new Color(0f, 0f, 0f), 0.5f);
+		}
+		else
+		{
+			// Set position and size immediately without animation
+			SelectedBlock.Size = targetSize;
+			SelectedBlock.GlobalPosition = targetPosition;
+			btn.AddThemeColorOverride("font_color", new Color(0f, 0f, 0f));
+		}
 	}
 }
