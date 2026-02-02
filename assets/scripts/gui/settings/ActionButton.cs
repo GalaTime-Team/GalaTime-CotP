@@ -73,9 +73,13 @@ public partial class ActionButton : Button
     /// <summary> When action is bound. Returns long representation of bind. </summary>
     public Action<long> OnBound;
 
+    private bool isListening = false;
+
     public override void _Ready()
     {
-        SetProcessUnhandledInput(false); // I don't know why, but it works.
+        // Disable input processing initially - we only enable it when the button is toggled
+        // to listen for keybind input
+        SetProcessInput(false);
         DisplayKey();
 
         Toggled += OnToggled;
@@ -83,16 +87,30 @@ public partial class ActionButton : Button
 
     private void OnToggled(bool toggled)
     {
-        SetProcessUnhandledInput(toggled); // I don't even why I just wrote this.
+        isListening = toggled;
+        SetProcessInput(toggled);
 
         // When toggled wait for keybind to be set.
         if (toggled) Text = "...";
         else DisplayKey();
     }
 
-    public override void _UnhandledInput(InputEvent @event)
+    public override void _Input(InputEvent @event)
     {
+        if (!isListening) return;
+
+        // Only process press events, not release events
+        if (!@event.IsPressed()) return;
+
+        // Bind the key
         BindKey(@event);
+        
+        // Mark event as handled to prevent the button from receiving the click
+        GetViewport().SetInputAsHandled();
+        
+        // Stop listening and update button state
+        isListening = false;
+        SetProcessInput(false);
         ButtonPressed = false;
     }
 
