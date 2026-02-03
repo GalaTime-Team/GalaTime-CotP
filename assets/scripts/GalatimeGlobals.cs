@@ -115,6 +115,51 @@ public sealed partial class GalatimeGlobals : Node
 		if (!DirAccess.DirExistsAbsolute(GalatimeConstants.SavesPath)) DirAccess.MakeDirAbsolute(GalatimeConstants.SavesPath);
 	}
 
+	/// <summary>
+	/// Gets all save files as SaveData objects.
+	/// </summary>
+	public static System.Collections.Generic.List<SaveData> GetSavesAsSaveData()
+	{
+		var results = new System.Collections.Generic.List<SaveData>();
+		
+		if (!DirAccess.DirExistsAbsolute(GalatimeConstants.SavesPath))
+		{
+			return results;
+		}
+		
+		var saves = DirAccess.Open(GalatimeConstants.SavesPath);
+		if (saves == null)
+		{
+			return results;
+		}
+
+		saves.ListDirBegin();
+		var fileName = saves.GetNext();
+		while (fileName != "")
+		{
+			if (fileName.EndsWith(".json"))
+			{
+				var file = FileAccess.Open($"{GalatimeConstants.SavesPath}{fileName}", FileAccess.ModeFlags.Read);
+				if (file != null)
+				{
+					var json = file.GetAsText();
+					file.Close();
+					
+					var saveData = SaveData.FromJson(json);
+					results.Add(saveData);
+				}
+			}
+			fileName = saves.GetNext();
+		}
+
+		// Sort by ID
+		results.Sort((a, b) => a.ID.CompareTo(b.ID));
+		return results;
+	}
+
+	/// <summary>
+	/// Gets all saves as Godot Dictionaries (for backwards compatibility).
+	/// </summary>
 	public static Godot.Collections.Array<Godot.Collections.Dictionary> GetSaves()
 	{
 		var saves = DirAccess.Open(GalatimeConstants.SavesPath);
@@ -126,16 +171,24 @@ public sealed partial class GalatimeGlobals : Node
 			var fileName = saves.GetNext();
 			while (fileName != "")
 			{
-				var file = FileAccess.Open($"{GalatimeConstants.SavesPath}{fileName}", Godot.FileAccess.ModeFlags.Read);
-				var json = new Json();
-				var parsedJson = json.Parse(file.GetAsText());
-				if (parsedJson == Error.Ok)
+				if (fileName.EndsWith(".json"))
 				{
-					results.Add((Godot.Collections.Dictionary)json.Data);
-				}
-				else
-				{
-					GD.Print(json.Data + " " + json.Data.GetType() + " " + parsedJson);
+					var file = FileAccess.Open($"{GalatimeConstants.SavesPath}{fileName}", Godot.FileAccess.ModeFlags.Read);
+					if (file != null)
+					{
+						var json = new Json();
+						var parsedJson = json.Parse(file.GetAsText());
+						file.Close();
+						
+						if (parsedJson == Error.Ok && json.Data.VariantType == Variant.Type.Dictionary)
+						{
+							results.Add((Godot.Collections.Dictionary)json.Data);
+						}
+						else
+						{
+							GD.PrintErr($"Error parsing save file: {fileName}");
+						}
+					}
 				}
 				fileName = saves.GetNext();
 			}
@@ -160,72 +213,170 @@ public sealed partial class GalatimeGlobals : Node
 		else
 		{
 			var saveData = GetSaveData(saveId);
-			var saveJson = Json.Stringify(saveData, "\t");
-			file.StoreString(saveJson);
+			file.StoreString(saveData.ToJson());
 			file.Close();
 		}
 	}
 
-	// TODO: Rework this, because it's a mess.
-	public static Godot.Collections.Dictionary LoadSave(int saveId)
+	/// <summary>
+	/// Loads save data from a file.
+	/// </summary>
+	/// <param name="saveId">The save slot ID to load.</param>
+	/// <returns>A SaveData object containing all save information.</returns>
+	public static SaveData LoadSave(int saveId)
 	{
-		string SAVE_FILE_PATH = $"{GalatimeConstants.SavesPath}save{saveId}.json";
-		var file = FileAccess.Open(SAVE_FILE_PATH, FileAccess.ModeFlags.Read);
-		var saveData = (Godot.Collections.Dictionary)Json.ParseString(file.GetAsText());
+		string savePath = $"{GalatimeConstants.SavesPath}save{saveId}.json";
+		
+		if (!FileAccess.FileExists(savePath))
+		{
+			GD.PrintErr($"Save file not found: {savePath}");
+			return new SaveData { ID = saveId };
+		}
+		
+		var file = FileAccess.Open(savePath, FileAccess.ModeFlags.Read);
+		if (file == null)
+		{
+			GD.PrintErr($"Error opening save file: {FileAccess.GetOpenError()}");
+			return new SaveData { ID = saveId };
+		}
+		
+		var json = file.GetAsText();
 		file.Close();
-		return saveData;
+		
+		return SaveData.FromJson(json);
 	}
 
-
-	private Godot.Collections.Dictionary GetSaveData(int saveId)
+	/// <summary>
+	/// Loads save data from a file as a Godot Dictionary (for backwards compatibility).
+	/// </summary>
+	public static Godot.Collections.Dictionary LoadSaveAsDictionary(int saveId)
 	{
-		var saveData = new Godot.Collections.Dictionary
+		string savePath = $"{GalatimeConstants.SavesPath}save{saveId}.json";
+		
+		if (!FileAccess.FileExists(savePath))
 		{
-			{ "DO_NOT_MODIFY_THIS_FILE_ONLY_MODIFY_IF_YOU_KNOW_WHAT_YOURE_DOING", 0 },
-			{ "id", saveId },
-			{ "chapter", 1 },
-			{ "day", 1 },
-			{ "playtime", 0 },
-			{ "learned_abilities", PlayerVariables.LearnedAbilities }
+			return new Godot.Collections.Dictionary();
+		}
+		
+		var file = FileAccess.Open(savePath, FileAccess.ModeFlags.Read);
+		if (file == null)
+		{
+			return new Godot.Collections.Dictionary();
+		}
+		
+		var result = (Godot.Collections.Dictionary)Json.ParseString(file.GetAsText());
+		file.Close();
+		return result ?? new Godot.Collections.Dictionary();
+	}
+
+	/// <summary>
+	/// Creates a SaveData object with all current game state.
+	/// </summary>
+	private SaveData GetSaveData(int saveId)
+	{
+		var saveData = new SaveData
+		{
+			ID = saveId,
+			Chapter = 1,
+			Day = LevelManager.Instance?.LevelInfo?.Day ?? 1,
+			Playtime = 0f // TODO: Implement playtime tracking
 		};
-		// Inventory
-		var inventory = new Godot.Collections.Dictionary();
+		
+		// Save current scene and spawn point
+		if (LevelManager.Instance?.LevelInfo?.LevelInstance != null)
+		{
+			saveData.CurrentScene = LevelManager.Instance.LevelInfo.LevelInstance.SceneFilePath;
+		}
+		saveData.SpawnPointIndex = LevelManager.Instance?.PlayerSpawnPointIndex ?? 0;
+		
+		// Save player state
+		if (PlayerVariables.Player != null)
+		{
+			saveData.PlayerState.Xp = PlayerVariables.Player.Xp;
+			
+			// Save character stats if available
+			if (Player.CurrentCharacter != null)
+			{
+				saveData.PlayerState.Health = Player.CurrentCharacter.Health;
+				saveData.PlayerState.Mana = Player.CurrentCharacter.Mana?.Value ?? 100f;
+				saveData.PlayerState.Stamina = Player.CurrentCharacter.Stamina?.Value ?? 100f;
+			}
+		}
+		
+		// Save learned abilities
+		foreach (var ability in PlayerVariables.LearnedAbilities)
+		{
+			saveData.LearnedAbilities.Add(ability);
+		}
+		
+		// Save equipped abilities
+		for (int i = 0; i < PlayerVariables.Abilities.Length; i++)
+		{
+			var ability = PlayerVariables.Abilities[i];
+			if (!ability.IsEmpty)
+			{
+				saveData.EquippedAbilities.Add(new SavedAbility
+				{
+					ID = ability.ID,
+					Slot = i
+				});
+			}
+		}
+		
+		// Save inventory
 		for (int i = 0; i < PlayerVariables.Inventory.Length; i++)
 		{
 			var item = PlayerVariables.Inventory[i];
 			if (!item.IsEmpty)
 			{
-				inventory.Add(i, new Godot.Collections.Dictionary {
-					{ "id", item.ID },
-					{ "quantity", item.Quantity }
+				saveData.Inventory.Add(new SavedInventoryItem
+				{
+					ID = item.ID,
+					Quantity = item.Quantity,
+					Slot = i
 				});
 			}
 		}
-		saveData.Add("inventory", inventory);
-		// Abilities
-		var abilities = new Godot.Collections.Dictionary();
-		for (int i = 0; i < PlayerVariables.Abilities.Length; i++)
-		{
-			var ability = PlayerVariables.Abilities[i];
-			abilities.Add(i, new Godot.Collections.Dictionary());
-			((Godot.Collections.Dictionary)abilities[i]).Add("id", ability.ID);
-		}
-		saveData.Add("equipped_abilities", abilities);
-		// Allies
-		var allies = new Godot.Collections.Array();
+		
+		// Save allies
 		for (int i = 0; i < PlayerVariables.Allies.Length; i++)
 		{
 			var ally = PlayerVariables.Allies[i];
-			if (!ally.IsEmpty) allies.Add(ally.ID);
+			if (!ally.IsEmpty)
+			{
+				saveData.Allies.Add(ally.ID);
+			}
 		}
-		saveData.Add("allies", allies);
-		var discoveredEnemies = new Godot.Collections.Array();
-		for (int i = 0; i < PlayerVariables.DiscoveredEnemies.Count; i++)
+		
+		// Save discovered enemies
+		foreach (var enemyId in PlayerVariables.DiscoveredEnemies)
 		{
-			discoveredEnemies.Add(PlayerVariables.DiscoveredEnemies[i]);
-			saveData.Add("discovered_enemies", discoveredEnemies);
+			saveData.DiscoveredEnemies.Add(enemyId);
 		}
-		if (PlayerVariables.Player is not null) saveData.Add("xp", PlayerVariables.Player.Xp);
+		
+		// Save level object states for all visited levels
+		if (LevelManager.Instance?.LevelObjects != null)
+		{
+			foreach (var levelEntry in LevelManager.Instance.LevelObjects)
+			{
+				var levelState = new SavedLevelState
+				{
+					LevelName = levelEntry.Key
+				};
+				
+				foreach (var obj in levelEntry.Value)
+				{
+					levelState.Objects.Add(new SavedLevelObject
+					{
+						Name = obj.Name,
+						Data = obj.Data ?? System.Array.Empty<object>()
+					});
+				}
+				
+				saveData.LevelStates.Add(levelState);
+			}
+		}
+		
 		return saveData;
 	}
 	private static Godot.Collections.Array GetTipsFromJson()

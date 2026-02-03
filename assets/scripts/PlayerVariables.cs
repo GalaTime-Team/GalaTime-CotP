@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ExtensionMethods;
+using Galatime;
 
 namespace Galatime.Global;
 
@@ -135,111 +136,149 @@ public partial class PlayerVariables : Node
 		LevelManager.Instance.LevelObjects.Clear();
 	}
 
-	// TODO: Rework this, because Godot.Collections.Dictionary is slow because of marshalling and not serializable.
-	/// <summary> Loads the save from the save file. </summary>
+	/// <summary> The last loaded save data. Accessible for restoring player state after scene changes. </summary>
+	public SaveData LastLoadedSave { get; private set; }
+
+	/// <summary> Loads the save from the save file using the new SaveData class. </summary>
 	public void LoadSave()
 	{
 		ResetValues();
 
-		try // Load the save is not critical, so exception can be ignored
+		try
 		{
-			// Get the save data
+			// Get the save data using the new SaveData class
 			var saveData = GalatimeGlobals.LoadSave(CurrentSave);
+			LastLoadedSave = saveData;
 
-			if (saveData.ContainsKey("equipped_abilities"))
+			// Load equipped abilities
+			foreach (var savedAbility in saveData.EquippedAbilities)
 			{
-				var abilitiesDeserialized = (Godot.Collections.Dictionary)saveData["equipped_abilities"];
-				// Converting keys to int, to be able to use them as indexes and loops through them
-				var abilitiesUnconverted = ConvertKeysToInt(abilitiesDeserialized);
-				// Lopping through the saved abilities
-				for (int i = 0; i < abilitiesUnconverted.Count; i++)
+				if (!string.IsNullOrEmpty(savedAbility.ID) && savedAbility.Slot >= 0 && savedAbility.Slot < Abilities.Length)
 				{
-					var ability = (Godot.Collections.Dictionary)abilitiesUnconverted[i];
-					// Checking if the save contains the ability by current index, then adding it
-					if (ability.ContainsKey("id")) Abilities[i] = GalatimeGlobals.GetAbilityById((string)ability["id"]);
+					Abilities[savedAbility.Slot] = GalatimeGlobals.GetAbilityById(savedAbility.ID);
 				}
 			}
 
-			if (saveData.ContainsKey("inventory"))
+			// Load inventory items
+			foreach (var savedItem in saveData.Inventory)
 			{
-				var inventoryDeserialized = (Godot.Collections.Dictionary)saveData["inventory"];
-				// Converting keys to int, to be able to use them as indexes and loops through them
-				var inventoryUnconverted = ConvertKeysToInt(inventoryDeserialized);
-				for (int i = 0; i < inventoryUnconverted.Count; i++)
+				if (!string.IsNullOrEmpty(savedItem.ID) && savedItem.Slot >= 0 && savedItem.Slot < Inventory.Length)
 				{
-					// Checking if the save contains the item by current index
-					if (!inventoryUnconverted.ContainsKey(i))
+					var item = GalatimeGlobals.GetItemById(savedItem.ID);
+					if (item != null && !item.IsEmpty)
 					{
-						// If not, we add empty item (space between items)
-						Inventory[i] = new Item();
-						continue;
-					}
-					// Getting the item
-					var item = (Godot.Collections.Dictionary)inventoryUnconverted[i];
-					if (item.ContainsKey("id"))
-					{
-						// Adding the item to the inventory
-						Inventory[i] = GalatimeGlobals.GetItemById((string)item["id"]);
-						// Adding the quantity as well
-						Inventory[i].Quantity = (int)item["quantity"];
+						item.Quantity = savedItem.Quantity;
+						Inventory[savedItem.Slot] = item;
 					}
 				}
 			}
 
-			if (saveData.ContainsKey("allies"))
+			// Load allies
+			for (int i = 0; i < saveData.Allies.Count && i < Allies.Length; i++)
 			{
-				var alliesDeserialized = (Godot.Collections.Array)saveData["allies"];
-				for (int i = 0; i < alliesDeserialized.Count; i++)
+				var allyId = saveData.Allies[i];
+				if (!string.IsNullOrEmpty(allyId))
 				{
-					var ally = (string)alliesDeserialized[i];
-					Allies[i] = GalatimeGlobals.GetAllyById(ally);
+					Allies[i] = GalatimeGlobals.GetAllyById(allyId);
 				}
 			}
 
-			if (saveData.ContainsKey("discovered_enemies"))
+			// Load discovered enemies
+			DiscoveredEnemies.Clear();
+			foreach (var enemyId in saveData.DiscoveredEnemies)
 			{
-				var discoveredEnemiesDeserialized = (Godot.Collections.Array)saveData["discovered_enemies"];
-				for (int i = 0; i < discoveredEnemiesDeserialized.Count; i++)
+				if (!DiscoveredEnemies.Contains(enemyId))
 				{
-					var enemy = (int)discoveredEnemiesDeserialized[i];
-					DiscoveredEnemies.Add(enemy);
+					DiscoveredEnemies.Add(enemyId);
 				}
 			}
 
-			Player.Xp = (int)saveData.GetOrNull("xp");
-			LearnedAbilities = (Godot.Collections.Array<string>)saveData["learned_abilities"];
+			// Load player XP
+			if (Player != null)
+			{
+				Player.Xp = saveData.PlayerState.Xp;
+			}
+
+			// Load learned abilities
+			LearnedAbilities.Clear();
+			foreach (var abilityId in saveData.LearnedAbilities)
+			{
+				if (!string.IsNullOrEmpty(abilityId))
+				{
+					LearnedAbilities.Add(abilityId);
+				}
+			}
+
+			// Load level object states into LevelManager
+			if (LevelManager.Instance != null && saveData.LevelStates.Count > 0)
+			{
+				foreach (var levelState in saveData.LevelStates)
+				{
+					if (string.IsNullOrEmpty(levelState.LevelName)) continue;
+					
+					var levelObjects = new System.Collections.Generic.List<LevelObject>();
+					foreach (var savedObj in levelState.Objects)
+					{
+						levelObjects.Add(new LevelObject(savedObj.Name, savedObj.Data));
+					}
+					
+					if (!LevelManager.Instance.LevelObjects.ContainsKey(levelState.LevelName))
+					{
+						LevelManager.Instance.LevelObjects.Add(levelState.LevelName, levelObjects);
+					}
+					else
+					{
+						LevelManager.Instance.LevelObjects[levelState.LevelName] = levelObjects;
+					}
+				}
+			}
+
+			// Set spawn point index
+			if (LevelManager.Instance != null)
+			{
+				LevelManager.Instance.PlayerSpawnPointIndex = saveData.SpawnPointIndex;
+			}
 
 			ShouldLoadSave = false;
+			IsLoaded = true;
+			
+			GD.PrintRich("[color=green]SAVE SYSTEM[/color]: Save loaded successfully");
 		}
 		catch (Exception e)
 		{
-			GD.PrintRich("Error when loading save: ");
+			GD.PrintRich("[color=red]SAVE SYSTEM[/color]: Error when loading save");
 			GD.PrintRich("Message: " + e.Message);
 			GD.PrintRich("Source: " + e.Source);
 			GD.PrintRich("Stack Trace: " + e.StackTrace);
 		}
 	}
 
-	/// <summary> Converts dictionary keys to int. Used to be able to use keys of the dictionary as indexes. </summary>
-	/// <param name="dict"> The dictionary to convert </param>
-	/// <returns> The converted dictionary </returns>
-	public Godot.Collections.Dictionary ConvertKeysToInt(Godot.Collections.Dictionary dict)
+	/// <summary>
+	/// Restores the player's character state (health, mana, stamina) from the last loaded save.
+	/// Should be called after the character is fully initialized.
+	/// </summary>
+	public void RestorePlayerState()
 	{
-		Godot.Collections.Dictionary newDict = new Godot.Collections.Dictionary();
-		foreach (var key in dict.Keys)
+		if (LastLoadedSave == null || Player == null) return;
+		
+		if (Player.CurrentCharacter != null)
 		{
-			if (int.TryParse(key.ToString(), out int newKey))
+			// Restore health (only if not already at full health from fresh spawn)
+			if (LastLoadedSave.PlayerState.Health > 0)
 			{
-				// GD.Print($"Trying to convert: {newKey}, {dict[key]}");
-				newDict.Add(newKey, dict[key]);
-				// GD.Print(newDict);
+				Player.CurrentCharacter.Health = LastLoadedSave.PlayerState.Health;
 			}
-			else
+			
+			// Restore mana and stamina
+			if (Player.CurrentCharacter.Mana != null)
 			{
-				GD.Print("Error: Cannot convert key to int: " + key);
+				Player.CurrentCharacter.Mana.Value = LastLoadedSave.PlayerState.Mana;
+			}
+			if (Player.CurrentCharacter.Stamina != null)
+			{
+				Player.CurrentCharacter.Stamina.Value = LastLoadedSave.PlayerState.Stamina;
 			}
 		}
-		return newDict;
 	}
 
 	#endregion

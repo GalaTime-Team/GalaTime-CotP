@@ -28,20 +28,44 @@ namespace Galatime
         public LabelButton GetDeleteButtonInstance() => DeleteButton;
         public LabelButton GetPlayButtonInstance() => PlayButton;
 
-        public void LoadData(Godot.Collections.Dictionary data)
+        /// <summary>
+        /// Loads save data from a SaveData object (new format).
+        /// </summary>
+        public void LoadData(SaveData data)
         {
-            GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=cyan]Load data[/color]");
+            GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=cyan]Load data (SaveData)[/color]");
             NameLabel.Text = $"Save {id}";
-            var chapter = (string)data.GetOrDefaultValue("chapter", "?");
-            var day = (string)data.GetOrDefaultValue("day", "?");
-            var playtime = (string)data.GetOrDefaultValue(Math.Round((float)data.GetOrDefaultValue("playtime", 0) / 3600, 1).ToString(), "?");
-            if (chapter == "?" && day == "?") 
+            
+            if (data == null || (data.Chapter == 1 && data.Day == 1 && data.Playtime == 0 && data.LearnedAbilities.Count == 0))
             {
                 DescriptionLabel.Text = "No saved data";
                 DeleteButton.Disabled = true;
                 return;
             }
-            DescriptionLabel.Text = $"Chapter {chapter} - Day {day} - {playtime} h";
+            
+            var playtimeHours = Math.Round(data.Playtime / 3600f, 1);
+            DescriptionLabel.Text = $"Chapter {data.Chapter} - Day {data.Day} - {playtimeHours} h";
+            DeleteButton.Disabled = false;
+        }
+
+        /// <summary>
+        /// Loads save data from a Godot Dictionary (legacy format, for backwards compatibility).
+        /// </summary>
+        public void LoadData(Godot.Collections.Dictionary data)
+        {
+            GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=cyan]Load data (Dictionary)[/color]");
+            NameLabel.Text = $"Save {id}";
+            
+            if (data == null || data.Count == 0)
+            {
+                DescriptionLabel.Text = "No saved data";
+                DeleteButton.Disabled = true;
+                return;
+            }
+            
+            // Try to convert to SaveData for consistent handling
+            var saveData = SaveData.FromDictionary(data);
+            LoadData(saveData);
         }
     }   
 }

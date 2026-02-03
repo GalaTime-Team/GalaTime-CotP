@@ -1,3 +1,4 @@
+using Galatime;
 using Galatime.Global;
 using Galatime.UI.Helpers;
 using Godot;
@@ -173,7 +174,7 @@ public partial class MainMenu : Control
 
 	public void UpdateSaves()
 	{
-		var saves = GalatimeGlobals.GetSaves();
+		var saves = GalatimeGlobals.GetSavesAsSaveData();
 		GD.PrintRich("[color=purple]MAIN MENU[/color]: [color=cyan]UPDATE SAVES[/color]");
 		var savesContainers = GetNode("StartMenuContainer/SavesContainer").GetChildren();
 
@@ -200,8 +201,13 @@ public partial class MainMenu : Control
 			deleteButton.Pressed += () => DeleteSaveButtonInput(deleteButton);
 
 			instance.id = i + 1;
-			if (i < saves.Count) instance.LoadData(saves[i]);
-			else instance.LoadData(new());
+			
+			// Find the save data for this slot (saves are sorted by ID)
+			var saveForSlot = saves.Find(s => s.ID == i);
+			if (saveForSlot != null) 
+				instance.LoadData(saveForSlot);
+			else 
+				instance.LoadData(new SaveData());
 
 			playButton.Pressed += () => PlayButtonPressed(instance.id);
 		}
