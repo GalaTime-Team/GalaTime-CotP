@@ -141,6 +141,9 @@ public partial class HumanoidCharacter : Entity
 	{
 		bool isValid(Node i) => i != null && IsInstanceValid(i);
 
+		// Ensure the abilities list has enough space
+		while (Abilities.Count <= i) Abilities.Add(new AbilityData());
+		
 		Abilities[i] = ab;
 		if (ab.Reload > 0)
 		{
@@ -175,6 +178,9 @@ public partial class HumanoidCharacter : Entity
 
 	private void OnCooldownTimerTimeout(int i)
 	{
+		// Bounds check to avoid index out of range
+		if (i < 0 || i >= Abilities.Count) return;
+		
 		var ability = Abilities[i];
 		if (ability.Charges < ability.MaxCharges)
 		{
@@ -205,14 +211,23 @@ public partial class HumanoidCharacter : Entity
 
 	public override void RemoveAbility(int i)
 	{
-		AbilityData ability = new();
-		Abilities[i] = ability;
-		ability.CooldownTimer.Stop();
+		// Bounds check to avoid index out of range
+		if (i < 0 || i >= Abilities.Count) return;
+		
+		// Stop the existing ability's timer before replacing it
+		var existingAbility = Abilities[i];
+		existingAbility.CooldownTimer?.Stop();
+		existingAbility.CooldownTimer?.QueueFree();
+		
+		Abilities[i] = new AbilityData();
 		OnAbilityRemoved?.Invoke();
 	}
 
 	public override bool UseAbility(int i)
 	{
+		// Bounds check to avoid index out of range
+		if (i < 0 || i >= Abilities.Count) return false;
+		
 		var ability = Abilities[i];
 		if (CanUseAbility(ability))
 		{
