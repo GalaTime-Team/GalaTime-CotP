@@ -347,6 +347,9 @@ namespace Galatime
 				// Set the character as possessed to control it.
 				(CurrentCharacter as TestCharacter).Possessed = true;
 
+				// Restore player state (health, mana, stamina, position) from save
+				PlayerVariables.RestorePlayerState();
+
 				// Again, update the UI.
 				OnStatsChanged(CurrentCharacter.Stats);
 				OnAbilitiesChangedForCharacter();

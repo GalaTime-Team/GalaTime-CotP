@@ -173,14 +173,22 @@ public partial class PlayerVariables : Node
 				}
 			}
 
-			// Load allies
-			for (int i = 0; i < saveData.Allies.Count && i < Allies.Length; i++)
+			// Load allies - if none saved, add default characters (arthur & raphael)
+			if (saveData.Allies.Count > 0)
 			{
-				var allyId = saveData.Allies[i];
-				if (!string.IsNullOrEmpty(allyId))
+				for (int i = 0; i < saveData.Allies.Count && i < Allies.Length; i++)
 				{
-					Allies[i] = GalatimeGlobals.GetAllyById(allyId);
+					var allyId = saveData.Allies[i];
+					if (!string.IsNullOrEmpty(allyId))
+					{
+						Allies[i] = GalatimeGlobals.GetAllyById(allyId);
+					}
 				}
+			}
+			else
+			{
+				// New game - add default characters
+				InitializeDefaultAllies();
 			}
 
 			// Load discovered enemies
@@ -250,11 +258,44 @@ public partial class PlayerVariables : Node
 			GD.PrintRich("Message: " + e.Message);
 			GD.PrintRich("Source: " + e.Source);
 			GD.PrintRich("Stack Trace: " + e.StackTrace);
+			
+			// If loading fails, ensure default allies are still initialized
+			InitializeDefaultAllies();
 		}
 	}
 
 	/// <summary>
-	/// Restores the player's character state (health, mana, stamina) from the last loaded save.
+	/// Initializes the default allies (Arthur and Raphael) for a new game.
+	/// </summary>
+	private void InitializeDefaultAllies()
+	{
+		// Add Arthur as the main character
+		var arthur = GalatimeGlobals.GetAllyById("arthur");
+		if (arthur != null && !arthur.IsEmpty)
+		{
+			Allies[0] = arthur;
+			GD.PrintRich("[color=green]SAVE SYSTEM[/color]: Added default ally: Arthur");
+		}
+		else
+		{
+			GD.PrintErr("SAVE SYSTEM: Failed to load default ally 'arthur'. Check allies.json configuration.");
+		}
+		
+		// Add Raphael as the second character
+		var raphael = GalatimeGlobals.GetAllyById("raphael");
+		if (raphael != null && !raphael.IsEmpty)
+		{
+			Allies[1] = raphael;
+			GD.PrintRich("[color=green]SAVE SYSTEM[/color]: Added default ally: Raphael");
+		}
+		else
+		{
+			GD.PrintErr("SAVE SYSTEM: Failed to load default ally 'raphael'. Check allies.json configuration.");
+		}
+	}
+
+	/// <summary>
+	/// Restores the player's character state (health, mana, stamina, position) from the last loaded save.
 	/// Should be called after the character is fully initialized.
 	/// </summary>
 	public void RestorePlayerState()
@@ -277,6 +318,17 @@ public partial class PlayerVariables : Node
 			if (Player.CurrentCharacter.Stamina != null)
 			{
 				Player.CurrentCharacter.Stamina.Value = LastLoadedSave.PlayerState.Stamina;
+			}
+			
+			// Restore position if save has valid position data
+			if (LastLoadedSave.PlayerState.HasSavedPosition)
+			{
+				var savedPosition = new Godot.Vector2(
+					LastLoadedSave.PlayerState.PositionX,
+					LastLoadedSave.PlayerState.PositionY
+				);
+				Player.CurrentCharacter.GlobalPosition = savedPosition;
+				GD.PrintRich($"[color=green]SAVE SYSTEM[/color]: Restored player position to ({savedPosition.X}, {savedPosition.Y})");
 			}
 		}
 	}

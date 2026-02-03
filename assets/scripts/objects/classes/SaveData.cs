@@ -76,6 +76,15 @@ public class SavedPlayerState
     
     [JsonProperty("xp")]
     public int Xp { get; set; } = 0;
+    
+    [JsonProperty("position_x")]
+    public float PositionX { get; set; } = 0f;
+    
+    [JsonProperty("position_y")]
+    public float PositionY { get; set; } = 0f;
+    
+    [JsonProperty("has_saved_position")]
+    public bool HasSavedPosition { get; set; } = false;
 }
 
 /// <summary>
@@ -187,6 +196,9 @@ public class SaveData
             if (playerState.ContainsKey("mana")) data.PlayerState.Mana = playerState["mana"].AsSingle();
             if (playerState.ContainsKey("stamina")) data.PlayerState.Stamina = playerState["stamina"].AsSingle();
             if (playerState.ContainsKey("xp")) data.PlayerState.Xp = playerState["xp"].AsInt32();
+            if (playerState.ContainsKey("position_x")) data.PlayerState.PositionX = playerState["position_x"].AsSingle();
+            if (playerState.ContainsKey("position_y")) data.PlayerState.PositionY = playerState["position_y"].AsSingle();
+            if (playerState.ContainsKey("has_saved_position")) data.PlayerState.HasSavedPosition = playerState["has_saved_position"].AsBool();
         }
         else if (dict.ContainsKey("xp"))
         {

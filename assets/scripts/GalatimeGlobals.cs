@@ -294,12 +294,17 @@ public sealed partial class GalatimeGlobals : Node
 		{
 			saveData.PlayerState.Xp = PlayerVariables.Player.Xp;
 			
-			// Save character stats if available
+			// Save character stats and position if available
 			if (Player.CurrentCharacter != null)
 			{
 				saveData.PlayerState.Health = Player.CurrentCharacter.Health;
 				saveData.PlayerState.Mana = Player.CurrentCharacter.Mana?.Value ?? 100f;
 				saveData.PlayerState.Stamina = Player.CurrentCharacter.Stamina?.Value ?? 100f;
+				
+				// Save player position
+				saveData.PlayerState.PositionX = Player.CurrentCharacter.GlobalPosition.X;
+				saveData.PlayerState.PositionY = Player.CurrentCharacter.GlobalPosition.Y;
+				saveData.PlayerState.HasSavedPosition = true;
 			}
 		}
 		
