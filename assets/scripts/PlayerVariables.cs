@@ -78,6 +78,12 @@ public partial class PlayerVariables : Node
 	public Player Player;
 	/// <summary> If the save should be loaded. After loading, automatically set to false. </summary>
 	public bool ShouldLoadSave = true;
+	/// <summary> 
+	/// If the player position should be restored from save. 
+	/// Set to true on initial save load or death reload, set to false during room transitions.
+	/// Automatically reset to false after RestorePlayerState() is called.
+	/// </summary>
+	public bool ShouldRestorePosition = true;
 
 	public PlayerVariables() => ResetValues();
 
@@ -133,6 +139,7 @@ public partial class PlayerVariables : Node
 	{
 		CurrentSave = save;
 		ShouldLoadSave = true;
+		ShouldRestorePosition = true; // Enable position restore for initial save load
 		LevelManager.Instance.LevelObjects.Clear();
 	}
 
@@ -320,8 +327,8 @@ public partial class PlayerVariables : Node
 				Player.CurrentCharacter.Stamina.Value = LastLoadedSave.PlayerState.Stamina;
 			}
 			
-			// Restore position if save has valid position data
-			if (LastLoadedSave.PlayerState.HasSavedPosition)
+			// Restore position only if allowed (not during room transitions) and save has valid position data
+			if (ShouldRestorePosition && LastLoadedSave.PlayerState.HasSavedPosition)
 			{
 				var savedPosition = new Godot.Vector2(
 					LastLoadedSave.PlayerState.PositionX,
@@ -330,6 +337,9 @@ public partial class PlayerVariables : Node
 				Player.CurrentCharacter.GlobalPosition = savedPosition;
 				GD.PrintRich($"[color=green]SAVE SYSTEM[/color]: Restored player position to ({savedPosition.X}, {savedPosition.Y})");
 			}
+			
+			// Reset the position restore flag after use
+			ShouldRestorePosition = false;
 		}
 	}
 

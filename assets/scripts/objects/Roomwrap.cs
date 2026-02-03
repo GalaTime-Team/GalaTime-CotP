@@ -86,6 +86,9 @@ using NodeExtensionMethods;
 		// Set spawn point for next room
 		LevelManager.Instance.PlayerSpawnPointIndex = PlayerSpawnPoint;
 		
+		// Disable position restore from save during room transitions (use spawn point instead)
+		PlayerVariables.Instance.ShouldRestorePosition = false;
+		
 		// Load the new scene
 		var globals = GetNode<GalatimeGlobals>("/root/GalatimeGlobals");
 		globals.LoadScene(Scene);

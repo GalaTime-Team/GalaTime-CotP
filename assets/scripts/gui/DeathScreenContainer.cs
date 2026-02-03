@@ -69,6 +69,7 @@ public partial class DeathScreenContainer : Control
         
         // Re-trigger save loading when the scene loads
         PlayerVariables.Instance.ShouldLoadSave = true;
+        PlayerVariables.Instance.ShouldRestorePosition = true; // Restore position from save on death reload
         
         // Load the scene from the save data (or default to Lobby if save has no scene)
         var scenePath = !string.IsNullOrEmpty(saveData?.CurrentScene) 
