@@ -202,8 +202,8 @@ public partial class MainMenu : Control
 
 			instance.id = i + 1;
 			
-			// Find the save data for this slot (saves are sorted by ID)
-			var saveForSlot = saves.Find(s => s.ID == i);
+			// Find the save data for this slot (save IDs are 1-based, loop is 0-based)
+			var saveForSlot = saves.Find(s => s.ID == i + 1);
 			if (saveForSlot != null) 
 				instance.LoadData(saveForSlot);
 			else 

@@ -36,7 +36,7 @@ namespace Galatime
             GD.PrintRich("[color=green]SAVE CONTAINER[/color]: [color=cyan]Load data (SaveData)[/color]");
             NameLabel.Text = $"Save {id}";
             
-            if (data == null || (data.Chapter == 1 && data.Day == 1 && data.Playtime == 0 && data.LearnedAbilities.Count == 0))
+            if (data == null || data.IsEmpty)
             {
                 DescriptionLabel.Text = "No saved data";
                 DeleteButton.Disabled = true;

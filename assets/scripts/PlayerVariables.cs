@@ -263,7 +263,7 @@ public partial class PlayerVariables : Node
 		
 		if (Player.CurrentCharacter != null)
 		{
-			// Restore health (only if not already at full health from fresh spawn)
+			// Restore health only if save has valid health data
 			if (LastLoadedSave.PlayerState.Health > 0)
 			{
 				Player.CurrentCharacter.Health = LastLoadedSave.PlayerState.Health;

@@ -85,7 +85,7 @@ public class SavedPlayerState
 [JsonObject(MemberSerialization.OptIn)]
 public class SaveData
 {
-    [JsonProperty("_version")]
+    [JsonProperty("version")]
     public int Version { get; set; } = 1;
     
     [JsonProperty("id")]
@@ -126,6 +126,14 @@ public class SaveData
     
     [JsonProperty("level_states")]
     public List<SavedLevelState> LevelStates { get; set; } = new();
+    
+    /// <summary>
+    /// Indicates whether this is an empty/new save slot with no actual data.
+    /// </summary>
+    public bool IsEmpty => Version == 1 && Chapter == 1 && Day == 1 && 
+                          Playtime == 0 && LearnedAbilities.Count == 0 && 
+                          Inventory.Count == 0 && string.IsNullOrEmpty(CurrentScene) ||
+                          CurrentScene == "res://assets/scenes/Lobby.tscn" && Playtime == 0;
     
     /// <summary>
     /// Creates a new SaveData instance with default values.
