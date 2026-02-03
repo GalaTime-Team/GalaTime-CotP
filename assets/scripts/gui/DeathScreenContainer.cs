@@ -1,3 +1,4 @@
+using Galatime;
 using Galatime.Global;
 using Galatime.UI.Helpers;
 using Godot;
@@ -7,6 +8,9 @@ namespace Galatime.UI;
 /// <summary> Represent the death screen in the game UI, which is shown when the player dies. </summary>
 public partial class DeathScreenContainer : Control
 {
+    /// <summary> Default scene to load if no save data is available. </summary>
+    private const string DefaultScenePath = "res://assets/scenes/Lobby.tscn";
+    
     public HBoxContainer ChoiceButtonsContainer;
     public Button YesButton;
     public Button NoButton;
@@ -56,6 +60,22 @@ public partial class DeathScreenContainer : Control
     public void OnYesPressed()
     {
         WindowManager.Instance.ToggleWindow("death", true);
-        LevelManager.Instance.ReloadLevel();
+        
+        // Load the last save data to get the saved scene
+        var saveData = GalatimeGlobals.LoadSave(PlayerVariables.CurrentSave);
+        
+        // Clear level objects to ensure a fresh start from the save
+        LevelManager.Instance.LevelObjects.Clear();
+        
+        // Re-trigger save loading when the scene loads
+        PlayerVariables.Instance.ShouldLoadSave = true;
+        
+        // Load the scene from the save data (or default to Lobby if save has no scene)
+        var scenePath = !string.IsNullOrEmpty(saveData?.CurrentScene) 
+            ? saveData.CurrentScene 
+            : DefaultScenePath;
+            
+        GD.PrintRich($"[color=cyan]DEATH SCREEN[/color]: Reloading last save from scene: {scenePath}");
+        GalatimeGlobals.Instance.LoadScene(scenePath);
     }
 }
